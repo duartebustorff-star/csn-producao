@@ -113,6 +113,19 @@ function normalize(s: string): string {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 }
 
+function cleanJSON(raw: string): string {
+  let s = raw.trim()
+  // Remove ```json ... ``` or ``` ... ```
+  s = s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/g, "")
+  // Extract from first { to last }
+  const start = s.indexOf("{")
+  const end = s.lastIndexOf("}")
+  if (start !== -1 && end !== -1 && end > start) {
+    s = s.substring(start, end + 1)
+  }
+  return s
+}
+
 // ---------- POST ----------
 
 export async function POST(req: NextRequest) {
@@ -197,7 +210,7 @@ async function processDAV(
 
   let dados: Record<string, unknown>
   try {
-    dados = JSON.parse(rawText)
+    dados = JSON.parse(cleanJSON(rawText))
   } catch {
     return NextResponse.json({ tipo: "DAV", error: "Erro ao extrair dados", raw: rawText })
   }
@@ -286,7 +299,7 @@ async function processFAM(
 
   let dados: Record<string, unknown>
   try {
-    dados = JSON.parse(rawText)
+    dados = JSON.parse(cleanJSON(rawText))
   } catch {
     return NextResponse.json({ tipo: "FAM", error: "Erro ao extrair dados", raw: rawText })
   }
@@ -422,7 +435,7 @@ async function processCIT(
 
   let dados: Record<string, unknown>
   try {
-    dados = JSON.parse(rawText)
+    dados = JSON.parse(cleanJSON(rawText))
   } catch {
     return NextResponse.json({ tipo: "CIT", error: "Erro ao extrair dados do CIT", raw: rawText })
   }

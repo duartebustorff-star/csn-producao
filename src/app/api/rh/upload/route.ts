@@ -4,6 +4,17 @@ import { getServiceSupabase } from "@/lib/supabase"
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+function cleanJSON(raw: string): string {
+  let s = raw.trim()
+  s = s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/g, "")
+  const start = s.indexOf("{")
+  const end = s.lastIndexOf("}")
+  if (start !== -1 && end !== -1 && end > start) {
+    s = s.substring(start, end + 1)
+  }
+  return s
+}
+
 const CIT_PROMPT = `Analisa esta imagem de um Certificado de Incapacidade Temporária para o Trabalho (CIT / baixa médica portuguesa). Extrai em JSON: { "colaborador_nome": string|null, "niss": string|null, "data_inicio": "YYYY-MM-DD"|null, "data_fim": "YYYY-MM-DD"|null, "numero_dias": number|null, "classificacao": "DN"|"DD"|"T"|"AF"|"DP"|"AT"|"RC"|"IG"|null, "inicial_ou_prorrogacao": "inicial"|"prorrogacao"|null, "medico_nome": string|null, "instituicao": string|null }. Se não conseguires ler algum campo, coloca null. Responde APENAS com o JSON, sem markdown.`
 
 export async function POST(req: NextRequest) {
@@ -81,7 +92,7 @@ export async function POST(req: NextRequest) {
             .join("")
 
           try {
-            dadosExtraidos = JSON.parse(responseText)
+            dadosExtraidos = JSON.parse(cleanJSON(responseText))
           } catch {
             // If JSON parsing fails, store raw response
             dadosExtraidos = { raw_response: responseText }
