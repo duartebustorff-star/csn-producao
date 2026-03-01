@@ -731,10 +731,28 @@ async function processINSPECAO(
 
   // 5. Build response message
   const dataFmt = dataInspecao ? formatDate(dataInspecao) : "?"
-  const pesoStr = dados.peso_estatico_total ? ` Peso estático: ${dados.peso_estatico_total}kg.` : ""
   const resultadoStr = dados.resultado ? ` Resultado: ${(dados.resultado as string).toUpperCase()}.` : ""
 
-  const mensagem = `✅ Inspeção registada — Matrícula: ${matricula}, Data: ${dataFmt}.${pesoStr}${resultadoStr}`
+  const pesoTotal = dados.peso_estatico_total as number | null
+  const pesoEixo1 = dados.peso_estatico_eixo1_total as number | null
+  const pesoEixo2 = dados.peso_estatico_eixo2_total as number | null
+
+  let pesosStr = `\n⚖️ Peso estático total: ${pesoTotal != null ? `${pesoTotal}kg` : "?"}`
+  pesosStr += `\n⚖️ Peso estático total eixo 1: ${pesoEixo1 != null ? `${pesoEixo1}kg` : "?"}`
+  pesosStr += `\n⚖️ Peso estático total eixo 2: ${pesoEixo2 != null ? `${pesoEixo2}kg` : "?"}`
+
+  if (pesoTotal != null && pesoEixo1 != null && pesoEixo2 != null) {
+    const soma = pesoEixo1 + pesoEixo2
+    if (soma === pesoTotal) {
+      pesosStr += `\n✅ Soma dos eixos confere.`
+    } else {
+      pesosStr += `\n⚠️ ATENÇÃO: Eixo 1 + Eixo 2 = ${soma}kg ≠ Total ${pesoTotal}kg. Verificar leitura do documento.`
+    }
+  } else {
+    pesosStr += `\n⚠️ Não foi possível validar — valores em falta.`
+  }
+
+  const mensagem = `✅ Inspeção registada — Matrícula: ${matricula}, Data: ${dataFmt}.${resultadoStr}${pesosStr}`
 
   return NextResponse.json({
     tipo: "INSPECAO",
