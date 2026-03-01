@@ -262,12 +262,12 @@ async function processDAV(
 
   // Upload file to storage
   const ext = file.name.split(".").pop() || "pdf"
-  const mat = (dados.matricula as string) || "DESCONHECIDO"
-  const fileName = `davs/DAV_${mat}_${vin}_${Date.now()}.${ext}`
-  await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
+  const mat = (dados.matricula as string) || "SEM-MATRICULA"
+  const fileName = `DAV_${mat}_${vin}_${Date.now()}.${ext}`
+  await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
-  const { data: urlData } = await supabase.storage.from("documentos-rh").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
   // Upsert DAV (anti-duplicados por VIN)
   const davRecord: Record<string, unknown> = {
@@ -355,11 +355,11 @@ async function processFAM(
 
   // Upload file
   const ext = file.name.split(".").pop() || "pdf"
-  const fileName = `fams/FAM_${numHomologacao}_${Date.now()}.${ext}`
-  await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
+  const fileName = `FAM_${numHomologacao || "DESCONHECIDO"}_${Date.now()}.${ext}`
+  await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
-  const { data: urlData } = await supabase.storage.from("documentos-rh").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
   const famRecord: Record<string, unknown> = {
     ...dados,
@@ -506,12 +506,12 @@ async function processCIT(
   // 3. Upload file to storage
   const ext = file.name.split(".").pop() || "pdf"
   const nomeUtenteCit = ((dados.nome_utente as string) || "DESCONHECIDO").replace(/\s+/g, "-")
-  const dataInicioCit = (dados.data_inicio as string) || "DESCONHECIDO"
-  const fileName = `cits/CIT_${nomeUtenteCit}_${dataInicioCit}_${Date.now()}.${ext}`
-  await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
+  const dataInicioCit = (dados.data_inicio as string) || String(Date.now())
+  const fileName = `CIT_${nomeUtenteCit}_${dataInicioCit}_${Date.now()}.${ext}`
+  await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
-  const { data: urlData } = await supabase.storage.from("documentos-rh").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
   // 4. Fuzzy match nome_utente against colaboradores
   const nomeUtente = dados.nome_utente as string | null
@@ -681,11 +681,11 @@ async function processINSPECAO(
 
   // 3. Upload file to storage
   const ext = file.name.split(".").pop() || "pdf"
-  const fileName = `inspecoes/INSP_${matricula}_${dataInspecao ? dataInspecao.split("T")[0] : Date.now()}.${ext}`
-  await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
+  const fileName = `INSP_${matricula}_${dataInspecao ? dataInspecao.split("T")[0] : Date.now()}.${ext}`
+  await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
-  const { data: urlData } = await supabase.storage.from("documentos-rh").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
   // 4. Insert into inspecoes table
   const inspecaoRecord: Record<string, unknown> = {
@@ -778,12 +778,12 @@ async function processOUTRO(
   supabase: ReturnType<typeof getServiceSupabase>
 ) {
   // Upload to storage
-  const fileName = `outros/${Date.now()}_${file.name}`
+  const fileName = `OUTRO_${file.name}`
   const arrayBuffer = await file.arrayBuffer()
-  await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(arrayBuffer), {
+  await supabase.storage.from("documentos").upload(fileName, Buffer.from(arrayBuffer), {
     contentType: file.type,
   })
-  const { data: urlData } = await supabase.storage.from("documentos-rh").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
   // Store in documentos_rh as generic
   const { data: doc } = await supabase
