@@ -2,7 +2,7 @@
 
 import { t, type Lang } from "@/lib/translations"
 
-export type View = "chat" | "obras" | "leads" | "rh" | "dashboard"
+export type View = "chat" | "obras" | "leads" | "documentos" | "rh" | "dashboard"
 
 interface BottomNavProps {
   active: View
@@ -15,14 +15,15 @@ const ICONS: Record<View, string> = {
   chat: "💬",
   obras: "🏗️",
   leads: "📋",
-  rh: "📁",
+  documentos: "📂",
+  rh: "👤",
   dashboard: "📊",
 }
 
 export default function BottomNav({ active, onChange, lang, isAdmin }: BottomNavProps) {
   const views: View[] = isAdmin
-    ? ["chat", "obras", "leads", "rh", "dashboard"]
-    : ["chat", "obras", "rh"]
+    ? ["chat", "obras", "leads", "documentos", "rh", "dashboard"]
+    : ["chat", "obras", "documentos", "rh"]
 
   return (
     <nav className="border-t border-border bg-background/80 backdrop-blur-sm sticky bottom-0 z-40 md:hidden">

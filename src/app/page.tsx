@@ -8,6 +8,7 @@ import ChatView from "@/components/ChatView"
 import ObrasView from "@/components/ObrasView"
 import DashboardView from "@/components/DashboardView"
 import RHView from "@/components/RHView"
+import DocumentosView from "@/components/DocumentosView"
 import LeadsView from "@/components/LeadsView"
 import type { Colaborador } from "@/lib/types"
 import type { Lang } from "@/lib/translations"
@@ -98,9 +99,15 @@ export default function Home() {
             />
           )}
           <SidebarButton
+            active={activeView === "documentos"}
+            onClick={() => setActiveView("documentos")}
+            icon="📂"
+            label="Documentos"
+          />
+          <SidebarButton
             active={activeView === "rh"}
             onClick={() => setActiveView("rh")}
-            icon="📁"
+            icon="👤"
             label="RH"
           />
           {isAdmin && (
@@ -146,6 +153,7 @@ export default function Home() {
           {activeView === "chat" && <ChatView user={user} />}
           {activeView === "obras" && <ObrasView lang={lang} />}
           {activeView === "leads" && isAdmin && <LeadsView />}
+          {activeView === "documentos" && <DocumentosView user={user} />}
           {activeView === "rh" && <RHView user={user} />}
           {activeView === "dashboard" && isAdmin && <DashboardView />}
         </main>

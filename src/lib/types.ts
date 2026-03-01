@@ -209,6 +209,45 @@ export interface FAM {
   [key: string]: unknown
 }
 
+export interface Inspecao {
+  id: number
+  matricula: string
+  data_inspecao: string | null
+  centro_inspecao: string | null
+  codigo_imt: string | null
+  linha: string | null
+  inspetor: string | null
+  peso_estatico_total: number | null
+  peso_dinamico_total: number | null
+  peso_estatico_eixo1_total: number | null
+  peso_estatico_eixo1_esq: number | null
+  peso_estatico_eixo1_dir: number | null
+  peso_estatico_eixo2_total: number | null
+  peso_estatico_eixo2_esq: number | null
+  peso_estatico_eixo2_dir: number | null
+  peso_dinamico_eixo1_total: number | null
+  peso_dinamico_eixo1_esq: number | null
+  peso_dinamico_eixo1_dir: number | null
+  peso_dinamico_eixo2_total: number | null
+  peso_dinamico_eixo2_esq: number | null
+  peso_dinamico_eixo2_dir: number | null
+  forca_travagem_servico: number | null
+  eficiencia_travao_servico_estatica: number | null
+  eficiencia_travao_servico_dinamica: number | null
+  forca_travagem_estacionamento: number | null
+  eficiencia_travao_estacionamento: number | null
+  opacidade_k: number | null
+  combustivel: string | null
+  ripometro_eixo1: number | null
+  deficiencias: Array<{codigo: string, designacao: string, tipo: number}> | null
+  resultado: string | null
+  url_ficheiro: string | null
+  dados_raw: Record<string, unknown> | null
+  uploaded_by: string | null
+  created_at: string
+  updated_at: string
+}
+
 export interface LugarParque {
   numero: number
   obra_id: string | null

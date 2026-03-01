@@ -11,6 +11,7 @@ const IDENTIFY_PROMPT = `Analisa este documento. Identifica o tipo:
 - "FAM" se for uma Folha de Aprovação de Modelo (cabeçalho com logo IMT — Instituto da Mobilidade e dos Transportes)
 - "CIT" se for um Certificado de Incapacidade Temporária (documento da Segurança Social com dados de baixa médica)
 - "VIN_PLATE" se for uma foto da placa VIN de um veículo
+- "INSPECAO" se for um Relatório de Inspeção automóvel (cabeçalho com "Relatório de Inspeção", "Controlauto" ou centro de inspeção IMT, com dados de frenómetro/opacímetro/ripómetro)
 - "OUTRO" para qualquer outro documento
 Responde APENAS com o tipo (uma palavra).`
 
@@ -86,6 +87,43 @@ Extrai TODOS os campos em JSON:
   "situacao": "...",
   "classificacao": "DN"|"DD"|"T"|"AF"|"DP"|"AT"|"RC"|"IG"|null
 }
+Se não conseguires ler algum campo, coloca null. Responde APENAS com JSON.`
+
+const INSPECAO_PROMPT = `Analisa este Relatório de Inspeção automóvel português.
+Extrai TODOS os campos em JSON:
+{
+  "matricula": "XX-XX-XX",
+  "data_inspecao": "YYYY-MM-DDTHH:mm:ss",
+  "centro_inspecao": "...",
+  "codigo_imt": "...",
+  "linha": "...",
+  "inspetor": "...",
+  "peso_estatico_total": null,
+  "peso_dinamico_total": null,
+  "peso_estatico_eixo1_total": null,
+  "peso_estatico_eixo1_esq": null,
+  "peso_estatico_eixo1_dir": null,
+  "peso_estatico_eixo2_total": null,
+  "peso_estatico_eixo2_esq": null,
+  "peso_estatico_eixo2_dir": null,
+  "peso_dinamico_eixo1_total": null,
+  "peso_dinamico_eixo1_esq": null,
+  "peso_dinamico_eixo1_dir": null,
+  "peso_dinamico_eixo2_total": null,
+  "peso_dinamico_eixo2_esq": null,
+  "peso_dinamico_eixo2_dir": null,
+  "forca_travagem_servico": null,
+  "eficiencia_travao_servico_estatica": null,
+  "eficiencia_travao_servico_dinamica": null,
+  "forca_travagem_estacionamento": null,
+  "eficiencia_travao_estacionamento": null,
+  "opacidade_k": null,
+  "combustivel": "...",
+  "ripometro_eixo1": null,
+  "deficiencias": [{"codigo": "...", "designacao": "...", "tipo": 1}],
+  "resultado": "aprovado|reprovado"
+}
+NOTA: Os pesos do frenómetro aparecem numa tabela. Peso estático e dinâmico total aparecem no final da secção do frenómetro. Os pesos por eixo aparecem nas linhas "Eixo 1" e "Eixo 2" nas colunas Esq/Dir/Total tanto para Estático como Dinâmico. Alguns relatórios têm banco de suspensões em vez de pesos no frenómetro — nesse caso o peso total aparece no banco de suspensões.
 Se não conseguires ler algum campo, coloca null. Responde APENAS com JSON.`
 
 // ---------- Helpers ----------
@@ -176,6 +214,8 @@ export async function POST(req: NextRequest) {
       return await processFAM(base64, fileContent, file, supabase)
     } else if (docType === "CIT") {
       return await processCIT(fileContent, file, uploadedBy, supabase)
+    } else if (docType === "INSPECAO") {
+      return await processINSPECAO(fileContent, file, uploadedBy, supabase)
     } else if (docType === "VIN_PLATE") {
       return await processVINPlate(fileContent, supabase)
     } else {
@@ -574,6 +614,133 @@ async function processCIT(
       ? { id: matchedColaboradorId, nome: matchedColaboradorNome }
       : null,
     ausencia,
+    mensagem,
+  })
+}
+
+// ---------- INSPECAO ----------
+
+async function processINSPECAO(
+  fileContent: ContentBlock,
+  file: File,
+  uploadedBy: string,
+  supabase: ReturnType<typeof getServiceSupabase>
+) {
+  // 1. Extract inspection data via Claude Vision
+  const extractRes = await anthropic.messages.create({
+    model: "claude-sonnet-4-5-20250929",
+    max_tokens: 4096,
+    messages: [{
+      role: "user",
+      content: [fileContent, { type: "text", text: INSPECAO_PROMPT }],
+    }],
+  })
+
+  const rawText = extractRes.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text).join("")
+
+  let dados: Record<string, unknown>
+  try {
+    dados = JSON.parse(cleanJSON(rawText))
+  } catch {
+    return NextResponse.json({ tipo: "INSPECAO", error: "Erro ao extrair dados da inspeção", raw: rawText })
+  }
+
+  const matricula = dados.matricula as string
+  if (!matricula) {
+    return NextResponse.json({ tipo: "INSPECAO", error: "Matrícula não encontrada no documento" })
+  }
+
+  const dataInspecao = dados.data_inspecao as string | null
+
+  // 2. Anti-duplicate by matricula + data_inspecao
+  if (dataInspecao) {
+    const { data: existing } = await supabase
+      .from("inspecoes")
+      .select("id")
+      .eq("matricula", matricula)
+      .eq("data_inspecao", dataInspecao)
+      .maybeSingle()
+
+    if (existing) {
+      return NextResponse.json({
+        tipo: "INSPECAO",
+        duplicado: true,
+        inspecao_id: existing.id,
+        mensagem: `⚠️ Inspeção de ${matricula} em ${formatDate(dataInspecao)} já existe no sistema. Não foi duplicada.`,
+      })
+    }
+  }
+
+  // 3. Upload file to storage
+  const fileName = `inspecoes/${matricula}_${Date.now()}.${file.name.split(".").pop()}`
+  await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
+    contentType: file.type,
+  })
+  const { data: urlData } = await supabase.storage.from("documentos-rh").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+
+  // 4. Insert into inspecoes table
+  const inspecaoRecord: Record<string, unknown> = {
+    matricula,
+    data_inspecao: dataInspecao,
+    centro_inspecao: dados.centro_inspecao || null,
+    codigo_imt: dados.codigo_imt || null,
+    linha: dados.linha || null,
+    inspetor: dados.inspetor || null,
+    peso_estatico_total: dados.peso_estatico_total ?? null,
+    peso_dinamico_total: dados.peso_dinamico_total ?? null,
+    peso_estatico_eixo1_total: dados.peso_estatico_eixo1_total ?? null,
+    peso_estatico_eixo1_esq: dados.peso_estatico_eixo1_esq ?? null,
+    peso_estatico_eixo1_dir: dados.peso_estatico_eixo1_dir ?? null,
+    peso_estatico_eixo2_total: dados.peso_estatico_eixo2_total ?? null,
+    peso_estatico_eixo2_esq: dados.peso_estatico_eixo2_esq ?? null,
+    peso_estatico_eixo2_dir: dados.peso_estatico_eixo2_dir ?? null,
+    peso_dinamico_eixo1_total: dados.peso_dinamico_eixo1_total ?? null,
+    peso_dinamico_eixo1_esq: dados.peso_dinamico_eixo1_esq ?? null,
+    peso_dinamico_eixo1_dir: dados.peso_dinamico_eixo1_dir ?? null,
+    peso_dinamico_eixo2_total: dados.peso_dinamico_eixo2_total ?? null,
+    peso_dinamico_eixo2_esq: dados.peso_dinamico_eixo2_esq ?? null,
+    peso_dinamico_eixo2_dir: dados.peso_dinamico_eixo2_dir ?? null,
+    forca_travagem_servico: dados.forca_travagem_servico ?? null,
+    eficiencia_travao_servico_estatica: dados.eficiencia_travao_servico_estatica ?? null,
+    eficiencia_travao_servico_dinamica: dados.eficiencia_travao_servico_dinamica ?? null,
+    forca_travagem_estacionamento: dados.forca_travagem_estacionamento ?? null,
+    eficiencia_travao_estacionamento: dados.eficiencia_travao_estacionamento ?? null,
+    opacidade_k: dados.opacidade_k ?? null,
+    combustivel: dados.combustivel || null,
+    ripometro_eixo1: dados.ripometro_eixo1 ?? null,
+    deficiencias: dados.deficiencias || null,
+    resultado: dados.resultado || null,
+    url_ficheiro: urlData?.signedUrl || "",
+    dados_raw: dados,
+    uploaded_by: uploadedBy,
+    updated_at: new Date().toISOString(),
+  }
+
+  const { data: inspecao, error: insertError } = await supabase
+    .from("inspecoes")
+    .insert(inspecaoRecord)
+    .select()
+    .single()
+
+  if (insertError) {
+    console.error("Inspecao insert error:", insertError)
+    return NextResponse.json({ tipo: "INSPECAO", error: "Erro ao registar inspeção" }, { status: 500 })
+  }
+
+  // 5. Build response message
+  const dataFmt = dataInspecao ? formatDate(dataInspecao) : "?"
+  const pesoStr = dados.peso_estatico_total ? ` Peso estático: ${dados.peso_estatico_total}kg.` : ""
+  const resultadoStr = dados.resultado ? ` Resultado: ${(dados.resultado as string).toUpperCase()}.` : ""
+
+  const mensagem = `✅ Inspeção registada — Matrícula: ${matricula}, Data: ${dataFmt}.${pesoStr}${resultadoStr}`
+
+  return NextResponse.json({
+    tipo: "INSPECAO",
+    inspecao,
+    dados,
+    matricula,
     mensagem,
   })
 }
