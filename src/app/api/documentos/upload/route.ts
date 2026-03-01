@@ -261,7 +261,9 @@ async function processDAV(
   }
 
   // Upload file to storage
-  const fileName = `davs/${vin}_${Date.now()}.${file.name.split(".").pop()}`
+  const ext = file.name.split(".").pop() || "pdf"
+  const mat = (dados.matricula as string) || "DESCONHECIDO"
+  const fileName = `davs/DAV_${mat}_${vin}_${Date.now()}.${ext}`
   await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
@@ -352,7 +354,8 @@ async function processFAM(
   }
 
   // Upload file
-  const fileName = `fams/${numHomologacao}_${extensao}_${Date.now()}.${file.name.split(".").pop()}`
+  const ext = file.name.split(".").pop() || "pdf"
+  const fileName = `fams/FAM_${numHomologacao}_${Date.now()}.${ext}`
   await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
@@ -501,7 +504,10 @@ async function processCIT(
   }
 
   // 3. Upload file to storage
-  const fileName = `cits/${numeroCit || "sem_numero"}_${Date.now()}.${file.name.split(".").pop()}`
+  const ext = file.name.split(".").pop() || "pdf"
+  const nomeUtenteCit = ((dados.nome_utente as string) || "DESCONHECIDO").replace(/\s+/g, "-")
+  const dataInicioCit = (dados.data_inicio as string) || "DESCONHECIDO"
+  const fileName = `cits/CIT_${nomeUtenteCit}_${dataInicioCit}_${Date.now()}.${ext}`
   await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
@@ -674,7 +680,8 @@ async function processINSPECAO(
   }
 
   // 3. Upload file to storage
-  const fileName = `inspecoes/${matricula}_${Date.now()}.${file.name.split(".").pop()}`
+  const ext = file.name.split(".").pop() || "pdf"
+  const fileName = `inspecoes/INSP_${matricula}_${dataInspecao ? dataInspecao.split("T")[0] : Date.now()}.${ext}`
   await supabase.storage.from("documentos-rh").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
