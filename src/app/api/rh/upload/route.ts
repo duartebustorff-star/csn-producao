@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const fileBuffer = Buffer.from(arrayBuffer)
 
     const { error: uploadError } = await supabase.storage
-      .from("documentos-rh")
+      .from("documentos")
       .upload(fileName, fileBuffer, {
         contentType: file.type,
         upsert: false,
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Gerar URL (signed, 1 year)
     const { data: urlData } = await supabase.storage
-      .from("documentos-rh")
+      .from("documentos")
       .createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
     const url = urlData?.signedUrl || ""
