@@ -23,6 +23,14 @@ export interface Lead {
   quantidade: number
   valor_unitario: number | null
   num_homologacao: string | null
+  plataforma_elevatoria: boolean
+  grua_coluna: boolean
+  distancia_entre_eixos: number | null
+  dist_eixo_frontal_frente: number | null
+  dist_eixo_traseiro_retaguarda: number | null
+  dist_eixo_frontal_traseira_cabine: number | null
+  largura_cabine: number | null
+  dist_topo_chassi_topo_cabine: number | null
   notas_encomenda: string[] | null
   estado: 'proposta' | 'ganha' | 'perdida' | 'cancelada'
   created_at: string

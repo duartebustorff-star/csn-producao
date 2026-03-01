@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import type { Lead, Obra, FaseObra } from "@/lib/types"
 
 const ESTADO_LEAD: Record<string, { label: string; color: string }> = {
@@ -15,18 +15,18 @@ export default function LeadsView() {
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchLeads()
-  }, [])
-
-  const fetchLeads = async () => {
+  const fetchLeads = useCallback(async () => {
     try {
       const res = await fetch("/api/leads")
       const data = await res.json()
       setLeads(data.leads || [])
     } catch { /* ignore */ }
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchLeads()
+  }, [fetchLeads])
 
   if (loading) {
     return <div className="flex items-center justify-center h-full"><span className="text-muted text-sm">A carregar...</span></div>
@@ -86,7 +86,7 @@ export default function LeadsView() {
                   <p className="text-right text-[10px] text-muted mt-0.5">{totalProgresso}% · {obras.length} obras</p>
                 </button>
 
-                {/* Expanded: obras list */}
+                {/* Expanded */}
                 {expanded === lead.id && (
                   <div className="px-4 pb-3 space-y-2">
                     {lead.dimensoes && (
@@ -101,6 +101,9 @@ export default function LeadsView() {
                     {lead.notas_encomenda && lead.notas_encomenda.length > 0 && (
                       <p className="text-xs text-muted">NE: <span className="text-foreground font-mono">{lead.notas_encomenda.join(", ")}</span></p>
                     )}
+
+                    {/* Dados técnicos */}
+                    <DadosTecnicos lead={lead} onUpdate={fetchLeads} />
 
                     <h4 className="text-xs text-muted uppercase tracking-wider mt-2">Obras</h4>
                     {obras.map((obra) => {
@@ -128,6 +131,133 @@ export default function LeadsView() {
           })
         )}
       </div>
+    </div>
+  )
+}
+
+function DadosTecnicos({ lead, onUpdate }: { lead: Lead; onUpdate: () => void }) {
+  const [saving, setSaving] = useState(false)
+  const [plataforma, setPlataforma] = useState(lead.plataforma_elevatoria ?? false)
+  const [grua, setGrua] = useState(lead.grua_coluna ?? false)
+  const [distEixos, setDistEixos] = useState(lead.distancia_entre_eixos)
+  const [distFrontalFrente, setDistFrontalFrente] = useState(lead.dist_eixo_frontal_frente)
+  const [distTraseiroRet, setDistTraseiroRet] = useState(lead.dist_eixo_traseiro_retaguarda)
+  const [distFrontalCabine, setDistFrontalCabine] = useState(lead.dist_eixo_frontal_traseira_cabine)
+  const [larguraCab, setLarguraCab] = useState(lead.largura_cabine)
+  const [distTopoChassi, setDistTopoChassi] = useState(lead.dist_topo_chassi_topo_cabine)
+
+  const hasChanges =
+    plataforma !== (lead.plataforma_elevatoria ?? false) ||
+    grua !== (lead.grua_coluna ?? false) ||
+    distEixos !== lead.distancia_entre_eixos ||
+    distFrontalFrente !== lead.dist_eixo_frontal_frente ||
+    distTraseiroRet !== lead.dist_eixo_traseiro_retaguarda ||
+    distFrontalCabine !== lead.dist_eixo_frontal_traseira_cabine ||
+    larguraCab !== lead.largura_cabine ||
+    distTopoChassi !== lead.dist_topo_chassi_topo_cabine
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      await fetch(`/api/leads/${lead.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plataforma_elevatoria: plataforma,
+          grua_coluna: grua,
+          distancia_entre_eixos: distEixos,
+          dist_eixo_frontal_frente: distFrontalFrente,
+          dist_eixo_traseiro_retaguarda: distTraseiroRet,
+          dist_eixo_frontal_traseira_cabine: distFrontalCabine,
+          largura_cabine: larguraCab,
+          dist_topo_chassi_topo_cabine: distTopoChassi,
+        }),
+      })
+      onUpdate()
+    } catch { /* ignore */ }
+    setSaving(false)
+  }
+
+  const numInput = (
+    label: string,
+    value: number | null,
+    onChange: (v: number | null) => void
+  ) => (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-xs text-muted flex-shrink-0">{label}</span>
+      <div className="flex items-center gap-1">
+        <input
+          type="number"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}
+          className="w-20 bg-background border border-border rounded px-2 py-1 text-xs font-mono text-foreground text-right"
+          placeholder="—"
+        />
+        <span className="text-[10px] text-muted">mm</span>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="mt-2 space-y-2">
+      <h4 className="text-xs text-muted uppercase tracking-wider">Dados técnicos</h4>
+
+      {/* Tipo de trabalho */}
+      <div className="bg-background rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted uppercase tracking-wider">Tipo de trabalho</p>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted">Carroçaria</span>
+          <span className="text-xs font-mono text-foreground">{lead.tipo_carrocaria}</span>
+        </div>
+        <Toggle label="Plataforma elevatória" value={plataforma} onChange={setPlataforma} />
+        <Toggle label="Grua coluna" value={grua} onChange={setGrua} />
+      </div>
+
+      {/* Eixo X */}
+      <div className="bg-background rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted uppercase tracking-wider">Eixo X (comprimento)</p>
+        {numInput("Dist. entre eixos", distEixos, setDistEixos)}
+        {numInput("Eixo frontal → frente", distFrontalFrente, setDistFrontalFrente)}
+        {numInput("Eixo traseiro → retaguarda", distTraseiroRet, setDistTraseiroRet)}
+        {numInput("Eixo frontal → traseira cabine", distFrontalCabine, setDistFrontalCabine)}
+      </div>
+
+      {/* Eixo Y */}
+      <div className="bg-background rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted uppercase tracking-wider">Eixo Y (largura)</p>
+        {numInput("Largura cabine", larguraCab, setLarguraCab)}
+      </div>
+
+      {/* Eixo Z */}
+      <div className="bg-background rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted uppercase tracking-wider">Eixo Z (altura)</p>
+        {numInput("Topo chassi → topo cabine", distTopoChassi, setDistTopoChassi)}
+      </div>
+
+      {/* Save button */}
+      {hasChanges && (
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full py-2 rounded-lg text-xs font-medium bg-accent text-white hover:bg-accent/90 transition-colors disabled:opacity-50"
+        >
+          {saving ? "A guardar..." : "Guardar dados técnicos"}
+        </button>
+      )}
+    </div>
+  )
+}
+
+function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-xs text-muted">{label}</span>
+      <button
+        onClick={() => onChange(!value)}
+        className={`w-9 h-5 rounded-full transition-colors relative ${value ? "bg-accent" : "bg-border"}`}
+      >
+        <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${value ? "left-4" : "left-0.5"}`} />
+      </button>
     </div>
   )
 }
