@@ -39,8 +39,9 @@ function formatDateShort(dateStr: string): string {
 }
 
 export default function DocumentosView({ user }: { user: Colaborador }) {
-  const [section, setSection] = useState<DocSection>("veiculos")
-  const [activeType, setActiveType] = useState<DocSubType>("davs")
+  const isAdmin = user.role === "admin"
+  const [section, setSection] = useState<DocSection>(isAdmin ? "veiculos" : "rh")
+  const [activeType, setActiveType] = useState<DocSubType>(isAdmin ? "davs" : "cits")
   const [counts, setCounts] = useState<Counts>({ davs: 0, fams: 0, inspecoes: 0, cits: 0, outros: 0 })
   const [documentos, setDocumentos] = useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = useState(true)
@@ -82,11 +83,12 @@ export default function DocumentosView({ user }: { user: Colaborador }) {
     else setActiveType("outros")
   }
 
-  const SECTIONS: { key: DocSection; label: string; icon: string }[] = [
+  const ALL_SECTIONS: { key: DocSection; label: string; icon: string }[] = [
     { key: "veiculos", label: "Veículos", icon: "🚛" },
     { key: "rh", label: "RH", icon: "👤" },
     { key: "geral", label: "Geral", icon: "📄" },
   ]
+  const SECTIONS = isAdmin ? ALL_SECTIONS : ALL_SECTIONS.filter((s) => s.key === "rh")
 
   const SUBTYPES: Record<DocSection, { key: DocSubType; label: string; countKey: keyof Counts }[]> = {
     veiculos: [

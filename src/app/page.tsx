@@ -91,19 +91,21 @@ export default function Home() {
             label="Obras"
           />
           {isAdmin && (
+            <SidebarButton
+              active={activeView === "leads"}
+              onClick={() => setActiveView("leads")}
+              icon="📋"
+              label="Leads"
+            />
+          )}
+          <SidebarButton
+            active={activeView === "documentos"}
+            onClick={() => setActiveView("documentos")}
+            icon="📂"
+            label="Documentos"
+          />
+          {isAdmin && (
             <>
-              <SidebarButton
-                active={activeView === "leads"}
-                onClick={() => setActiveView("leads")}
-                icon="📋"
-                label="Leads"
-              />
-              <SidebarButton
-                active={activeView === "documentos"}
-                onClick={() => setActiveView("documentos")}
-                icon="📂"
-                label="Documentos"
-              />
               <SidebarButton
                 active={activeView === "rh"}
                 onClick={() => setActiveView("rh")}
@@ -153,7 +155,7 @@ export default function Home() {
           {activeView === "chat" && <ChatView user={user} />}
           {activeView === "obras" && <ObrasView lang={lang} />}
           {activeView === "leads" && isAdmin && <LeadsView />}
-          {activeView === "documentos" && isAdmin && <DocumentosView user={user} />}
+          {activeView === "documentos" && <DocumentosView user={user} />}
           {activeView === "rh" && isAdmin && <RHView user={user} />}
           {activeView === "dashboard" && isAdmin && <DashboardView />}
         </main>

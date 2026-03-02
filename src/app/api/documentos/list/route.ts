@@ -9,6 +9,11 @@ export async function GET(req: NextRequest) {
   const supabase = getServiceSupabase()
 
   try {
+    // Non-admin can only access CITs
+    if (!isAdmin && tipo && tipo !== "cits") {
+      return NextResponse.json({ documentos: [] })
+    }
+
     if (tipo === "davs") {
       const { data, error } = await supabase
         .from("davs")
@@ -64,6 +69,15 @@ export async function GET(req: NextRequest) {
     if (!isAdmin && userId) {
       citsCountQuery = citsCountQuery.eq("uploaded_by", userId)
     }
+
+    if (!isAdmin) {
+      // Workers only get CITs count
+      const cits = await citsCountQuery
+      return NextResponse.json({
+        counts: { davs: 0, fams: 0, inspecoes: 0, cits: cits.count || 0, outros: 0 },
+      })
+    }
+
     const [davs, fams, inspecoes, cits, outros] = await Promise.all([
       supabase.from("davs").select("id", { count: "exact", head: true }),
       supabase.from("fams").select("id", { count: "exact", head: true }),
