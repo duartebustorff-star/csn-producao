@@ -23,7 +23,7 @@ const ICONS: Record<View, string> = {
 export default function BottomNav({ active, onChange, lang, isAdmin }: BottomNavProps) {
   const views: View[] = isAdmin
     ? ["chat", "obras", "leads", "documentos", "rh", "dashboard"]
-    : ["chat", "obras", "documentos", "rh"]
+    : ["chat", "obras"]
 
   return (
     <nav className="border-t border-border bg-background/80 backdrop-blur-sm sticky bottom-0 z-40 md:hidden">
