@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServiceSupabase } from "@/lib/supabase"
 
 const ALLOWED_FIELDS = [
+  "estado",
   "plataforma_elevatoria",
   "grua_coluna",
   "distancia_entre_eixos",

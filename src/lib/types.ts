@@ -32,7 +32,7 @@ export interface Lead {
   largura_cabine: number | null
   dist_topo_chassi_topo_cabine: number | null
   notas_encomenda: string[] | null
-  estado: 'proposta' | 'ganha' | 'perdida' | 'cancelada'
+  estado: 'novo' | 'em_orcamentacao' | 'proposta_enviada' | 'fechado' | 'perdido' | 'em_preparacao' | 'em_obra'
   created_at: string
   updated_at: string
   obras?: Obra[]

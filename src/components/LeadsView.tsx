@@ -4,11 +4,16 @@ import { useState, useEffect, useCallback } from "react"
 import type { Lead, Obra, FaseObra } from "@/lib/types"
 
 const ESTADO_LEAD: Record<string, { label: string; color: string }> = {
-  proposta: { label: "Proposta", color: "bg-blue-500/20 text-blue-400" },
-  ganha: { label: "Ganha", color: "bg-success/20 text-success" },
-  perdida: { label: "Perdida", color: "bg-danger/20 text-danger" },
-  cancelada: { label: "Cancelada", color: "bg-muted/20 text-muted" },
+  novo: { label: "Novo", color: "bg-blue-500/20 text-blue-400" },
+  em_orcamentacao: { label: "Em orçamentação", color: "bg-yellow-500/20 text-yellow-400" },
+  proposta_enviada: { label: "Proposta enviada", color: "bg-orange-500/20 text-orange-400" },
+  fechado: { label: "Fechado", color: "bg-success/20 text-success" },
+  perdido: { label: "Perdido", color: "bg-danger/20 text-danger" },
+  em_preparacao: { label: "Em preparação", color: "bg-purple-500/20 text-purple-400" },
+  em_obra: { label: "Em obra", color: "bg-emerald-700/20 text-emerald-500" },
 }
+
+const ESTADOS_COM_DADOS_TECNICOS = ["em_preparacao", "em_obra"]
 
 export default function LeadsView() {
   const [leads, setLeads] = useState<Lead[]>([])
@@ -102,8 +107,10 @@ export default function LeadsView() {
                       <p className="text-xs text-muted">NE: <span className="text-foreground font-mono">{lead.notas_encomenda.join(", ")}</span></p>
                     )}
 
-                    {/* Dados técnicos */}
-                    <DadosTecnicos lead={lead} onUpdate={fetchLeads} />
+                    {/* Dados técnicos (só em_preparacao ou em_obra) */}
+                    {ESTADOS_COM_DADOS_TECNICOS.includes(lead.estado) && (
+                      <DadosTecnicos lead={lead} onUpdate={fetchLeads} />
+                    )}
 
                     <h4 className="text-xs text-muted uppercase tracking-wider mt-2">Obras</h4>
                     {obras.map((obra) => {
