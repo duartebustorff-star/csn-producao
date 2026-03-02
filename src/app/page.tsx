@@ -61,7 +61,7 @@ export default function Home() {
       {/* Desktop sidebar (hidden on mobile) */}
       <aside className="hidden md:flex flex-col w-16 lg:w-56 border-r border-border bg-background flex-shrink-0">
         <div className="flex items-center justify-center px-4 py-4 border-b border-border">
-          <img src="/horizontal_black_assinatura.png" alt="CSN" className="hidden lg:block h-8 brightness-0 invert" />
+          <img src="/horizontal_black_assinatura.png" alt="CSN" className="hidden lg:block h-16 brightness-0 invert" />
           <span className="lg:hidden text-accent font-bold text-lg">CSN</span>
         </div>
         <nav className="flex-1 py-2">

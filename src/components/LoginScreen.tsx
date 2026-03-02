@@ -72,7 +72,7 @@ export default function LoginScreen({
     return (
       <div className="flex h-dvh flex-col items-center justify-center bg-background px-4">
         <div className="mb-8 flex justify-center">
-          <img src="/horizontal_black_assinatura.png" alt="CSN Produção" className="h-12 brightness-0 invert" />
+          <img src="/horizontal_black_assinatura.png" alt="CSN Produção" className="h-24 brightness-0 invert" />
         </div>
         <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
           {COLABORADORES_PREVIEW.map((c) => (
