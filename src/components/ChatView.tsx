@@ -96,49 +96,57 @@ export default function ChatView({ user }: { user: Colaborador }) {
     inputRef.current?.focus()
   }
 
-  const handleFileUpload = async (file: File, type: "foto" | "documento") => {
-    const now = new Date().toLocaleTimeString("pt-PT", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null)
 
-    const label = type === "foto" ? `📸 ${file.name}` : `📄 ${file.name}`
-    setMessages((prev) => [...prev, { role: "user", content: label, timestamp: now }])
+  const handleFileUpload = async (files: File[], type: "foto" | "documento") => {
+    const total = files.length
     setLoading(true)
 
-    try {
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("colaborador_id", user.id)
-      formData.append("uploaded_by", user.id)
+    for (let i = 0; i < total; i++) {
+      const file = files[i]
+      const now = new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })
+      const label = type === "foto" ? `📸 ${file.name}` : `📄 ${file.name}`
+      setMessages((prev) => [...prev, { role: "user", content: label, timestamp: now }])
 
-      const uploadRes = await fetch("/api/documentos/upload", {
-        method: "POST",
-        body: formData,
-      })
-      const uploadData = await uploadRes.json()
+      if (total > 1) {
+        setUploadProgress(`A processar ficheiro ${i + 1} de ${total}...`)
+      }
 
-      const responseContent = uploadData.error || uploadData.mensagem || "Documento processado."
+      try {
+        const formData = new FormData()
+        formData.append("file", file)
+        formData.append("colaborador_id", user.id)
+        formData.append("uploaded_by", user.id)
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: responseContent,
-          timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
-        },
-      ])
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Erro ao enviar ficheiro.",
-          timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
-        },
-      ])
+        const uploadRes = await fetch("/api/documentos/upload", {
+          method: "POST",
+          body: formData,
+        })
+        const uploadData = await uploadRes.json()
+
+        const responseContent = uploadData.error || uploadData.mensagem || "Documento processado."
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: responseContent,
+            timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+          },
+        ])
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: `Erro ao enviar ${file.name}.`,
+            timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+          },
+        ])
+      }
     }
 
+    setUploadProgress(null)
     setLoading(false)
   }
 
@@ -186,11 +194,15 @@ export default function ChatView({ user }: { user: Colaborador }) {
               🤖
             </div>
             <div className="bg-card rounded-2xl rounded-bl-md px-4 py-3">
-              <div className="flex gap-1">
-                <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-              </div>
+              {uploadProgress ? (
+                <p className="text-xs text-muted">{uploadProgress}</p>
+              ) : (
+                <div className="flex gap-1">
+                  <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                </div>
+              )}
             </div>
           </div>
         )}

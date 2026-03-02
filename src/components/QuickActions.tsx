@@ -11,7 +11,7 @@ export interface ChatContext {
 
 interface QuickActionsProps {
   onSend: (message: string) => void
-  onFileUpload: (file: File, type: "foto" | "documento") => void
+  onFileUpload: (files: File[], type: "foto" | "documento") => void
   lang: Lang
   context: ChatContext
 }
@@ -52,9 +52,9 @@ export default function QuickActions({ onSend, onFileUpload, lang, context }: Qu
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      onFileUpload(file, uploadTypeRef.current)
+    const fileList = e.target.files
+    if (fileList && fileList.length > 0) {
+      onFileUpload(Array.from(fileList), uploadTypeRef.current)
       e.target.value = ""
     }
   }
@@ -124,6 +124,7 @@ export default function QuickActions({ onSend, onFileUpload, lang, context }: Qu
       <input
         ref={fileInputRef}
         type="file"
+        multiple
         className="hidden"
         onChange={handleFileChange}
       />
