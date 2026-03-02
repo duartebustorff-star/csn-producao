@@ -287,6 +287,7 @@ function DocDetails({ doc, tipo }: { doc: Record<string, unknown>; tipo: DocSubT
         { label: "Matrícula", value: doc.matricula },
         { label: "Marca/Modelo", value: [doc.marca, doc.modelo].filter(Boolean).join(" ") || null },
         { label: "Homologação", value: doc.cod_homologacao },
+        { label: "Tripulantes", value: doc.numero_lugares != null ? `${doc.numero_lugares} (${Number(doc.numero_lugares) * 65}kg)` : null },
       )
       break
     case "fams":

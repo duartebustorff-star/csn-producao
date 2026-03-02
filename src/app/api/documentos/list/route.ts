@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     if (tipo === "davs") {
       const { data, error } = await supabase
         .from("davs")
-        .select("id, vin, matricula, marca, modelo, cod_homologacao, url_ficheiro, created_at")
+        .select("id, vin, matricula, marca, modelo, cod_homologacao, numero_lugares, url_ficheiro, created_at")
         .order("created_at", { ascending: false })
       if (error) throw error
       return NextResponse.json({ documentos: data || [] })
