@@ -71,9 +71,8 @@ export default function LoginScreen({
   if (step === "select") {
     return (
       <div className="flex h-dvh flex-col items-center justify-center bg-background px-4">
-        <div className="mb-8 text-center">
-          <h1 className="text-accent text-3xl font-bold">CSN</h1>
-          <p className="text-muted mt-1 text-sm">Produção</p>
+        <div className="mb-8 flex justify-center">
+          <img src="/horizontal_black_assinatura.png" alt="CSN Produção" className="h-12 brightness-0 invert" />
         </div>
         <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
           {COLABORADORES_PREVIEW.map((c) => (

@@ -60,9 +60,9 @@ export default function Home() {
     <div className="flex h-dvh bg-background">
       {/* Desktop sidebar (hidden on mobile) */}
       <aside className="hidden md:flex flex-col w-16 lg:w-56 border-r border-border bg-background flex-shrink-0">
-        <div className="flex items-center gap-2 px-4 py-4 border-b border-border">
-          <span className="text-accent font-bold text-lg">CSN</span>
-          <span className="text-muted text-xs hidden lg:inline">Produção</span>
+        <div className="flex items-center justify-center px-4 py-4 border-b border-border">
+          <img src="/horizontal_black_assinatura.png" alt="CSN" className="hidden lg:block h-8 brightness-0 invert" />
+          <span className="lg:hidden text-accent font-bold text-lg">CSN</span>
         </div>
         <nav className="flex-1 py-2">
           <SidebarButton
