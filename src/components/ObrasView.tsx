@@ -6,6 +6,8 @@ import type { Lang } from "@/lib/translations"
 import { t } from "@/lib/translations"
 import ObraDetail from "./ObraDetail"
 
+const ESTADO_FALLBACK = { label: "Desconhecido", color: "text-muted" }
+
 const ESTADO_LABELS: Record<string, { label: string; color: string }> = {
   espera_documentacao: { label: "Espera docs", color: "text-yellow-400" },
   espera_projeto: { label: "Espera projeto", color: "text-blue-400" },
@@ -118,7 +120,7 @@ function ObraCard({ obra, onClick }: { obra: ObraWithDocs; onClick: () => void }
   const total = fases.length
   const progresso = total > 0 ? Math.round((concluidas / total) * 100) : 0
   const faseAtual = fases.find((f: FaseObra) => f.estado === "em_curso")
-  const estado = ESTADO_LABELS[obra.estado] || ESTADO_LABELS.espera_documentacao
+  const estado = ESTADO_LABELS[obra.estado] || ESTADO_FALLBACK
 
   return (
     <button

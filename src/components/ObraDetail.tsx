@@ -8,6 +8,8 @@ interface ObraWithDocs extends Obra {
   has_fam?: boolean
 }
 
+const ESTADO_FALLBACK = { label: "Desconhecido", color: "text-muted" }
+
 const ESTADO_LABELS: Record<string, { label: string; color: string }> = {
   espera_documentacao: { label: "Espera documentação", color: "text-yellow-400" },
   espera_projeto: { label: "Espera projeto", color: "text-blue-400" },
@@ -24,7 +26,7 @@ export default function ObraDetail({ obra, onClose }: { obra: ObraWithDocs; onCl
   const total = fases.length
   const progresso = total > 0 ? Math.round((concluidas / total) * 100) : 0
   const totalHoras = fases.reduce((sum: number, f: FaseObra) => sum + (f.horas_reais || 0), 0)
-  const estado = ESTADO_LABELS[obra.estado] || ESTADO_LABELS.espera_documentacao
+  const estado = ESTADO_LABELS[obra.estado] || ESTADO_FALLBACK
   const lead = obra.leads
 
   return (

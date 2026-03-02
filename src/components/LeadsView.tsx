@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react"
 import type { Lead, Obra, FaseObra } from "@/lib/types"
 
+const ESTADO_LEAD_FALLBACK = { label: "Desconhecido", color: "bg-border text-muted" }
+
 const ESTADO_LEAD: Record<string, { label: string; color: string }> = {
   novo: { label: "Novo", color: "bg-blue-500/20 text-blue-400" },
   em_orcamentacao: { label: "Em orçamentação", color: "bg-yellow-500/20 text-yellow-400" },
@@ -11,6 +13,11 @@ const ESTADO_LEAD: Record<string, { label: string; color: string }> = {
   perdido: { label: "Perdido", color: "bg-danger/20 text-danger" },
   em_preparacao: { label: "Em preparação", color: "bg-purple-500/20 text-purple-400" },
   em_obra: { label: "Em obra", color: "bg-emerald-700/20 text-emerald-500" },
+  // Legacy states
+  proposta: { label: "Proposta", color: "bg-blue-500/20 text-blue-400" },
+  ganha: { label: "Ganha", color: "bg-success/20 text-success" },
+  perdida: { label: "Perdida", color: "bg-danger/20 text-danger" },
+  cancelada: { label: "Cancelada", color: "bg-border text-muted" },
 }
 
 const ESTADOS_COM_DADOS_TECNICOS = ["em_preparacao", "em_obra"]
@@ -49,7 +56,7 @@ export default function LeadsView() {
         ) : (
           leads.map((lead) => {
             const obras = (lead.obras || []) as Obra[]
-            const estadoBadge = ESTADO_LEAD[lead.estado] || ESTADO_LEAD.proposta
+            const estadoBadge = ESTADO_LEAD[lead.estado] || ESTADO_LEAD_FALLBACK
             const totalProgresso = obras.length > 0
               ? Math.round(
                   obras.reduce((sum, obra) => {
