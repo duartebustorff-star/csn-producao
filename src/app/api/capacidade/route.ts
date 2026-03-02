@@ -1,8 +1,11 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { getServiceSupabase } from "@/lib/supabase"
 import { HORARIO, OPERADORES, FERIAS_ANUAIS, CAPACIDADE_TOTAL_ANUAL } from "@/lib/constants"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const userId = req.nextUrl.searchParams.get("user_id")
+  const role = req.nextUrl.searchParams.get("role")
+  const isAdmin = role === "admin"
   const supabase = getServiceSupabase()
   const now = new Date()
   const year = now.getFullYear()
@@ -34,7 +37,7 @@ export async function GET() {
       supabase.from("timetracking").select("colaborador_id, duracao_minutos").gte("inicio", weekStart.toISOString()).lte("inicio", weekEnd.toISOString()).not("duracao_minutos", "is", null),
       supabase.from("timetracking").select("colaborador_id, duracao_minutos").gte("inicio", monthStart.toISOString()).lte("inicio", monthEnd.toISOString()).not("duracao_minutos", "is", null),
       supabase.from("timetracking").select("colaborador_id, duracao_minutos").gte("inicio", yearStart.toISOString()).lte("inicio", yearEnd.toISOString()).not("duracao_minutos", "is", null),
-      supabase.from("colaboradores").select("id, nome, funcao").in("id", [...OPERADORES]),
+      supabase.from("colaboradores").select("id, nome, funcao").in("id", !isAdmin && userId ? [userId] : [...OPERADORES]),
     ])
 
   const calendario = calendarioRes.data || []
@@ -150,8 +153,11 @@ export async function GET() {
     .sort((a, b) => a.data.localeCompare(b.data))
     .map((c) => ({ data: c.data, descricao: c.descricao, tipo: c.tipo }))
 
-  // Active absences
-  const ausenciasAtivasFormatted = ausenciasAtivas.map((a) => ({
+  // Active absences (filter by user if not admin)
+  const ausenciasFiltered = !isAdmin && userId
+    ? ausenciasAtivas.filter((a) => a.colaborador_id === userId)
+    : ausenciasAtivas
+  const ausenciasAtivasFormatted = ausenciasFiltered.map((a) => ({
     colaborador_id: a.colaborador_id,
     colaborador_nome: (a.colaboradores as unknown as { nome: string })?.nome || a.colaborador_id,
     tipo: a.tipo,

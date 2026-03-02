@@ -46,28 +46,28 @@ export default function DocumentosView({ user }: { user: Colaborador }) {
   const [loading, setLoading] = useState(true)
   const [loadingDocs, setLoadingDocs] = useState(false)
 
-  // Fetch counts on mount
+  // Fetch counts on mount (pass user context for CITs filtering)
   useEffect(() => {
-    fetch("/api/documentos/list")
+    fetch(`/api/documentos/list?user_id=${user.id}&role=${user.role}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.counts) setCounts(data.counts)
       })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [])
+  }, [user.id, user.role])
 
   const fetchDocs = useCallback(async (tipo: DocSubType) => {
     setLoadingDocs(true)
     try {
-      const res = await fetch(`/api/documentos/list?tipo=${tipo}`)
+      const res = await fetch(`/api/documentos/list?tipo=${tipo}&user_id=${user.id}&role=${user.role}`)
       const data = await res.json()
       setDocumentos(data.documentos || [])
     } catch {
       setDocumentos([])
     }
     setLoadingDocs(false)
-  }, [])
+  }, [user.id, user.role])
 
   // Fetch docs when active type changes
   useEffect(() => {

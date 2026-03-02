@@ -3,6 +3,9 @@ import { getServiceSupabase } from "@/lib/supabase"
 
 export async function GET(req: NextRequest) {
   const tipo = req.nextUrl.searchParams.get("tipo")
+  const userId = req.nextUrl.searchParams.get("user_id")
+  const role = req.nextUrl.searchParams.get("role")
+  const isAdmin = role === "admin"
   const supabase = getServiceSupabase()
 
   try {
@@ -34,10 +37,14 @@ export async function GET(req: NextRequest) {
     }
 
     if (tipo === "cits") {
-      const { data, error } = await supabase
+      let query = supabase
         .from("cits")
         .select("id, nome_utente, colaborador_id, data_inicio, data_fim, numero_dias, uploaded_by, url_ficheiro, created_at")
         .order("created_at", { ascending: false })
+      if (!isAdmin && userId) {
+        query = query.eq("uploaded_by", userId)
+      }
+      const { data, error } = await query
       if (error) throw error
       return NextResponse.json({ documentos: data || [] })
     }
@@ -53,11 +60,15 @@ export async function GET(req: NextRequest) {
     }
 
     // Return counts for all types
+    let citsCountQuery = supabase.from("cits").select("id", { count: "exact", head: true })
+    if (!isAdmin && userId) {
+      citsCountQuery = citsCountQuery.eq("uploaded_by", userId)
+    }
     const [davs, fams, inspecoes, cits, outros] = await Promise.all([
       supabase.from("davs").select("id", { count: "exact", head: true }),
       supabase.from("fams").select("id", { count: "exact", head: true }),
       supabase.from("inspecoes").select("id", { count: "exact", head: true }),
-      supabase.from("cits").select("id", { count: "exact", head: true }),
+      citsCountQuery,
       supabase.from("documentos_rh").select("id", { count: "exact", head: true }).eq("tipo", "outro"),
     ])
 

@@ -55,12 +55,12 @@ export default function RHView({ user }: { user: Colaborador }) {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch("/api/capacidade")
+      const res = await fetch(`/api/capacidade?user_id=${user.id}&role=${user.role}`)
       const json = await res.json()
       setData(json)
     } catch { /* ignore */ }
     setLoading(false)
-  }, [])
+  }, [user.id, user.role])
 
   useEffect(() => {
     fetchData()
@@ -78,13 +78,18 @@ export default function RHView({ user }: { user: Colaborador }) {
   const ausenciasAtivas = data?.ausencias_ativas || []
   const feriados = data?.proximos_feriados || []
 
+  // Filter collaborators list for non-admin
+  const visibleColabs = isAdmin
+    ? COLABORADORES_LIST
+    : COLABORADORES_LIST.filter((c) => c.id === user.id)
+
   return (
     <div className="flex flex-col h-full overflow-y-auto">
       {/* Colaboradores */}
       <div className="px-4 py-3 border-b border-border">
         <h2 className="text-sm font-semibold text-foreground mb-3">Colaboradores</h2>
         <div className="space-y-2">
-          {COLABORADORES_LIST.map((c) => {
+          {visibleColabs.map((c) => {
             const opData = operadores.find((o) => o.id === c.id)
             const colabAusencias = ausenciasAtivas.filter(
               (a) => a.colaborador_id === c.id
@@ -175,7 +180,7 @@ export default function RHView({ user }: { user: Colaborador }) {
         </div>
       </div>
 
-      {/* Active absences summary */}
+      {/* Active absences summary (admin sees all, worker sees own) */}
       {ausenciasAtivas.length > 0 && (
         <div className="px-4 py-3 border-b border-border">
           <h2 className="text-sm font-semibold text-foreground mb-3">
