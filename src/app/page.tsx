@@ -20,25 +20,25 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("csn_session")
+      const saved = sessionStorage.getItem("csn_session")
       if (saved) {
         setUser(JSON.parse(saved))
       }
     } catch {
-      localStorage.removeItem("csn_session")
+      sessionStorage.removeItem("csn_session")
     }
     setLoading(false)
   }, [])
 
   const handleLogin = (colaborador: Colaborador) => {
     setUser(colaborador)
-    localStorage.setItem("csn_session", JSON.stringify(colaborador))
+    sessionStorage.setItem("csn_session", JSON.stringify(colaborador))
   }
 
   const handleLogout = () => {
     setUser(null)
     setActiveView("chat")
-    localStorage.removeItem("csn_session")
+    sessionStorage.removeItem("csn_session")
   }
 
   if (loading) {
