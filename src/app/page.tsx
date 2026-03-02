@@ -138,8 +138,11 @@ export default function Home() {
         </div>
 
         {/* View content */}
-        <main className="flex-1 min-h-0">
-          {activeView === "chat" && <ChatView user={user} />}
+        <main className="flex-1 min-h-0 relative">
+          {/* ChatView always mounted, hidden via CSS to preserve state */}
+          <div className={`absolute inset-0 ${activeView === "chat" ? "" : "hidden"}`}>
+            <ChatView user={user} />
+          </div>
           {activeView === "obras" && <ObrasView lang={lang} />}
           {activeView === "leads" && isAdmin && <LeadsView user={user} />}
           {activeView === "documentos" && <DocumentosView user={user} />}

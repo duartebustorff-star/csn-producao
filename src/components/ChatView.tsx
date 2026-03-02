@@ -17,6 +17,7 @@ export default function ChatView({ user }: { user: Colaborador }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
+  const [loadingHistory, setLoadingHistory] = useState(true)
   const [timerAtivo, setTimerAtivo] = useState(false)
   const [citWizard, setCitWizard] = useState<CITWizardData | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -28,6 +29,35 @@ export default function ChatView({ user }: { user: Colaborador }) {
   }
 
   useEffect(scrollToBottom, [messages])
+
+  // Load message history from Supabase on mount
+  useEffect(() => {
+    async function loadHistory() {
+      try {
+        const res = await fetch(`/api/mensagens?colaborador_id=${user.id}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.mensagens && data.mensagens.length > 0) {
+            const loaded: Message[] = data.mensagens.map(
+              (m: { role: string; content: string; created_at: string }) => ({
+                role: m.role as "user" | "assistant",
+                content: m.content,
+                timestamp: new Date(m.created_at).toLocaleTimeString("pt-PT", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              })
+            )
+            setMessages(loaded)
+          }
+        }
+      } catch {
+        // Silently fail — start with empty chat
+      }
+      setLoadingHistory(false)
+    }
+    loadHistory()
+  }, [user.id])
 
   // Check if timer is active
   const checkTimer = useCallback(async () => {
@@ -249,7 +279,17 @@ export default function ChatView({ user }: { user: Colaborador }) {
     <div className="flex flex-col h-full">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {messages.length === 0 && (
+        {loadingHistory && (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="flex gap-1 mb-3">
+              <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+            <p className="text-muted text-sm">A carregar mensagens...</p>
+          </div>
+        )}
+        {!loadingHistory && messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <span className="text-4xl mb-3">🏭</span>
             <p className="text-muted text-sm">
