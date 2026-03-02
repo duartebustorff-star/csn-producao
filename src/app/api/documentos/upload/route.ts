@@ -73,6 +73,7 @@ Responde APENAS com o VIN, sem explicações. Se não conseguires ler, responde 
 const CIT_PROMPT = `Analisa este documento. É um Certificado de Incapacidade Temporária para o Trabalho (CIT) português.
 Extrai TODOS os campos em JSON:
 {
+  "tipo_cit": "inicial"|"prorrogacao",
   "numero_cit": "...",
   "data_inicio": "YYYY-MM-DD",
   "data_fim": "YYYY-MM-DD",
@@ -87,6 +88,7 @@ Extrai TODOS os campos em JSON:
   "situacao": "...",
   "classificacao": "DN"|"DD"|"T"|"AF"|"DP"|"AT"|"RC"|"IG"|null
 }
+NOTA: O campo "tipo_cit" indica se o documento é um CIT inicial ("inicial") ou uma prorrogação ("prorrogacao"). Normalmente aparece no cabeçalho do documento como "Certificado de Incapacidade Temporária" (inicial) ou "Prorrogação" / "Prorrogação do CIT".
 Se não conseguires ler algum campo, coloca null. Responde APENAS com JSON.`
 
 const INSPECAO_PROMPT = `Analisa este Relatório de Inspeção automóvel português.
@@ -505,9 +507,12 @@ async function processCIT(
 
   // 3. Upload file to storage
   const ext = file.name.split(".").pop() || "pdf"
+  const tipoCit = (dados.tipo_cit as string) || null
+  const tipoCitTag = tipoCit === "prorrogacao" ? "PRORR" : "INIC"
   const nomeUtenteCit = ((dados.nome_utente as string) || "DESCONHECIDO").replace(/\s+/g, "-")
-  const dataInicioCit = (dados.data_inicio as string) || String(Date.now())
-  const fileName = `CIT_${nomeUtenteCit}_${dataInicioCit}_${Date.now()}.${ext}`
+  const dataInicioCit = (dados.data_inicio as string) || "DESCONHECIDO"
+  const dataFimCit = (dados.data_fim as string) || "DESCONHECIDO"
+  const fileName = `CIT_${tipoCitTag}_${nomeUtenteCit}_${dataInicioCit}_${dataFimCit}_${Date.now()}.${ext}`
   await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
@@ -539,6 +544,7 @@ async function processCIT(
 
   // 5. Insert CIT record
   const citRecord = {
+    tipo_cit: tipoCit,
     numero_cit: numeroCit,
     data_inicio: (dados.data_inicio as string) || null,
     data_fim: (dados.data_fim as string) || null,
@@ -596,15 +602,17 @@ async function processCIT(
   // 7. Build response message
   const dataInicioFmt = dados.data_inicio ? formatDate(dados.data_inicio as string) : "?"
   const dataFimFmt = dados.data_fim ? formatDate(dados.data_fim as string) : "?"
+  const tipoCitLabel = tipoCit === "prorrogacao" ? "Prorrogação" : "Inicial"
 
   let mensagem = `✅ CIT registado`
   if (matchedColaboradorNome) {
-    mensagem += ` — ${matchedColaboradorNome}`
+    mensagem += ` — Colaborador: ${matchedColaboradorNome}.`
   } else if (nomeUtente) {
-    mensagem += ` — ${nomeUtente}`
+    mensagem += ` — ${nomeUtente}.`
   }
+  mensagem += ` Tipo: ${tipoCitLabel}.`
   if (dados.numero_dias) {
-    mensagem += `, ${dados.numero_dias} dias (${dataInicioFmt} a ${dataFimFmt})`
+    mensagem += ` Período: ${dataInicioFmt} → ${dataFimFmt} (${dados.numero_dias} dias).`
   }
   if (matchedColaboradorId && ausencia) {
     mensagem += `\nAusência criada automaticamente.`
