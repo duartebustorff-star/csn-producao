@@ -141,7 +141,7 @@ export default function Home() {
         <main className="flex-1 min-h-0">
           {activeView === "chat" && <ChatView user={user} />}
           {activeView === "obras" && <ObrasView lang={lang} />}
-          {activeView === "leads" && isAdmin && <LeadsView />}
+          {activeView === "leads" && isAdmin && <LeadsView user={user} />}
           {activeView === "documentos" && <DocumentosView user={user} />}
           {activeView === "rh" && isAdmin && <RHView user={user} />}
           {activeView === "dashboard" && isAdmin && <DashboardView />}

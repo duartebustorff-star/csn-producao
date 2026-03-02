@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import Anthropic from "@anthropic-ai/sdk"
 import { getServiceSupabase } from "@/lib/supabase"
 import { CLAUDE_TOOLS, executeTool } from "@/lib/chat-tools"
+import { audit } from "@/lib/audit"
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
       .join("\n")
 
     // 9. Guardar mensagens na DB
-    await supabase.from("mensagens").insert([
+    const { data: msgs } = await supabase.from("mensagens").insert([
       { colaborador_id, role: "user", content: message },
       {
         colaborador_id,
@@ -147,7 +148,19 @@ export async function POST(req: NextRequest) {
         content: responseText,
         metadata: { tool_calls: iterations > 0 },
       },
-    ])
+    ]).select("id")
+
+    // 10. Audit
+    if (msgs && msgs.length > 0) {
+      await audit({
+        entidade_tipo: "mensagem",
+        entidade_id: String(msgs[0].id),
+        acao: "criar",
+        utilizador_id: colaborador_id,
+        utilizador_nome: colab.nome,
+        metadata: { tool_calls: iterations > 0 },
+      })
+    }
 
     return NextResponse.json({ response: responseText })
   } catch (error) {

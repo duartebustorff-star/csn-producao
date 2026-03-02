@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import type { Lead, Obra, FaseObra } from "@/lib/types"
+import type { Lead, Obra, FaseObra, Colaborador } from "@/lib/types"
 
 const ESTADO_LEAD_FALLBACK = { label: "Desconhecido", color: "bg-border text-muted" }
 
@@ -22,7 +22,7 @@ const ESTADO_LEAD: Record<string, { label: string; color: string }> = {
 
 const ESTADOS_COM_DADOS_TECNICOS = ["em_preparacao", "em_obra"]
 
-export default function LeadsView() {
+export default function LeadsView({ user }: { user: Colaborador }) {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -116,7 +116,7 @@ export default function LeadsView() {
 
                     {/* Dados técnicos (só em_preparacao ou em_obra) */}
                     {ESTADOS_COM_DADOS_TECNICOS.includes(lead.estado) && (
-                      <DadosTecnicos lead={lead} onUpdate={fetchLeads} />
+                      <DadosTecnicos lead={lead} onUpdate={fetchLeads} user={user} />
                     )}
 
                     <h4 className="text-xs text-muted uppercase tracking-wider mt-2">Obras</h4>
@@ -149,7 +149,7 @@ export default function LeadsView() {
   )
 }
 
-function DadosTecnicos({ lead, onUpdate }: { lead: Lead; onUpdate: () => void }) {
+function DadosTecnicos({ lead, onUpdate, user }: { lead: Lead; onUpdate: () => void; user: Colaborador }) {
   const [saving, setSaving] = useState(false)
   const [plataforma, setPlataforma] = useState(lead.plataforma_elevatoria ?? false)
   const [grua, setGrua] = useState(lead.grua_coluna ?? false)
@@ -185,6 +185,8 @@ function DadosTecnicos({ lead, onUpdate }: { lead: Lead; onUpdate: () => void })
           dist_eixo_frontal_traseira_cabine: distFrontalCabine,
           largura_cabine: larguraCab,
           dist_topo_chassi_topo_cabine: distTopoChassi,
+          _user_id: user.id,
+          _user_nome: user.nome,
         }),
       })
       onUpdate()

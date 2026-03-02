@@ -1,4 +1,5 @@
 import { getServiceSupabase } from "./supabase"
+import { audit } from "./audit"
 
 const supabase = getServiceSupabase()
 
@@ -276,6 +277,12 @@ async function iniciarTimer(
     .eq("id", faseId)
     .eq("estado", "pendente")
 
+  await audit({
+    entidade_tipo: "timer", entidade_id: String(timer.id),
+    acao: "criar", utilizador_id: colaboradorId,
+    metadata: { obra_id: obraId, fase_id: faseId },
+  })
+
   return JSON.stringify({ sucesso: true, timer })
 }
 
@@ -316,6 +323,13 @@ async function pararTimer(colaboradorId: string): Promise<string> {
       .eq("id", timer.fase_obra_id)
   }
 
+  await audit({
+    entidade_tipo: "timer", entidade_id: String(timer.id),
+    acao: "atualizar", campo_alterado: "fim",
+    valor_novo: String(duracaoMinutos) + " min",
+    utilizador_id: colaboradorId,
+  })
+
   return JSON.stringify({
     sucesso: true,
     duracao_minutos: duracaoMinutos,
@@ -348,6 +362,13 @@ async function concluirFase(
     .eq("id", faseId)
 
   if (error) return JSON.stringify({ error: "Erro ao concluir fase" })
+
+  await audit({
+    entidade_tipo: "fase_obra", entidade_id: String(faseId),
+    acao: "mudar_estado", campo_alterado: "estado",
+    valor_anterior: "em_curso", valor_novo: "concluido",
+    utilizador_id: colaboradorId, metadata: { obra_id: obraId },
+  })
 
   // Buscar próxima fase da mesma obra
   const { data: faseAtual } = await supabase
@@ -384,6 +405,12 @@ async function concluirFase(
           .from("obras")
           .update({ estado: "concluida", updated_at: new Date().toISOString() })
           .eq("id", obraId)
+        await audit({
+          entidade_tipo: "obra", entidade_id: obraId,
+          acao: "mudar_estado", campo_alterado: "estado",
+          valor_anterior: "producao", valor_novo: "concluida",
+          utilizador_id: colaboradorId,
+        })
       }
     }
   }
@@ -408,6 +435,12 @@ async function adicionarNota(
     .single()
 
   if (error) return JSON.stringify({ error: "Erro ao adicionar nota" })
+
+  await audit({
+    entidade_tipo: "nota", entidade_id: String(data.id),
+    acao: "criar", utilizador_id: colaboradorId,
+    metadata: { obra_id: obraId, tipo },
+  })
 
   return JSON.stringify({ sucesso: true, nota: data })
 }
@@ -469,6 +502,12 @@ async function registarAusencia(
     .single()
 
   if (error) return JSON.stringify({ error: "Erro ao registar ausência" })
+
+  await audit({
+    entidade_tipo: "ausencia", entidade_id: String(data.id),
+    acao: "criar", utilizador_id: colaboradorId,
+    metadata: { tipo, data_inicio: dataInicio, data_fim: dataFim },
+  })
 
   return JSON.stringify({
     sucesso: true,
@@ -579,6 +618,13 @@ async function receberVeiculo(vin: string, lugarParque: number): Promise<string>
     .from("obras")
     .update({ lugar_parque: lugarParque, estado: "veiculo_recebido", updated_at: new Date().toISOString() })
     .eq("id", obra.id)
+
+  await audit({
+    entidade_tipo: "obra", entidade_id: obra.id,
+    acao: "mudar_estado", campo_alterado: "estado",
+    valor_anterior: obra.estado, valor_novo: "veiculo_recebido",
+    utilizador_id: "system", metadata: { vin, lugar_parque: lugarParque },
+  })
 
   return JSON.stringify({
     sucesso: true,

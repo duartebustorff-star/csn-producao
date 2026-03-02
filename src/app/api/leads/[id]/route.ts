@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServiceSupabase } from "@/lib/supabase"
+import { auditChanges } from "@/lib/audit"
 
 const ALLOWED_FIELDS = [
   "estado",
@@ -34,6 +35,16 @@ export async function PATCH(
     }
 
     const supabase = getServiceSupabase()
+    const userId = body._user_id as string || "system"
+    const userName = body._user_nome as string || undefined
+
+    // Fetch before state for audit
+    const { data: before } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("id", id)
+      .single()
+
     const { data: lead, error } = await supabase
       .from("leads")
       .update({ ...updates, updated_at: new Date().toISOString() })
@@ -44,6 +55,11 @@ export async function PATCH(
     if (error) {
       console.error("Lead update error:", error)
       return NextResponse.json({ error: "Erro ao atualizar lead" }, { status: 500 })
+    }
+
+    // Audit changes
+    if (before) {
+      await auditChanges("lead", id, before, updates, userId, userName)
     }
 
     return NextResponse.json({ lead })
