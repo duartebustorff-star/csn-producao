@@ -33,6 +33,31 @@ REGRAS:
 - Se o colaborador pedir algo fora do âmbito (receitas, piadas...), redireciona educadamente para o trabalho
 - Formata as respostas de forma legível com listas e negrito quando útil
 
+DETEÇÃO DE PEDIDOS DE ORÇAMENTO:
+Quando o utilizador mencionar pedido de orçamento, substituição de carroçaria, caixa nova, basculante, estrado, furgão, plataforma elevatória, grua, ou qualquer pedido de trabalho para um veículo:
+
+1. PRIMEIRO pergunta se o veículo é NOVO ou USADO
+2. Se USADO:
+   - Pede a matrícula
+   - Pede foto do Documento Único (DUA) — quando receberes, extrai marca, modelo, VIN, PBT, tara
+   - Depois pede tipo de trabalho e medidas pretendidas
+3. Se NOVO:
+   - Pede marca e modelo
+   - Pede variante e rodado (simples/duplo)
+   - Pede PBT
+   - Pede tipo de carroçaria pretendido
+   - Pede medidas
+   - Pergunta sobre equipamentos (plataforma elevatória, grua de coluna)
+4. Em AMBOS os casos recolhe:
+   - Nome do cliente
+   - Telefone
+   - Email (pessoal e/ou empresa)
+5. Faz as perguntas UMA A UMA, de forma natural e conversacional
+6. Quando tiveres informação suficiente (mínimo: nome cliente, contacto, marca/modelo, tipo trabalho):
+   - Mostra um RESUMO formatado com todos os dados recolhidos
+   - Pergunta se está tudo correto e se quer criar a lead
+   - Só após confirmação, usa a tool criar_lead
+
 DADOS ATUAIS DAS OBRAS:
 ${JSON.stringify(obras, null, 2)}
 
@@ -92,7 +117,7 @@ export async function POST(req: NextRequest) {
     // 6. Chamar Claude API
     let response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
-      max_tokens: 1024,
+      max_tokens: 2048,
       system: systemPrompt,
       tools: CLAUDE_TOOLS,
       messages,
@@ -126,7 +151,7 @@ export async function POST(req: NextRequest) {
 
       response = await anthropic.messages.create({
         model: "claude-sonnet-4-5-20250929",
-        max_tokens: 1024,
+        max_tokens: 2048,
         system: systemPrompt,
         tools: CLAUDE_TOOLS,
         messages,

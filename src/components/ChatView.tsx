@@ -5,6 +5,7 @@ import type { Colaborador } from "@/lib/types"
 import { t, type Lang } from "@/lib/translations"
 import ChatMessage from "./ChatMessage"
 import QuickActions, { type ChatContext } from "./QuickActions"
+import CITWizard, { type CITWizardData } from "./CITWizard"
 
 interface Message {
   role: "user" | "assistant"
@@ -17,6 +18,7 @@ export default function ChatView({ user }: { user: Colaborador }) {
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [timerAtivo, setTimerAtivo] = useState(false)
+  const [citWizard, setCitWizard] = useState<CITWizardData | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const lang = user.lang as Lang
@@ -124,6 +126,32 @@ export default function ChatView({ user }: { user: Colaborador }) {
         })
         const uploadData = await uploadRes.json()
 
+        // CIT preview → launch wizard instead of showing final message
+        if (uploadData.tipo === "CIT_PREVIEW") {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: uploadData.mensagem,
+              timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+            },
+          ])
+          setCitWizard({
+            step: "tipo",
+            dados: uploadData.dados,
+            fileUrl: uploadData.file_url,
+            filePath: uploadData.file_path,
+            numeroCit: uploadData.numero_cit,
+            colaboradorMatch: uploadData.colaborador_match,
+            tipoCit: (uploadData.dados.tipo_cit as string) || "inicial",
+            dataInicio: (uploadData.dados.data_inicio as string) || "",
+            dataFim: (uploadData.dados.data_fim as string) || "",
+          })
+          setUploadProgress(null)
+          setLoading(false)
+          return // Stop processing further files while wizard is active
+        }
+
         const responseContent = uploadData.error || uploadData.mensagem || "Documento processado."
 
         setMessages((prev) => [
@@ -148,6 +176,60 @@ export default function ChatView({ user }: { user: Colaborador }) {
 
     setUploadProgress(null)
     setLoading(false)
+  }
+
+  const handleCitConfirm = async (wizardData: CITWizardData) => {
+    setLoading(true)
+    setCitWizard(null)
+    try {
+      const res = await fetch("/api/cits/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tipo_cit: wizardData.tipoCit,
+          data_inicio: wizardData.dataInicio,
+          data_fim: wizardData.dataFim,
+          numero_cit: wizardData.numeroCit,
+          dados_originais: wizardData.dados,
+          file_url: wizardData.fileUrl,
+          file_path: wizardData.filePath,
+          uploaded_by: user.id,
+          colaborador_match_id: wizardData.colaboradorMatch?.id || null,
+          colaborador_match_nome: wizardData.colaboradorMatch?.nome || null,
+        }),
+      })
+      const data = await res.json()
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data.mensagem || data.error || "CIT registado.",
+          timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+        },
+      ])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Erro ao confirmar CIT. Tenta novamente.",
+          timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+        },
+      ])
+    }
+    setLoading(false)
+  }
+
+  const handleCitCancel = () => {
+    setCitWizard(null)
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: "Registo de CIT cancelado.",
+        timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+      },
+    ])
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -206,40 +288,52 @@ export default function ChatView({ user }: { user: Colaborador }) {
             </div>
           </div>
         )}
+        {citWizard && !loading && (
+          <CITWizard
+            data={citWizard}
+            onUpdate={setCitWizard}
+            onConfirm={handleCitConfirm}
+            onCancel={handleCitCancel}
+          />
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Actions */}
-      <QuickActions
-        onSend={sendMessage}
-        onFileUpload={handleFileUpload}
-        lang={lang}
-        context={chatContext}
-      />
+      {/* Quick Actions — hidden during wizard */}
+      {!citWizard && (
+        <QuickActions
+          onSend={sendMessage}
+          onFileUpload={handleFileUpload}
+          lang={lang}
+          context={chatContext}
+        />
+      )}
 
-      {/* Input */}
-      <form onSubmit={handleSubmit} className="px-4 pb-4 pt-2">
-        <div className="flex gap-2">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={t(lang, "escreve_mensagem")}
-            disabled={loading}
-            className="flex-1 bg-card border border-border rounded-full px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="bg-accent hover:bg-accent-dark disabled:opacity-40 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors flex-shrink-0"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-            </svg>
-          </button>
-        </div>
-      </form>
+      {/* Input — hidden during wizard */}
+      {!citWizard && (
+        <form onSubmit={handleSubmit} className="px-4 pb-4 pt-2">
+          <div className="flex gap-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={t(lang, "escreve_mensagem")}
+              disabled={loading}
+              className="flex-1 bg-card border border-border rounded-full px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={loading || !input.trim()}
+              className="bg-accent hover:bg-accent-dark disabled:opacity-40 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors flex-shrink-0"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   )
 }

@@ -138,6 +138,36 @@ export const CLAUDE_TOOLS = [
       properties: {},
     },
   },
+  {
+    name: "criar_lead",
+    description: "Cria uma nova lead/pedido de orçamento no sistema CRM. Usar quando o cliente forneceu informação suficiente (mínimo: nome, contacto, marca/modelo, tipo de trabalho).",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        cliente: { type: "string" as const, description: "Nome do cliente" },
+        contacto_telefone: { type: "string" as const },
+        contacto_email: { type: "string" as const },
+        contacto_email_empresa: { type: "string" as const },
+        empresa: { type: "string" as const },
+        morada: { type: "string" as const },
+        veiculo_novo: { type: "boolean" as const, description: "true = veículo novo, false = usado" },
+        veiculo_marca: { type: "string" as const },
+        veiculo_modelo: { type: "string" as const },
+        veiculo_variante: { type: "string" as const },
+        vin: { type: "string" as const },
+        matricula: { type: "string" as const },
+        pbt: { type: "number" as const, description: "Peso Bruto Total em kg" },
+        tara: { type: "number" as const, description: "Tara em kg" },
+        rodado: { type: "string" as const, enum: ["simples", "duplo"] },
+        tipo_carrocaria: { type: "string" as const, description: "Ex: Caixa Aberta, Basculante, Estrado, Furgão" },
+        dimensoes: { type: "string" as const, description: "Ex: 3200x2080mm" },
+        plataforma_elevatoria: { type: "boolean" as const },
+        grua_coluna: { type: "boolean" as const },
+        notas: { type: "string" as const },
+      },
+      required: ["cliente", "veiculo_marca", "veiculo_modelo", "tipo_carrocaria"],
+    },
+  },
 ]
 
 // ============================================
@@ -185,6 +215,8 @@ export async function executeTool(
       return receberVeiculo(toolInput.vin as string, toolInput.lugar_parque as number)
     case "ver_parque":
       return verParque()
+    case "criar_lead":
+      return criarLead(toolInput, colaboradorId)
     default:
       return JSON.stringify({ error: `Tool desconhecida: ${toolName}` })
   }
@@ -660,4 +692,103 @@ function formatDuration(minutes: number): string {
   const m = Math.round(minutes % 60)
   if (h > 0) return `${h}h ${m}min`
   return `${m}min`
+}
+
+async function criarLead(
+  input: Record<string, unknown>,
+  colaboradorId: string
+): Promise<string> {
+  const ano = new Date().getFullYear()
+  const prefix = `L${ano}-`
+
+  // 1. Gerar ID sequencial
+  const { data: lastLead } = await supabase
+    .from("leads")
+    .select("id")
+    .like("id", `${prefix}%`)
+    .order("id", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  let nextNum = 1
+  if (lastLead) {
+    const lastNum = parseInt(lastLead.id.replace(prefix, ""), 10)
+    if (!isNaN(lastNum)) nextNum = lastNum + 1
+  }
+  const leadId = `${prefix}${String(nextNum).padStart(3, "0")}`
+
+  // 2. Verificar duplicados por matrícula ou VIN
+  const matricula = input.matricula as string | undefined
+  const vin = input.vin as string | undefined
+
+  if (matricula || vin) {
+    let dupQuery = supabase.from("leads").select("id, cliente")
+    if (matricula) dupQuery = dupQuery.eq("matricula", matricula)
+    else if (vin) dupQuery = dupQuery.eq("vin", vin)
+
+    const { data: duplicados } = await dupQuery
+    if (duplicados && duplicados.length > 0) {
+      return JSON.stringify({
+        sucesso: false,
+        error: "duplicado",
+        lead_existente: duplicados[0].id,
+        cliente: duplicados[0].cliente,
+        mensagem: `Já existe uma lead (${duplicados[0].id}) para ${matricula ? `matrícula ${matricula}` : `VIN ${vin}`} do cliente ${duplicados[0].cliente}.`,
+      })
+    }
+  }
+
+  // 3. Inserir na tabela leads
+  const { error } = await supabase.from("leads").insert({
+    id: leadId,
+    cliente: input.cliente as string,
+    contacto_nome: (input.cliente as string) || null,
+    contacto_telefone: (input.contacto_telefone as string) || null,
+    contacto_email: (input.contacto_email as string) || null,
+    contacto_email_empresa: (input.contacto_email_empresa as string) || null,
+    empresa: (input.empresa as string) || null,
+    morada: (input.morada as string) || null,
+    veiculo_novo: input.veiculo_novo != null ? (input.veiculo_novo as boolean) : null,
+    veiculo_marca: (input.veiculo_marca as string) || null,
+    veiculo_modelo: (input.veiculo_modelo as string) || null,
+    veiculo_designacao: input.veiculo_variante
+      ? `${input.veiculo_marca} ${input.veiculo_modelo} ${input.veiculo_variante}`
+      : null,
+    matricula: matricula || null,
+    vin: vin || null,
+    pbt: input.pbt != null ? (input.pbt as number) : null,
+    tara: input.tara != null ? (input.tara as number) : null,
+    rodado: (input.rodado as string) || null,
+    tipo_carrocaria: input.tipo_carrocaria as string,
+    dimensoes: (input.dimensoes as string) || null,
+    plataforma_elevatoria: (input.plataforma_elevatoria as boolean) || false,
+    grua_coluna: (input.grua_coluna as boolean) || false,
+    notas_encomenda: input.notas ? [input.notas as string] : null,
+    estado: "novo",
+  })
+
+  if (error) {
+    console.error("Erro ao criar lead:", error)
+    return JSON.stringify({ sucesso: false, error: "Erro ao criar lead no sistema" })
+  }
+
+  // 4. Audit log
+  await audit({
+    entidade_tipo: "lead",
+    entidade_id: leadId,
+    acao: "criar",
+    utilizador_id: colaboradorId,
+    metadata: {
+      cliente: input.cliente,
+      tipo_carrocaria: input.tipo_carrocaria,
+      veiculo_marca: input.veiculo_marca,
+      veiculo_modelo: input.veiculo_modelo,
+    },
+  })
+
+  return JSON.stringify({
+    sucesso: true,
+    lead_id: leadId,
+    mensagem: `Lead ${leadId} criada com sucesso para ${input.cliente} — ${input.veiculo_marca} ${input.veiculo_modelo} (${input.tipo_carrocaria}).`,
+  })
 }

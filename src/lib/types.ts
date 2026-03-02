@@ -14,12 +14,24 @@ export interface Lead {
   id: string
   cliente: string
   cliente_final: string | null
+  contacto_nome: string | null
+  contacto_telefone: string | null
+  contacto_email: string | null
+  contacto_email_empresa: string | null
+  empresa: string | null
+  morada: string | null
   tipo_carrocaria: string
   tipo_taipais: string | null
   dimensoes: string | null
   veiculo_marca: string | null
   veiculo_modelo: string | null
   veiculo_designacao: string | null
+  veiculo_novo: boolean | null
+  matricula: string | null
+  vin: string | null
+  pbt: number | null
+  tara: number | null
+  rodado: string | null
   quantidade: number
   valor_unitario: number | null
   num_homologacao: string | null

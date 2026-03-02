@@ -542,93 +542,17 @@ async function processCIT(
     }
   }
 
-  // 5. Insert CIT record
-  const citRecord = {
-    tipo_cit: tipoCit,
-    numero_cit: numeroCit,
-    data_inicio: (dados.data_inicio as string) || null,
-    data_fim: (dados.data_fim as string) || null,
-    numero_dias: (dados.numero_dias as number) || null,
-    motivo: (dados.motivo as string) || null,
-    medico_nome: (dados.medico_nome as string) || null,
-    medico_cedula: (dados.medico_cedula as string) || null,
-    unidade_saude: (dados.unidade_saude as string) || null,
-    nif_utente: (dados.nif_utente as string) || null,
-    nome_utente: nomeUtente,
-    nuss: (dados.nuss as string) || null,
-    situacao: (dados.situacao as string) || null,
-    url_ficheiro: urlData?.signedUrl || "",
-    dados_raw: dados,
-    uploaded_by: uploadedBy,
-    colaborador_id: matchedColaboradorId,
-    updated_at: new Date().toISOString(),
-  }
-
-  const { data: cit, error: insertError } = await supabase
-    .from("cits")
-    .insert(citRecord)
-    .select()
-    .single()
-
-  if (insertError) {
-    console.error("CIT insert error:", insertError)
-    return NextResponse.json({ tipo: "CIT", error: "Erro ao registar CIT" }, { status: 500 })
-  }
-
-  // 6. Auto-create ausencia if dates found and collaborator matched
-  let ausencia = null
-  if (matchedColaboradorId && dados.data_inicio && dados.data_fim) {
-    const { data: ausenciaData } = await supabase
-      .from("ausencias")
-      .insert({
-        colaborador_id: matchedColaboradorId,
-        data_inicio: dados.data_inicio,
-        data_fim: dados.data_fim,
-        tipo: "baixa",
-        notas: `CIT ${numeroCit || "s/n"} — ${dados.numero_dias || "?"} dias (extração automática)`,
-        aprovado: true,
-      })
-      .select()
-      .single()
-
-    ausencia = ausenciaData
-
-    // Link ausencia back to CIT
-    if (ausenciaData) {
-      await supabase.from("cits").update({ ausencia_id: ausenciaData.id }).eq("id", cit.id)
-    }
-  }
-
-  // 7. Build response message
-  const dataInicioFmt = dados.data_inicio ? formatDate(dados.data_inicio as string) : "?"
-  const dataFimFmt = dados.data_fim ? formatDate(dados.data_fim as string) : "?"
-  const tipoCitLabel = tipoCit === "prorrogacao" ? "Prorrogação" : "Inicial"
-
-  let mensagem = `✅ CIT registado`
-  if (matchedColaboradorNome) {
-    mensagem += ` — Colaborador: ${matchedColaboradorNome}.`
-  } else if (nomeUtente) {
-    mensagem += ` — ${nomeUtente}.`
-  }
-  mensagem += ` Tipo: ${tipoCitLabel}.`
-  if (dados.numero_dias) {
-    mensagem += ` Período: ${dataInicioFmt} → ${dataFimFmt} (${dados.numero_dias} dias).`
-  }
-  if (matchedColaboradorId && ausencia) {
-    mensagem += `\nAusência criada automaticamente.`
-  } else if (nomeUtente && !matchedColaboradorId) {
-    mensagem += `\n⚠️ Não foi possível associar "${nomeUtente}" a nenhum colaborador. Ausência não criada.`
-  }
-
+  // 5. Return preview for wizard confirmation
   return NextResponse.json({
-    tipo: "CIT",
-    cit,
+    tipo: "CIT_PREVIEW",
     dados,
+    file_url: urlData?.signedUrl || "",
+    file_path: fileName,
     colaborador_match: matchedColaboradorId
       ? { id: matchedColaboradorId, nome: matchedColaboradorNome }
       : null,
-    ausencia,
-    mensagem,
+    numero_cit: numeroCit,
+    mensagem: "📋 CIT detectado. Confirma os dados extraídos:",
   })
 }
 
