@@ -19,39 +19,26 @@ export default function Home() {
   const [activeView, setActiveView] = useState<View>("chat")
 
   useEffect(() => {
-    const saved = localStorage.getItem("csn_user")
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        const loginTime = localStorage.getItem("csn_login_time")
-        if (loginTime) {
-          const elapsed = Date.now() - parseInt(loginTime)
-          const EIGHT_HOURS = 8 * 60 * 60 * 1000
-          if (elapsed < EIGHT_HOURS) {
-            setUser(parsed)
-          } else {
-            localStorage.removeItem("csn_user")
-            localStorage.removeItem("csn_login_time")
-          }
-        }
-      } catch {
-        localStorage.removeItem("csn_user")
+    try {
+      const saved = localStorage.getItem("csn_session")
+      if (saved) {
+        setUser(JSON.parse(saved))
       }
+    } catch {
+      localStorage.removeItem("csn_session")
     }
     setLoading(false)
   }, [])
 
   const handleLogin = (colaborador: Colaborador) => {
     setUser(colaborador)
-    localStorage.setItem("csn_user", JSON.stringify(colaborador))
-    localStorage.setItem("csn_login_time", Date.now().toString())
+    localStorage.setItem("csn_session", JSON.stringify(colaborador))
   }
 
   const handleLogout = () => {
     setUser(null)
     setActiveView("chat")
-    localStorage.removeItem("csn_user")
-    localStorage.removeItem("csn_login_time")
+    localStorage.removeItem("csn_session")
   }
 
   if (loading) {
