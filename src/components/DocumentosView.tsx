@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react"
 import type { Colaborador } from "@/lib/types"
+import SGQSection from "./SGQSection"
 
-type DocSection = "veiculos" | "rh" | "geral"
+type DocSection = "veiculos" | "rh" | "geral" | "qualidade"
 type DocSubType = "davs" | "fams" | "inspecoes" | "cits" | "outros"
 
 interface Counts {
@@ -86,6 +87,7 @@ export default function DocumentosView({ user }: { user: Colaborador }) {
   const ALL_SECTIONS: { key: DocSection; label: string; icon: string }[] = [
     { key: "veiculos", label: "Veículos", icon: "🚛" },
     { key: "rh", label: "RH", icon: "👤" },
+    { key: "qualidade", label: "Qualidade", icon: "✅" },
     { key: "geral", label: "Geral", icon: "📄" },
   ]
   const SECTIONS = isAdmin ? ALL_SECTIONS : ALL_SECTIONS.filter((s) => s.key === "rh")
@@ -99,6 +101,7 @@ export default function DocumentosView({ user }: { user: Colaborador }) {
     rh: [
       { key: "cits", label: "CITs", countKey: "cits" },
     ],
+    qualidade: [], // SGQSection handles its own sub-tabs
     geral: [
       { key: "outros", label: "Outros", countKey: "outros" },
     ],
@@ -134,42 +137,49 @@ export default function DocumentosView({ user }: { user: Colaborador }) {
         </div>
       </div>
 
-      {/* Sub-type tabs with badges */}
-      <div className="px-4 py-2 border-b border-border">
-        <div className="flex gap-2">
-          {SUBTYPES[section].map((st) => (
-            <button
-              key={st.key}
-              onClick={() => setActiveType(st.key)}
-              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors ${
-                activeType === st.key
-                  ? "bg-accent/20 text-accent"
-                  : "bg-card text-muted hover:text-foreground"
-              }`}
-            >
-              <span>{st.label}</span>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                activeType === st.key ? "bg-accent/30" : "bg-border"
-              }`}>
-                {counts[st.countKey]}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Qualidade section renders its own component */}
+      {section === "qualidade" ? (
+        <SGQSection />
+      ) : (
+        <>
+          {/* Sub-type tabs with badges */}
+          <div className="px-4 py-2 border-b border-border">
+            <div className="flex gap-2">
+              {SUBTYPES[section]?.map((st) => (
+                <button
+                  key={st.key}
+                  onClick={() => setActiveType(st.key)}
+                  className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors ${
+                    activeType === st.key
+                      ? "bg-accent/20 text-accent"
+                      : "bg-card text-muted hover:text-foreground"
+                  }`}
+                >
+                  <span>{st.label}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                    activeType === st.key ? "bg-accent/30" : "bg-border"
+                  }`}>
+                    {counts[st.countKey]}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* Document list */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
-        {loadingDocs ? (
-          <p className="text-center text-muted text-sm py-8">A carregar...</p>
-        ) : documentos.length === 0 ? (
-          <p className="text-center text-muted text-sm py-8">Sem documentos</p>
-        ) : (
-          documentos.map((doc) => (
-            <DocCard key={doc.id as number} doc={doc} tipo={activeType} />
-          ))
-        )}
-      </div>
+          {/* Document list */}
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+            {loadingDocs ? (
+              <p className="text-center text-muted text-sm py-8">A carregar...</p>
+            ) : documentos.length === 0 ? (
+              <p className="text-center text-muted text-sm py-8">Sem documentos</p>
+            ) : (
+              documentos.map((doc) => (
+                <DocCard key={doc.id as number} doc={doc} tipo={activeType} />
+              ))
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

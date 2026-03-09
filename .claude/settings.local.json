@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(mv .claude:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Bash(xargs grep:*)",
+      "Bash(npx next:*)",
+      "Bash(npx supabase:*)",
+      "Bash(curl:*)",
+      "Bash(ls:*)",
+      "Bash(touch:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(icacls supabase:*)",
+      "Bash(icacls:*)",
+      "Bash(npx vercel:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}
