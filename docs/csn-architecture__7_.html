@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN — Arquitetura do SaaS</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #111418;
+    --bg3: #181d24;
+    --border: #1e2730;
+    --border2: #2a3540;
+    --text: #c8d4de;
+    --text-dim: #5a7080;
+    --text-bright: #e8f0f8;
+    --done: #00c896;
+    --done-bg: rgba(0,200,150,0.08);
+    --done-border: rgba(0,200,150,0.25);
+    --wip: #f0a020;
+    --wip-bg: rgba(240,160,32,0.08);
+    --wip-border: rgba(240,160,32,0.25);
+    --future: #4488cc;
+    --future-bg: rgba(68,136,204,0.08);
+    --future-border: rgba(68,136,204,0.25);
+    --human: #e05050;
+    --human-bg: rgba(224,80,80,0.08);
+    --human-border: rgba(224,80,80,0.3);
+    --ai: #8866ee;
+    --ai-bg: rgba(136,102,238,0.08);
+    --ai-border: rgba(136,102,238,0.25);
+    --accent: #00c896;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,200,150,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,150,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-left h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .header-left h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--text-bright);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .header-left p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Tiers */
+  .tier {
+    margin-bottom: 32px;
+  }
+
+  .tier-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tier-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Connector lines */
+  .connector {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0;
+  }
+
+  .connector-line {
+    width: 1px;
+    height: 24px;
+    background: linear-gradient(to bottom, var(--border2), transparent);
+  }
+
+  /* CEO Node */
+  .ceo-node {
+    background: linear-gradient(135deg, #0f1a14, #0a1410);
+    border: 1px solid var(--done-border);
+    border-radius: 8px;
+    padding: 20px 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 0 40px rgba(0,200,150,0.08), inset 0 1px 0 rgba(0,200,150,0.1);
+    position: relative;
+  }
+
+  .ceo-node::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(0,200,150,0.15), transparent);
+    pointer-events: none;
+  }
+
+  .ceo-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--done), #008060);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    flex-shrink: 0;
+  }
+
+  .ceo-info h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+  }
+
+  .ceo-info p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--done);
+    margin-top: 2px;
+  }
+
+  .ceo-badges {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-owner { background: rgba(0,200,150,0.15); color: var(--done); border: 1px solid var(--done-border); }
+  .badge-iso { background: rgba(240,160,32,0.1); color: var(--wip); border: 1px solid var(--wip-border); }
+  .badge-admin { background: rgba(224,80,80,0.1); color: var(--human); border: 1px solid var(--human-border); }
+
+  /* Departments grid */
+  .dept-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .dept-card {
+    border-radius: 6px;
+    padding: 16px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .dept-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .dept-card.done {
+    background: var(--done-bg);
+    border: 1px solid var(--done-border);
+  }
+
+  .dept-card.done:hover {
+    box-shadow: 0 8px 24px rgba(0,200,150,0.12);
+  }
+
+  .dept-card.wip {
+    background: var(--wip-bg);
+    border: 1px solid var(--wip-border);
+  }
+
+  .dept-card.wip:hover {
+    box-shadow: 0 8px 24px rgba(240,160,32,0.1);
+  }
+
+  .dept-card.future {
+    background: var(--future-bg);
+    border: 1px solid var(--future-border);
+    opacity: 0.7;
+  }
+
+  .dept-card.future:hover {
+    box-shadow: 0 8px 24px rgba(68,136,204,0.1);
+    opacity: 1;
+  }
+
+  .dept-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .dept-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .dept-agent {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+
+  .dept-card.done .dept-agent { color: var(--done); }
+  .dept-card.wip .dept-agent { color: var(--wip); }
+  .dept-card.future .dept-agent { color: var(--future); }
+
+  .dept-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .dept-features li {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.4;
+  }
+
+  .dept-features li::before {
+    content: '—';
+    flex-shrink: 0;
+    opacity: 0.4;
+  }
+
+  .status-pill {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .done .status-pill { background: rgba(0,200,150,0.2); color: var(--done); }
+  .wip .status-pill { background: rgba(240,160,32,0.2); color: var(--wip); }
+  .future .status-pill { background: rgba(68,136,204,0.2); color: var(--future); }
+
+  /* Production special */
+  .production-section {
+    margin-top: 32px;
+  }
+
+  .production-card {
+    background: linear-gradient(135deg, #0f1520, #0a1018);
+    border: 1px solid rgba(136,102,238,0.3);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 0 40px rgba(136,102,238,0.06);
+  }
+
+  .production-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .production-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .production-title h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .production-title p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--ai);
+    margin-top: 2px;
+  }
+
+  .prod-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .agent-box {
+    background: var(--ai-bg);
+    border: 1px solid var(--ai-border);
+    border-radius: 6px;
+    padding: 16px;
+  }
+
+  .agent-box h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ai);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .agent-box h4 span { font-size: 16px; }
+
+  .workers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .worker-node {
+    background: var(--human-bg);
+    border: 1px solid var(--human-border);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .worker-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e05050, #a03030);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 auto 8px;
+  }
+
+  .worker-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-bright);
+    display: block;
+  }
+
+  .worker-role {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--human);
+    margin-top: 3px;
+    display: block;
+  }
+
+  .worker-cert {
+    font-size: 9px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* Database layer */
+  .db-layer {
+    margin-top: 32px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .db-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .db-info h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .db-info p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .db-tables {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .db-table {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+  }
+
+  .db-table.active {
+    border-color: var(--done-border);
+    color: var(--done);
+    background: var(--done-bg);
+  }
+
+  /* External layer */
+  .external-layer {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .ext-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ext-icon { font-size: 24px; flex-shrink: 0; }
+
+  .ext-info h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ext-info p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .ext-status {
+    margin-left: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .ext-status.done { background: var(--done-bg); color: var(--done); border: 1px solid var(--done-border); }
+  .ext-status.wip { background: var(--wip-bg); color: var(--wip); border: 1px solid var(--wip-border); }
+  .ext-status.future { background: var(--future-bg); color: var(--future); border: 1px solid var(--future-border); }
+
+  /* Permissions panel */
+  .permissions-panel {
+    margin-top: 32px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .permissions-header {
+    padding: 14px 20px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .perm-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .perm-table th {
+    padding: 10px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+
+  .perm-table td {
+    padding: 10px 16px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .perm-table tr:last-child td { border-bottom: none; }
+
+  .perm-table td:first-child {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+  }
+
+  .perm-check { color: var(--done); font-size: 14px; }
+  .perm-cross { color: var(--border2); font-size: 14px; }
+  .perm-partial { color: var(--wip); font-size: 14px; }
+
+  /* Footer */
+  .footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-left {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .footer-left span { color: var(--accent); }
+
+  .migration-count {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .migration-count strong { color: var(--done); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tier { animation: fadeUp 0.5s ease both; }
+  .tier:nth-child(1) { animation-delay: 0.05s; }
+  .tier:nth-child(2) { animation-delay: 0.1s; }
+  .tier:nth-child(3) { animation-delay: 0.15s; }
+  .tier:nth-child(4) { animation-delay: 0.2s; }
+  .tier:nth-child(5) { animation-delay: 0.25s; }
+
+  /* Pulse for active */
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,200,150,0.15); }
+    50% { box-shadow: 0 0 0 4px rgba(0,200,150,0.05); }
+  }
+
+  .dept-card.done {
+    animation: fadeUp 0.5s ease both, pulse-border 4s ease infinite;
+    animation-delay: 0.15s, 2s;
+  }
+
+  /* Tooltip */
+  .dept-card[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .center { text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>CSN — Engenharia de Veículos Comerciais</h1>
+      <h2>ARQUITETURA DO SAAS</h2>
+      <p>v1.1 — Março 2026 · supabase/migrations 001–010 deployed · confirmado do código fonte</p>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--done)"></div>IMPLEMENTADO</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--wip)"></div>EM DESENVOLVIMENTO</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--future)"></div>PLANEADO</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>HUMANO</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--ai)"></div>AGENTE IA</div>
+    </div>
+  </div>
+
+  <!-- TIER 1: Direção -->
+  <div class="tier">
+    <div class="tier-label">01 — DIREÇÃO</div>
+    <div class="center">
+      <div class="ceo-node">
+        <div class="ceo-avatar">D</div>
+        <div class="ceo-info">
+          <h3>DUARTE BUSTORFF</h3>
+          <p>CEO · OWNER · RESPONSÁVEL ISO 9001</p>
+          <div class="ceo-badges">
+            <span class="badge badge-owner">OWNER</span>
+            <span class="badge badge-admin">ADMIN</span>
+            <span class="badge badge-iso">ISO RESP.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT READINESS -->
+  <div class="tier">
+    <div class="tier-label">06 — PRONTIDÃO PARA AUDITORIA · Estado atual vs requisitos</div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+
+      <!-- ISO 9001 -->
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;">
+        <div style="padding:14px 16px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text-bright);letter-spacing:0.05em;">ISO 9001:2015</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--wip);background:var(--wip-bg);border:1px solid var(--wip-border);padding:2px 8px;border-radius:2px;">~50%</div>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:8px;">✓ COBERTO — 010_sgq_minimo_iso9001.sql deployed</div>
+          <ul class="dept-features" style="margin-bottom:12px;">
+            <li>Controlo de documentos e registos</li>
+            <li>Controlo de processos (fases_obra)</li>
+            <li>Rastreabilidade por obra</li>
+            <li>Pacote auditoria ISO 9001 gerado (7 PDFs + zip)</li>
+            <li>SGQSection.tsx + /api/sgq/* implementados</li>
+          </ul>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--wip);margin-bottom:8px;">⚠ FALTA NO SAAS</div>
+          <ul class="dept-features">
+            <li>Módulo não-conformidades + ações corretivas</li>
+            <li>Módulo auditorias internas</li>
+            <li>Revisão pela gestão (registo anual)</li>
+            <li>Avaliação de fornecedores</li>
+            <li>Satisfação do cliente (métricas)</li>
+          </ul>
+          <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--future);border-top:1px solid var(--border);padding-top:10px;">◉ FORA DO SAAS<br><span style="color:var(--text-dim)">Manual da qualidade · Política · Objetivos</span></div>
+        </div>
+      </div>
+
+      <!-- CE / 2018/858 -->
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;">
+        <div style="padding:14px 16px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text-bright);letter-spacing:0.05em;">MARCAÇÃO CE</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--wip);background:var(--wip-bg);border:1px solid var(--wip-border);padding:2px 8px;border-radius:2px;">~50%</div>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:8px;">✓ COBERTO</div>
+          <ul class="dept-features" style="margin-bottom:12px;">
+            <li>Campo coc_emitido por obra</li>
+            <li>Campo dop_emitido por obra</li>
+            <li>Campo marcacao_ce por obra</li>
+            <li>Declaração de massas (davs + inspecoes)</li>
+          </ul>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--wip);margin-bottom:8px;">⚠ FALTA NO SAAS</div>
+          <ul class="dept-features">
+            <li>Checklist GSR — sensores/câmaras/AEB</li>
+            <li>COC eletrónico (deadline jul/2026)</li>
+            <li>Geração automática DoP</li>
+            <li>Ficha reduzida características (Espanha)</li>
+          </ul>
+          <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--future);border-top:1px solid var(--border);padding-top:10px;">◉ FORA DO SAAS<br><span style="color:var(--text-dim)">Sistema qualidade Anexo IV · KBA assessment</span></div>
+        </div>
+      </div>
+
+      <!-- EN 1090 -->
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;overflow:hidden;">
+        <div style="padding:14px 16px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text-bright);letter-spacing:0.05em;">EN 1090</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--wip);background:var(--wip-bg);border:1px solid var(--wip-border);padding:2px 8px;border-radius:2px;">~45%</div>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:8px;">✓ COBERTO</div>
+          <ul class="dept-features" style="margin-bottom:12px;">
+            <li>Classe execução EXC2 por obra</li>
+            <li>Campo wps_usado por fase</li>
+            <li>Campo soldador_cert por fase</li>
+            <li>dossie_obra — 11 registos obrigatórios</li>
+            <li>Registo fotográfico por obra</li>
+          </ul>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--wip);margin-bottom:8px;">⚠ FALTA NO SAAS</div>
+          <ul class="dept-features">
+            <li>Inspeção visual soldaduras (foto + Vision)</li>
+            <li>Stocks com certificados 3.1 por lote</li>
+            <li>BOM por obra (rastreabilidade material)</li>
+            <li>NDT — registo ensaios não destrutivos</li>
+            <li>Não-conformidades de soldadura</li>
+          </ul>
+          <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--future);border-top:1px solid var(--border);padding-top:10px;">◉ FORA DO SAAS<br><span style="color:var(--text-dim)">Manual FPC · IWS/IWT · WPS físicos · EN 9606-1</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modules to build -->
+    <div style="background:var(--bg2);border:1px solid var(--wip-border);border-radius:8px;padding:20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--wip);margin-bottom:16px;">⚠ MÓDULOS CRÍTICOS A CONSTRUIR PARA AUDITORIA</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:12px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--wip);text-transform:uppercase;margin-bottom:6px;">⚡ Não-Conformidades</div>
+          <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">Registo NC<br>Análise de causa<br>Ação corretiva<br>Verificação fecho<br>ISO 9001 + EN 1090</div>
+        </div>
+
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:12px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--wip);text-transform:uppercase;margin-bottom:6px;">⚡ Auditorias Internas</div>
+          <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">Planeamento anual<br>Execução + resultados<br>Não-conformidades<br>Seguimento<br>ISO 9001 obrigatório</div>
+        </div>
+
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:12px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--wip);text-transform:uppercase;margin-bottom:6px;">⚡ Checklist GSR</div>
+          <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">AEB intacto<br>Câmaras OK<br>Sensores OK<br>Visão direta OK<br>Por cada obra antes entrega</div>
+        </div>
+
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:12px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--wip);text-transform:uppercase;margin-bottom:6px;">⚡ Revisão Gestão</div>
+          <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">Registo anual obrigatório<br>KPIs de qualidade<br>Resultados auditorias<br>Decisões da gestão<br>ISO 9001 §9.3</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Connector -->
+  <div class="connector"><div class="connector-line"></div></div>
+
+
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      
+      <!-- Colaborador -->
+      <div style="background:var(--human-bg);border:1px solid var(--human-border);border-radius:8px;padding:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+          <span style="font-size:24px;">👷</span>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--human);text-transform:uppercase;letter-spacing:0.05em;">Dashboard Colaborador</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;">João · Bohdan · José Júlio</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--human);margin-bottom:4px;">PRESENÇA</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">Dias trabalhados vs úteis<br>Horas registadas vs esperadas<br>Faltas / ausências / baixas</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--human);margin-bottom:4px;">PERFORMANCE</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">Obras concluídas este mês<br>Tempo médio vs equipa<br>Fases em atraso</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--human);margin-bottom:4px;">FORMAÇÃO</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">Certificações válidas/expiradas<br>Formações pendentes<br>Última manutenção p/ máquina</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--human);margin-bottom:4px;">HOJE</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.6;">Obras atribuídas<br>Timer fase em curso<br>Instruções do Sr. Manuel</div>
+          </div>
+        </div>
+
+        <!-- Pressure elements -->
+        <div style="background:var(--bg3);border:1px solid var(--human-border);border-radius:4px;padding:10px;margin-bottom:6px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--human);margin-bottom:6px;">⚡ PRESSÃO POSITIVA</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="font-size:10px;color:var(--text-dim);">↗ Comparação mês anterior (melhorou/piorou)</div>
+            <div style="font-size:10px;color:var(--text-dim);">🔥 Streak de dias sem atrasos</div>
+            <div style="font-size:10px;color:var(--text-dim);">🏅 Badge ao fechar obra dentro do prazo</div>
+          </div>
+        </div>
+
+        <div style="padding:8px 10px;background:var(--bg3);border-radius:4px;border:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">10 seg. para saber onde estou · sem reuniões</div>
+        </div>
+      </div>
+
+      <!-- Gestão -->
+      <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:8px;padding:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+          <span style="font-size:24px;">📊</span>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--done);text-transform:uppercase;letter-spacing:0.05em;">Dashboard Gestão</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;">Duarte · acesso total</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:4px;">PRODUÇÃO</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.5;">Obras em curso<br>Tempo por fase<br>Capacidade oficina</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:4px;">COMERCIAL</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.5;">Leads activos<br>Taxa conversão<br>Pipeline valor</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:4px;">FINANCEIRO</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.5;">Faturação mensal<br>Margem por obra<br>Pendentes</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:4px;">QUALIDADE</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.5;">Não-conformidades<br>Certificações<br>Auditorias</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:4px;">DOCUMENTAL</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.5;">Docs processados<br>Alertas pendentes<br>Emails recebidos</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);margin-bottom:4px;">FORMAÇÃO</div>
+            <div style="font-size:10px;color:var(--text-dim);line-height:1.5;">Cert. soldadores<br>Formações feitas<br>Manutenções ok</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:8px 10px;background:var(--bg3);border-radius:4px;border:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">Vista: números · gráficos · tendências · alertas</div>
+        </div>
+      </div>
+
+      <!-- Consultor -->
+      <div style="background:var(--future-bg);border:1px solid var(--future-border);border-radius:8px;padding:20px;opacity:0.8;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+          <span style="font-size:24px;">🔍</span>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--future);text-transform:uppercase;letter-spacing:0.05em;">Dashboard Externo</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;">Consultores · Contabilista · IWS coord.</div>
+          </div>
+        </div>
+        <ul class="dept-features">
+          <li>Só vê os dept. autorizados por Duarte</li>
+          <li>KPIs filtrados por área de acesso</li>
+          <li>Ex: contabilista vê só Financeiro</li>
+          <li>Ex: coord. soldadura vê Produção + Formação</li>
+          <li>Sem acesso a dados comerciais ou RH</li>
+          <li>Configurável por utilizador</li>
+        </ul>
+        <div style="margin-top:12px;padding:8px 10px;background:var(--bg3);border-radius:4px;border:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">Vista: parcial · definida por Duarte · RLS Supabase</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Connector -->
+  <div class="connector"><div class="connector-line"></div></div>
+
+
+  <div class="tier">
+    <div class="tier-label">03 — DEPARTAMENTOS · AGENTES IA sob responsabilidade de Duarte Bustorff</div>
+    <div class="dept-grid">
+
+      <div class="dept-card done">
+        <span class="status-pill">ATIVO</span>
+        <span class="dept-icon">💼</span>
+        <div class="dept-name">Comercial</div>
+        <div class="dept-agent">⬡ Agente Comercial</div>
+        <ul class="dept-features">
+          <li>Criação de leads conversacional</li>
+          <li>CRM integrado (Supabase)</li>
+          <li>Extração dados DUA por foto</li>
+          <li>Admin only · permissões separadas</li>
+        </ul>
+      </div>
+
+      <div class="dept-card wip">
+        <span class="status-pill">EM CURSO</span>
+        <span class="dept-icon">📣</span>
+        <div class="dept-name">Marketing</div>
+        <div class="dept-agent">⬡ Agente Marketing</div>
+        <ul class="dept-features">
+          <li>LinkedIn Sales Navigator</li>
+          <li>Cold email sequences</li>
+          <li>Instagram Reels fabricação</li>
+          <li>3D renders basculante (Fiverr)</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">PLANEADO</span>
+        <span class="dept-icon">🔩</span>
+        <div class="dept-name">Fornecedores</div>
+        <div class="dept-agent">⬡ Agente Fornecedores</div>
+        <ul class="dept-features">
+          <li>Pedidos de cotação</li>
+          <li>Encomendas e seguimento</li>
+          <li>Certificados de material</li>
+          <li>Sem porta pública externa</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">PLANEADO</span>
+        <span class="dept-icon">🚛</span>
+        <div class="dept-name">Logística</div>
+        <div class="dept-agent">⬡ Agente Logística</div>
+        <ul class="dept-features">
+          <li>Seguimento de entregas</li>
+          <li>Gestão de transportadoras</li>
+          <li>Rastreabilidade de material</li>
+          <li>Integração homologação</li>
+        </ul>
+      </div>
+
+      <div class="dept-card done">
+        <span class="status-pill">ATIVO</span>
+        <span class="dept-icon">⚙️</span>
+        <div class="dept-name">Técnico</div>
+        <div class="dept-agent">⬡ Agente Técnico</div>
+        <ul class="dept-features">
+          <li>Guidelines chassis (Renault XDD)</li>
+          <li>WPS / WPQR (em curso)</li>
+          <li>EN 1090 · EN ISO 3834</li>
+          <li>Dossier técnico por obra</li>
+        </ul>
+      </div>
+
+      <div class="dept-card done">
+        <span class="status-pill">ATIVO</span>
+        <span class="dept-icon">📁</span>
+        <div class="dept-name">Documental</div>
+        <div class="dept-agent">⬡ Agente Documental — HUB CENTRAL</div>
+        <ul class="dept-features">
+          <li>Recebe <strong style="color:var(--done)">todos</strong> os docs da empresa (email/upload/WhatsApp)</li>
+          <li>Analisa, classifica e renomeia com código definido</li>
+          <li>Extrai campos → regista na tabela BD do dept. dono</li>
+          <li>Sem tabela BD? → alerta Duarte para criar</li>
+          <li>Arquivo único: bucket <em>documentos/</em></li>
+          <li>Emails registados em BD (corpo + anexos + PDF)</li>
+          <li>Já implementado: DAV · FAM · INSP · CIT</li>
+          <li>Pendente: FAT · WPS · CERT · SEG · emails</li>
+          <li>MCP Outlook (Azure AD pendente)</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">PLANEADO</span>
+        <span class="dept-icon">💰</span>
+        <div class="dept-name">Contabilidade</div>
+        <div class="dept-agent">⬡ Agente Contabilidade</div>
+        <ul class="dept-features">
+          <li>Faturação por obra</li>
+          <li>Integração contabilista</li>
+          <li>Controlo de custos</li>
+          <li>Acesso consultor externo</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">PLANEADO</span>
+        <span class="dept-icon">📈</span>
+        <div class="dept-name">Financeiro</div>
+        <div class="dept-agent">⬡ Agente Financeiro</div>
+        <ul class="dept-features">
+          <li>Tesouraria e fluxos</li>
+          <li>PRR / Portugal 2030</li>
+          <li>Relatórios gestão</li>
+          <li>KPIs produção</li>
+        </ul>
+      </div>
+
+      <div class="dept-card wip">
+        <span class="status-pill">EM CURSO</span>
+        <span class="dept-icon">🤝</span>
+        <div class="dept-name">Apoio Cliente</div>
+        <div class="dept-agent">⬡ Agente Cliente</div>
+        <ul class="dept-features">
+          <li>Chat site (porta pública)</li>
+          <li>WhatsApp integration</li>
+          <li>Estado da obra em tempo real</li>
+          <li>Sem login — acesso limitado</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">PLANEADO</span>
+        <span class="dept-icon">🎓</span>
+        <div class="dept-name">Formação</div>
+        <div class="dept-agent">⬡ Agente Formação</div>
+        <ul class="dept-features">
+          <li>Manuais digitais por máquina</li>
+          <li>Checklists manutenção diária/semanal/mensal</li>
+          <li>Testes antes de operar equipamento</li>
+          <li>Registo por colaborador (EN 1090)</li>
+          <li>Segurança e EPI</li>
+          <li>Normas ISO 9001 · EN 1090</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">PLANEADO</span>
+        <span class="dept-icon">📦</span>
+        <div class="dept-name">Stocks</div>
+        <div class="dept-agent">⬡ Agente Stocks</div>
+        <ul class="dept-features">
+          <li>EPI & Segurança — por colaborador</li>
+          <li>Matérias-primas — aço, madeira, c/ cert. 3.1</li>
+          <li>Componentes — luzes, fechos, parafusos</li>
+          <li>Consumíveis — fios, gases, discos, tinta</li>
+          <li>Hidráulica & Mecânica — cilindros, bombas</li>
+          <li>BOM por obra → rastreabilidade EN 1090</li>
+          <li>Stock mínimo → alerta → proposta encomenda</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">PLANEADO</span>
+        <span class="dept-icon">🔍</span>
+        <div class="dept-name">Inspeção</div>
+        <div class="dept-agent">⬡ Agente Inspeção</div>
+        <ul class="dept-features">
+          <li>Foto soldadura → análise Claude Vision</li>
+          <li>Classificação EN ISO 5817 (nível B/C/D)</li>
+          <li>Deteta porosidades, fissuras, mordeduras</li>
+          <li>Registo automático no dossie_obra</li>
+          <li>Soldador + WPS + data + resultado</li>
+          <li>NDT — registo de ensaios não destrutivos</li>
+          <li>100% soldaduras inspecionadas e rastreadas</li>
+        </ul>
+      </div>
+
+      <div class="dept-card future">
+        <span class="status-pill">EXTENSÍVEL</span>
+        <span class="dept-icon">＋</span>
+        <div class="dept-name">+ Novo Dept.</div>
+        <div class="dept-agent">⬡ Agente a definir</div>
+        <ul class="dept-features">
+          <li>Arquitetura modular</li>
+          <li>Adicionar sem quebrar sistema</li>
+          <li>Permissões independentes</li>
+          <li>Agente próprio por dept.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Connector -->
+  <div class="connector"><div class="connector-line"></div></div>
+
+  <!-- TIER 3: Produção -->
+  <div class="tier production-section">
+    <div class="tier-label">03 — PRODUÇÃO · Único departamento com humanos físicos</div>
+    <div class="production-card">
+      <div class="production-header">
+        <div class="production-title">
+          <span style="font-size:28px">🏭</span>
+          <div>
+            <h3>Departamento de Produção</h3>
+            <p>⬡ Agente Produção (Sr. Manuel) · ATIVO · chat operadores implementado</p>
+          </div>
+        </div>
+        <span class="badge badge-owner" style="font-size:10px;padding:4px 12px;">IMPLEMENTADO</span>
+      </div>
+      <div class="prod-grid">
+        <div class="agent-box">
+          <h4><span>🤖</span>Agente Produção — "Sr. Manuel"</h4>
+          <ul class="dept-features" style="margin-top:4px">
+            <li>Chefe de Oficina Virtual</li>
+            <li>Dá ordens por chat aos operadores</li>
+            <li>Timers de produção por fase</li>
+            <li>Instruções diárias por colaborador</li>
+            <li>Rastreabilidade EN 1090 por obra</li>
+            <li>Registo de soldadores por junta</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--human);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><span>👷</span>Colaboradores Físicos</h4>
+          <div class="workers-grid">
+            <div class="worker-node">
+              <div class="worker-avatar">J</div>
+              <span class="worker-name">João</span>
+              <span class="worker-role">SOLDADOR</span>
+              <span class="worker-cert">EN 9606-1 pendente</span>
+            </div>
+            <div class="worker-node">
+              <div class="worker-avatar">B</div>
+              <span class="worker-name">Bohdan</span>
+              <span class="worker-role">SOLDADOR</span>
+              <span class="worker-cert">EN 9606-1 pendente</span>
+            </div>
+            <div class="worker-node">
+              <div class="worker-avatar">JJ</div>
+              <span class="worker-name">José Júlio</span>
+              <span class="worker-role">COLABORADOR</span>
+              <span class="worker-cert">—</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:var(--wip-bg);border:1px solid var(--wip-border);border-radius:4px;">
+            <p style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--wip);">⚠ A CONTRATAR — Coordenador de Soldadura (IWS/IWT) · desbloqueia EN 1090</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIER 4: Database -->
+  <div class="tier">
+    <div class="tier-label">04 — BASE DE DADOS · Supabase PostgreSQL</div>
+    <div class="db-layer">
+      <div class="db-icon">🗄️</div>
+      <div class="db-info">
+        <h3>Supabase</h3>
+        <p>csn-producao · migrations 001–010 deployed · RLS ativo</p>
+      </div>
+      <div class="db-tables">
+        <span class="db-table active">obras</span>
+        <span class="db-table active">fases_obra</span>
+        <span class="db-table active">leads</span>
+        <span class="db-table active">dossie_obra</span>
+        <span class="db-table active">certificacoes_empresa</span>
+        <span class="db-table active">inspecoes</span>
+        <span class="db-table active">davs</span>
+        <span class="db-table active">fams</span>
+        <span class="db-table active">cits</span>
+        <span class="db-table active">audit_log</span>
+        <span class="db-table active">documentos (storage)</span>
+        <span class="db-table">emails</span>
+        <span class="db-table">tipos_documento</span>
+        <span class="db-table">faturas</span>
+        <span class="db-table">certificados_material</span>
+        <span class="db-table">seguros</span>
+        <span class="db-table">stocks</span>
+        <span class="db-table">categorias_stock</span>
+        <span class="db-table">movimentos_stock</span>
+        <span class="db-table">bom_obra</span>
+        <span class="db-table">inspecoes_soldadura</span>
+        <span class="db-table">utilizadores</span>
+        <span class="db-table">departamentos</span>
+        <span class="db-table">permissoes</span>
+        <span class="db-table">fornecedores</span>
+      </div>
+
+      <!-- Document flow diagram -->
+      <div style="margin-top:16px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:20px 24px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:16px;">
+          📁 &nbsp;FLUXO DOCUMENTAL — Agente Documental como Hub Central
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;align-items:center;">
+          
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:12px;text-align:center;">
+            <div style="font-size:20px;margin-bottom:6px;">📥</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text-bright);text-transform:uppercase;">Entrada</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:4px;line-height:1.6;">Email (Outlook)<br>Upload manual<br>WhatsApp<br>MCP Outlook</div>
+          </div>
+
+          <div style="text-align:center;padding:0 4px;">
+            <div style="height:1px;background:linear-gradient(to right,var(--border2),var(--done-border));margin-bottom:4px;"></div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">analisa</div>
+          </div>
+
+          <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:6px;padding:12px;text-align:center;">
+            <div style="font-size:20px;margin-bottom:6px;">🤖</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--done);text-transform:uppercase;">Agente Documental</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:4px;line-height:1.6;">Classifica<br>Renomeia (código)<br>Extrai campos<br>Regista email em BD<br>Guarda PDF email<br>Verifica tabela BD</div>
+            <div style="margin-top:8px;padding:6px 8px;background:var(--wip-bg);border:1px solid var(--wip-border);border-radius:4px;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--wip);margin-bottom:3px;">⚠ REGRA ANTI-DUPLICADO</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.5;">Extrai identificadores únicos<br>→ NÃO EXISTE: regista<br>→ IGUAL: descarta silenciosamente<br>→ DIFERENTE: alerta Duarte<br>&nbsp;&nbsp;"doc mais recente — atualizar?"</div>
+            </div>
+          </div>
+
+          <div style="text-align:center;padding:0 4px;">
+            <div style="height:1px;background:linear-gradient(to right,var(--done-border),var(--border2));margin-bottom:4px;"></div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">arquiva</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:4px;padding:8px 10px;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);">✓ Email sempre registado</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;">tabela emails → corpo + PDF</div>
+            </div>
+            <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:4px;padding:8px 10px;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);">✓ Tem anexos</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;">Storage + BD → notifica dept.</div>
+            </div>
+            <div style="background:var(--wip-bg);border:1px solid var(--wip-border);border-radius:4px;padding:8px 10px;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--wip);">⚠ Sem tabela BD</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;">Alerta Duarte → criar migração</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Delivery flow -->
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-bottom:12px;letter-spacing:0.15em;">🚛 FLUXO DE ENTREGA — Geração Automática de Documentos</div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:0;align-items:center;">
+            <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px;text-align:center;">
+              <div style="font-size:16px;margin-bottom:4px;">📋</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.5;">Inspeção<br>Controlauto<br>recebida</div>
+            </div>
+            <div style="text-align:center;"><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);">→</div></div>
+            <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:6px;padding:10px;text-align:center;">
+              <div style="font-size:16px;margin-bottom:4px;">📄</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--done);">TERMO</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.5;">Auto-gerado<br>DAV+Obra+INSP<br>PDF ✓ PRONTO</div>
+            </div>
+            <div style="text-align:center;"><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);">→</div></div>
+            <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px;text-align:center;">
+              <div style="font-size:16px;margin-bottom:4px;">📸</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.5;">Sr. Manuel<br>pede 4 fotos<br>uma a uma</div>
+            </div>
+            <div style="text-align:center;"><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);">→</div></div>
+            <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:6px;padding:10px;text-align:center;">
+              <div style="font-size:16px;margin-bottom:4px;">✅</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--done);">CHECKLIST</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);line-height:1.5;">4 fotos grelha<br>GSR + dados<br>PDF ✓ PRONTO</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:4px;padding:5px 10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);">✓ /api/documentos/gerar-termo — INTEGRADO</div>
+            <div style="background:var(--done-bg);border:1px solid var(--done-border);border-radius:4px;padding:5px 10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--done);">✓ /api/documentos/gerar-checklist — INTEGRADO</div>
+            <div style="background:var(--wip-bg);border:1px solid var(--wip-border);border-radius:4px;padding:5px 10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--wip);">⚡ gerar-termo formato real CSN — PENDENTE</div>
+          </div>
+        </div>
+
+        <!-- Document type codes -->
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-bottom:10px;letter-spacing:0.15em;">CÓDIGOS DE NOMENCLATURA</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--done-bg);border:1px solid var(--done-border);color:var(--done);">DAV_ ✓</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--done-bg);border:1px solid var(--done-border);color:var(--done);">FAM_ ✓</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--done-bg);border:1px solid var(--done-border);color:var(--done);">INSP_ ✓</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--done-bg);border:1px solid var(--done-border);color:var(--done);">CIT_ ✓</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">FAT_FORN_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">FAT_CLI_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">CERT_MAT_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">WPS_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">COC_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">SEG_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">ORC_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--bg3);border:1px solid var(--border2);color:var(--text-dim);">OUTRO_</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--done-bg);border:1px solid var(--done-border);color:var(--done);">TERM_ ✓</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;background:var(--done-bg);border:1px solid var(--done-border);color:var(--done);">CHKL_ ✓</span>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- External integrations -->
+    <div class="external-layer">
+      <div class="ext-card">
+        <div class="ext-icon">📧</div>
+        <div class="ext-info">
+          <h4>MCP Outlook</h4>
+          <p>Microsoft Graph API · extrair anexos · emails → PDF · Azure AD</p>
+        </div>
+        <span class="ext-status wip">AZURE AD PENDENTE</span>
+      </div>
+      <div class="ext-card">
+        <div class="ext-icon">🏛️</div>
+        <div class="ext-info">
+          <h4>IMT / COC Eletrónico</h4>
+          <p>Homologação multi-etapa · deadline julho 2026 · Reg. 2018/858</p>
+        </div>
+        <span class="ext-status future">JUL 2026</span>
+      </div>
+      <div class="ext-card">
+        <div class="ext-icon">💬</div>
+        <div class="ext-info">
+          <h4>WhatsApp Business API</h4>
+          <p>Agente Cliente · resposta automática · estado de obra</p>
+        </div>
+        <span class="ext-status future">PLANEADO</span>
+      </div>
+      <div class="ext-card">
+        <div class="ext-icon">🔬</div>
+        <div class="ext-info">
+          <h4>ISQ / CATIM</h4>
+          <p>WPS/WPQR qualification · EN 9606-1 soldadores · EN 1090</p>
+        </div>
+        <span class="ext-status wip">EM CURSO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Permissions -->
+  <div class="tier">
+    <div class="tier-label">05 — MATRIZ DE PERMISSÕES · Escalável por utilizador</div>
+    <div class="permissions-panel">
+      <div class="permissions-header">
+        🔐 &nbsp;CONTROLO DE ACESSO — Row Level Security (Supabase RLS)
+      </div>
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th>PERFIL</th>
+            <th>Produção</th>
+            <th>Comercial</th>
+            <th>Formação</th>
+            <th>Documental</th>
+            <th>Financeiro</th>
+            <th>Fornecedores</th>
+            <th>Apoio Cliente</th>
+            <th>Config.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>👤 Duarte (Owner)</td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-check">✓</span></td>
+          </tr>
+          <tr>
+            <td>👷 Operador (João / Bohdan / JJ)</td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>🔧 Coord. Soldadura (a contratar)</td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-check">✓</span></td>
+            <td><span class="perm-partial">◐</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-partial">◐</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>📊 Consultor Externo</td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-partial">◐</span></td>
+            <td><span class="perm-partial">◐</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>🌐 Cliente (sem login)</td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-cross">✗</span></td>
+            <td><span class="perm-partial">◐</span></td>
+            <td><span class="perm-cross">✗</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:8px;">◐ = acesso parcial definível por Duarte · Permissões configuráveis por departamento · sem limite de perfis externos</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">
+      <span>CSN</span> · duartebustorff-star/csn-producao · Mafra, Portugal<br>
+      <span style="color:var(--text-dim)">Próximo passo → Agente Documental (hub central: classifica DAV/FAM/CIT/INSP → dispara gerar-termo automático) · Reescrever gerar-termo formato real CSN · Módulos: Não-Conformidades · Auditorias · GSR · COC Eletrónico jul/2026</span>
+    </div>
+    <div class="migration-count">
+      <span>Migrações: <strong>010/∞</strong></span>
+      <span>Departamentos ativos: <strong>3/13</strong></span>
+      <span>Agentes ativos: <strong>1/13</strong></span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
