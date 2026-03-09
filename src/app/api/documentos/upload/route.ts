@@ -7,11 +7,11 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 // ---------- Prompts ----------
 
 const IDENTIFY_PROMPT = `Analisa este documento. Identifica o tipo:
-- "DAV" se for uma Declaração Aduaneira de Veículo (cabeçalho com logo AT — Autoridade Tributária e Aduaneira)
-- "FAM" se for uma Folha de Aprovação de Modelo (cabeçalho com logo IMT — Instituto da Mobilidade e dos Transportes)
+- "DAV" se for uma Declaração Aduaneira de Veículo (cabeçalho com logo AT – Autoridade Tributária e Aduaneira)
+- "FAM" se for uma Folha de Aprovação de Modelo (cabeçalho com logo IMT – Instituto da Mobilidade e dos Transportes)
 - "CIT" se for um Certificado de Incapacidade Temporária (documento da Segurança Social com dados de baixa médica)
 - "VIN_PLATE" se for uma foto da placa VIN de um veículo
-- "INSPECAO" se for um Relatório de Inspeção automóvel (cabeçalho com "Relatório de Inspeção", "Controlauto" ou centro de inspeção IMT, com dados de frenómetro/opacímetro/ripómetro)
+- "INSPECAO" se for um Relatório de Inspeção automóvel (cabeçalho com "Relatório de Inspeção", "Controlauto" ou centro de inspeção IMT, com dados de frénómetro/opacímetro/ripómetro)
 - "OUTRO" para qualquer outro documento
 Responde APENAS com o tipo (uma palavra).`
 
@@ -67,7 +67,7 @@ Extrai os campos principais em JSON. Presta especial atenção ao campo 50 (Anot
 Se não conseguires ler algum campo, coloca null. Responde APENAS com JSON.`
 
 const VIN_PROMPT = `Analisa esta foto de uma placa de identificação de veículo (VIN plate).
-Extrai o número VIN (Vehicle Identification Number) — são 17 caracteres alfanuméricos.
+Extrai o número VIN (Vehicle Identification Number) – são 17 caracteres alfanuméricos.
 Responde APENAS com o VIN, sem explicações. Se não conseguires ler, responde "ILEGIVEL".`
 
 const CIT_PROMPT = `Analisa este documento. É um Certificado de Incapacidade Temporária para o Trabalho (CIT) português.
@@ -88,7 +88,7 @@ Extrai TODOS os campos em JSON:
   "situacao": "...",
   "classificacao": "DN"|"DD"|"T"|"AF"|"DP"|"AT"|"RC"|"IG"|null
 }
-NOTA: O campo "tipo_cit" indica se o documento é um CIT inicial ("inicial") ou uma prorrogação ("prorrogacao"). Normalmente aparece no cabeçalho do documento como "Certificado de Incapacidade Temporária" (inicial) ou "Prorrogação" / "Prorrogação do CIT".
+NOTA: O campo "tipo_cit" indica se o documento é um CIT inicial ("inicial") ou uma prorrogação ("prorrogacao").
 Se não conseguires ler algum campo, coloca null. Responde APENAS com JSON.`
 
 const INSPECAO_PROMPT = `Analisa este Relatório de Inspeção automóvel português.
@@ -125,12 +125,14 @@ Extrai TODOS os campos em JSON:
   "deficiencias": [{"codigo": "...", "designacao": "...", "tipo": 1}],
   "resultado": "aprovado|reprovado"
 }
-NOTA: Os pesos do frenómetro aparecem numa tabela. Peso estático e dinâmico total aparecem no final da secção do frenómetro. Os pesos por eixo aparecem nas linhas "Eixo 1" e "Eixo 2" nas colunas Esq/Dir/Total tanto para Estático como Dinâmico. Alguns relatórios têm banco de suspensões em vez de pesos no frenómetro — nesse caso o peso total aparece no banco de suspensões.
 Se não conseguires ler algum campo, coloca null. Responde APENAS com JSON.`
 
-// ---------- Helpers ----------
+// ---------- Types ----------
 
 type ContentBlock = Anthropic.ImageBlockParam | Anthropic.DocumentBlockParam
+type SupabaseClient = ReturnType<typeof getServiceSupabase>
+
+// ---------- Helpers ----------
 
 function buildFileContent(base64: string, mimeType: string): ContentBlock {
   if (mimeType === "application/pdf") {
@@ -155,15 +157,163 @@ function normalize(s: string): string {
 
 function cleanJSON(raw: string): string {
   let s = raw.trim()
-  // Remove ```json ... ``` or ``` ... ```
   s = s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/g, "")
-  // Extract from first { to last }
   const start = s.indexOf("{")
   const end = s.lastIndexOf("}")
   if (start !== -1 && end !== -1 && end > start) {
     s = s.substring(start, end + 1)
   }
   return s
+}
+
+function formatDate(dateStr: string): string {
+  try {
+    const parts = dateStr.split("T")[0].split("-")
+    return `${parts[2]}/${parts[1]}/${parts[0]}`
+  } catch {
+    return dateStr
+  }
+}
+
+// ---------- DOSSIER: marcar documento como ok ----------
+
+async function marcarDossierOk(
+  obraId: string,
+  tipo: "dav" | "fam" | "inspecao",
+  ficheiroUrl: string,
+  supabase: SupabaseClient
+): Promise<void> {
+  await supabase
+    .from("dossie_obra")
+    .update({
+      estado: "ok",
+      ficheiro_url: ficheiroUrl,
+      concluido_em: new Date().toISOString(),
+      concluido_por: "system",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("obra_id", obraId)
+    .eq("tipo", tipo)
+}
+
+// ---------- DOSSIER: verificar e gerar termo ----------
+
+async function verificarEGerarTermo(
+  obraId: string,
+  supabase: SupabaseClient
+): Promise<{ termoGerado: boolean; termoUrl: string | null; mensagem: string }> {
+  // Verificar se DAV + FAM + INSPECAO estão todos ok
+  const { data: docs } = await supabase
+    .from("dossie_obra")
+    .select("tipo, estado, ficheiro_url")
+    .eq("obra_id", obraId)
+    .in("tipo", ["dav", "fam", "inspecao", "termo_responsabilidade"])
+
+  if (!docs) return { termoGerado: false, termoUrl: null, mensagem: "" }
+
+  const dav = docs.find(d => d.tipo === "dav")
+  const fam = docs.find(d => d.tipo === "fam")
+  const insp = docs.find(d => d.tipo === "inspecao")
+  const termo = docs.find(d => d.tipo === "termo_responsabilidade")
+
+  // Se termo já está ok, não gera de novo
+  if (termo?.estado === "ok") {
+    return { termoGerado: false, termoUrl: termo.ficheiro_url, mensagem: "" }
+  }
+
+  // Falta algum documento?
+  const faltam = []
+  if (dav?.estado !== "ok") faltam.push("DAV")
+  if (fam?.estado !== "ok") faltam.push("FAM")
+  if (insp?.estado !== "ok") faltam.push("Inspeção")
+
+  if (faltam.length > 0) {
+    return {
+      termoGerado: false,
+      termoUrl: null,
+      mensagem: `\n⏳ Dossier incompleto — falta: ${faltam.join(", ")}`,
+    }
+  }
+
+  // Todos presentes — buscar dados para o termo
+  const { data: obra } = await supabase
+    .from("obras")
+    .select("id, vin, matricula, leads(tipo_carrocaria, dimensoes, pbt)")
+    .eq("id", obraId)
+    .single()
+
+  if (!obra) return { termoGerado: false, termoUrl: null, mensagem: "" }
+
+  const { data: davRecord } = await supabase
+    .from("davs")
+    .select("marca, modelo, matricula, vin, cod_homologacao, peso_bruto")
+    .eq("vin", obra.vin)
+    .maybeSingle()
+
+  const { data: inspecaoRecord } = await supabase
+    .from("inspecoes")
+    .select("peso_estatico_total, peso_estatico_eixo1_total, peso_estatico_eixo2_total")
+    .eq("matricula", obra.matricula || davRecord?.matricula || "")
+    .order("data_inspecao", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const lead = obra.leads as Record<string, unknown> | null
+
+  const termoBody = {
+    obra_id: obraId,
+    marca: davRecord?.marca || null,
+    modelo: davRecord?.modelo || null,
+    matricula: obra.matricula || davRecord?.matricula || null,
+    vin: obra.vin || null,
+    cod_homologacao: davRecord?.cod_homologacao || null,
+    tipo_carrocaria: lead?.tipo_carrocaria || null,
+    comprimento: null,
+    largura: null,
+    altura: null,
+    dist_eixo_frente: null,
+    dist_eixo_retaguarda: null,
+    tara_total: inspecaoRecord?.peso_estatico_total || null,
+    tara_frontal: inspecaoRecord?.peso_estatico_eixo1_total || null,
+    tara_traseira: inspecaoRecord?.peso_estatico_eixo2_total || null,
+    peso_bruto: davRecord?.peso_bruto || lead?.pbt || null,
+  }
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    const res = await fetch(`${baseUrl}/api/documentos/gerar-termo`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(termoBody),
+    })
+    const termoData = await res.json()
+
+    if (termoData.sucesso && termoData.download_url) {
+      // Marcar termo como ok no dossier
+      await marcarDossierOk(obraId, "dav", termoData.download_url, supabase)
+      await supabase
+        .from("dossie_obra")
+        .update({
+          estado: "ok",
+          ficheiro_url: termoData.download_url,
+          concluido_em: new Date().toISOString(),
+          concluido_por: "system",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("obra_id", obraId)
+        .eq("tipo", "termo_responsabilidade")
+
+      return {
+        termoGerado: true,
+        termoUrl: termoData.download_url,
+        mensagem: `\n📋 DAV + FAM + Inspeção completos → **Termo gerado automaticamente!**\n🔗 ${termoData.download_url}`,
+      }
+    }
+  } catch (err) {
+    console.error("Erro ao gerar termo:", err)
+  }
+
+  return { termoGerado: false, termoUrl: null, mensagem: "" }
 }
 
 // ---------- POST ----------
@@ -189,16 +339,13 @@ export async function POST(req: NextRequest) {
     const base64 = Buffer.from(arrayBuffer).toString("base64")
     const fileContent = buildFileContent(base64, file.type)
 
-    // 1. Identify document type
+    // 1. Identificar tipo
     const identifyRes = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 50,
       messages: [{
         role: "user",
-        content: [
-          fileContent,
-          { type: "text", text: IDENTIFY_PROMPT },
-        ],
+        content: [fileContent, { type: "text", text: IDENTIFY_PROMPT }],
       }],
     })
 
@@ -209,20 +356,13 @@ export async function POST(req: NextRequest) {
 
     const supabase = getServiceSupabase()
 
-    // 2. Process based on type
-    if (docType === "DAV") {
-      return await processDAV(base64, fileContent, file, supabase)
-    } else if (docType === "FAM") {
-      return await processFAM(base64, fileContent, file, supabase)
-    } else if (docType === "CIT") {
-      return await processCIT(fileContent, file, uploadedBy, supabase)
-    } else if (docType === "INSPECAO") {
-      return await processINSPECAO(fileContent, file, uploadedBy, supabase)
-    } else if (docType === "VIN_PLATE") {
-      return await processVINPlate(fileContent, supabase)
-    } else {
-      return await processOUTRO(file, uploadedBy, supabase)
-    }
+    if (docType === "DAV") return await processDAV(base64, fileContent, file, supabase)
+    if (docType === "FAM") return await processFAM(base64, fileContent, file, supabase)
+    if (docType === "CIT") return await processCIT(fileContent, file, uploadedBy, supabase)
+    if (docType === "INSPECAO") return await processINSPECAO(fileContent, file, uploadedBy, supabase)
+    if (docType === "VIN_PLATE") return await processVINPlate(fileContent, supabase)
+    return await processOUTRO(file, uploadedBy, supabase)
+
   } catch (error) {
     console.error("Document upload error:", error)
     return NextResponse.json({ error: "Erro interno" }, { status: 500 })
@@ -235,7 +375,7 @@ async function processDAV(
   base64: string,
   fileContent: ContentBlock,
   file: File,
-  supabase: ReturnType<typeof getServiceSupabase>
+  supabase: SupabaseClient
 ) {
   const extractRes = await anthropic.messages.create({
     model: "claude-sonnet-4-5-20250929",
@@ -258,11 +398,9 @@ async function processDAV(
   }
 
   const vin = dados.vin as string
-  if (!vin) {
-    return NextResponse.json({ tipo: "DAV", error: "VIN não encontrado no documento" })
-  }
+  if (!vin) return NextResponse.json({ tipo: "DAV", error: "VIN não encontrado no documento" })
 
-  // Upload file to storage
+  // Upload storage
   const ext = file.name.split(".").pop() || "pdf"
   const mat = (dados.matricula as string) || "SEM-MATRICULA"
   const fileName = `DAV_${mat}_${vin}_${Date.now()}.${ext}`
@@ -270,12 +408,12 @@ async function processDAV(
     contentType: file.type,
   })
   const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const ficheiroUrl = urlData?.signedUrl || ""
 
-  // Upsert DAV (anti-duplicados por VIN)
+  // Upsert DAV
   const davRecord: Record<string, unknown> = {
     ...dados,
-    tipo_documento: undefined,
-    url_ficheiro: urlData?.signedUrl || "",
+    url_ficheiro: ficheiroUrl,
     dados_raw: dados,
     completo: !!(vin && dados.matricula && dados.cod_homologacao),
     updated_at: new Date().toISOString(),
@@ -283,7 +421,6 @@ async function processDAV(
   delete davRecord.tipo_documento
 
   const { data: existing } = await supabase.from("davs").select("id").eq("vin", vin).maybeSingle()
-
   let dav
   if (existing) {
     const { data } = await supabase.from("davs").update(davRecord).eq("vin", vin).select().single()
@@ -293,29 +430,39 @@ async function processDAV(
     dav = data
   }
 
-  // Link to obra via VIN
+  // Associar obra
   const { data: obra } = await supabase.from("obras").select("id").eq("vin", vin).maybeSingle()
-
-  // Update obra matricula if available
   if (obra && dados.matricula) {
     await supabase.from("obras").update({ matricula: dados.matricula as string }).eq("id", obra.id)
   }
 
   const marcaModelo = [dados.marca, dados.modelo].filter(Boolean).join(" ")
-  const mensagem = `✅ DAV ${existing ? "atualizado" : "registado"} — VIN: ${vin}`
+  let mensagem = `✅ DAV ${existing ? "atualizado" : "registado"} — VIN: ${vin}`
     + (dados.matricula ? `, Matrícula: ${dados.matricula}` : "")
     + (marcaModelo ? `, ${marcaModelo}` : "")
     + (dados.cod_homologacao ? `\nHomologação: ${dados.cod_homologacao}` : "")
     + (obra ? `\nAssociado à obra ${obra.id}.` : "")
 
+  // Dossier: marcar DAV como ok e verificar se gera termo
+  let termoGerado = false
+  let termoUrl = null
+  if (obra) {
+    await marcarDossierOk(obra.id, "dav", ficheiroUrl, supabase)
+    const resultado = await verificarEGerarTermo(obra.id, supabase)
+    termoGerado = resultado.termoGerado
+    termoUrl = resultado.termoUrl
+    mensagem += resultado.mensagem
+  } else {
+    mensagem += "\n⚠️ Obra não encontrada para este VIN — dossier não atualizado."
+  }
+
   return NextResponse.json({
-    tipo: "DAV",
-    dav,
-    dados,
-    obra_id: obra?.id || null,
-    vin,
+    tipo: "DAV", dav, dados,
+    obra_id: obra?.id || null, vin,
     matricula: dados.matricula || null,
     updated: !!existing,
+    termo_gerado: termoGerado,
+    termo_url: termoUrl,
     mensagem,
   })
 }
@@ -326,7 +473,7 @@ async function processFAM(
   base64: string,
   fileContent: ContentBlock,
   file: File,
-  supabase: ReturnType<typeof getServiceSupabase>
+  supabase: SupabaseClient
 ) {
   const extractRes = await anthropic.messages.create({
     model: "claude-sonnet-4-5-20250929",
@@ -350,32 +497,28 @@ async function processFAM(
 
   const numHomologacao = dados.numero_homologacao_nacional as string
   const extensao = (dados.extensao as string) || "0"
+  if (!numHomologacao) return NextResponse.json({ tipo: "FAM", error: "Número de homologação não encontrado" })
 
-  if (!numHomologacao) {
-    return NextResponse.json({ tipo: "FAM", error: "Número de homologação não encontrado" })
-  }
-
-  // Upload file
+  // Upload storage
   const ext = file.name.split(".").pop() || "pdf"
-  const fileName = `FAM_${numHomologacao || "DESCONHECIDO"}_${Date.now()}.${ext}`
+  const fileName = `FAM_${numHomologacao}_${Date.now()}.${ext}`
   await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
   const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const ficheiroUrl = urlData?.signedUrl || ""
 
+  // Upsert FAM
   const famRecord: Record<string, unknown> = {
     ...dados,
-    tipo_documento: undefined,
-    url_ficheiro: urlData?.signedUrl || "",
+    url_ficheiro: ficheiroUrl,
     dados_raw: dados,
     updated_at: new Date().toISOString(),
   }
   delete famRecord.tipo_documento
 
-  // Upsert FAM
   const { data: existing } = await supabase
-    .from("fams")
-    .select("id")
+    .from("fams").select("id")
     .eq("numero_homologacao_nacional", numHomologacao)
     .eq("extensao", extensao)
     .maybeSingle()
@@ -391,168 +534,52 @@ async function processFAM(
     fam = data
   }
 
-  const marcaModelo = [dados.campo_0_1_marca, dados.campo_0_2_modelo].filter(Boolean).join(" ")
-  const mensagem = `✅ FAM ${existing ? "atualizada" : "registada"} — Homologação: ${numHomologacao} ext. ${extensao}`
-    + (marcaModelo ? `, ${marcaModelo}` : "")
-    + (dados.campo_37_2_comprimento_exterior_max ? `\nComprimento máx: ${dados.campo_37_2_comprimento_exterior_max}mm` : "")
-    + (dados.campo_37_6_largura_exterior_max ? `, Largura máx: ${dados.campo_37_6_largura_exterior_max}mm` : "")
+  // Encontrar todas as obras cujo DAV tem este cod_homologacao
+  const { data: davsAssociados } = await supabase
+    .from("davs")
+    .select("vin")
+    .eq("cod_homologacao", numHomologacao)
 
-  return NextResponse.json({
-    tipo: "FAM",
-    fam,
-    dados,
-    numero_homologacao: numHomologacao,
-    extensao,
-    updated: !!existing,
-    anotacoes: dados.campo_50_anotacoes || null,
-    mensagem,
-  })
-}
+  let obrasAtualizadas = 0
+  let mensagemTermo = ""
 
-// ---------- VIN Plate ----------
+  if (davsAssociados && davsAssociados.length > 0) {
+    const vins = davsAssociados.map(d => d.vin).filter(Boolean)
 
-async function processVINPlate(
-  fileContent: ContentBlock,
-  supabase: ReturnType<typeof getServiceSupabase>
-) {
-  const vinRes = await anthropic.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 100,
-    messages: [{
-      role: "user",
-      content: [fileContent, { type: "text", text: VIN_PROMPT }],
-    }],
-  })
+    for (const vin of vins) {
+      const { data: obra } = await supabase
+        .from("obras").select("id")
+        .eq("vin", vin).maybeSingle()
 
-  const vin = vinRes.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
-    .map((b) => b.text.trim()).join("")
+      if (obra) {
+        await marcarDossierOk(obra.id, "fam", ficheiroUrl, supabase)
+        obrasAtualizadas++
 
-  if (vin === "ILEGIVEL" || vin.length !== 17) {
-    return NextResponse.json({ tipo: "VIN_PLATE", error: "VIN ilegível", vin_tentativa: vin })
-  }
-
-  // Find obra with this VIN
-  const { data: obra } = await supabase.from("obras").select("id, estado, lugar_parque").eq("vin", vin).maybeSingle()
-
-  // Find available parking spots
-  const { data: lugaresLivres } = await supabase
-    .from("lugares_parque")
-    .select("numero")
-    .eq("ocupado", false)
-    .order("numero")
-    .limit(10)
-
-  const mensagem = obra
-    ? `✅ VIN identificado: ${vin}\nObra ${obra.id} encontrada (${obra.estado}).`
-    : `✅ VIN identificado: ${vin}\nNenhuma obra associada.`
-
-  return NextResponse.json({
-    tipo: "VIN_PLATE",
-    vin,
-    obra: obra || null,
-    lugares_livres: (lugaresLivres || []).map((l) => l.numero),
-    mensagem,
-  })
-}
-
-// ---------- CIT ----------
-
-async function processCIT(
-  fileContent: ContentBlock,
-  file: File,
-  uploadedBy: string,
-  supabase: ReturnType<typeof getServiceSupabase>
-) {
-  // 1. Extract CIT data via Claude Vision
-  const extractRes = await anthropic.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 2048,
-    messages: [{
-      role: "user",
-      content: [fileContent, { type: "text", text: CIT_PROMPT }],
-    }],
-  })
-
-  const rawText = extractRes.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
-    .map((b) => b.text).join("")
-
-  let dados: Record<string, unknown>
-  try {
-    dados = JSON.parse(cleanJSON(rawText))
-  } catch {
-    return NextResponse.json({ tipo: "CIT", error: "Erro ao extrair dados do CIT", raw: rawText })
-  }
-
-  const numeroCit = dados.numero_cit as string | null
-
-  // 2. Anti-duplicate by numero_cit
-  if (numeroCit) {
-    const { data: existing } = await supabase
-      .from("cits")
-      .select("id")
-      .eq("numero_cit", numeroCit)
-      .maybeSingle()
-
-    if (existing) {
-      return NextResponse.json({
-        tipo: "CIT",
-        duplicado: true,
-        cit_id: existing.id,
-        mensagem: `⚠️ CIT ${numeroCit} já existe no sistema. Não foi duplicado.`,
-      })
-    }
-  }
-
-  // 3. Upload file to storage
-  const ext = file.name.split(".").pop() || "pdf"
-  const tipoCit = (dados.tipo_cit as string) || null
-  const tipoCitTag = tipoCit === "prorrogacao" ? "PRORR" : "INIC"
-  const nomeUtenteCit = ((dados.nome_utente as string) || "DESCONHECIDO").replace(/\s+/g, "-")
-  const dataInicioCit = (dados.data_inicio as string) || "DESCONHECIDO"
-  const dataFimCit = (dados.data_fim as string) || "DESCONHECIDO"
-  const fileName = `CIT_${tipoCitTag}_${nomeUtenteCit}_${dataInicioCit}_${dataFimCit}_${Date.now()}.${ext}`
-  await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
-    contentType: file.type,
-  })
-  const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
-
-  // 4. Fuzzy match nome_utente against colaboradores
-  const nomeUtente = dados.nome_utente as string | null
-  let matchedColaboradorId: string | null = null
-  let matchedColaboradorNome: string | null = null
-
-  if (nomeUtente) {
-    const { data: colaboradores } = await supabase
-      .from("colaboradores")
-      .select("id, nome")
-      .eq("ativo", true)
-
-    if (colaboradores) {
-      const nomeNorm = normalize(nomeUtente)
-      for (const c of colaboradores) {
-        const cNorm = normalize(c.nome)
-        if (nomeNorm.includes(cNorm) || cNorm.includes(nomeNorm)) {
-          matchedColaboradorId = c.id
-          matchedColaboradorNome = c.nome
-          break
+        const resultado = await verificarEGerarTermo(obra.id, supabase)
+        if (resultado.termoGerado) {
+          mensagemTermo += `\nObra ${obra.id}: ${resultado.mensagem}`
+        } else if (resultado.mensagem) {
+          mensagemTermo += `\nObra ${obra.id}: ${resultado.mensagem}`
         }
       }
     }
   }
 
-  // 5. Return preview for wizard confirmation
+  const marcaModelo = [dados.campo_0_1_marca, dados.campo_0_2_modelo].filter(Boolean).join(" ")
+  let mensagem = `✅ FAM ${existing ? "atualizada" : "registada"} — Homologação: ${numHomologacao} ext. ${extensao}`
+    + (marcaModelo ? `, ${marcaModelo}` : "")
+    + (dados.campo_37_2_comprimento_exterior_max ? `\nComprimento máx: ${dados.campo_37_2_comprimento_exterior_max}mm` : "")
+    + (dados.campo_37_6_largura_exterior_max ? `, Largura máx: ${dados.campo_37_6_largura_exterior_max}mm` : "")
+    + (obrasAtualizadas > 0 ? `\n📁 Dossier atualizado em ${obrasAtualizadas} obra(s).` : "")
+    + mensagemTermo
+
   return NextResponse.json({
-    tipo: "CIT_PREVIEW",
-    dados,
-    file_url: urlData?.signedUrl || "",
-    file_path: fileName,
-    colaborador_match: matchedColaboradorId
-      ? { id: matchedColaboradorId, nome: matchedColaboradorNome }
-      : null,
-    numero_cit: numeroCit,
-    mensagem: "📋 CIT detectado. Confirma os dados extraídos:",
+    tipo: "FAM", fam, dados,
+    numero_homologacao: numHomologacao, extensao,
+    updated: !!existing,
+    obras_atualizadas: obrasAtualizadas,
+    anotacoes: dados.campo_50_anotacoes || null,
+    mensagem,
   })
 }
 
@@ -562,9 +589,8 @@ async function processINSPECAO(
   fileContent: ContentBlock,
   file: File,
   uploadedBy: string,
-  supabase: ReturnType<typeof getServiceSupabase>
+  supabase: SupabaseClient
 ) {
-  // 1. Extract inspection data via Claude Vision
   const extractRes = await anthropic.messages.create({
     model: "claude-sonnet-4-5-20250929",
     max_tokens: 4096,
@@ -586,43 +612,37 @@ async function processINSPECAO(
   }
 
   const matricula = dados.matricula as string
-  if (!matricula) {
-    return NextResponse.json({ tipo: "INSPECAO", error: "Matrícula não encontrada no documento" })
-  }
+  if (!matricula) return NextResponse.json({ tipo: "INSPECAO", error: "Matrícula não encontrada" })
 
   const dataInspecao = dados.data_inspecao as string | null
 
-  // 2. Anti-duplicate by matricula + data_inspecao
+  // Anti-duplicado
   if (dataInspecao) {
     const { data: existing } = await supabase
-      .from("inspecoes")
-      .select("id")
-      .eq("matricula", matricula)
-      .eq("data_inspecao", dataInspecao)
+      .from("inspecoes").select("id")
+      .eq("matricula", matricula).eq("data_inspecao", dataInspecao)
       .maybeSingle()
 
     if (existing) {
       return NextResponse.json({
-        tipo: "INSPECAO",
-        duplicado: true,
-        inspecao_id: existing.id,
-        mensagem: `⚠️ Inspeção de ${matricula} em ${formatDate(dataInspecao)} já existe no sistema. Não foi duplicada.`,
+        tipo: "INSPECAO", duplicado: true, inspecao_id: existing.id,
+        mensagem: `⚠️ Inspeção de ${matricula} em ${formatDate(dataInspecao)} já existe.`,
       })
     }
   }
 
-  // 3. Upload file to storage
+  // Upload storage
   const ext = file.name.split(".").pop() || "pdf"
   const fileName = `INSP_${matricula}_${dataInspecao ? dataInspecao.split("T")[0] : Date.now()}.${ext}`
   await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
     contentType: file.type,
   })
   const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+  const ficheiroUrl = urlData?.signedUrl || ""
 
-  // 4. Insert into inspecoes table
+  // Insert inspeção
   const inspecaoRecord: Record<string, unknown> = {
-    matricula,
-    data_inspecao: dataInspecao,
+    matricula, data_inspecao: dataInspecao,
     centro_inspecao: dados.centro_inspecao || null,
     codigo_imt: dados.codigo_imt || null,
     linha: dados.linha || null,
@@ -651,102 +671,201 @@ async function processINSPECAO(
     ripometro_eixo1: dados.ripometro_eixo1 ?? null,
     deficiencias: dados.deficiencias || null,
     resultado: dados.resultado || null,
-    url_ficheiro: urlData?.signedUrl || "",
+    url_ficheiro: ficheiroUrl,
     dados_raw: dados,
     uploaded_by: uploadedBy,
     updated_at: new Date().toISOString(),
   }
 
   const { data: inspecao, error: insertError } = await supabase
-    .from("inspecoes")
-    .insert(inspecaoRecord)
-    .select()
-    .single()
+    .from("inspecoes").insert(inspecaoRecord).select().single()
 
   if (insertError) {
     console.error("Inspecao insert error:", insertError)
     return NextResponse.json({ tipo: "INSPECAO", error: "Erro ao registar inspeção" }, { status: 500 })
   }
 
-  // 5. Build response message
-  const dataFmt = dataInspecao ? formatDate(dataInspecao) : "?"
-  const resultadoStr = dados.resultado ? ` Resultado: ${(dados.resultado as string).toUpperCase()}.` : ""
-
+  // Pesos
   const pesoTotal = dados.peso_estatico_total as number | null
   const pesoEixo1 = dados.peso_estatico_eixo1_total as number | null
   const pesoEixo2 = dados.peso_estatico_eixo2_total as number | null
+  const resultadoStr = dados.resultado ? ` Resultado: ${(dados.resultado as string).toUpperCase()}.` : ""
 
   let pesosStr = ""
   if (pesoTotal != null || pesoEixo1 != null || pesoEixo2 != null) {
     pesosStr += `\n⚖️ Peso estático total: ${pesoTotal != null ? pesoTotal + "kg" : "?"}`
-    pesosStr += `\n⚖️ Peso estático total eixo 1: ${pesoEixo1 != null ? pesoEixo1 + "kg" : "?"}`
-    pesosStr += `\n⚖️ Peso estático total eixo 2: ${pesoEixo2 != null ? pesoEixo2 + "kg" : "?"}`
-
+    pesosStr += `\n⚖️ Eixo 1: ${pesoEixo1 != null ? pesoEixo1 + "kg" : "?"}`
+    pesosStr += `\n⚖️ Eixo 2: ${pesoEixo2 != null ? pesoEixo2 + "kg" : "?"}`
     if (pesoTotal != null && pesoEixo1 != null && pesoEixo2 != null) {
       const soma = pesoEixo1 + pesoEixo2
-      if (soma === pesoTotal) {
-        pesosStr += `\n✅ Soma dos eixos confere.`
-      } else {
-        pesosStr += `\n⚠️ ATENÇÃO: Eixo 1 + Eixo 2 = ${soma}kg ≠ Total ${pesoTotal}kg. Verificar leitura do documento.`
-      }
-    } else {
-      pesosStr += `\n⚠️ Não foi possível validar — valores em falta.`
+      pesosStr += soma === pesoTotal
+        ? `\n✅ Soma dos eixos confere.`
+        : `\n⚠️ Eixo 1 + Eixo 2 = ${soma}kg ≠ Total ${pesoTotal}kg. Verificar.`
     }
   }
 
-  const mensagem = `✅ Inspeção registada — Matrícula: ${matricula}, Data: ${dataFmt}.${resultadoStr}${pesosStr}`
+  let mensagem = `✅ Inspeção registada — Matrícula: ${matricula}, Data: ${formatDate(dataInspecao || "")}.${resultadoStr}${pesosStr}`
+
+  // Dossier: encontrar obra pela matrícula via DAV
+  const { data: davAssociado } = await supabase
+    .from("davs").select("vin")
+    .eq("matricula", matricula).maybeSingle()
+
+  if (davAssociado?.vin) {
+    const { data: obra } = await supabase
+      .from("obras").select("id")
+      .eq("vin", davAssociado.vin).maybeSingle()
+
+    if (obra) {
+      await marcarDossierOk(obra.id, "inspecao", ficheiroUrl, supabase)
+      const resultado = await verificarEGerarTermo(obra.id, supabase)
+      mensagem += resultado.mensagem
+    } else {
+      mensagem += "\n⚠️ Obra não encontrada para esta matrícula — dossier não atualizado."
+    }
+  } else {
+    mensagem += "\n⚠️ DAV não encontrado para esta matrícula — dossier não atualizado."
+  }
 
   return NextResponse.json({
-    tipo: "INSPECAO",
-    inspecao,
-    dados,
-    matricula,
-    mensagem,
+    tipo: "INSPECAO", inspecao, dados, matricula, mensagem,
+  })
+}
+
+// ---------- VIN Plate ----------
+
+async function processVINPlate(fileContent: ContentBlock, supabase: SupabaseClient) {
+  const vinRes = await anthropic.messages.create({
+    model: "claude-sonnet-4-5-20250929",
+    max_tokens: 100,
+    messages: [{
+      role: "user",
+      content: [fileContent, { type: "text", text: VIN_PROMPT }],
+    }],
+  })
+
+  const vin = vinRes.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text.trim()).join("")
+
+  if (vin === "ILEGIVEL" || vin.length !== 17) {
+    return NextResponse.json({ tipo: "VIN_PLATE", error: "VIN ilegível", vin_tentativa: vin })
+  }
+
+  const { data: obra } = await supabase.from("obras").select("id, estado, lugar_parque").eq("vin", vin).maybeSingle()
+  const { data: lugaresLivres } = await supabase
+    .from("lugares_parque").select("numero")
+    .eq("ocupado", false).order("numero").limit(10)
+
+  return NextResponse.json({
+    tipo: "VIN_PLATE", vin,
+    obra: obra || null,
+    lugares_livres: (lugaresLivres || []).map((l) => l.numero),
+    mensagem: obra
+      ? `✅ VIN identificado: ${vin}\nObra ${obra.id} encontrada (${obra.estado}).`
+      : `✅ VIN identificado: ${vin}\nNenhuma obra associada.`,
+  })
+}
+
+// ---------- CIT ----------
+
+async function processCIT(
+  fileContent: ContentBlock,
+  file: File,
+  uploadedBy: string,
+  supabase: SupabaseClient
+) {
+  const extractRes = await anthropic.messages.create({
+    model: "claude-sonnet-4-5-20250929",
+    max_tokens: 2048,
+    messages: [{
+      role: "user",
+      content: [fileContent, { type: "text", text: CIT_PROMPT }],
+    }],
+  })
+
+  const rawText = extractRes.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text).join("")
+
+  let dados: Record<string, unknown>
+  try {
+    dados = JSON.parse(cleanJSON(rawText))
+  } catch {
+    return NextResponse.json({ tipo: "CIT", error: "Erro ao extrair dados do CIT", raw: rawText })
+  }
+
+  const numeroCit = dados.numero_cit as string | null
+
+  if (numeroCit) {
+    const { data: existing } = await supabase
+      .from("cits").select("id").eq("numero_cit", numeroCit).maybeSingle()
+    if (existing) {
+      return NextResponse.json({
+        tipo: "CIT", duplicado: true, cit_id: existing.id,
+        mensagem: `⚠️ CIT ${numeroCit} já existe no sistema.`,
+      })
+    }
+  }
+
+  const ext = file.name.split(".").pop() || "pdf"
+  const tipoCitTag = (dados.tipo_cit as string) === "prorrogacao" ? "PRORR" : "INIC"
+  const nomeUtenteCit = ((dados.nome_utente as string) || "DESCONHECIDO").replace(/\s+/g, "-")
+  const fileName = `CIT_${tipoCitTag}_${nomeUtenteCit}_${dados.data_inicio || "?"}_${dados.data_fim || "?"}_${Date.now()}.${ext}`
+
+  await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
+    contentType: file.type,
+  })
+  const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
+
+  // Fuzzy match colaborador
+  const nomeUtente = dados.nome_utente as string | null
+  let matchedColaboradorId: string | null = null
+  let matchedColaboradorNome: string | null = null
+
+  if (nomeUtente) {
+    const { data: colaboradores } = await supabase.from("colaboradores").select("id, nome").eq("ativo", true)
+    if (colaboradores) {
+      const nomeNorm = normalize(nomeUtente)
+      for (const c of colaboradores) {
+        const cNorm = normalize(c.nome)
+        if (nomeNorm.includes(cNorm) || cNorm.includes(nomeNorm)) {
+          matchedColaboradorId = c.id
+          matchedColaboradorNome = c.nome
+          break
+        }
+      }
+    }
+  }
+
+  return NextResponse.json({
+    tipo: "CIT_PREVIEW", dados,
+    file_url: urlData?.signedUrl || "",
+    file_path: fileName,
+    colaborador_match: matchedColaboradorId ? { id: matchedColaboradorId, nome: matchedColaboradorNome } : null,
+    numero_cit: numeroCit,
+    mensagem: "🏥 CIT detectado. Confirma os dados extraídos:",
   })
 }
 
 // ---------- OUTRO ----------
 
-async function processOUTRO(
-  file: File,
-  uploadedBy: string,
-  supabase: ReturnType<typeof getServiceSupabase>
-) {
-  // Upload to storage
+async function processOUTRO(file: File, uploadedBy: string, supabase: SupabaseClient) {
   const fileName = `OUTRO_${file.name}`
   const arrayBuffer = await file.arrayBuffer()
-  await supabase.storage.from("documentos").upload(fileName, Buffer.from(arrayBuffer), {
-    contentType: file.type,
-  })
+  await supabase.storage.from("documentos").upload(fileName, Buffer.from(arrayBuffer), { contentType: file.type })
   const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
-  // Store in documentos_rh as generic
-  const { data: doc } = await supabase
-    .from("documentos_rh")
-    .insert({
-      colaborador_id: uploadedBy,
-      tipo: "outro",
-      nome_ficheiro: file.name,
-      url: urlData?.signedUrl || "",
-      uploaded_by: uploadedBy,
-    })
-    .select()
-    .single()
+  const { data: doc } = await supabase.from("documentos_rh").insert({
+    colaborador_id: uploadedBy,
+    tipo: "outro",
+    nome_ficheiro: file.name,
+    url: urlData?.signedUrl || "",
+    uploaded_by: uploadedBy,
+  }).select().single()
 
   return NextResponse.json({
-    tipo: "OUTRO",
-    documento: doc,
-    mensagem: `Documento carregado mas não identifiquei como DAV, FAM ou CIT. Guardado como documento genérico.`,
+    tipo: "OUTRO", documento: doc,
+    mensagem: "Documento carregado mas não identificado como DAV, FAM, CIT ou Inspeção. Guardado como genérico.",
   })
-}
-
-// ---------- Utils ----------
-
-function formatDate(dateStr: string): string {
-  try {
-    const [y, m, d] = dateStr.split("-")
-    return `${d}/${m}/${y}`
-  } catch {
-    return dateStr
-  }
 }
