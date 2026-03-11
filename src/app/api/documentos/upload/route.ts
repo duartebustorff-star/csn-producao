@@ -202,7 +202,7 @@ async function verificarEGerarTermo(
   obraId: string,
   supabase: SupabaseClient
 ): Promise<{ termoGerado: boolean; termoUrl: string | null; mensagem: string }> {
-  // Verificar se DAV + FAM + INSPECAO estão todos ok
+  // Verificar se DAV + INSPECAO estão ok (FAM não obrigatória para termo)
   const { data: docs } = await supabase
     .from("dossie_obra")
     .select("tipo, estado, ficheiro_url")
@@ -212,7 +212,6 @@ async function verificarEGerarTermo(
   if (!docs) return { termoGerado: false, termoUrl: null, mensagem: "" }
 
   const dav = docs.find(d => d.tipo === "dav")
-  const fam = docs.find(d => d.tipo === "fam")
   const insp = docs.find(d => d.tipo === "inspecao")
   const termo = docs.find(d => d.tipo === "termo_responsabilidade")
 
@@ -224,17 +223,17 @@ async function verificarEGerarTermo(
   // Falta algum documento?
   const faltam = []
   if (dav?.estado !== "ok") faltam.push("DAV")
-    if (insp?.estado !== "ok") faltam.push("Inspeção")
+  if (insp?.estado !== "ok") faltam.push("Inspeção")
 
   if (faltam.length > 0) {
     return {
       termoGerado: false,
       termoUrl: null,
-      mensagem: `\n⏳ Dossier incompleto — falta: ${faltam.join(", ")}`,
+      mensagem: `\n⏳ Dossier incompleto – falta: ${faltam.join(", ")}`,
     }
   }
 
-  // Todos presentes — buscar dados para o termo
+  // Todos presentes – buscar dados para o termo
   const { data: obra } = await supabase
     .from("obras")
     .select("id, vin, matricula, leads(tipo_carrocaria, dimensoes, pbt)")
@@ -288,8 +287,6 @@ async function verificarEGerarTermo(
     const termoData = await res.json()
 
     if (termoData.sucesso && termoData.download_url) {
-      // Marcar termo como ok no dossier
-      await marcarDossierOk(obraId, "dav", termoData.download_url, supabase)
       await supabase
         .from("dossie_obra")
         .update({
@@ -305,7 +302,7 @@ async function verificarEGerarTermo(
       return {
         termoGerado: true,
         termoUrl: termoData.download_url,
-        mensagem: `\n📋 DAV + FAM + Inspeção completos → **Termo gerado automaticamente!**\n🔗 ${termoData.download_url}`,
+        mensagem: `\n📋 DAV + Inspeção completos → **Termo gerado automaticamente!**\n🔗 ${termoData.download_url}`,
       }
     }
   } catch (err) {
@@ -436,13 +433,12 @@ async function processDAV(
   }
 
   const marcaModelo = [dados.marca, dados.modelo].filter(Boolean).join(" ")
-  let mensagem = `✅ DAV ${existing ? "atualizado" : "registado"} — VIN: ${vin}`
+  let mensagem = `✅ DAV ${existing ? "atualizado" : "registado"} – VIN: ${vin}`
     + (dados.matricula ? `, Matrícula: ${dados.matricula}` : "")
     + (marcaModelo ? `, ${marcaModelo}` : "")
     + (dados.cod_homologacao ? `\nHomologação: ${dados.cod_homologacao}` : "")
     + (obra ? `\nAssociado à obra ${obra.id}.` : "")
 
-  // Dossier: marcar DAV como ok e verificar se gera termo
   let termoGerado = false
   let termoUrl = null
   if (obra) {
@@ -452,7 +448,7 @@ async function processDAV(
     termoUrl = resultado.termoUrl
     mensagem += resultado.mensagem
   } else {
-    mensagem += "\n⚠️ Obra não encontrada para este VIN — dossier não atualizado."
+    mensagem += "\n⚠️ Obra não encontrada para este VIN – dossier não atualizado."
   }
 
   return NextResponse.json({
@@ -498,7 +494,6 @@ async function processFAM(
   const extensao = (dados.extensao as string) || "0"
   if (!numHomologacao) return NextResponse.json({ tipo: "FAM", error: "Número de homologação não encontrado" })
 
-  // Upload storage
   const ext = file.name.split(".").pop() || "pdf"
   const fileName = `FAM_${numHomologacao}_${Date.now()}.${ext}`
   await supabase.storage.from("documentos").upload(fileName, Buffer.from(await file.arrayBuffer()), {
@@ -507,7 +502,6 @@ async function processFAM(
   const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
   const ficheiroUrl = urlData?.signedUrl || ""
 
-  // Upsert FAM
   const famRecord: Record<string, unknown> = {
     ...dados,
     url_ficheiro: ficheiroUrl,
@@ -533,7 +527,6 @@ async function processFAM(
     fam = data
   }
 
-  // Encontrar todas as obras cujo DAV tem este cod_homologacao
   const { data: davsAssociados } = await supabase
     .from("davs")
     .select("vin")
@@ -544,32 +537,21 @@ async function processFAM(
 
   if (davsAssociados && davsAssociados.length > 0) {
     const vins = davsAssociados.map(d => d.vin).filter(Boolean)
-
     for (const vin of vins) {
-      const { data: obra } = await supabase
-        .from("obras").select("id")
-        .eq("vin", vin).maybeSingle()
-
+      const { data: obra } = await supabase.from("obras").select("id").eq("vin", vin).maybeSingle()
       if (obra) {
         await marcarDossierOk(obra.id, "fam", ficheiroUrl, supabase)
         obrasAtualizadas++
-
         const resultado = await verificarEGerarTermo(obra.id, supabase)
-        if (resultado.termoGerado) {
-          mensagemTermo += `\nObra ${obra.id}: ${resultado.mensagem}`
-        } else if (resultado.mensagem) {
-          mensagemTermo += `\nObra ${obra.id}: ${resultado.mensagem}`
-        }
+        if (resultado.mensagem) mensagemTermo += `\nObra ${obra.id}: ${resultado.mensagem}`
       }
     }
   }
 
   const marcaModelo = [dados.campo_0_1_marca, dados.campo_0_2_modelo].filter(Boolean).join(" ")
-  let mensagem = `✅ FAM ${existing ? "atualizada" : "registada"} — Homologação: ${numHomologacao} ext. ${extensao}`
+  const mensagem = `✅ FAM ${existing ? "atualizada" : "registada"} – Homologação: ${numHomologacao} ext. ${extensao}`
     + (marcaModelo ? `, ${marcaModelo}` : "")
-    + (dados.campo_37_2_comprimento_exterior_max ? `\nComprimento máx: ${dados.campo_37_2_comprimento_exterior_max}mm` : "")
-    + (dados.campo_37_6_largura_exterior_max ? `, Largura máx: ${dados.campo_37_6_largura_exterior_max}mm` : "")
-    + (obrasAtualizadas > 0 ? `\n📁 Dossier atualizado em ${obrasAtualizadas} obra(s).` : "")
+    + (obrasAtualizadas > 0 ? `\n📝 Dossier atualizado em ${obrasAtualizadas} obra(s).` : "")
     + mensagemTermo
 
   return NextResponse.json({
@@ -615,17 +597,40 @@ async function processINSPECAO(
 
   const dataInspecao = dados.data_inspecao as string | null
 
-  // Anti-duplicado
+  // Helper: correr dossier e termo para esta matrícula
+  async function correrDossierInspecao(ficheiroUrl: string) {
+    const { data: davAssociado } = await supabase
+      .from("davs").select("vin")
+      .eq("matricula", matricula).maybeSingle()
+
+    if (davAssociado?.vin) {
+      const { data: obra } = await supabase
+        .from("obras").select("id")
+        .eq("vin", davAssociado.vin).maybeSingle()
+
+      if (obra) {
+        await marcarDossierOk(obra.id, "inspecao", ficheiroUrl, supabase)
+        return await verificarEGerarTermo(obra.id, supabase)
+      }
+    }
+    return null
+  }
+
+  // Anti-duplicado — mas corre dossier na mesma
   if (dataInspecao) {
     const { data: existing } = await supabase
-      .from("inspecoes").select("id")
+      .from("inspecoes").select("id, url_ficheiro")
       .eq("matricula", matricula).eq("data_inspecao", dataInspecao)
       .maybeSingle()
 
     if (existing) {
+      const resultado = await correrDossierInspecao(existing.url_ficheiro || "")
       return NextResponse.json({
-        tipo: "INSPECAO", duplicado: true, inspecao_id: existing.id,
-        mensagem: `⚠️ Inspeção de ${matricula} em ${formatDate(dataInspecao)} já existe.`,
+        tipo: "INSPECAO",
+        duplicado: true,
+        inspecao_id: existing.id,
+        mensagem: `⚠️ Inspeção de ${matricula} em ${formatDate(dataInspecao)} já existe.`
+          + (resultado?.mensagem || ""),
       })
     }
   }
@@ -684,7 +689,6 @@ async function processINSPECAO(
     return NextResponse.json({ tipo: "INSPECAO", error: "Erro ao registar inspeção" }, { status: 500 })
   }
 
-  // Pesos
   const pesoTotal = dados.peso_estatico_total as number | null
   const pesoEixo1 = dados.peso_estatico_eixo1_total as number | null
   const pesoEixo2 = dados.peso_estatico_eixo2_total as number | null
@@ -703,27 +707,13 @@ async function processINSPECAO(
     }
   }
 
-  let mensagem = `✅ Inspeção registada — Matrícula: ${matricula}, Data: ${formatDate(dataInspecao || "")}.${resultadoStr}${pesosStr}`
+  let mensagem = `✅ Inspeção registada – Matrícula: ${matricula}, Data: ${formatDate(dataInspecao || "")}.${resultadoStr}${pesosStr}`
 
-  // Dossier: encontrar obra pela matrícula via DAV
-  const { data: davAssociado } = await supabase
-    .from("davs").select("vin")
-    .eq("matricula", matricula).maybeSingle()
-
-  if (davAssociado?.vin) {
-    const { data: obra } = await supabase
-      .from("obras").select("id")
-      .eq("vin", davAssociado.vin).maybeSingle()
-
-    if (obra) {
-      await marcarDossierOk(obra.id, "inspecao", ficheiroUrl, supabase)
-      const resultado = await verificarEGerarTermo(obra.id, supabase)
-      mensagem += resultado.mensagem
-    } else {
-      mensagem += "\n⚠️ Obra não encontrada para esta matrícula — dossier não atualizado."
-    }
+  const resultado = await correrDossierInspecao(ficheiroUrl)
+  if (resultado) {
+    mensagem += resultado.mensagem
   } else {
-    mensagem += "\n⚠️ DAV não encontrado para esta matrícula — dossier não atualizado."
+    mensagem += "\n⚠️ DAV não encontrado para esta matrícula – dossier não atualizado."
   }
 
   return NextResponse.json({
@@ -817,7 +807,6 @@ async function processCIT(
   })
   const { data: urlData } = await supabase.storage.from("documentos").createSignedUrl(fileName, 60 * 60 * 24 * 365)
 
-  // Fuzzy match colaborador
   const nomeUtente = dados.nome_utente as string | null
   let matchedColaboradorId: string | null = null
   let matchedColaboradorNome: string | null = null
@@ -868,5 +857,3 @@ async function processOUTRO(file: File, uploadedBy: string, supabase: SupabaseCl
     mensagem: "Documento carregado mas não identificado como DAV, FAM, CIT ou Inspeção. Guardado como genérico.",
   })
 }
-
-
