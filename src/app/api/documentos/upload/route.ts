@@ -207,7 +207,7 @@ async function verificarEGerarTermo(
     .from("dossie_obra")
     .select("tipo, estado, ficheiro_url")
     .eq("obra_id", obraId)
-    .in("tipo", ["dav", "fam", "inspecao", "termo_responsabilidade"])
+    .in("tipo", ["dav", "inspecao", "termo_responsabilidade"])
 
   if (!docs) return { termoGerado: false, termoUrl: null, mensagem: "" }
 
@@ -224,8 +224,7 @@ async function verificarEGerarTermo(
   // Falta algum documento?
   const faltam = []
   if (dav?.estado !== "ok") faltam.push("DAV")
-  if (fam?.estado !== "ok") faltam.push("FAM")
-  if (insp?.estado !== "ok") faltam.push("Inspeção")
+    if (insp?.estado !== "ok") faltam.push("Inspeção")
 
   if (faltam.length > 0) {
     return {
@@ -869,3 +868,5 @@ async function processOUTRO(file: File, uploadedBy: string, supabase: SupabaseCl
     mensagem: "Documento carregado mas não identificado como DAV, FAM, CIT ou Inspeção. Guardado como genérico.",
   })
 }
+
+
