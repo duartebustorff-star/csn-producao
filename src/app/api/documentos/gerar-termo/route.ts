@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
 import { createClient } from "@supabase/supabase-js"
+import fs from "fs"
+import path from "path"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,160 +12,253 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const {
-      obra_id,
-      marca,
-      modelo,
-      matricula,
-      vin,
-      cod_homologacao,
-      tipo_carrocaria,
-      comprimento,
-      largura,
-      altura,
-      dist_eixo_frente,
-      dist_eixo_retaguarda,
-      tara_total,
-      tara_frontal,
-      tara_traseira,
-      peso_bruto,
-    } = body
+    const { obra_id } = body
 
-    // ── 1. Criar PDF ────────────────────────────────────────────────────────
+    if (!obra_id) {
+      return NextResponse.json({ error: "obra_id obrigatorio" }, { status: 400 })
+    }
+
+    // Buscar obra
+    const { data: obra, error: obraError } = await supabase
+      .from("obras")
+      .select("id, matricula, vin, lead_id")
+      .eq("id", obra_id)
+      .maybeSingle()
+
+    if (obraError || !obra) {
+      return NextResponse.json({ error: "Obra nao encontrada" }, { status: 404 })
+    }
+
+    // Buscar lead
+    const { data: lead } = await supabase
+      .from("leads")
+      .select("tipo_carrocaria, comprimento_ext, largura_ext, altura_ext, pbt, tara")
+      .eq("id", obra.lead_id)
+      .maybeSingle()
+
+    // Buscar DAV pela matricula
+    const { data: dav } = await supabase
+      .from("davs")
+      .select("marca, modelo, cod_homologacao, peso_bruto, tara")
+      .eq("matricula", obra.matricula)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    const matricula = obra.matricula || "-"
+    const vin = obra.vin || "-"
+    const marca = dav?.marca || "-"
+    const modelo = dav?.modelo || "-"
+    const cod_homologacao = dav?.cod_homologacao || "-"
+    const peso_bruto = dav?.peso_bruto ? String(dav.peso_bruto) : "-"
+    const tara_total = dav?.tara ? String(dav.tara) : "-"
+    const tipo_carrocaria = lead?.tipo_carrocaria || "-"
+    const comprimento = lead?.comprimento_ext ? String(lead.comprimento_ext) : "-"
+    const largura = lead?.largura_ext ? String(lead.largura_ext) : "-"
+    const altura = lead?.altura_ext ? String(lead.altura_ext) : "-"
+
+    // Gerar PDF
     const pdfDoc = await PDFDocument.create()
-    const page = pdfDoc.addPage([595, 842]) // A4
+    const page = pdfDoc.addPage([595, 842])
     const { width, height } = page.getSize()
 
     const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-    const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica)
+    const fontReg  = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
     const BLACK = rgb(0, 0, 0)
-    const GRAY = rgb(0.4, 0.4, 0.4)
-    const BLUE = rgb(0.05, 0.3, 0.6)
+    const GRAY  = rgb(0.4, 0.4, 0.4)
 
-    // Cabeçalho
-    page.drawRectangle({ x: 0, y: height - 60, width, height: 60, color: BLUE })
-    page.drawText("CSN — Engenharia de Veículos Comerciais", {
-      x: 30, y: height - 22,
-      size: 14, font: fontBold, color: rgb(1, 1, 1),
-    })
-    page.drawText("Estrada Nacional 116 · Mafra · Portugal · NIF: 506 073 196", {
-      x: 30, y: height - 40,
-      size: 8, font: fontReg, color: rgb(0.85, 0.85, 0.85),
-    })
+    const L = 56
+    const R = width - 56
+    const W = R - L
 
-    // Título
-    page.drawText("TERMO DE RESPONSABILIDADE", {
-      x: 30, y: height - 90,
-      size: 16, font: fontBold, color: BLUE,
-    })
-    page.drawText("Transformação / Carroçamento de Veículo Comercial", {
-      x: 30, y: height - 110,
-      size: 10, font: fontReg, color: GRAY,
-    })
-    page.drawLine({ start: { x: 30, y: height - 118 }, end: { x: width - 30, y: height - 118 }, thickness: 1, color: BLUE })
-
-    // Secção: Identificação do Veículo
-    let y = height - 145
-    const drawSection = (title: string, yPos: number) => {
-      page.drawText(title, { x: 30, y: yPos, size: 10, font: fontBold, color: BLUE })
-      page.drawLine({ start: { x: 30, y: yPos - 4 }, end: { x: width - 30, y: yPos - 4 }, thickness: 0.5, color: rgb(0.8, 0.8, 0.8) })
-    }
-    const drawField = (label: string, value: string, x: number, yPos: number) => {
-      page.drawText(label + ":", { x, y: yPos, size: 8, font: fontBold, color: GRAY })
-      page.drawText(value || "—", { x: x + 100, y: yPos, size: 9, font: fontReg, color: BLACK })
+    // LOGO
+    try {
+      const logoPath = path.join(process.cwd(), "public", "logo-horizontal.png")
+      if (fs.existsSync(logoPath)) {
+        const logoBytes = fs.readFileSync(logoPath)
+        const logoImg = await pdfDoc.embedPng(logoBytes)
+        const logoDims = logoImg.scale(0.18)
+        page.drawImage(logoImg, {
+          x: width / 2 - logoDims.width / 2,
+          y: height - 90,
+          width: logoDims.width,
+          height: logoDims.height,
+        })
+      }
+    } catch {
+      page.drawText("CSN", { x: width / 2 - 20, y: height - 70, size: 28, font: fontBold, color: BLACK })
+      page.drawText("TRANSFORMACAO DE VEICULOS", { x: width / 2 - 80, y: height - 86, size: 8, font: fontBold, color: BLACK })
     }
 
-    drawSection("1. IDENTIFICAÇÃO DO VEÍCULO BASE", y)
-    y -= 20
-    drawField("Marca", marca, 30, y)
-    drawField("Modelo", modelo, 220, y)
-    y -= 16
-    drawField("Matrícula", matricula, 30, y)
-    drawField("VIN", vin, 220, y)
-    y -= 16
-    drawField("Cód. Homologação", cod_homologacao, 30, y)
-    drawField("Peso Bruto Total", peso_bruto ? `${peso_bruto} kg` : "—", 220, y)
+    let y = height - 110
 
-    y -= 30
-    drawSection("2. IDENTIFICAÇÃO DA CARROÇARIA", y)
-    y -= 20
-    drawField("Tipo de Carroçaria", tipo_carrocaria, 30, y)
-    y -= 16
-    drawField("Comprimento", comprimento ? `${comprimento} mm` : "—", 30, y)
-    drawField("Largura", largura ? `${largura} mm` : "—", 220, y)
-    y -= 16
-    drawField("Altura", altura ? `${altura} mm` : "—", 30, y)
-    y -= 16
-    drawField("Distância eixo frente", dist_eixo_frente ? `${dist_eixo_frente} mm` : "—", 30, y)
-    drawField("Distância eixo retaguarda", dist_eixo_retaguarda ? `${dist_eixo_retaguarda} mm` : "—", 220, y)
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
+    y -= 22
 
-    y -= 30
-    drawSection("3. PESOS APÓS TRANSFORMAÇÃO (Inspeção Controlauto)", y)
+    const title = "TERMO DE RESPONSABILIDADE"
+    const titleW = fontBold.widthOfTextAtSize(title, 14)
+    page.drawText(title, { x: width / 2 - titleW / 2, y, size: 14, font: fontBold, color: BLACK })
+    y -= 6
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
     y -= 20
-    drawField("Tara Total", tara_total ? `${tara_total} kg` : "—", 30, y)
-    y -= 16
-    drawField("Tara Eixo Frontal", tara_frontal ? `${tara_frontal} kg` : "—", 30, y)
-    drawField("Tara Eixo Traseiro", tara_traseira ? `${tara_traseira} kg` : "—", 220, y)
 
-    y -= 30
-    drawSection("4. DECLARAÇÃO DE CONFORMIDADE", y)
-    y -= 20
-    const declaracaoText = [
-      "A Carlos dos Santos Nascimento, Lda (CSN) declara que a transformação efectuada no veículo identificado",
-      "neste documento foi realizada de acordo com as regras da arte, respeitando os requisitos técnicos aplicáveis,",
-      "nomeadamente o Regulamento (UE) 2018/858, a Directiva 96/53/CE (pesos e dimensões), e as boas práticas",
-      "de construção de carroçarias para veículos comerciais.",
-      "",
-      "A CSN declara ainda que a montagem não comprometeu nenhum sistema de segurança activo ou passivo",
-      "do veículo base, incluindo sistemas AEB, câmaras de assistência à condução e estrutura do chassi.",
+    const tipoCarrocaria = tipo_carrocaria.toUpperCase()
+
+    const textoIntro = [
+      "Eu, abaixo assinado com poderes para o efeito, na qualidade de gerente da empresa Carlos dos Santos",
+      "Nascimento, Lda, com o n.\u00BA de contribuinte 500 861790 e sede em Rua da Industria n.\u00BA 8, Casal do",
+      "Rodo, 2640-216 Encarnacao, declara que a carrocaria produzida e do Tipo:",
     ]
-    for (const line of declaracaoText) {
-      page.drawText(line, { x: 30, y, size: 8, font: fontReg, color: BLACK })
+
+    for (const linha of textoIntro) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
       y -= 13
     }
+    y -= 4
 
-    y -= 20
-    drawSection("5. ASSINATURAS", y)
+    const tipoW = fontBold.widthOfTextAtSize(tipoCarrocaria, 11)
+    page.drawText(tipoCarrocaria, { x: width / 2 - tipoW / 2, y, size: 11, font: fontBold, color: BLACK })
+    y -= 16
+
+    const textoConf = [
+      "esta em conformidade com as disposicoes legais aplicaveis, cumpre com as caracteristicas definidas na",
+      "folha de aprovacao de modelo e obedece as caracteristicas estabelecidas na Norma Portuguesa em",
+      "vigor.",
+    ]
+
+    for (const linha of textoConf) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      y -= 13
+    }
+    y -= 16
+
+    // TABELA VEICULO
+    const tableTop = y
+    const rowH = 18
+    const col1W = 120
+    const tableW = W
+
+    page.drawRectangle({ x: L, y: tableTop - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    page.drawText("Veiculo:", { x: L + 4, y: tableTop - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y = tableTop - rowH
+
+    const veiculoRows = [
+      ["Marca:", marca],
+      ["Modelo:", modelo],
+      ["Matricula:", matricula],
+      ["VIN:", vin],
+      ["Cod. Homologacao", cod_homologacao],
+    ]
+
+    for (const [label, value] of veiculoRows) {
+      page.drawRectangle({ x: L, y: y - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      page.drawText(label, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      page.drawText(value, { x: L + col1W, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+      y -= rowH
+    }
+
+    y -= 16
+
+    // TABELA DIMENSOES / PESOS
+    const halfW = W / 2
+    const col2Start = L + halfW
+
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr1W = fontBold.widthOfTextAtSize("Carrocaria", 9)
+    page.drawText("Carrocaria", { x: L + halfW / 2 - hdr1W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr2W = fontBold.widthOfTextAtSize("Conjunto", 9)
+    page.drawText("Conjunto", { x: col2Start + halfW / 2 - hdr2W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr3W = fontBold.widthOfTextAtSize("Dimensoes exteriores (mm)", 9)
+    page.drawText("Dimensoes exteriores (mm)", { x: L + halfW / 2 - hdr3W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr4W = fontBold.widthOfTextAtSize("Pesos (Kg)", 9)
+    page.drawText("Pesos (Kg)", { x: col2Start + halfW / 2 - hdr4W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    const dimCol = 100
+    const pesoCol = 110
+
+    const dimRows = [
+      ["Comprimento", comprimento],
+      ["Largura", largura],
+      ["Altura", altura],
+      ["Dist. eixo ret. a frente", "-"],
+      ["Dist. eixo ret. a retaguarda", "-"],
+    ]
+
+    const pesoRows = [
+      ["Peso bruto:", peso_bruto],
+      ["Peso tara total:", tara_total],
+      ["Peso tara frontal:", "-"],
+      ["Peso tara traseira:", "-"],
+      ["", ""],
+    ]
+
+    const maxRows = Math.max(dimRows.length, pesoRows.length)
+    for (let i = 0; i < maxRows; i++) {
+      const [dLabel, dVal] = dimRows[i] || ["", ""]
+      const [pLabel, pVal] = pesoRows[i] || ["", ""]
+
+      page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (dLabel) page.drawText(dLabel, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (dVal) page.drawText(dVal, { x: L + dimCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (pLabel) page.drawText(pLabel, { x: col2Start + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (pVal) page.drawText(pVal, { x: col2Start + pesoCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      y -= rowH
+    }
+
     y -= 30
-    // Linha assinatura CSN
-    page.drawLine({ start: { x: 30, y }, end: { x: 230, y }, thickness: 0.5, color: BLACK })
-    page.drawText("Responsável CSN", { x: 30, y: y - 12, size: 8, font: fontReg, color: GRAY })
-    page.drawText("Data: _____ / _____ / __________", { x: 30, y: y - 24, size: 8, font: fontReg, color: GRAY })
 
-    page.drawLine({ start: { x: 320, y }, end: { x: 560, y }, thickness: 0.5, color: BLACK })
-    page.drawText("Cliente / Receptor", { x: 320, y: y - 12, size: 8, font: fontReg, color: GRAY })
-    page.drawText("Data: _____ / _____ / __________", { x: 320, y: y - 24, size: 8, font: fontReg, color: GRAY })
+    // LOCAL E DATA
+    const dataGeracao = new Date()
+    const meses = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    const dataStr = `Encarnacao, ${String(dataGeracao.getDate()).padStart(2,"0")} de ${meses[dataGeracao.getMonth()]} de ${dataGeracao.getFullYear()}`
+    page.drawText(dataStr, { x: L, y, size: 9, font: fontReg, color: BLACK })
 
-    // Rodapé
-    const dataGeracao = new Date().toLocaleDateString("pt-PT")
-    page.drawText(`Documento gerado em ${dataGeracao} pelo sistema CSN. Obra: ${obra_id}`, {
-      x: 30, y: 25, size: 7, font: fontReg, color: GRAY,
-    })
+    y -= 60
 
+    // ASSINATURA
+    const sigW = 200
+    const sigX = width / 2 - sigW / 2
+    page.drawLine({ start: { x: sigX, y: y + 10 }, end: { x: sigX + sigW, y: y + 10 }, thickness: 0.5, color: BLACK })
+
+    const nome = "Duarte da Cunha Martins Bustorff-Silva"
+    const nomeW = fontBold.widthOfTextAtSize(nome, 10)
+    page.drawText(nome, { x: width / 2 - nomeW / 2, y, size: 10, font: fontBold, color: BLACK })
+    y -= 14
+
+    const certidao = "Certidao Permanente Codigo de acesso: 3172-1374-8252"
+    const certW = fontReg.widthOfTextAtSize(certidao, 8)
+    page.drawText(certidao, { x: width / 2 - certW / 2, y, size: 8, font: fontReg, color: GRAY })
+
+    // GUARDAR NO SUPABASE
     const pdfBytes = await pdfDoc.save()
-
-    // ── 2. Upload para Supabase Storage ─────────────────────────────────────
-    const dataStr = new Date().toISOString().slice(0, 10).replace(/-/g, "")
-    const fileName = `TERM_${obra_id}_${dataStr}.pdf`
+    const dataStr2 = new Date().toISOString().slice(0, 10).replace(/-/g, "")
+    const fileName = `TERM_${obra_id}_${dataStr2}.pdf`
     const storagePath = `termos/${fileName}`
 
     const { error: uploadError } = await supabase.storage
       .from("documentos")
-      .upload(storagePath, pdfBytes, {
-        contentType: "application/pdf",
-        upsert: true,
-      })
+      .upload(storagePath, pdfBytes, { contentType: "application/pdf", upsert: true })
 
     if (uploadError) {
-      console.error("Erro upload Storage:", uploadError)
-      return NextResponse.json({ error: "Erro ao guardar PDF no Storage" }, { status: 500 })
+      console.error("Erro upload:", uploadError)
+      return NextResponse.json({ error: "Erro ao guardar PDF" }, { status: 500 })
     }
 
-    // ── 3. Gerar URL pública (signed, 7 dias) ───────────────────────────────
     const { data: signedUrl } = await supabase.storage
       .from("documentos")
-      .createSignedUrl(storagePath, 60 * 60 * 24 * 7) // 7 dias
+      .createSignedUrl(storagePath, 60 * 60 * 24 * 7)
 
     return NextResponse.json({
       sucesso: true,
@@ -171,8 +266,9 @@ export async function POST(req: NextRequest) {
       download_url: signedUrl?.signedUrl ?? null,
       file_name: fileName,
     })
+
   } catch (err) {
     console.error("Erro gerar-termo:", err)
-    return NextResponse.json({ error: "Erro interno ao gerar Termo" }, { status: 500 })
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 })
   }
 }
