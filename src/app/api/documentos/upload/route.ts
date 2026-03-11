@@ -256,7 +256,7 @@ async function verificarEGerarTermo(
     .limit(1)
     .maybeSingle()
 
-  const lead = obra.leads as Record<string, unknown> | null
+  const lead = obra.leads as unknown as Record<string, unknown> | null
 
   const termoBody = {
     obra_id: obraId,
