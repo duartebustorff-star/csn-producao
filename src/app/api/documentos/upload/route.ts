@@ -189,7 +189,7 @@ async function marcarDossierOk(
       estado: "ok",
       ficheiro_url: ficheiroUrl,
       concluido_em: new Date().toISOString(),
-      concluido_por: "system",
+      concluido_por: null,
       updated_at: new Date().toISOString(),
     })
     .eq("obra_id", obraId)
@@ -276,7 +276,7 @@ async function verificarEGerarTermo(
           estado: "ok",
           ficheiro_url: termoData.download_url,
           concluido_em: new Date().toISOString(),
-          concluido_por: "system",
+          concluido_por: null,
           updated_at: new Date().toISOString(),
         })
         .eq("obra_id", obraId)
