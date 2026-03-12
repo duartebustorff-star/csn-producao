@@ -5,10 +5,22 @@ export async function GET(req: NextRequest) {
   const tipo = req.nextUrl.searchParams.get("tipo")
   const userId = req.nextUrl.searchParams.get("user_id")
   const role = req.nextUrl.searchParams.get("role")
+  const obraId = req.nextUrl.searchParams.get("obra_id")
   const isAdmin = role === "admin"
   const supabase = getServiceSupabase()
 
   try {
+    // --- DOSSIER POR OBRA ---
+    if (obraId) {
+      const { data, error } = await supabase
+        .from("dossie_obra")
+        .select("tipo, estado, ficheiro_url, concluido_em")
+        .eq("obra_id", obraId)
+        .order("tipo")
+      if (error) throw error
+      return NextResponse.json({ documentos: data || [] })
+    }
+
     // Non-admin can only access CITs
     if (!isAdmin && tipo && tipo !== "cits") {
       return NextResponse.json({ documentos: [] })
@@ -71,7 +83,6 @@ export async function GET(req: NextRequest) {
     }
 
     if (!isAdmin) {
-      // Workers only get CITs count
       const cits = await citsCountQuery
       return NextResponse.json({
         counts: { davs: 0, fams: 0, inspecoes: 0, cits: cits.count || 0, outros: 0 },
