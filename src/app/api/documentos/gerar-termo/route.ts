@@ -221,7 +221,7 @@ export async function POST(req: NextRequest) {
 
     // LOCAL E DATA
     const dataGeracao = new Date()
-    const meses = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    const meses = ["Janeiro","Fevereiro","Marco","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
     const dataStr = `Encarnacao, ${String(dataGeracao.getDate()).padStart(2,"0")} de ${meses[dataGeracao.getMonth()]} de ${dataGeracao.getFullYear()}`
     page.drawText(dataStr, { x: L, y, size: 9, font: fontReg, color: BLACK })
 
