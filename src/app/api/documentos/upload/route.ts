@@ -258,27 +258,10 @@ async function verificarEGerarTermo(
 
   const lead = obra.leads as unknown as Record<string, unknown> | null
 
-  const termoBody = {
-    obra_id: obraId,
-    marca: davRecord?.marca || null,
-    modelo: davRecord?.modelo || null,
-    matricula: obra.matricula || davRecord?.matricula || null,
-    vin: obra.vin || null,
-    cod_homologacao: davRecord?.cod_homologacao || null,
-    tipo_carrocaria: lead?.tipo_carrocaria || null,
-    comprimento: null,
-    largura: null,
-    altura: null,
-    dist_eixo_frente: null,
-    dist_eixo_retaguarda: null,
-    tara_total: inspecaoRecord?.peso_estatico_total || null,
-    tara_frontal: inspecaoRecord?.peso_estatico_eixo1_total || null,
-    tara_traseira: inspecaoRecord?.peso_estatico_eixo2_total || null,
-    peso_bruto: davRecord?.peso_bruto || lead?.pbt || null,
-  }
+  const termoBody = { obra_id: obraId }
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://csn-producao.vercel.app"
     const res = await fetch(`${baseUrl}/api/documentos/gerar-termo`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -857,3 +840,4 @@ async function processOUTRO(file: File, uploadedBy: string, supabase: SupabaseCl
     mensagem: "Documento carregado mas não identificado como DAV, FAM, CIT ou Inspeção. Guardado como genérico.",
   })
 }
+
