@@ -16,7 +16,11 @@
       "Bash(icacls supabase:*)",
       "Bash(icacls:*)",
       "Bash(npx vercel:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__filesystem__list_directory",
+      "mcp__filesystem__directory_tree",
+      "Bash(find . -name *.test.ts -o -name *.spec.ts -o -name __tests__ -type d)",
+      "Bash(wc -l src/**/*.ts src/**/*.tsx)"
     ]
   }
 }
