@@ -3,13 +3,6 @@
 -- ADR-020 | Nível ISA-95: 4 (ERP — RH)
 
 -- ============================================
--- CLEANUP (re-run safe)
--- ============================================
-DROP TABLE IF EXISTS recibos_vencimento CASCADE;
-DROP TABLE IF EXISTS processamentos_mensais CASCADE;
-DROP TABLE IF EXISTS colaboradores_rh CASCADE;
-
--- ============================================
 -- TABELA: colaboradores_rh
 -- Dados salariais separados de colaboradores (produção)
 -- ============================================
@@ -140,6 +133,79 @@ INSERT INTO processamentos_mensais (ano, mes, salario_base, subsidio_alimentacao
   (2026,  1, 920.00, 4.55, 'rascunho'),
   (2026,  2, 920.00, 4.55, 'rascunho'),
   (2026,  3, 920.00, 4.55, 'rascunho');
+
+-- ============================================
+-- SEED: Recibos de vencimento (Out 2025 — Fev 2026)
+-- 15 recibos: 5 meses x 3 colaboradores
+-- Bruto = vencimento + duod_ferias + duod_natal
+-- Liquido = bruto - desconto_ss - retencao_irs + sub_alimentacao + km
+-- ============================================
+
+INSERT INTO recibos_vencimento (
+  numero_recibo, processamento_id, colaborador_rh_id, colaborador_id,
+  ano, mes, dias_uteis, dias_trabalhados,
+  vencimento_base, subsidio_alimentacao, duodecimo_ferias, duodecimo_natal, km_viatura,
+  bruto, taxa_ss, desconto_ss, taxa_irs, retencao_irs, liquido
+) VALUES
+
+-- ====== OUTUBRO 2025 (23 dias uteis, base 870) ======
+-- Bohdan (id=1, SS 7.5%)
+('RV-202510-001', 1, 1, NULL, 2025, 10, 23, 23,
+  870.00, 104.65, 72.50, 72.50, 0,
+  1015.00, 7.50, 76.13, 0, 0, 1043.52),
+-- Jose Julio (id=2, SS 11%)
+('RV-202510-002', 1, 2, NULL, 2025, 10, 23, 23,
+  870.00, 104.65, 72.50, 72.50, 0,
+  1015.00, 11.00, 111.65, 0, 0, 1008.00),
+-- Joao Antonio (id=3, SS 11%, km=0)
+('RV-202510-003', 1, 3, NULL, 2025, 10, 23, 23,
+  870.00, 104.65, 72.50, 72.50, 0,
+  1015.00, 11.00, 111.65, 0, 0, 1008.00),
+
+-- ====== NOVEMBRO 2025 (20 dias uteis, base 870) ======
+('RV-202511-001', 2, 1, NULL, 2025, 11, 20, 20,
+  870.00, 91.00, 72.50, 72.50, 0,
+  1015.00, 7.50, 76.13, 0, 0, 1029.87),
+('RV-202511-002', 2, 2, NULL, 2025, 11, 20, 20,
+  870.00, 91.00, 72.50, 72.50, 0,
+  1015.00, 11.00, 111.65, 0, 0, 994.35),
+('RV-202511-003', 2, 3, NULL, 2025, 11, 20, 20,
+  870.00, 91.00, 72.50, 72.50, 0,
+  1015.00, 11.00, 111.65, 0, 0, 994.35),
+
+-- ====== DEZEMBRO 2025 (23 dias uteis, base 870) ======
+('RV-202512-001', 3, 1, NULL, 2025, 12, 23, 23,
+  870.00, 104.65, 72.50, 72.50, 0,
+  1015.00, 7.50, 76.13, 0, 0, 1043.52),
+('RV-202512-002', 3, 2, NULL, 2025, 12, 23, 23,
+  870.00, 104.65, 72.50, 72.50, 0,
+  1015.00, 11.00, 111.65, 0, 0, 1008.00),
+('RV-202512-003', 3, 3, NULL, 2025, 12, 23, 23,
+  870.00, 104.65, 72.50, 72.50, 0,
+  1015.00, 11.00, 111.65, 0, 0, 1008.00),
+
+-- ====== JANEIRO 2026 (22 dias uteis, base 920) ======
+('RV-202601-001', 4, 1, NULL, 2026, 1, 22, 22,
+  920.00, 100.10, 76.67, 76.67, 0,
+  1073.34, 7.50, 80.50, 0, 0, 1092.94),
+('RV-202601-002', 4, 2, NULL, 2026, 1, 22, 22,
+  920.00, 100.10, 76.67, 76.67, 0,
+  1073.34, 11.00, 118.07, 0, 0, 1055.37),
+('RV-202601-003', 4, 3, NULL, 2026, 1, 22, 22,
+  920.00, 100.10, 76.67, 76.67, 0,
+  1073.34, 11.00, 118.07, 0, 0, 1055.37),
+
+-- ====== FEVEREIRO 2026 (20 dias uteis, base 920) ======
+-- Jose Julio: baixa desde 16/02, so 10 dias — valores proporcionais
+('RV-202602-001', 5, 1, NULL, 2026, 2, 20, 20,
+  920.00, 91.00, 76.67, 76.67, 0,
+  1073.34, 7.50, 80.50, 0, 0, 1083.84),
+('RV-202602-002', 5, 2, NULL, 2026, 2, 20, 10,
+  460.00, 45.50, 38.34, 38.34, 0,
+  536.68, 11.00, 59.03, 0, 0, 523.15),
+('RV-202602-003', 5, 3, NULL, 2026, 2, 20, 20,
+  920.00, 91.00, 76.67, 76.67, 0,
+  1073.34, 11.00, 118.07, 0, 0, 1046.27);
 
 -- ============================================
 -- AUDIT LOG
