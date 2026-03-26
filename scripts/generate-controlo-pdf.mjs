@@ -47,7 +47,7 @@ async function generatePDF() {
   y -= 30;
   page.drawText(s('Controlo de Sistema'), { x: margin, y, size: 28, font: fontBold, color: black });
   y -= 22;
-  page.drawText(s('v6 -- 26 Marco 2026'), { x: margin, y, size: 14, font, color: gray });
+  page.drawText(s('v7 -- 26 Marco 2026'), { x: margin, y, size: 14, font, color: gray });
   y -= 40;
 
   // Separator
@@ -61,7 +61,7 @@ async function generatePDF() {
     ['Marca corporativa', 'CSN Technic -- Commercial Vehicle Engineering'],
     ['URL', 'https://csn-producao.vercel.app'],
     ['Stack', 'Next.js 16 + Supabase + Claude API + Vercel'],
-    ['Tabelas Supabase', '22 existentes'],
+    ['Tabelas Supabase', '25 existentes'],
     ['ADRs', '24 commitados'],
     ['AI Personas', '6 definidas (1 em codigo: Sr. Manuel)'],
     ['Autonomous Agents', '10 definidos (1 funcional: Research)'],
@@ -108,7 +108,7 @@ async function generatePDF() {
   const personas = [
     ['Luisa', 'Assistente CEO', 'Transversal', 'Fase 1'],
     ['Fernando', 'Chefe de Producao', 'Nivel 3 MES', 'Existe como Sr. Manuel'],
-    ['Carolina', 'Recursos Humanos', 'Nivel 4 ERP', 'URGENTE'],
+    ['Carolina', 'Recursos Humanos', 'Nivel 4 ERP', 'DB pronta'],
     ['Marta', 'Agente Comercial', 'Nivel 4 ERP', 'Fase 2'],
     ['Leonor', 'Aftersales', 'Nivel 4 ERP', 'Fase 2'],
     ['Irina', 'Fornecedores', 'Nivel 4 ERP', 'Fase 2'],
@@ -126,7 +126,7 @@ async function generatePDF() {
     page.drawText(s(nome), { x: margin + 4, y, size: 8, font: fontBold, color: black });
     page.drawText(s(funcao), { x: 140, y, size: 8, font, color: black });
     page.drawText(s(isa), { x: 310, y, size: 8, font: mono, color: darkGray });
-    const estadoColor = estado.includes('URGENTE') ? red : estado.includes('Existe') ? yellow : gray;
+    const estadoColor = estado.includes('URGENTE') ? red : estado.includes('Existe') ? yellow : estado.includes('DB pronta') ? green : gray;
     page.drawText(s(estado), { x: 420, y, size: 8, font, color: estadoColor });
     y -= 14;
   }
@@ -186,7 +186,7 @@ async function generatePDF() {
     tx += tw + 4;
   }
 
-  page.drawText(s('CSN Opus -- Controlo de Sistema v6'), { x: margin, y: 40, size: 8, font, color: gray });
+  page.drawText(s('CSN Opus -- Controlo de Sistema v7'), { x: margin, y: 40, size: 8, font, color: gray });
   page.drawText(s('Pagina 2/4'), { x: W - margin - 50, y: 40, size: 8, font, color: gray });
 
   // ===== PAGE 3: AGENTE RESEARCH + MIGRATIONS =====
@@ -225,7 +225,7 @@ async function generatePDF() {
   page.drawLine({ start: { x: margin, y }, end: { x: W - margin, y }, thickness: 1, color: lightGray });
   y -= 20;
 
-  page.drawText(s('MIGRATIONS -- 14 EXISTENTES + 9 PENDENTES'), { x: margin, y, size: 12, font: fontBold, color: orange });
+  page.drawText(s('MIGRATIONS -- 15 EXISTENTES + 8 PENDENTES'), { x: margin, y, size: 12, font: fontBold, color: orange });
   y -= 20;
 
   page.drawRectangle({ x: margin, y: y - 2, width: W - 2 * margin, height: 14, color: rgb(0.95, 0.95, 0.95) });
@@ -243,7 +243,7 @@ async function generatePDF() {
     ['018', 'equipamentos_csn, manutencao_plano, avarias', 'Pendente', yellow],
     ['019', 'marcas_veiculo, nomenclatura_marcas', 'Pendente', yellow],
     ['020', 'equipamentos_carrocaria, tipos_carrocaria', 'Pendente', yellow],
-    ['021', 'colaboradores_rh, recibos_vencimento, ferias', 'URGENTE', red],
+    ['021', 'colaboradores_rh, processamentos, recibos_vencimento', 'OK', green],
     ['022', 'sops, work_instructions, cadernos_montagem', 'Pendente', yellow],
     ['023', 'analises_fea', 'Pendente', yellow],
   ];
@@ -255,7 +255,7 @@ async function generatePDF() {
     y -= 14;
   }
 
-  page.drawText(s('CSN Opus -- Controlo de Sistema v6'), { x: margin, y: 40, size: 8, font, color: gray });
+  page.drawText(s('CSN Opus -- Controlo de Sistema v7'), { x: margin, y: 40, size: 8, font, color: gray });
   page.drawText(s('Pagina 3/4'), { x: W - margin - 50, y: 40, size: 8, font, color: gray });
 
   // ===== PAGE 4: PRONTIDAO AUDITORIA + PENDENTES =====
@@ -289,7 +289,7 @@ async function generatePDF() {
 
   const pendentes = [
     ['P1', 'Migration 015 -- ERP light (faturas, fornecedores)', red],
-    ['P2', 'Migration 021 -- Carolina RH (27 recibos pendentes)', red],
+    ['P2', 'Carolina -- persona + tools RH + PDF recibos', red],
     ['P3', 'Agente Documental', red],
     ['P4', 'Reescrever gerar-termo', red],
     ['P5', 'Migration 019 -- CSN Brain (marcas_veiculo)', yellow],
@@ -312,15 +312,15 @@ async function generatePDF() {
   y -= 30;
   page.drawLine({ start: { x: margin, y }, end: { x: W - margin, y }, thickness: 1, color: lightGray });
   y -= 16;
-  page.drawText(s('Gerado automaticamente pelo CSN Opus -- 26/03/2026 14:30 WET'), { x: margin, y, size: 8, font, color: gray });
+  page.drawText(s('Gerado automaticamente pelo CSN Opus -- 26/03/2026 21:00 WET'), { x: margin, y, size: 8, font, color: gray });
 
-  page.drawText(s('CSN Opus -- Controlo de Sistema v6'), { x: margin, y: 40, size: 8, font, color: gray });
+  page.drawText(s('CSN Opus -- Controlo de Sistema v7'), { x: margin, y: 40, size: 8, font, color: gray });
   page.drawText(s('Pagina 4/4'), { x: W - margin - 50, y: 40, size: 8, font, color: gray });
 
   // Save
   const bytes = await doc.save();
-  writeFileSync('docs/CSN-Controlo-Sistema-v6.pdf', bytes);
-  console.log('PDF generated: docs/CSN-Controlo-Sistema-v6.pdf');
+  writeFileSync('docs/CSN-Controlo-Sistema-v7.pdf', bytes);
+  console.log('PDF generated: docs/CSN-Controlo-Sistema-v7.pdf');
 }
 
 generatePDF().catch(console.error);
