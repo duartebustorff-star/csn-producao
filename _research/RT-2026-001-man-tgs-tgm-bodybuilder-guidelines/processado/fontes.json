@@ -1,0 +1,206 @@
+[
+  {
+    "url": "https://www.man.eu/trucks/en/man-trucks/bodybuilder-portal.html",
+    "titulo": "https://www.man.eu/trucks/en/man-trucks/bodybuilder-portal.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.man.eu/en/bodybuilder-portal.html",
+    "titulo": "https://www.man.eu/en/bodybuilder-portal.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.truck.man.eu/man/media/en/content_medien/doc/global_trucks/bodybuilder/MAN_Bodybuilder_Portal.pdf",
+    "titulo": "https://www.truck.man.eu/man/media/en/content_medien/doc/global_trucks/bodybuilder/MAN_Bodybuilder_Portal.pdf",
+    "estado": "erro",
+    "resumo": "HTTP 503"
+  },
+  {
+    "url": "https://www.man.eu/trucks/en/man-trucks/tgs.html",
+    "titulo": "https://www.man.eu/trucks/en/man-trucks/tgs.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.mantruckandbus.com/en/bodybuilder-portal.html",
+    "titulo": "https://www.mantruckandbus.com/en/bodybuilder-portal.html",
+    "estado": "erro",
+    "resumo": "HTTP 503"
+  },
+  {
+    "url": "https://www.man.eu",
+    "titulo": "https://www.man.eu",
+    "estado": "ok",
+    "resumo": "Camiões, autocarros, carrinhas e serviços MAN | MAN MAN Portugal Camiões Camiões Todos os modelos Todos os modelos Visão geral dos modelos O MAN TGX MAN eTGX O MAN TGS MAN eTGS O MAN TGM e o MAN TGL O"
+  },
+  {
+    "url": "https://www.mantruckandbus.com",
+    "titulo": "https://www.mantruckandbus.com",
+    "estado": "erro",
+    "resumo": "HTTP 503"
+  },
+  {
+    "url": "https://www.truck.man.eu",
+    "titulo": "https://www.truck.man.eu",
+    "estado": "erro",
+    "resumo": "HTTP 503"
+  },
+  {
+    "url": "https://www.man.eu/pt/pt/caminhoes/man-trucks/tgs.html",
+    "titulo": "https://www.man.eu/pt/pt/caminhoes/man-trucks/tgs.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.man.eu/pt/pt/caminhoes/man-trucks/tgm-e-tgl.html",
+    "titulo": "https://www.man.eu/pt/pt/caminhoes/man-trucks/tgm-e-tgl.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.man.eu/pt/pt/caminhoes/man-trucks/visao-geral-dos-modelos.html",
+    "titulo": "https://www.man.eu/pt/pt/caminhoes/man-trucks/visao-geral-dos-modelos.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.man.eu/en/trucks/bodybuilder-portal.html",
+    "titulo": "https://www.man.eu/en/trucks/bodybuilder-portal.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.man.eu/trucks/en/truck-models/tgs.html",
+    "titulo": "https://www.man.eu/trucks/en/truck-models/tgs.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.man.eu/trucks/en/truck-models/tgm-and-tgl.html",
+    "titulo": "https://www.man.eu/trucks/en/truck-models/tgm-and-tgl.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.man.eu/trucks/en/service/bodybuilder.html",
+    "titulo": "https://www.man.eu/trucks/en/service/bodybuilder.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.mantruckandbus.com/en/company/bodybuilder-portal.html",
+    "titulo": "https://www.mantruckandbus.com/en/company/bodybuilder-portal.html",
+    "estado": "erro",
+    "resumo": "HTTP 503"
+  },
+  {
+    "url": "https://manualslib.com/products/man-tgs-10842916.html",
+    "titulo": "https://manualslib.com/products/man-tgs-10842916.html",
+    "estado": "ok",
+    "resumo": "Easy xLogic SuperRelay Manuals | ManualsLib Sign In Upload Manuals Brands Easy Manuals Computer Hardware xLogic SuperRelay Easy xLogic SuperRelay Manuals Manuals and User Guides for Easy xLogic SuperR"
+  },
+  {
+    "url": "https://manualslib.com/products/man-tgm-10842917.html",
+    "titulo": "https://manualslib.com/products/man-tgm-10842917.html",
+    "estado": "ok",
+    "resumo": "Easy xLogic SuperRelay ELC-12AC-R Manuals | ManualsLib Sign In Upload Manuals Brands Easy Manuals Computer Hardware xLogic SuperRelay ELC-12AC-R Easy xLogic SuperRelay ELC-12AC-R Manuals Manuals and U"
+  },
+  {
+    "url": "https://truckmanualshub.com/man-truck-service-repair-manuals.html",
+    "titulo": "https://truckmanualshub.com/man-truck-service-repair-manuals.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.manualscat.com/en/man/trucks",
+    "titulo": "https://www.manualscat.com/en/man/trucks",
+    "estado": "ok",
+    "resumo": "Manual lost? Download the manual you&#x27;re searching for. Manuals Type brand and type here Brand Philips Samsung LG AEG Panasonic Bosch HP Toyota Kärcher Opel Steinberg DeLonghi Hotpoint Ariston Son"
+  },
+  {
+    "url": "https://www.mantruckandbus.com/fileadmin/media/bilder/02_19/219_db_01_g.jpg",
+    "titulo": "https://www.mantruckandbus.com/fileadmin/media/bilder/02_19/219_db_01_g.jpg",
+    "estado": "erro",
+    "resumo": "HTTP 503"
+  },
+  {
+    "url": "https://www.commercialmotor.com/man-tgs",
+    "titulo": "https://www.commercialmotor.com/man-tgs",
+    "estado": "ok",
+    "resumo": "Used MAN TGS for Sale in the UK - Commercial Motor --> FOLLOW US --> Sign In Register Used Trucks ▼ Sell a truck Tractor Units Rigids Vans Trailers Tippers Tankers Specialist Vehicles Used Vehicle Lin"
+  },
+  {
+    "url": "https://www.truckscience.com",
+    "titulo": "https://www.truckscience.com",
+    "estado": "ok",
+    "resumo": "Truck Weight Distribution | TruckScience SOLUTIONS For Body Manufacturers For Fleet Engineers For Upfitters For Truck Salespeople FEATURES PRICING RESOURCES Explainer Videos Testimonials Webinars Even"
+  },
+  {
+    "url": "https://www.automotive-fleet.com",
+    "titulo": "https://www.automotive-fleet.com",
+    "estado": "erro",
+    "resumo": "HTTP 403"
+  },
+  {
+    "url": "https://www.truckscience.com/chassis-library",
+    "titulo": "https://www.truckscience.com/chassis-library",
+    "estado": "ok",
+    "resumo": "Chassis Library | TruckScience SOLUTIONS For Body Manufacturers For Fleet Engineers For Upfitters For Truck Salespeople FEATURES PRICING RESOURCES Explainer Videos Testimonials Webinars Events Partner"
+  },
+  {
+    "url": "https://www.truckscience.com/product-library",
+    "titulo": "https://www.truckscience.com/product-library",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.scania.com/group/en/home/products-and-services/bodybuilder.html",
+    "titulo": "https://www.scania.com/group/en/home/products-and-services/bodybuilder.html",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://mediathek.man.eu",
+    "titulo": "https://mediathek.man.eu",
+    "estado": "bloqueado",
+    "resumo": "Timeout ou bloqueado"
+  },
+  {
+    "url": "https://www.rio.cloud",
+    "titulo": "https://www.rio.cloud",
+    "estado": "ok",
+    "resumo": "RIO | Logistikplattform für effizientere Transporte Für Carrier Telematik Transportmanagement Mobile Apps Hardware Marketplace Für Shipper Supply Chain Orchestration Platform Für Business Partner RIO4"
+  },
+  {
+    "url": "https://www.trucknet-uk.com/phpBB/viewforum.php?f=30",
+    "titulo": "https://www.trucknet-uk.com/phpBB/viewforum.php?f=30",
+    "estado": "bloqueado",
+    "resumo": "Timeout ou bloqueado"
+  },
+  {
+    "url": "https://www.daf.com/en/trucks/bodybuilder-support",
+    "titulo": "https://www.daf.com/en/trucks/bodybuilder-support",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  },
+  {
+    "url": "https://www.mercedes-benz-trucks.com/en_GB/services/bodybuilder.html",
+    "titulo": "https://www.mercedes-benz-trucks.com/en_GB/services/bodybuilder.html",
+    "estado": "ok",
+    "resumo": "Welcome to the world of Mercedes-Benz Trucks | Mercedes-Benz Trucks UK Welcome to the world of Mercedes-Benz Trucks Provider My TruckPoint Login Contact Careers Dealer search United Kingdom Contact Yo"
+  },
+  {
+    "url": "https://www.scania.com/uk/en/home/products-and-services/bodybuilder.html",
+    "titulo": "https://www.scania.com/uk/en/home/products-and-services/bodybuilder.html",
+    "estado": "ok",
+    "resumo": "--> --> --> Home | Scania United Kingdom © Copyright Scania 2026. All rights reserved. Scania (Great Britain) Limited, Delaware Drive, Tongwell, Milton Keynes, MK15 8HB, Tel: +44 (0) 1908 210210. VAT "
+  },
+  {
+    "url": "https://www.renault-trucks.com/en/bodybuilding",
+    "titulo": "https://www.renault-trucks.com/en/bodybuilding",
+    "estado": "erro",
+    "resumo": "HTTP 404"
+  }
+]
