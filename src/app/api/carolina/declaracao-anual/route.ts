@@ -207,7 +207,7 @@ export async function GET(req: NextRequest) {
 
   const bytes = await pdfDoc.save()
 
-  return new NextResponse(bytes, {
+  return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="declaracao_${colab.nif}_${ano}.pdf"`,

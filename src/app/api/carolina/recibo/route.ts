@@ -193,7 +193,7 @@ export async function GET(req: NextRequest) {
 
   const bytes = await pdfDoc.save()
 
-  return new NextResponse(bytes, {
+  return new NextResponse(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="recibo_${colab.nif}_${ano}_${String(mes).padStart(2, "0")}.pdf"`,
