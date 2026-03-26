@@ -1,0 +1,9 @@
+# Research agent output — não é necessário no deploy
+_research/
+
+# Documentation — não é necessário no deploy
+docs/
+supabase/
+
+# Claude Code
+.claude/

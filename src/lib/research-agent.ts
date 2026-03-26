@@ -360,32 +360,35 @@ export async function executeResearchTask(taskId: string): Promise<ResearchResul
       unfinished: (conclusionData.por_fazer as string[]) || [],
     }
 
-    // 6. Gerar relatório e gravar no filesystem
+    // 6. Gerar relatório e gravar no filesystem (skip em serverless/Vercel)
     const report = generateReport(task as ResearchTask, result, dataInicio)
-    const taskDir = path.resolve(process.cwd(), task.pasta_local)
-
-    await fs.mkdir(path.join(taskDir, "raw"), { recursive: true })
-    await fs.mkdir(path.join(taskDir, "processado"), { recursive: true })
-    await fs.mkdir(path.join(taskDir, "downloads"), { recursive: true })
-
     const reportPath = path.join(task.pasta_local, `RELATORIO_${task.codigo}.md`)
-    await fs.writeFile(path.resolve(process.cwd(), reportPath), report, "utf-8")
 
-    // Gravar dados estruturados como JSON
-    if (context.findings.length > 0) {
+    try {
+      const taskDir = path.resolve(process.cwd(), task.pasta_local)
+      await fs.mkdir(path.join(taskDir, "raw"), { recursive: true })
+      await fs.mkdir(path.join(taskDir, "processado"), { recursive: true })
+      await fs.mkdir(path.join(taskDir, "downloads"), { recursive: true })
+
+      await fs.writeFile(path.resolve(process.cwd(), reportPath), report, "utf-8")
+
+      if (context.findings.length > 0) {
+        await fs.writeFile(
+          path.join(taskDir, "processado", "dados_extraidos.json"),
+          JSON.stringify(context.findings, null, 2),
+          "utf-8"
+        )
+      }
+
       await fs.writeFile(
-        path.join(taskDir, "processado", "dados_extraidos.json"),
-        JSON.stringify(context.findings, null, 2),
+        path.join(taskDir, "processado", "fontes.json"),
+        JSON.stringify(context.sources, null, 2),
         "utf-8"
       )
+    } catch {
+      // Serverless (Vercel) — filesystem read-only, dados ficam apenas na DB
+      console.log("Filesystem not writable — skipping file output, data saved to DB only")
     }
-
-    // Gravar lista de fontes
-    await fs.writeFile(
-      path.join(taskDir, "processado", "fontes.json"),
-      JSON.stringify(context.sources, null, 2),
-      "utf-8"
-    )
 
     // 7. Actualizar tarefa como concluída
     const dataConclusao = new Date().toISOString()

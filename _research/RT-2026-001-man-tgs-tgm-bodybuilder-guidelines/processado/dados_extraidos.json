@@ -1,0 +1,16 @@
+[
+  {
+    "titulo": "TruckScience - Plataforma de especificações de chassis",
+    "conteudo": "TruckScience é uma plataforma online especializada em cálculo de distribuição de peso, dimensões, centro de gravidade e carga útil máxima para camiões. Dispõe de biblioteca de especificações OEM de fabricantes, incluindo MAN. Utilizada por bodybuilders, upfitters e fleet managers em mais de 60 países. Oferece trial gratuito e base de dados com specs de chassis, bodies e equipamentos.",
+    "fonte": "https://www.truckscience.com",
+    "tipo": "outro",
+    "fiabilidade": "media"
+  },
+  {
+    "titulo": "TruckScience - Biblioteca de chassis MAN TGS e TGM",
+    "conteudo": "TruckScience confirma ter especificações detalhadas de chassis MAN TGS e TGM na sua biblioteca. Cada chassis inclui: desenhos dimensionais (general arrangement), pesos do chassis, centro de gravidade, capacidade de viragem, pesos de combustível e tripulação, UVW máximo, e ratings dos eixos. Atualizações recentes mencionam adições de specs para MAN TGM, TGS e TGX com várias configurações.",
+    "fonte": "https://www.truckscience.com/chassis-library",
+    "tipo": "dado_tecnico",
+    "fiabilidade": "media"
+  }
+]
