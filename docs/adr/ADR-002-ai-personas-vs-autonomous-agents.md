@@ -3,6 +3,7 @@
 **Data:** 21/03/2026
 **Estado:** ✅ Aceite
 **Sessão:** 15
+**Última actualização:** 26/03/2026
 
 ---
 
@@ -14,19 +15,31 @@ O sistema tinha agentes definidos por módulo funcional (Agente de Qualidade, Ag
 
 Dois tipos de agentes completamente distintos:
 
-**AI Personas** — simulam humanos reais com nome, personalidade e avatar. São a face do sistema. Falam com humanos. Têm acesso controlado e definido.
+**AI Personas — 6** — simulam humanos reais com nome, personalidade e avatar. São a face do sistema. Falam com humanos. Têm acesso controlado e definido.
 
-| Persona | Nome | Âmbito |
-|---|---|---|
-| Assistente CEO | Luísa | Acesso total |
-| Chefe de Produção | Fernando | Workers + produção |
-| Agente Comercial | Marta | Clientes + CSN Connect |
-| Aftersales | Leonor | Garantias + pós-entrega |
-| Fornecedores | Irina | Compras + certificados |
+| Persona | Nome | Âmbito | Nível ISA-95 | ADR |
+|---|---|---|---|---|
+| Assistente CEO | Luísa | Acesso total | Transversal | — |
+| Chefe de Produção | Fernando | Workers + produção | Nível 3 MES | ADR-021 |
+| Recursos Humanos | Carolina | RH + recibos + férias | Nível 4 ERP | ADR-020 |
+| Agente Comercial | Marta | Clientes + CSN Connect | Nível 4 ERP | — |
+| Aftersales | Leonor | Garantias + pós-entrega | Nível 4 ERP | — |
+| Fornecedores | Irina | Compras + certificados | Nível 4 ERP | — |
 
-**Autonomous Agents** — trabalham em background sem persona. Nunca falam directamente com humanos. Executam tarefas, processam dados, tomam decisões dentro de regras.
+**Autonomous Agents — 9** — trabalham em background sem persona. Nunca falam directamente com humanos. Executam tarefas, processam dados, tomam decisões dentro de regras.
 
-Roteador · Documental · QMS · Stock · Manutenção · KPIs · Compliance
+| Agente | Função | Nível ISA-95 | ADR | Estado |
+|---|---|---|---|---|
+| Roteador | Recebe e distribui entradas | Transversal | — | ❌ |
+| Documental | DAV/FAM/INSP/CIT → Termo | Nível 3 MES | — | ❌ |
+| QMS | NC, inspecções, EN 1090 | Nível 3 MES | — | ❌ |
+| Stock | FIFO, alertas, rastreabilidade | Nível 3 MES | ADR-007 | ❌ |
+| Manutenção | Equipamentos, plano preventivo | Nível 3 MES | — | ❌ |
+| KPIs | OEE, throughput, ISO 22400 | Transversal | — | ❌ |
+| Compliance | Auditoria mensal automática | Transversal | ADR-006 | ❌ |
+| Inteligência de Marcas | Guardião tabela marcas_veiculo | Nível 4 ERP | ADR-016 | ❌ |
+| Research | Pesquisa técnica autónoma | Transversal | ADR-022 | ✅ Funcional |
+| FEA | iLogic + Nastran + EN 12642 | Nível 3 MES | ADR-024 | ❌ |
 
 ## Razão
 
@@ -36,7 +49,7 @@ A segurança também melhora — as personas são buffers entre humanos e o sist
 
 ## Consequências
 
-- O Sr. Manuel é renomeado Fernando e ganha persona com personalidade definida
+- O Sr. Manuel é renomeado Fernando e ganha persona com personalidade definida (ADR-021)
 - As suas tools são redistribuídas pelos agentes autónomos correctos
 - Cada nova funcionalidade deve ser classificada primeiro: é uma Persona ou um Agente Autónomo?
 - O fluxo é sempre: Humano → AI Persona → Autonomous Agent → Sistema

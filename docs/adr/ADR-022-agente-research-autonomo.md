@@ -178,7 +178,7 @@ O Agente Research deve estar sempre a melhorar:
 ## Consequências
 
 - Pasta `_research/` criada na raiz do repo
-- Migration 018 adiciona tabela `research_tasks`
+- Migration 014 (`supabase/014_research_tasks.sql`) adiciona tabela `research_tasks`
 - O sistema notifica Duarte (via Luísa) quando uma tarefa é concluída
 - Nenhum dado entra no RAG ou Supabase sem passar pela análise do sistema
 - O Agente Research é completamente independente — não tem acesso às credenciais do sistema
