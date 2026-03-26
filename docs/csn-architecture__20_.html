@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Technic — Arquitectura v20</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #080808;
+  --bg2:      #0f0f0f;
+  --bg3:      #141414;
+  --bg4:      #1a1a1a;
+  --border:   #1e1e1e;
+  --border2:  #2a2a2a;
+  --text:     #888;
+  --text2:    #bbb;
+  --bright:   #f0f0f0;
+  --d1:       #f97316;
+  --d2:       #3b82f6;
+  --d3:       #10b981;
+  --persona:  #a78bfa;
+  --auto:     #f59e0b;
+  --portal:   #60a5fa;
+  --exists:   #22c55e;
+  --pending:  #f59e0b;
+  --missing:  #ef4444;
+  --future:   #6b7280;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--sans); font-size:13px; line-height:1.6; }
+a { color:inherit; text-decoration:none; }
+
+/* LAYOUT */
+.page { max-width:1400px; margin:0 auto; padding:40px 28px 80px; }
+
+/* HEADER */
+.header { border-bottom:1px solid var(--border); padding-bottom:28px; margin-bottom:36px; display:flex; justify-content:space-between; align-items:flex-end; }
+.header-left {}
+.eyebrow { font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:var(--d1); margin-bottom:8px; }
+.h1 { font-size:30px; font-weight:800; color:var(--bright); letter-spacing:-.03em; line-height:1; margin-bottom:6px; }
+.h1 span { color:var(--d1); }
+.subtitle { font-size:12px; color:#444; font-family:var(--mono); }
+.header-meta { text-align:right; }
+.meta-item { font-family:var(--mono); font-size:10px; color:#333; margin-bottom:4px; }
+.meta-item span { color:#555; }
+
+/* SECTIONS */
+.section { margin-bottom:40px; }
+.section-title { font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:#444; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+.section-title::after { content:''; flex:1; height:1px; }
+
+/* NORMAS — 3 DIMENSÕES */
+.dims { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px; }
+.dim { background:var(--bg2); border-radius:10px; padding:18px 20px; position:relative; overflow:hidden; }
+.dim::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.dim-d1::before { background:var(--d1); }
+.dim-d2::before { background:var(--d2); }
+.dim-d3::before { background:var(--d3); }
+.dim-label { font-family:var(--mono); font-size:9px; letter-spacing:.15em; margin-bottom:4px; }
+.dim-d1 .dim-label { color:var(--d1); }
+.dim-d2 .dim-label { color:var(--d2); }
+.dim-d3 .dim-label { color:var(--d3); }
+.dim-title { font-size:14px; font-weight:700; color:var(--bright); margin-bottom:12px; }
+.dim-desc { font-size:11px; color:#555; margin-bottom:12px; font-family:var(--mono); }
+.norm-list { display:flex; flex-direction:column; gap:6px; }
+.norm-item { background:var(--bg3); border-radius:6px; padding:8px 12px; border-left:2px solid; }
+.dim-d1 .norm-item { border-color:var(--d1); }
+.dim-d2 .norm-item { border-color:var(--d2); }
+.dim-d3 .norm-item { border-color:var(--d3); }
+.norm-item.future { opacity:.4; border-style:dashed; }
+.norm-name { font-family:var(--mono); font-size:11px; font-weight:600; color:var(--bright); }
+.norm-desc { font-size:10px; color:#555; margin-top:2px; }
+.norm-phase { font-size:9px; color:#444; font-family:var(--mono); }
+
+/* CAMADAS */
+.layers { display:flex; flex-direction:column; gap:10px; }
+.layer { background:var(--bg2); border-radius:10px; padding:18px 20px; border-left:3px solid; }
+.layer-header { display:flex; align-items:baseline; gap:12px; margin-bottom:14px; }
+.layer-num { font-family:var(--mono); font-size:10px; color:#333; }
+.layer-name { font-size:13px; font-weight:700; color:var(--bright); font-family:var(--mono); }
+.layer-desc { font-size:11px; color:#555; margin-left:auto; }
+.layer-content { display:flex; gap:8px; flex-wrap:wrap; }
+
+/* CARDS */
+.card { background:var(--bg3); border-radius:8px; padding:12px 14px; border:1px solid var(--border); min-width:140px; flex:1; }
+.card-name { font-size:12px; font-weight:700; color:var(--bright); margin-bottom:4px; font-family:var(--mono); }
+.card-sub { font-size:10px; color:#555; line-height:1.4; }
+.card-badge { display:inline-block; font-size:9px; padding:2px 6px; border-radius:3px; margin-top:6px; font-family:var(--mono); }
+.badge-exists { background:#052e16; color:var(--exists); border:1px solid #166534; }
+.badge-pending { background:#2d1a00; color:var(--pending); border:1px solid #92400e; }
+.badge-missing { background:#1a0000; color:var(--missing); border:1px solid #7f1d1d; }
+.badge-future { background:#111; color:#555; border:1px solid #222; }
+.badge-phase { background:#0a0a0a; color:#444; border:1px solid #1a1a1a; }
+
+/* PERSONAS */
+.persona-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+.persona-card { background:var(--bg3); border-radius:10px; padding:16px; border:1px solid var(--border); border-top:3px solid var(--persona); text-align:center; }
+.persona-avatar { width:44px; height:44px; border-radius:50%; background:var(--bg4); border:2px solid var(--persona); margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.persona-name { font-size:13px; font-weight:700; color:var(--bright); font-family:var(--mono); margin-bottom:4px; }
+.persona-role { font-size:10px; color:var(--persona); margin-bottom:8px; }
+.persona-access { font-size:10px; color:#555; line-height:1.5; }
+.persona-phase { margin-top:8px; }
+
+/* MÓDULOS */
+.modules-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.module-card { background:var(--bg3); border-radius:8px; padding:14px 16px; border:1px solid var(--border); }
+.module-name { font-size:12px; font-weight:700; color:var(--bright); font-family:var(--mono); margin-bottom:4px; }
+.module-full { font-size:11px; color:#555; margin-bottom:8px; }
+.module-norm { font-size:10px; color:#444; font-family:var(--mono); margin-bottom:8px; }
+.module-tables { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+.table-tag { font-size:9px; font-family:var(--mono); background:var(--bg4); border:1px solid var(--border2); color:#555; padding:2px 6px; border-radius:3px; }
+.table-tag.exists { color:var(--exists); border-color:#166534; background:#052e16; }
+.table-tag.missing { color:var(--missing); border-color:#7f1d1d; background:#1a0000; }
+
+/* AGENTS */
+.agents-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.agent-card { background:var(--bg3); border-radius:8px; padding:14px; border:1px solid var(--border); border-top:2px solid var(--auto); }
+.agent-name { font-size:12px; font-weight:700; color:var(--bright); font-family:var(--mono); margin-bottom:4px; }
+.agent-desc { font-size:10px; color:#555; margin-bottom:8px; line-height:1.4; }
+.agent-tools { display:flex; flex-direction:column; gap:3px; }
+.tool-item { font-size:9px; font-family:var(--mono); color:#444; background:var(--bg4); padding:2px 8px; border-radius:3px; }
+.tool-item.exists { color:#10b981; background:#051a0f; }
+
+/* KNOWLEDGE BASE */
+.kb-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.kb-card { background:var(--bg3); border-radius:8px; padding:14px 16px; border:1px solid var(--border); }
+.kb-path { font-family:var(--mono); font-size:11px; color:var(--d3); font-weight:700; margin-bottom:8px; }
+.kb-items { display:flex; flex-direction:column; gap:4px; }
+.kb-item { font-size:10px; color:#555; display:flex; gap:8px; }
+.kb-item::before { content:'→'; color:#333; flex-shrink:0; }
+
+/* EQUIPAMENTOS */
+.equip-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.equip-card { background:var(--bg3); border-radius:8px; padding:12px 14px; border:1px solid var(--border); }
+.equip-cat { font-size:9px; font-family:var(--mono); letter-spacing:.1em; color:#444; margin-bottom:4px; }
+.equip-name { font-size:12px; font-weight:600; color:var(--bright); margin-bottom:4px; }
+.equip-model { font-size:10px; color:#555; }
+.equip-norm { font-size:9px; color:#333; font-family:var(--mono); margin-top:6px; }
+
+/* PESSOAS */
+.people-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+.people-card { background:var(--bg3); border-radius:8px; padding:12px 14px; border:1px solid var(--border); }
+.people-name { font-size:12px; font-weight:700; color:var(--bright); margin-bottom:4px; }
+.people-role { font-size:10px; color:#555; margin-bottom:8px; }
+.people-cert { font-size:9px; font-family:var(--mono); color:var(--pending); }
+
+/* STACK */
+.stack-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+.stack-card { background:var(--bg3); border-radius:8px; padding:12px 14px; border:1px solid var(--border); text-align:center; }
+.stack-name { font-size:12px; font-weight:700; color:var(--bright); margin-bottom:4px; }
+.stack-desc { font-size:10px; color:#555; }
+
+/* AUDITORIA */
+.audit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.audit-card { background:var(--bg3); border-radius:8px; padding:14px 16px; border:1px solid var(--border); }
+.audit-norm { font-family:var(--mono); font-size:11px; font-weight:700; color:var(--bright); margin-bottom:4px; }
+.audit-pct { font-size:20px; font-weight:800; font-family:var(--mono); margin-bottom:8px; }
+.audit-items { display:flex; flex-direction:column; gap:3px; }
+.audit-item { font-size:10px; color:#555; display:flex; gap:8px; align-items:flex-start; }
+.audit-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.dot-ok { background:var(--exists); }
+.dot-partial { background:var(--pending); }
+.dot-missing { background:var(--missing); }
+
+/* FLUXO */
+.flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+.flow-node { background:var(--bg3); border:1px solid var(--border2); border-radius:6px; padding:6px 12px; font-size:11px; color:var(--text2); font-family:var(--mono); white-space:nowrap; }
+.flow-arrow { color:#333; font-size:14px; }
+
+/* STATUS LEGEND */
+.legend { display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:10px; color:#444; font-family:var(--mono); }
+.legend-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+
+/* PENDENTES */
+.pending-list { display:flex; flex-direction:column; gap:8px; }
+.pending-item { background:var(--bg3); border-radius:8px; padding:12px 16px; border:1px solid var(--border); border-left:3px solid; display:flex; align-items:flex-start; gap:12px; }
+.pending-item.p1 { border-color:var(--missing); }
+.pending-item.p2 { border-color:var(--pending); }
+.pending-item.p3 { border-color:#555; }
+.pending-num { font-family:var(--mono); font-size:10px; color:#444; min-width:24px; margin-top:2px; }
+.pending-title { font-size:12px; font-weight:600; color:var(--bright); margin-bottom:4px; }
+.pending-desc { font-size:11px; color:#555; line-height:1.5; }
+
+/* TABS */
+.tabs { display:flex; gap:4px; margin-bottom:24px; border-bottom:1px solid var(--border); padding-bottom:0; }
+.tab { font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:#444; padding:8px 16px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .15s; }
+.tab:hover { color:#888; }
+.tab.active { color:var(--d1); border-bottom-color:var(--d1); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* EMPRESA */
+.empresa-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+.empresa-block { }
+.empresa-label { font-family:var(--mono); font-size:9px; letter-spacing:.15em; color:#444; margin-bottom:4px; }
+.empresa-value { font-size:13px; color:var(--bright); font-weight:500; }
+.empresa-sub { font-size:11px; color:#555; }
+
+/* RESPONSIVE */
+@media (max-width:900px) {
+  .dims { grid-template-columns:1fr; }
+  .persona-grid { grid-template-columns:repeat(3,1fr); }
+  .modules-grid { grid-template-columns:repeat(2,1fr); }
+  .agents-grid { grid-template-columns:repeat(2,1fr); }
+  .equip-grid { grid-template-columns:repeat(2,1fr); }
+  .stack-grid { grid-template-columns:repeat(3,1fr); }
+  .audit-grid { grid-template-columns:1fr; }
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.section { animation:fadeIn .3s ease forwards; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">CSN TECHNIC — DOCUMENTO FUNDADOR</div>
+      <div class="h1">Arquitectura <span>v19</span></div>
+      <div class="subtitle">csn-architecture__20_.html · Março 2026 · duartebustorff-star/csn-producao</div>
+    </div>
+    <div class="header-meta">
+      <div class="meta-item">Sistema interno: <span>CSN Opus</span></div>
+      <div class="meta-item">Produto comercial: <span>CSN Brain</span></div>
+      <div class="meta-item">Marca corporativa: <span>CSN Technic</span></div>
+      <div class="meta-item">Stack: <span>Next.js 16 + Supabase + Claude API + Vercel</span></div>
+      <div class="meta-item">Deploy: <span>https://csn-producao.vercel.app</span></div>
+      <div class="meta-item">NIF: <span>500 861 790</span></div>
+      <div class="meta-item">Path local: <span>C:\Users\Utilizador\Projectos-AI\csn-producao</span></div>
+    </div>
+  </div>
+
+    <div style="background:var(--bg2);border-radius:10px;padding:18px 24px;margin-bottom:32px;border-left:4px solid var(--d1);">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--d1);letter-spacing:.15em;margin-bottom:8px;">PRINCÍPIO CENTRAL — NÃO NEGOCIÁVEL</div>
+      <div style="font-size:16px;font-weight:700;color:var(--bright);margin-bottom:6px;">O CSN Opus é a implementação digital das normas que regulam o fabrico de carroçarias na UE. O CSN Brain é o produto comercial que vende este conhecimento ao mercado.</div>
+      <div style="font-size:12px;color:#555;">Cada módulo existe porque uma norma obriga. Cada tabela guarda uma evidência. Cada documento gerado é uma prova de conformidade. A secção Prontidão para Auditoria é <strong style="color:var(--bright)">NUNCA removida</strong> de nenhuma versão deste documento.<br><br>
+      <strong style="color:var(--bright)">CSN Technic</strong> — Commercial Vehicle Engineering · <strong style="color:var(--bright)">CSN Opus</strong> — sistema interno · <strong style="color:var(--bright)">CSN Brain</strong> — produto comercial SaaS<br><br>
+      <strong style="color:var(--d1)">v20 — 26/03/2026 14:30 WET</strong> · 24 ADRs · 6 AI Personas · 10 Autonomous Agents · Agente Research ✅ funcional · 17 chat tools</div>
+    </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('normas')">BASE NORMATIVA</div>
+    <div class="tab" onclick="showTab('camadas')">ARQUITECTURA</div>
+    <div class="tab" onclick="showTab('personas')">AI PERSONAS</div>
+    <div class="tab" onclick="showTab('agentes')">AUTONOMOUS AGENTS</div>
+    <div class="tab" onclick="showTab('modulos')">MÓDULOS</div>
+    <div class="tab" onclick="showTab('brain')">CSN BRAIN</div>
+    <div class="tab" onclick="showTab('kb')">KNOWLEDGE BASE</div>
+    <div class="tab" onclick="showTab('infra')">INFRA & EQUIPA</div>
+    <div class="tab" onclick="showTab('auditoria')">PRONTIDÃO AUDITORIA</div>
+    <div class="tab" onclick="showTab('pendentes')">PENDENTES</div>
+  </div>
+
+  <!-- TAB: BASE NORMATIVA -->
+  <div id="tab-normas" class="tab-content active">
+    <div class="section">
+      <div class="section-title">3 DIMENSÕES NORMATIVAS — SEMPRE PRESENTES</div>
+      <div class="dims">
+        <div class="dim dim-d1">
+          <div class="dim-label">DIMENSÃO 1</div>
+          <div class="dim-title">O Produto</div>
+          <div class="dim-desc">Regula o que sai da fábrica</div>
+          <div class="norm-list">
+            <div class="norm-item">
+              <div class="norm-name">Reg. (UE) 2018/858</div>
+              <div class="norm-desc">Homologação multi-etapa + COC electrónico (deadline Jul 2026)</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">Reg. (UE) 2019/2144 — GSR</div>
+              <div class="norm-desc">AEB, câmaras, sensores — verificar por cada montagem</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">EN 12642 L/XL</div>
+              <div class="norm-desc">Resistência estrutural carroçaria — obrigatória mercado DE/FR</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">UNECE R48 / R73 / R58</div>
+              <div class="norm-desc">Iluminação, protecções laterais, para-choques traseiro</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">Dir. 96/53/CE + DL 99/2005</div>
+              <div class="norm-desc">Pesos e dimensões máximos — distribuição de carga</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">EN 12640 + EN 12195-1</div>
+              <div class="norm-desc">Pontos de amarração + cálculo forças fixação carga</div>
+            </div>
+          </div>
+        </div>
+        <div class="dim dim-d2">
+          <div class="dim-label">DIMENSÃO 2</div>
+          <div class="dim-title">O Processo</div>
+          <div class="dim-desc">Regula como fabricas</div>
+          <div class="norm-list">
+            <div class="norm-item">
+              <div class="norm-name">ISO 9001:2015</div>
+              <div class="norm-desc">SGQ completo — base para todas as outras certificações</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">EN 1090-1/-2 + Marcação CE</div>
+              <div class="norm-desc">Execução estruturas aço EXC2 — WPS, WPQR, FPC, DoP, etiqueta CE</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">EN ISO 3834-3</div>
+              <div class="norm-desc">Qualidade soldadura — consumíveis, planeamento, NC</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">EN ISO 15614-1</div>
+              <div class="norm-desc">Qualificação WPS por ensaio — WPQR em laboratório acreditado</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">EN ISO 9606-1</div>
+              <div class="norm-desc">Certificação soldadores manuais — João e Bohdan (pendentes)</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">EN ISO 5817 + EN ISO 17637</div>
+              <div class="norm-desc">Qualidade imperfeições soldadura + inspecção visual (nível C)</div>
+            </div>
+            <div class="norm-item future">
+              <div class="norm-name">ISO 14001 — FASE 3</div>
+              <div class="norm-desc">Gestão ambiental — resíduos, energia, fornecedores</div>
+              <div class="norm-phase">Reservado na arquitectura — não construído</div>
+            </div>
+            <div class="norm-item future">
+              <div class="norm-name">ISO 45001 — FASE 3</div>
+              <div class="norm-desc">Segurança e saúde — riscos, EPIs, formações, acidentes</div>
+              <div class="norm-phase">Reservado na arquitectura — não construído</div>
+            </div>
+          </div>
+        </div>
+        <div class="dim dim-d3">
+          <div class="dim-label">DIMENSÃO 3</div>
+          <div class="dim-title">O Sistema</div>
+          <div class="dim-desc">Regula como geres</div>
+          <div class="norm-list">
+            <div class="norm-item">
+              <div class="norm-name">ISA-95 (ANSI/ISA)</div>
+              <div class="norm-desc">Arquitectura MES — define os 4 níveis do sistema de fabrico. O CSN Opus implementa Nível 3 + Nível 4.</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">ISO 22400</div>
+              <div class="norm-desc">KPIs para operações de fabrico — OEE, throughput, taxa entrega, NC rate</div>
+            </div>
+            <div class="norm-item">
+              <div class="norm-name">ISO 55000</div>
+              <div class="norm-desc">Gestão de activos físicos — equipamentos, manutenção preventiva, rastreabilidade</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fluxo normativo -->
+      <div style="background:var(--bg2);border-radius:10px;padding:16px 20px;margin-top:12px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#444;letter-spacing:.15em;margin-bottom:12px;">SEQUÊNCIA DE IMPLEMENTAÇÃO RECOMENDADA</div>
+        <div class="flow">
+          <div class="flow-node" style="border-color:var(--d2);color:var(--d2);">ISO 9001</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--d2);color:var(--d2);">EN 1090 + EN ISO 3834</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--d1);color:var(--d1);">EN 12642 L/XL</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--d1);color:var(--d1);">COC Electrónico Jul/2026</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:#555;color:#555;">ISO 14001 + ISO 45001</div>
+        </div>
+        <div style="font-size:10px;color:#444;margin-top:8px;font-family:var(--mono);">Mercados: Portugal · França · Alemanha · Espanha</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ARQUITECTURA -->
+  <div id="tab-camadas" class="tab-content">
+    <div class="section">
+      <div class="section-title">5 CAMADAS DO CSN OPUS</div>
+
+      <div style="background:var(--bg2);border-radius:10px;padding:16px 20px;margin-bottom:16px;text-align:center;">
+        <div style="font-size:11px;color:#555;font-family:var(--mono);letter-spacing:.1em;">FLUXO PRINCIPAL</div>
+        <div class="flow" style="justify-content:center;margin-top:10px;">
+          <div class="flow-node" style="border-color:#60a5fa;color:#60a5fa;">HUMANOS</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--persona);color:var(--persona);">AI PERSONAS</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--auto);color:var(--auto);">AUTONOMOUS AGENTS</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node" style="border-color:var(--d3);color:var(--d3);">SISTEMA (Supabase)</div>
+          <div class="flow-arrow">↕</div>
+          <div class="flow-node" style="border-color:var(--d2);color:var(--d2);">KNOWLEDGE BASE</div>
+        </div>
+      </div>
+
+      <div class="layers">
+        <div class="layer" style="border-color:#60a5fa;">
+          <div class="layer-header">
+            <div class="layer-num">CAMADA 1</div>
+            <div class="layer-name" style="color:#60a5fa;">HUMANOS</div>
+            <div class="layer-desc">Actores que interagem com o sistema</div>
+          </div>
+          <div class="layer-content">
+            <div class="card"><div class="card-name">Duarte</div><div class="card-sub">CEO · Admin · Acesso total via Luísa</div></div>
+            <div class="card"><div class="card-name">João</div><div class="card-sub">Soldador · Interface Fernando · Workers app</div></div>
+            <div class="card"><div class="card-name">Bohdan</div><div class="card-sub">Soldador · Interface Fernando · Workers app</div></div>
+            <div class="card"><div class="card-name">José Júlio</div><div class="card-sub">Colaborador · Interface Fernando · Workers app</div></div>
+            <div class="card"><div class="card-name">Clientes</div><div class="card-sub">Interface Marta · Contacto directo</div></div>
+            <div class="card"><div class="card-name">Fornecedores</div><div class="card-sub">Interface Irina · Compras + certificados</div></div>
+            <div class="card"><div class="card-name">Concessionários</div><div class="card-sub">Portal CSN Connect + Marta</div></div>
+          </div>
+        </div>
+
+        <div class="layer" style="border-color:var(--persona);">
+          <div class="layer-header">
+            <div class="layer-num">CAMADA 2</div>
+            <div class="layer-name" style="color:var(--persona);">AI PERSONAS</div>
+            <div class="layer-desc">Simulações de humanos com personalidade e acesso definido — construção faseada</div>
+          </div>
+          <div class="layer-content">
+            <div class="card" style="border-top:2px solid var(--persona);">
+              <div class="card-name" style="color:var(--persona);">Luísa</div>
+              <div class="card-sub">Assistente CEO · Acesso total ao sistema · Agrega todas as camadas</div>
+              <div class="card-badge badge-pending">FASE 1 — A CONSTRUIR</div>
+            </div>
+            <div class="card" style="border-top:2px solid var(--persona);">
+              <div class="card-name" style="color:var(--persona);">Fernando</div>
+              <div class="card-sub">Chefe de Produção · Workers · Motivação + controlo · Não define regras</div>
+              <div class="card-badge badge-pending">FASE 1 — A CONSTRUIR</div>
+            </div>
+            <div class="card" style="border-top:2px solid var(--persona);">
+              <div class="card-name" style="color:var(--persona);">Marta</div>
+              <div class="card-sub">Comercial · Clientes directos + janela CSN Connect · Buffer de segurança</div>
+              <div class="card-badge badge-future">FASE 2</div>
+            </div>
+            <div class="card" style="border-top:2px solid var(--persona);">
+              <div class="card-name" style="color:var(--persona);">Leonor</div>
+              <div class="card-sub">Aftersales · Garantias + reclamações + assistência pós-entrega</div>
+              <div class="card-badge badge-future">FASE 2</div>
+            </div>
+            <div class="card" style="border-top:2px solid var(--persona);">
+              <div class="card-name" style="color:var(--persona);">Irina</div>
+              <div class="card-sub">Fornecedores · Compras + encomendas + certificados material + qualificação fornecedor</div>
+              <div class="card-badge badge-future">FASE 2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer" style="border-color:var(--auto);">
+          <div class="layer-header">
+            <div class="layer-num">CAMADA 3</div>
+            <div class="layer-name" style="color:var(--auto);">AUTONOMOUS AGENTS</div>
+            <div class="layer-desc">Trabalham em background — sem persona — motor do sistema</div>
+          </div>
+          <div class="layer-content">
+            <div class="card"><div class="card-name">Roteador</div><div class="card-sub">Recebe email/upload/WhatsApp · Distribui pelas personas certas</div><div class="card-badge badge-missing">POR FAZER</div></div>
+            <div class="card"><div class="card-name">Agente Documental</div><div class="card-sub">Classifica DAV/FAM/INSP/CIT · Associa a obras · Dispara Termo</div><div class="card-badge badge-missing">🔴 URGENTE</div></div>
+            <div class="card"><div class="card-name">Agente QMS</div><div class="card-sub">NC, inspecções, rastreabilidade · EN 1090 + ISO 9001</div><div class="card-badge badge-missing">POR FAZER</div></div>
+            <div class="card"><div class="card-name">Agente Stock</div><div class="card-sub">FIFO · Alertas mínimo · Rastreabilidade lote por obra</div><div class="card-badge badge-missing">POR FAZER</div></div>
+            <div class="card"><div class="card-name">Agente Manutenção</div><div class="card-sub">11 equipamentos · Plano preventivo · ISO 55000</div><div class="card-badge badge-missing">POR FAZER</div></div>
+            <div class="card"><div class="card-name">Agente KPIs</div><div class="card-sub">OEE · Throughput · Taxa entrega · ISO 22400</div><div class="card-badge badge-missing">POR FAZER</div></div>
+            <div class="card"><div class="card-name">Agente Compliance</div><div class="card-sub">Auditoria mensal automática · Prontidão por norma · Alertas certificados</div><div class="card-badge badge-missing">POR FAZER</div></div>
+          </div>
+        </div>
+
+        <div class="layer" style="border-color:var(--d3);">
+          <div class="layer-header">
+            <div class="layer-num">CAMADA 4</div>
+            <div class="layer-name" style="color:var(--d3);">SISTEMA — SUPABASE</div>
+            <div class="layer-desc">Fonte de verdade · Todos os dados · Todas as evidências de auditoria</div>
+          </div>
+          <div class="layer-content">
+            <div class="card"><div class="card-name">Tabelas existentes</div><div class="card-sub">obras, fases_obra, leads, davs, fams, inspecoes, cits, dossie_obra, certificacoes_empresa, audit_log, timetracking, notas_obra, ausencias, lugares_parque, mensagens, colaboradores, documentos_rh, calendario, templates_fases, obras_dossier_status, certificados_matricula, <strong style="color:var(--exists)">research_tasks</strong></div><div class="card-badge badge-exists">22 TABELAS — MIGRATIONS 001-014</div></div>
+            <div class="card"><div class="card-name">Tabelas por criar</div><div class="card-sub">utilizadores, departamentos, permissoes, fornecedores, faturas, faturas_linhas, notas_credito, recibos, tipos_documento, stocks, lotes_material, certificados_material, nao_conformidades, wps, wpqr, certificados_soldadores, equipamentos, manutencao, kpis_producao, emails, seguros</div><div class="card-badge badge-missing">21+ TABELAS EM FALTA</div></div>
+          </div>
+        </div>
+
+        <div class="layer" style="border-color:var(--d2);">
+          <div class="layer-header">
+            <div class="layer-num">CAMADA 5</div>
+            <div class="layer-name" style="color:var(--d2);">KNOWLEDGE BASE</div>
+            <div class="layer-desc">Conhecimento externo e interno por domínio · RAG partilhado entre agentes · Permanente</div>
+          </div>
+          <div class="layer-content">
+            <div class="card"><div class="card-name">/csn/producao</div><div class="card-sub">WPS, checklists, IT, fases, procedimentos internos</div></div>
+            <div class="card"><div class="card-name">/csn/qualidade</div><div class="card-sub">NC, inspecções, EN 1090, ISO 9001, EN ISO 3834</div></div>
+            <div class="card"><div class="card-name">/csn/comercial</div><div class="card-sub">Catálogos, preços, argumentários, histórico clientes</div></div>
+            <div class="card"><div class="card-name">/tecnico/plm</div><div class="card-sub">Desenhos Inventor, BOM, modelos 3D, especificações</div></div>
+            <div class="card"><div class="card-name">/tecnico/normas</div><div class="card-sub">PDFs ISO/EN — as 3 dimensões normativas completas</div></div>
+            <div class="card"><div class="card-name">/tecnico/bodybuilder</div><div class="card-sub">Guidelines Renault, Mercedes, MAN, DAF — em construção</div></div>
+            <div class="card"><div class="card-name">/tecnico/equipamentos</div><div class="card-sub">Manuais Bodor laser, Fronius, quinadora, guilhotina</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: AI PERSONAS -->
+  <div id="tab-personas" class="tab-content">
+    <div class="section">
+      <div class="section-title">AI PERSONAS — SIMULAÇÕES DE HUMANOS COM PERSONALIDADE DEFINIDA</div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:11px;color:#555;">
+        As personas são a face humana do sistema. 6 personas definidas. O sistema por baixo é o mesmo para todas. Cada persona tem nome, personalidade, âmbito de acesso e conjunto de tools definido.
+      </div>
+      <div class="persona-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍💼</div>
+          <div class="persona-name">Luísa</div>
+          <div class="persona-role">Assistente CEO</div>
+          <div class="persona-access">Acesso total ao sistema. Agrega todas as camadas. Responde a perguntas cruzadas. Alerta proactivamente.</div>
+          <div class="persona-phase"><div class="card-badge badge-pending">FASE 1 — PRIORIDADE</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👨‍🔧</div>
+          <div class="persona-name">Fernando</div>
+          <div class="persona-role">Chefe de Produção</div>
+          <div class="persona-access">Lidera equipa humana com inteligência emocional. RAG específico de liderança. Motiva, exige, apoia. Não gere KPIs — recebe info para liderar.</div>
+          <div class="persona-phase"><div class="card-badge badge-pending">FASE 1</div></div>
+        </div>
+        <div class="persona-card" style="border-top-color:#22c55e;">
+          <div class="persona-avatar">👩‍💻</div>
+          <div class="persona-name">Carolina</div>
+          <div class="persona-role">Recursos Humanos</div>
+          <div class="persona-access">Recibos, férias, faltas, declarações. Workers acedem directamente. Dados isolados por RLS. 27 recibos 2025 pendentes + Jan/Fev 2026.</div>
+          <div class="persona-phase"><div class="card-badge badge-pending">FASE 1 — URGENTE</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍💼</div>
+          <div class="persona-name">Marta</div>
+          <div class="persona-role">Agente Comercial</div>
+          <div class="persona-access">Clientes directos + janela CSN Connect. Buffer de segurança.</div>
+          <div class="persona-phase"><div class="card-badge badge-future">FASE 2</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍🔬</div>
+          <div class="persona-name">Leonor</div>
+          <div class="persona-role">Aftersales</div>
+          <div class="persona-access">Garantias, reclamações, assistência pós-entrega.</div>
+          <div class="persona-phase"><div class="card-badge badge-future">FASE 2</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍🏭</div>
+          <div class="persona-name">Irina</div>
+          <div class="persona-role">Fornecedores</div>
+          <div class="persona-access">Compras, encomendas, certificados material, qualificação fornecedor EN 1090.</div>
+          <div class="persona-phase"><div class="card-badge badge-future">FASE 2</div></div>
+        </div>
+      </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍💼</div>
+          <div class="persona-name">Luísa</div>
+          <div class="persona-role">Assistente CEO</div>
+          <div class="persona-access">Acesso total ao sistema. Agrega todas as camadas. Responde a perguntas cruzadas. Alerta proactivamente. Prepara relatórios executivos.</div>
+          <div class="persona-phase"><div class="card-badge badge-pending">FASE 1 — PRIORIDADE</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👨‍🔧</div>
+          <div class="persona-name">Fernando</div>
+          <div class="persona-role">Chefe de Produção</div>
+          <div class="persona-access">Workers no chão de fábrica. Motivação + foco + produtividade. Inteligência emocional. Não define regras — executa o que o sistema definiu com calor humano.</div>
+          <div class="persona-phase"><div class="card-badge badge-pending">FASE 1</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍💻</div>
+          <div class="persona-name">Marta</div>
+          <div class="persona-role">Agente Comercial</div>
+          <div class="persona-access">Clientes directos + janela CSN Connect. Buffer de segurança — não acede directamente ao sistema. Filtra informação errada.</div>
+          <div class="persona-phase"><div class="card-badge badge-future">FASE 2</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍🔬</div>
+          <div class="persona-name">Leonor</div>
+          <div class="persona-role">Aftersales</div>
+          <div class="persona-access">Garantias, reclamações, assistência pós-entrega. Acesso ao histórico de obras entregues, certificados e registos de qualidade.</div>
+          <div class="persona-phase"><div class="card-badge badge-future">FASE 2</div></div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍🏭</div>
+          <div class="persona-name">Irina</div>
+          <div class="persona-role">Gestão Fornecedores</div>
+          <div class="persona-access">Compras, encomendas, facturas, certificados de material. Qualificação de fornecedores EN 1090. Rastreabilidade lote → obra.</div>
+          <div class="persona-phase"><div class="card-badge badge-future">FASE 2</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;background:var(--bg2);border-radius:8px;padding:14px 18px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#444;letter-spacing:.15em;margin-bottom:10px;">PORTAIS — SEM PERSONA PRÓPRIA</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:var(--bg3);border-radius:8px;padding:12px 16px;border:1px solid var(--border);border-top:2px solid var(--portal);">
+            <div style="font-size:12px;font-weight:700;color:var(--bright);margin-bottom:4px;">CSN Connect</div>
+            <div style="font-size:11px;color:#555;">Portal B2B para concessionários. Self-service: configurador, simulador, histórico. Marta disponível como janela de chat dentro do portal.</div>
+            <div class="card-badge badge-future" style="margin-top:8px;">FASE 2</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:8px;padding:12px 16px;border:1px solid var(--border);border-top:2px solid var(--portal);">
+            <div style="font-size:12px;font-weight:700;color:var(--bright);margin-bottom:4px;">Portal Cliente</div>
+            <div style="font-size:11px;color:#555;">Acesso limitado para clientes directos. Estado da obra em tempo real. Sem acesso ao sistema principal.</div>
+            <div class="card-badge badge-future" style="margin-top:8px;">FASE 3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: AUTONOMOUS AGENTS -->
+  <div id="tab-agentes" class="tab-content">
+    <div class="section">
+      <div class="section-title">AUTONOMOUS AGENTS — MOTOR DO SISTEMA — SEM PERSONA — BACKGROUND</div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:11px;color:#555;">
+        Não falam com humanos. Executam tarefas, processam dados, tomam decisões dentro de regras. O Sr. Manuel actual (15 tools) será migrado para o Fernando (AI Persona) + tools redistribuídas pelos agentes correctos.
+      </div>
+
+      <!-- SR. MANUEL EXISTENTE -->
+      <div style="background:var(--bg2);border-radius:10px;padding:16px 20px;margin-bottom:16px;border:1px solid #166534;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--exists);letter-spacing:.15em;margin-bottom:10px;">✅ EXISTENTE — SR. MANUEL / 17 TOOLS (a migrar para Fernando + agentes)</div>
+        <div style="font-size:11px;color:#555;margin-bottom:12px;">O Sr. Manuel actual tem <strong style="color:var(--exists)">17 tools</strong> em <code style="color:var(--d3)">src/lib/chat-tools.ts</code>. Na arquitectura nova passa a chamar-se Fernando e as suas tools ficam distribuídas pelos agentes correctos.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">
+          <span class="table-tag exists">consultar_tarefas</span>
+          <span class="table-tag exists">estado_obra</span>
+          <span class="table-tag exists">iniciar_timer</span>
+          <span class="table-tag exists">parar_timer</span>
+          <span class="table-tag exists">concluir_fase</span>
+          <span class="table-tag exists">adicionar_nota</span>
+          <span class="table-tag exists">listar_obras</span>
+          <span class="table-tag exists">registar_ausencia</span>
+          <span class="table-tag exists">consultar_ausencias</span>
+          <span class="table-tag exists">verificar_documentacao</span>
+          <span class="table-tag exists">receber_veiculo</span>
+          <span class="table-tag exists">ver_parque</span>
+          <span class="table-tag exists">criar_lead</span>
+          <span class="table-tag exists">gerar_termo_responsabilidade</span>
+          <span class="table-tag exists">gerar_checklist_entrega</span>
+          <span class="table-tag exists" style="border-color:#166534;background:#052e16;color:#22c55e;">criar_tarefa_research</span>
+          <span class="table-tag exists" style="border-color:#166534;background:#052e16;color:#22c55e;">listar_tarefas_research</span>
+        </div>
+      </div>
+
+      <div class="agents-grid">
+        <div class="agent-card">
+          <div class="agent-name">🔀 Roteador</div>
+          <div class="agent-desc">Ponto de entrada único. Recebe email, upload, WhatsApp. Classifica e distribui pela persona correcta.</div>
+          <div class="agent-tools">
+            <div class="tool-item">classificar_entrada()</div>
+            <div class="tool-item">distribuir_para_persona()</div>
+            <div class="tool-item">registar_log_entrada()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">POR FAZER</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-name">📁 Agente Documental</div>
+          <div class="agent-desc">Classifica DAV/FAM/INSP/CIT. Associa ao dossier de obra. Dispara geração Termo quando DAV+INSP completos.</div>
+          <div class="agent-tools">
+            <div class="tool-item">classificar_documento()</div>
+            <div class="tool-item">registar_dav()</div>
+            <div class="tool-item">registar_inspecao()</div>
+            <div class="tool-item">registar_fam()</div>
+            <div class="tool-item">registar_cit()</div>
+            <div class="tool-item">verificar_completude_obra()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">🔴 URGENTE</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-name">🔍 Agente QMS</div>
+          <div class="agent-desc">Gestão de qualidade. NC, inspecções visuais, rastreabilidade soldador/WPS/junta. EN 1090 + ISO 9001.</div>
+          <div class="agent-tools">
+            <div class="tool-item">abrir_nc()</div>
+            <div class="tool-item">registar_inspecao_visual()</div>
+            <div class="tool-item">associar_wps_obra()</div>
+            <div class="tool-item">gerar_dop()</div>
+            <div class="tool-item">gerar_relatorio_qualidade()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">POR FAZER</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-name">📦 Agente Stock</div>
+          <div class="agent-desc">FIFO automático. Rastreabilidade por lote. Alertas stock mínimo. Aço estrutural + consumíveis + madeira + tintas.</div>
+          <div class="agent-tools">
+            <div class="tool-item">registar_entrada_lote()</div>
+            <div class="tool-item">consumir_material_obra()</div>
+            <div class="tool-item">verificar_fifo()</div>
+            <div class="tool-item">alerta_stock_minimo()</div>
+            <div class="tool-item">alerta_validade_material()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">POR FAZER</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-name">🔧 Agente Manutenção</div>
+          <div class="agent-desc">11 equipamentos. Plano preventivo. Registo de avarias. ISO 55000. Alertas periódicos.</div>
+          <div class="agent-tools">
+            <div class="tool-item">agendar_manutencao()</div>
+            <div class="tool-item">registar_avaria()</div>
+            <div class="tool-item">alerta_manutencao_pendente()</div>
+            <div class="tool-item">registar_intervencao()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">POR FAZER</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-name">📊 Agente KPIs</div>
+          <div class="agent-desc">OEE, throughput, taxa entrega, NC rate. ISO 22400. Dashboard executivo para Luísa.</div>
+          <div class="agent-tools">
+            <div class="tool-item">calcular_oee()</div>
+            <div class="tool-item">calcular_throughput()</div>
+            <div class="tool-item">taxa_entrega_prazo()</div>
+            <div class="tool-item">gerar_dashboard_executivo()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">POR FAZER</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-name">⚖️ Agente Compliance</div>
+          <div class="agent-desc">Auditoria interna mensal automática. Verifica cada norma, cada cláusula. Alerta certificados a expirar. Gera pacote de evidências para auditores externos.</div>
+          <div class="agent-tools">
+            <div class="tool-item">auditar_iso9001()</div>
+            <div class="tool-item">auditar_en1090()</div>
+            <div class="tool-item">auditar_reg2018858()</div>
+            <div class="tool-item">alerta_certificado_expira()</div>
+            <div class="tool-item">gerar_pacote_auditor()</div>
+            <div class="tool-item">registar_resultado_auditoria()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">POR FAZER</div>
+        </div>
+        <div class="agent-card" style="border-top-color:var(--d2);">
+          <div class="agent-name">🔎 Inteligência de Marcas</div>
+          <div class="agent-desc">Guardião da tabela marcas_veiculo. Monitoriza portais fabricantes 2x/mês. Scores de completude e confiança por modelo.</div>
+          <div class="agent-tools">
+            <div class="tool-item">verificar_portal_marca()</div>
+            <div class="tool-item">actualizar_campo_marca()</div>
+            <div class="tool-item">calcular_score_completude()</div>
+            <div class="tool-item">criar_ot_cowork()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">ADR-016 — POR FAZER</div>
+        </div>
+        <div class="agent-card" style="border-top-color:var(--exists);">
+          <div class="agent-name">🔬 Agente Research</div>
+          <div class="agent-desc">Pesquisa técnica autónoma. Claude API + web search. Extrai dados de fabricantes, normas, legislação. Deposita em _research/.</div>
+          <div class="agent-tools">
+            <div class="tool-item exists">web_search()</div>
+            <div class="tool-item exists">fetch_url()</div>
+            <div class="tool-item exists">save_finding()</div>
+            <div class="tool-item exists">conclude_research()</div>
+          </div>
+          <div class="card-badge badge-exists" style="margin-top:8px;">✅ ADR-022 — FUNCIONAL</div>
+        </div>
+        <div class="agent-card">
+          <div class="agent-name">🧮 Agente FEA</div>
+          <div class="agent-desc">Testes estruturais EN 12642 via iLogic + Inventor Nastran. Gera relatórios PASSA/FALHA automáticos.</div>
+          <div class="agent-tools">
+            <div class="tool-item">gerar_modelo_3d()</div>
+            <div class="tool-item">lancar_nastran()</div>
+            <div class="tool-item">verificar_en12642()</div>
+            <div class="tool-item">gerar_relatorio_fea()</div>
+          </div>
+          <div class="card-badge badge-missing" style="margin-top:8px;">ADR-024 — DEPENDE RAG iLogic</div>
+        </div>
+        <div class="agent-card" style="border-top-color:#555;opacity:.5;">
+          <div class="agent-name" style="color:#555;">🌿 Agente Ambiental</div>
+          <div class="agent-desc">Resíduos, energia, fornecedores qualificados. ISO 14001.</div>
+          <div class="agent-tools">
+            <div class="tool-item">registar_residuo()</div>
+            <div class="tool-item">registar_consumo_energia()</div>
+          </div>
+          <div class="card-badge badge-future" style="margin-top:8px;">FASE 3 — ISO 14001</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: MÓDULOS -->
+  <div id="tab-modulos" class="tab-content">
+    <div class="section">
+      <div class="section-title">MÓDULOS DO SISTEMA — CADA UM É UMA OBRIGAÇÃO NORMATIVA</div>
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-name">CRM</div>
+          <div class="module-full">Customer Relationship Management</div>
+          <div class="module-norm">↳ Comercial interno</div>
+          <span class="card-badge badge-exists">PARCIALMENTE IMPLEMENTADO</span>
+          <div class="module-tables">
+            <span class="table-tag exists">leads</span>
+            <span class="table-tag missing">clientes</span>
+            <span class="table-tag missing">orcamentos</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">MES</div>
+          <div class="module-full">Manufacturing Execution System</div>
+          <div class="module-norm">↳ ISA-95 Nível 3</div>
+          <span class="card-badge badge-exists">PARCIALMENTE IMPLEMENTADO</span>
+          <div class="module-tables">
+            <span class="table-tag exists">obras</span>
+            <span class="table-tag exists">fases_obra</span>
+            <span class="table-tag exists">timetracking</span>
+            <span class="table-tag missing">stocks</span>
+            <span class="table-tag missing">lotes_material</span>
+            <span class="table-tag missing">instrucoes_trabalho</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">QMS</div>
+          <div class="module-full">Quality Management System</div>
+          <div class="module-norm">↳ ISO 9001 + EN 1090 + EN ISO 3834</div>
+          <span class="card-badge badge-missing">POR CONSTRUIR — CRÍTICO</span>
+          <div class="module-tables">
+            <span class="table-tag exists">audit_log</span>
+            <span class="table-tag exists">certificacoes_empresa</span>
+            <span class="table-tag missing">nao_conformidades</span>
+            <span class="table-tag missing">wps</span>
+            <span class="table-tag missing">wpqr</span>
+            <span class="table-tag missing">inspecoes_soldadura</span>
+            <span class="table-tag missing">certificados_soldadores</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">DMS</div>
+          <div class="module-full">Document Management System</div>
+          <div class="module-norm">↳ Reg. 2018/858 + EN 1090</div>
+          <span class="card-badge badge-exists">PARCIALMENTE IMPLEMENTADO</span>
+          <div class="module-tables">
+            <span class="table-tag exists">davs</span>
+            <span class="table-tag exists">fams</span>
+            <span class="table-tag exists">inspecoes</span>
+            <span class="table-tag exists">cits</span>
+            <span class="table-tag exists">dossie_obra</span>
+            <span class="table-tag missing">dop</span>
+            <span class="table-tag missing">coc_eletronico</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">ERP light</div>
+          <div class="module-full">Financeiro + Fornecedores</div>
+          <div class="module-norm">↳ CIVA art.36 + fiscal PT</div>
+          <span class="card-badge badge-missing">MIGRATION 015 PENDENTE</span>
+          <div class="module-tables">
+            <span class="table-tag missing">fornecedores</span>
+            <span class="table-tag missing">faturas</span>
+            <span class="table-tag missing">faturas_linhas</span>
+            <span class="table-tag missing">notas_credito</span>
+            <span class="table-tag missing">recibos</span>
+            <span class="table-tag missing">tipos_documento</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">CMMS</div>
+          <div class="module-full">Computerized Maintenance Management</div>
+          <div class="module-norm">↳ ISO 55000</div>
+          <span class="card-badge badge-missing">POR CONSTRUIR</span>
+          <div class="module-tables">
+            <span class="table-tag missing">equipamentos</span>
+            <span class="table-tag missing">manutencao_plano</span>
+            <span class="table-tag missing">manutencao_registos</span>
+            <span class="table-tag missing">avarias</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">HRM</div>
+          <div class="module-full">Human Resources & Competencies</div>
+          <div class="module-norm">↳ EN ISO 9606-1 + EN 1090 + ISO 45001</div>
+          <span class="card-badge badge-missing">POR CONSTRUIR</span>
+          <div class="module-tables">
+            <span class="table-tag exists">ausencias</span>
+            <span class="table-tag missing">colaboradores</span>
+            <span class="table-tag missing">certificados_colaboradores</span>
+            <span class="table-tag missing">formacoes</span>
+            <span class="table-tag missing">epis</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">PLM</div>
+          <div class="module-full">Product Lifecycle Management</div>
+          <div class="module-norm">↳ Autodesk Inventor · iLogic · BOM</div>
+          <span class="card-badge badge-future">FASE 2</span>
+          <div class="module-tables">
+            <span class="table-tag missing">produtos</span>
+            <span class="table-tag missing">bom</span>
+            <span class="table-tag missing">desenhos_tecnicos</span>
+            <span class="table-tag missing">versoes_produto</span>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-name">Analytics</div>
+          <div class="module-full">KPIs + Business Intelligence</div>
+          <div class="module-norm">↳ ISO 22400</div>
+          <span class="card-badge badge-missing">POR CONSTRUIR</span>
+          <div class="module-tables">
+            <span class="table-tag missing">kpis_producao</span>
+            <span class="table-tag missing">relatorios_semanais</span>
+            <span class="table-tag missing">dashboard_executivo</span>
+          </div>
+        </div>
+        <div class="module-card" style="opacity:.5;">
+          <div class="module-name">EMS</div>
+          <div class="module-full">Environmental Management System</div>
+          <div class="module-norm">↳ ISO 14001 — FASE 3</div>
+          <span class="card-badge badge-future">FASE 3</span>
+        </div>
+        <div class="module-card" style="opacity:.5;">
+          <div class="module-name">SMS</div>
+          <div class="module-full">Safety Management System</div>
+          <div class="module-norm">↳ ISO 45001 — FASE 3</div>
+          <span class="card-badge badge-future">FASE 3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: CSN BRAIN -->
+  <div id="tab-brain" class="tab-content">
+    <div class="section">
+      <div class="section-title">CSN BRAIN — PRODUTO COMERCIAL SAAS</div>
+      <div style="background:var(--bg2);border-radius:10px;padding:16px 20px;margin-bottom:16px;border-left:3px solid var(--d1);">
+        <div style="font-size:14px;font-weight:700;color:var(--bright);margin-bottom:4px;">The engineering brain behind every body.</div>
+        <div style="font-size:11px;color:#555;">Começa como módulo interno do CSN Opus. Cresce para produto SaaS independente vendido a carroçadores europeus. Melhor que o TrailerWin — calcula, desenha e gera documentação.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+        <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border:1px solid var(--border);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--d1);margin-bottom:8px;">MÓDULO 1</div>
+          <div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:6px;">Configurador de Chassi</div>
+          <div style="font-size:11px;color:#555;line-height:1.6;">Motorização → Marca → Modelo → Cabine → Versão → Rodado → Caixa/Tracção → Nº Passageiros</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border:1px solid var(--border);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--d2);margin-bottom:8px;">MÓDULO 2</div>
+          <div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:6px;">Calculadora de Carga</div>
+          <div style="font-size:11px;color:#555;line-height:1.6;">Peso útil = PBT - Tara - (Pax × 75kg)<br>Distribuição por eixo<br>Verificação CoG máximo</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border:1px solid var(--border);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--d3);margin-bottom:8px;">MÓDULO 3</div>
+          <div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:6px;">Configurador de Carroçaria</div>
+          <div style="font-size:11px;color:#555;line-height:1.6;">Dimensões max/min automáticas<br>Limites por fabricante<br>Verificação EN 12642</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border:1px solid var(--border);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--persona);margin-bottom:8px;">MÓDULO 4</div>
+          <div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:6px;">Render 3D Paramétrico</div>
+          <div style="font-size:11px;color:#555;line-height:1.6;">Desenho com dimensões correctas<br>Vista lateral/frontal/superior<br>Export Inventor/SolidWorks</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border:1px solid var(--border);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--auto);margin-bottom:8px;">MÓDULO 5</div>
+          <div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:6px;">Gerador de Documentação</div>
+          <div style="font-size:11px;color:#555;line-height:1.6;">Ficha técnica<br>Cálculo de carga (EN 12642)<br>Base para COC multi-etapa</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border:1px solid var(--border);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--portal);margin-bottom:8px;">BASE DE DADOS</div>
+          <div style="font-size:13px;font-weight:700;color:var(--bright);margin-bottom:6px;">Chassi Multi-Marca</div>
+          <div style="font-size:11px;color:#555;line-height:1.6;">Fuso ✅ · Renault ✅ · Mercedes ✅<br>MAN · DAF · Iveco — a fazer<br>Stellantis — em curso</div>
+        </div>
+      </div>
+
+      <!-- Tabelas Migration 018 -->
+      <div style="background:var(--bg2);border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+        <div style="font-family:var(--mono);font-size:10px;color:#444;letter-spacing:.15em;margin-bottom:12px;">MIGRATION 018 — 4 TABELAS A CRIAR</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+          <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;border:1px solid var(--border);">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--missing);font-weight:700;margin-bottom:6px;">marcas_veiculo</div>
+            <div style="font-size:10px;color:#555;line-height:1.6;">marca, modelo, versao, cabine, rodado, motorizacao, num_passageiros_max, pbt_max, tara_chassi, carga_max_eixo_dianteiro, carga_max_eixo_traseiro, altura_max_cog, overhang_max_traseiro, restricoes_soldadura, sensores_gsr_localizacao, validado_por, data_validacao, estado</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;border:1px solid var(--border);">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--missing);font-weight:700;margin-bottom:6px;">nomenclatura_marcas</div>
+            <div style="font-size:10px;color:#555;line-height:1.6;">Dicionário de sinónimos por marca. conceito_csn, marca, termo_marca, unidade, notas.<br><br>Ex: "rodado duplo" = Renault "Roues jumelées" = Fuso "Dual rear" = Mercedes "Zwillingsbereifung"</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;border:1px solid var(--border);">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--missing);font-weight:700;margin-bottom:6px;">ordens_trabalho_cowork</div>
+            <div style="font-size:10px;color:#555;line-height:1.6;">Registo de ordens ao Cowork. referencia OT-AAAA-NNN-marca, tipo, pasta_destino, relatorio_extraccao (JSON), proxima_verificacao, estado.</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;border:1px solid var(--border);">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--missing);font-weight:700;margin-bottom:6px;">documentos_externos</div>
+            <div style="font-size:10px;color:#555;line-height:1.6;">Registo de documentos das marcas. marca, tipo, nome_ficheiro, versao, data_documento, url_fonte, metodo_obtencao, ot_id, estado (activo/obsoleto).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- vs TrailerWin -->
+      <div style="background:var(--bg2);border-radius:10px;padding:16px 20px;">
+        <div style="font-family:var(--mono);font-size:10px;color:#444;letter-spacing:.15em;margin-bottom:12px;">CSN BRAIN vs TRAILERWIN</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          ${[
+            ["Cálculo distribuição carga","✅","✅"],
+            ["Limites por eixo","✅","✅"],
+            ["Base dados multi-marca","✅","✅"],
+            ["Dicionário nomenclatura","❌","✅"],
+            ["Nº passageiros → peso útil","❌","✅"],
+            ["Dimensões carroçaria auto","❌","✅"],
+            ["Render 3D paramétrico","❌","✅"],
+            ["Geração documentação","❌","✅"],
+            ["Conformidade normativa","❌","✅"],
+            ["COC multi-etapa","❌","✅"],
+            ["Ligado sistema gestão","❌","✅"],
+            ["SaaS / cloud","❌","✅"],
+          ].map(([f,tw,csn]) => `
+            <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:10px;color:#666;">${f}</span>
+              <span style="font-size:11px;">${tw} <span style="color:#333;margin:0 4px;">→</span> ${csn}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:#444;">Modelo de negócio: SaaS mensal por carroçador · White label · API para fabricantes e concessionários</div>
+      </div>
+
+      <!-- 5 Camadas CSN Brain -->
+      <div style="background:var(--bg2);border-radius:10px;padding:16px 20px;margin-top:12px;">
+        <div style="font-family:var(--mono);font-size:10px;color:#444;letter-spacing:.15em;margin-bottom:12px;">AS 5 CAMADAS DO CSN BRAIN — AINDA NEM FALÁMOS DE CARROÇARIAS</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${[
+            ["1","LEGISLAÇÃO","DL 132/2017 · Reg. UE 1230/2012 · Dir. 96/53/CE · UNECE R48/R58/R73","var(--d1)"],
+            ["2","CHASSI","tabela marcas_veiculo · dados técnicos por marca/modelo · mounting directives","var(--d2)"],
+            ["3","EQUIPAMENTOS","Grua EN 12999 · Plataforma EN 1756 · Engate UNECE R55 · D-value · S-value","var(--d3)"],
+            ["4","CARROÇARIA","Basculante · Caixa Aberta/Estrado · EN 1090 EXC2 · EN 12642 L/XL","var(--persona)"],
+            ["5","ACESSÓRIOS","Sem impacto estrutural · Calhas amarração · Iluminação · Degraus","var(--auto)"],
+          ].map(([n,nome,desc,cor]) => `
+            <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;border:1px solid var(--border);border-left:3px solid ${cor};display:flex;gap:12px;align-items:flex-start;">
+              <span style="font-family:var(--mono);font-size:10px;color:${cor};min-width:16px;font-weight:700;">${n}</span>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--bright);margin-bottom:2px;">${nome}</div>
+                <div style="font-size:10px;color:#555;">${desc}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top:12px;background:var(--bg4);border-radius:6px;padding:10px 14px;font-family:var(--mono);font-size:11px;">
+          <span style="color:#444;">Fórmula peso útil: </span>
+          <span style="color:var(--d1);">Peso_carrocaria = (PBV × 0.90) - Tara - ((Nº_lugares - 1) × 75) - Σ(peso equipamentos)</span>
+          <br><span style="font-size:10px;color:#333;">Base legal: DL 132/2017 alínea e) + Reg. UE 1230/2012 ponto 2.6.2.2</span>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: KNOWLEDGE BASE -->
+  <div id="tab-kb" class="tab-content">
+    <div class="section">
+      <div class="section-title">KNOWLEDGE BASE — RAG POR DOMÍNIO — PERMANENTE E PARTILHADA</div>
+      <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:11px;color:#555;">
+        O conhecimento não vive dentro dos agentes — vive aqui. Se um agente é apagado e recriado, herda a Knowledge Base do seu domínio. Actualizar um documento aqui actualiza o conhecimento de todos os agentes que o consultam.
+      </div>
+      <div class="kb-grid">
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/csn/producao</div>
+          <div class="kb-items">
+            <div class="kb-item">WPS qualificados por processo/material/espessura</div>
+            <div class="kb-item">Instruções de trabalho por fase</div>
+            <div class="kb-item">Checklists de operador</div>
+            <div class="kb-item">Procedimentos internos de produção</div>
+            <div class="kb-item">Planos de inspecção e ensaio (ITP)</div>
+          </div>
+        </div>
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/csn/qualidade</div>
+          <div class="kb-items">
+            <div class="kb-item">Procedimento de tratamento de NC</div>
+            <div class="kb-item">Critérios inspeção visual EN ISO 5817 nível C</div>
+            <div class="kb-item">Manual FPC (Factory Production Control)</div>
+            <div class="kb-item">Política e objectivos de qualidade ISO 9001</div>
+            <div class="kb-item">Histórico de auditorias internas</div>
+          </div>
+        </div>
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/csn/comercial</div>
+          <div class="kb-items">
+            <div class="kb-item">Catálogos e fichas de produto</div>
+            <div class="kb-item">Argumentário de vendas por mercado</div>
+            <div class="kb-item">Histórico de clientes e obras</div>
+            <div class="kb-item">Preços base e condições comerciais</div>
+          </div>
+        </div>
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/csn/fornecedores</div>
+          <div class="kb-items">
+            <div class="kb-item">Fornecedores qualificados EN 1090</div>
+            <div class="kb-item">Certificados de material por lote</div>
+            <div class="kb-item">Critérios de qualificação de fornecedor</div>
+            <div class="kb-item">Histórico de encomendas</div>
+          </div>
+        </div>
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/tecnico/normas</div>
+          <div class="kb-items">
+            <div class="kb-item">PDFs ISO 9001, EN 1090, EN ISO 3834</div>
+            <div class="kb-item">Reg. 2018/858 + GSR 2019/2144</div>
+            <div class="kb-item">EN 12642, UNECE R48/R73/R58</div>
+            <div class="kb-item">ISA-95, ISO 22400, ISO 55000</div>
+            <div class="kb-item">VDI 2700, EN 12195-1, EN 12640</div>
+          </div>
+        </div>
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/tecnico/plm</div>
+          <div class="kb-items">
+            <div class="kb-item">Manuais Autodesk Inventor</div>
+            <div class="kb-item">Guias iLogic e automação</div>
+            <div class="kb-item">Modelos 3D e desenhos técnicos CSN</div>
+            <div class="kb-item">BOM por modelo de carroçaria</div>
+          </div>
+        </div>
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/tecnico/bodybuilder</div>
+          <div class="kb-items">
+            <div class="kb-item">Renault Master XDD — guidelines (iniciado)</div>
+            <div class="kb-item">Mercedes Sprinter — a adicionar</div>
+            <div class="kb-item">MAN TGE — a adicionar</div>
+            <div class="kb-item">DAF, Iveco, Ford Transit — a adicionar</div>
+          </div>
+        </div>
+        <div class="kb-card">
+          <div class="kb-path">/knowledge-base/tecnico/equipamentos</div>
+          <div class="kb-items">
+            <div class="kb-item">Manual Bodor laser chapa + tubo</div>
+            <div class="kb-item">Manual Fronius MIG/MAG</div>
+            <div class="kb-item">Manual quinadora CNC</div>
+            <div class="kb-item">Manuais empilhadores Mitsubishi + Toyota</div>
+            <div class="kb-item">Manuais guilhotina, máquina pintar, tupi, garlopa</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: INFRA & EQUIPA -->
+  <div id="tab-infra" class="tab-content">
+    <div class="section">
+      <div class="section-title">EMPRESA</div>
+      <div style="background:var(--bg2);border-radius:10px;padding:20px 24px;margin-bottom:20px;">
+        <div class="empresa-grid">
+          <div><div class="empresa-label">NOME</div><div class="empresa-value">Carlos dos Santos Nascimento, Lda</div></div>
+          <div><div class="empresa-label">NIF</div><div class="empresa-value">500 861 790</div></div>
+          <div><div class="empresa-label">MORADA</div><div class="empresa-value">Rua da Industria nº8, Casal do Rôdo</div><div class="empresa-sub">2640-216 Encarnação, Mafra</div></div>
+          <div><div class="empresa-label">CEO</div><div class="empresa-value">Duarte da Cunha Martins Bustorff-Silva</div></div>
+          <div><div class="empresa-label">CERTIDÃO PERMANENTE</div><div class="empresa-value">3172-1374-8252</div></div>
+          <div><div class="empresa-label">POSICIONAMENTO</div><div class="empresa-value">CSN — Engenharia de Veículos Comerciais</div></div>
+          <div><div class="empresa-label">SISTEMA</div><div class="empresa-value">CSN Opus</div><div class="empresa-sub">Every build. Documented. Certified. Traceable.</div></div>
+          <div><div class="empresa-label">URL PRODUÇÃO</div><div class="empresa-value">https://csn-producao.vercel.app</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">EQUIPA</div>
+      <div class="people-grid">
+        <div class="people-card">
+          <div class="people-name">Duarte</div>
+          <div class="people-role">CEO · Admin · Owner</div>
+          <div class="people-cert" style="color:var(--exists);">Acesso total ao sistema</div>
+        </div>
+        <div class="people-card">
+          <div class="people-name">João</div>
+          <div class="people-role">Soldador</div>
+          <div class="people-cert">EN ISO 9606-1 — pendente</div>
+        </div>
+        <div class="people-card">
+          <div class="people-name">Bohdan</div>
+          <div class="people-role">Soldador</div>
+          <div class="people-cert">EN ISO 9606-1 — pendente</div>
+        </div>
+        <div class="people-card">
+          <div class="people-name">José Júlio</div>
+          <div class="people-role">Colaborador</div>
+          <div class="people-cert" style="color:#555;">—</div>
+        </div>
+        <div class="people-card" style="border:1px dashed var(--border2);">
+          <div class="people-name" style="color:#555;">IWS/IWT</div>
+          <div class="people-role" style="color:#444;">Coordenador Soldadura</div>
+          <div class="people-cert">A contratar — desbloqueia EN 1090</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:24px;">EQUIPAMENTOS — 11 UNIDADES</div>
+      <div class="equip-grid">
+        <div class="equip-card"><div class="equip-cat">CORTE</div><div class="equip-name">Guilhotina</div><div class="equip-model">Marca/modelo a confirmar</div><div class="equip-norm">ISO 55000 · CMMS</div></div>
+        <div class="equip-card"><div class="equip-cat">CORTE LASER</div><div class="equip-name">Laser Chapa</div><div class="equip-model">Bodor</div><div class="equip-norm">ISO 55000 · CMMS</div></div>
+        <div class="equip-card"><div class="equip-cat">CORTE LASER</div><div class="equip-name">Laser Tubo</div><div class="equip-model">Marca/modelo a confirmar</div><div class="equip-norm">ISO 55000 · CMMS</div></div>
+        <div class="equip-card"><div class="equip-cat">QUINAGEM</div><div class="equip-name">Quinadora CNC</div><div class="equip-model">Marca/modelo a confirmar</div><div class="equip-norm">ISO 55000 · Calibração periódica</div></div>
+        <div class="equip-card"><div class="equip-cat">SOLDADURA</div><div class="equip-name">MIG/MAG #1</div><div class="equip-model">Fronius</div><div class="equip-norm">EN ISO 3834 · Manutenção afecta qualidade</div></div>
+        <div class="equip-card"><div class="equip-cat">SOLDADURA</div><div class="equip-name">MIG/MAG #2</div><div class="equip-model">Marca/modelo a identificar</div><div class="equip-norm">EN ISO 3834 · CMMS</div></div>
+        <div class="equip-card"><div class="equip-cat">ACABAMENTOS</div><div class="equip-name">Máquina de Pintar</div><div class="equip-model">Marca/modelo a confirmar</div><div class="equip-norm">ISO 14001 · Resíduos tinta · VOC</div></div>
+        <div class="equip-card"><div class="equip-cat">MADEIRA</div><div class="equip-name">Máq. Polir Tábuas</div><div class="equip-model">Marca/modelo a confirmar</div><div class="equip-norm">ISO 45001 · EPI obrigatório</div></div>
+        <div class="equip-card"><div class="equip-cat">MADEIRA</div><div class="equip-name">Tupi</div><div class="equip-model">Marca/modelo a confirmar</div><div class="equip-norm">ISO 45001 · Risco elevado</div></div>
+        <div class="equip-card"><div class="equip-cat">MADEIRA</div><div class="equip-name">Garlopa</div><div class="equip-model">Marca/modelo a confirmar</div><div class="equip-norm">ISO 45001 · Risco elevado</div></div>
+        <div class="equip-card"><div class="equip-cat">MOVIMENTAÇÃO</div><div class="equip-name">Empilhador 2,5t</div><div class="equip-model">Mitsubishi</div><div class="equip-norm">ISO 45001 · Inspecção obrigatória</div></div>
+        <div class="equip-card"><div class="equip-cat">MOVIMENTAÇÃO</div><div class="equip-name">Empilhador 4,5t</div><div class="equip-model">Toyota</div><div class="equip-norm">ISO 45001 · Inspecção obrigatória</div></div>
+      </div>
+
+      <div class="section-title" style="margin-top:24px;">STACK TÉCNICA</div>
+      <div class="stack-grid">
+        <div class="stack-card"><div class="stack-name">Next.js 16</div><div class="stack-desc">Frontend + API Routes</div></div>
+        <div class="stack-card"><div class="stack-name">Supabase</div><div class="stack-desc">Base de dados + Storage + Auth</div></div>
+        <div class="stack-card"><div class="stack-name">Claude API</div><div class="stack-desc">claude-sonnet-4-5 · Agentes</div></div>
+        <div class="stack-card"><div class="stack-name">Vercel</div><div class="stack-desc">Deploy · CDN · Serverless</div></div>
+        <div class="stack-card"><div class="stack-name">GitHub</div><div class="stack-desc">duartebustorff-star/csn-producao</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PRONTIDÃO AUDITORIA -->
+  <div id="tab-auditoria" class="tab-content">
+    <div class="section">
+      <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;margin-bottom:16px;border-left:3px solid var(--d1);">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--d1);letter-spacing:.15em;margin-bottom:4px;">⚠️ REGRA ABSOLUTA</div>
+        <div style="font-size:11px;color:var(--text2);">Esta secção NUNCA é removida de nenhuma versão deste documento. É o diferenciador estratégico da CSN. Percentagens reflectem progresso real — não objectivos.</div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--exists);"></div>Coberto pelo sistema</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--pending);"></div>Parcialmente coberto</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--missing);"></div>Em falta no sistema</div>
+      </div>
+
+      <div class="audit-grid">
+        <div class="audit-card">
+          <div class="audit-norm">ISO 9001:2015</div>
+          <div class="audit-pct" style="color:var(--pending);">15%</div>
+          <div class="audit-items">
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>Audit log implementado (cláusula 7.5)</div>
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>Certificacoes_empresa tabela existe</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Política de qualidade — documento em falta</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Objectivos de qualidade — não definidos</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>NC e acções correctivas — tabela em falta</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Auditorias internas — processo em falta</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Revisão pela gestão — processo em falta</div>
+          </div>
+        </div>
+        <div class="audit-card">
+          <div class="audit-norm">EN 1090-1/-2 + Marcação CE</div>
+          <div class="audit-pct" style="color:var(--missing);">5%</div>
+          <div class="audit-items">
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>Dossier por obra existe (dossie_obra)</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>WPS qualificados — não existem</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>WPQR — não existem</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Soldadores certificados EN 9606-1 — pendente</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Coordenador IWS/IWT — a contratar</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Manual FPC — não existe</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>DoP por obra — não gerado</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Etiqueta CE — não emitida</div>
+          </div>
+        </div>
+        <div class="audit-card">
+          <div class="audit-norm">Reg. 2018/858 + COC</div>
+          <div class="audit-pct" style="color:var(--pending);">40%</div>
+          <div class="audit-items">
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>DAV — pipeline implementado</div>
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>FAM — pipeline implementado</div>
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>INSP — pipeline implementado</div>
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>Termo de Responsabilidade — implementado</div>
+            <div class="audit-item"><div class="audit-dot dot-partial"></div>Checklist GSR — implementado mas incompleto</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>COC electrónico IMT — deadline Jul 2026</div>
+          </div>
+        </div>
+        <div class="audit-card">
+          <div class="audit-norm">EN ISO 3834-3</div>
+          <div class="audit-pct" style="color:var(--missing);">5%</div>
+          <div class="audit-items">
+            <div class="audit-item"><div class="audit-dot dot-ok"></div>Dossier obra existe (base para rastreabilidade)</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Controlo consumíveis soldadura — em falta</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Planeamento soldadura por obra — em falta</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Rastreabilidade soldador/WPS/junta — em falta</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>NC de soldadura — processo em falta</div>
+          </div>
+        </div>
+        <div class="audit-card">
+          <div class="audit-norm">EN 12642 L/XL</div>
+          <div class="audit-pct" style="color:var(--missing);">0%</div>
+          <div class="audit-items">
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Ensaio ou cálculo FEA — não realizado</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Certificado por modelo — não existe</div>
+            <div class="audit-item"><div class="audit-dot dot-missing"></div>Etiqueta L/XL na carroçaria — não emitida</div>
+          </div>
+        </div>
+        <div class="audit-card" style="opacity:.5;">
+          <div class="audit-norm">ISO 14001 + ISO 45001</div>
+          <div class="audit-pct" style="color:#555;">0%</div>
+          <div class="audit-items">
+            <div class="audit-item"><div class="audit-dot" style="background:#333;"></div>Reservado na arquitectura — Fase 3</div>
+            <div class="audit-item"><div class="audit-dot" style="background:#333;"></div>Tabelas planeadas mas não criadas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PENDENTES -->
+  <div id="tab-pendentes" class="tab-content">
+    <div class="section">
+      <div class="section-title">PENDENTES — POR ORDEM DE PRIORIDADE</div>
+      <div class="pending-list">
+        <div class="pending-item p1">
+          <div class="pending-num">P1</div>
+          <div><div class="pending-title">🔴 Migration 015 — ERP light (faturas, fornecedores)</div><div class="pending-desc">Criar migration: fornecedores, faturas, faturas_linhas, notas_credito, recibos, tipos_documento. Campos CIVA art.36 obrigatórios.</div></div>
+        </div>
+        <div class="pending-item p1">
+          <div class="pending-num">P2</div>
+          <div><div class="pending-title">🔴 Migration 021 — Carolina RH (27 recibos pendentes)</div><div class="pending-desc">Criar tabelas: colaboradores_rh, processamentos_mensais, recibos_vencimento, pedidos_ferias_faltas, declaracoes_anuais. ADR-020.</div></div>
+        </div>
+        <div class="pending-item p1">
+          <div class="pending-num">P3</div>
+          <div><div class="pending-title">🔴 Agente Documental — URGENTE</div><div class="pending-desc">Tools: classificar_documento, registar_dav, registar_inspecao, registar_cit, registar_fam, verificar_completude_obra. Trigger: DAV + inspecção → gerar_termo.</div></div>
+        </div>
+        <div class="pending-item p1">
+          <div class="pending-num">P4</div>
+          <div><div class="pending-title">🔴 Reescrever gerar-termo — formato real CSN</div><div class="pending-desc">Logo branco, texto jurídico, tabela dados veículo, tabela carroçaria, assinatura CEO, Certidão 3172-1374-8252.</div></div>
+        </div>
+        <div class="pending-item p2">
+          <div class="pending-num">P5</div>
+          <div><div class="pending-title">🟡 Migration 019 — CSN Brain (marcas_veiculo)</div><div class="pending-desc">Tabelas: marcas_veiculo, nomenclatura_marcas, qualidade_dados_marca, monitorizacao_marcas. Base para Agente Inteligência de Marcas (ADR-016).</div></div>
+        </div>
+        <div class="pending-item p2">
+          <div class="pending-num">P6</div>
+          <div><div class="pending-title">🟡 Função calcular_box_rules()</div><div class="pending-desc">Implementar lógica ADR-017: largura, comprimento, altura, peso — envelope automático por chassis + equipamento.</div></div>
+        </div>
+        <div class="pending-item p2">
+          <div class="pending-num">P7</div>
+          <div><div class="pending-title">🟡 Página Gestão de OTs no CSN Opus</div><div class="pending-desc">UI para criar, listar e gerir ordens de trabalho. Integração com _cowork/ (ADR-018).</div></div>
+        </div>
+        <div class="pending-item p2">
+          <div class="pending-num">P8</div>
+          <div><div class="pending-title">🟡 COC Electrónico IMT — deadline Jul 2026</div><div class="pending-desc">Integração com portal IMT para emissão electrónica do COC multi-etapa.</div></div>
+        </div>
+        <div class="pending-item p3">
+          <div class="pending-num">P9</div>
+          <div><div class="pending-title">⚪ Luísa — Assistente CEO (Fase 1)</div><div class="pending-desc">Primeira AI Persona. Acesso total ao sistema. Agrega dados de todos os módulos.</div></div>
+        </div>
+        <div class="pending-item p3">
+          <div class="pending-num">P10</div>
+          <div><div class="pending-title">⚪ Fernando — migrar Sr. Manuel com persona liderança</div><div class="pending-desc">Persona com RAG liderança + inteligência emocional (ADR-021). Workers app com chat Fernando.</div></div>
+        </div>
+        <div class="pending-item p3">
+          <div class="pending-num">P11</div>
+          <div><div class="pending-title">⚪ Knowledge Base Nastran para Agente FEA</div><div class="pending-desc">RAG com Inventor Trenches, GitHub iLogic, Autodesk University. Base para ADR-024.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`[onclick="showTab('${id}')"]`).classList.add('active');
+  document.getElementById(`tab-${id}`).classList.add('active');
+}
+</script>
+</body>
+</html>
