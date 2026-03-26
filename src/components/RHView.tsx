@@ -80,14 +80,13 @@ function SalariosTab() {
       .then((r) => r.json())
       .then((data) => {
         setColabs(data)
-        const now = new Date()
         const defaults: Record<number, number> = {}
         const defaultsAno: Record<number, number> = {}
         const defaultsAnoDecl: Record<number, number> = {}
         for (const c of data) {
-          defaults[c.id] = now.getMonth() + 1
-          defaultsAno[c.id] = now.getFullYear()
-          defaultsAnoDecl[c.id] = now.getFullYear() - 1
+          defaults[c.id] = 2
+          defaultsAno[c.id] = 2026
+          defaultsAnoDecl[c.id] = 2025
         }
         setSelectedMes(defaults)
         setSelectedAno(defaultsAno)
