@@ -168,6 +168,37 @@ export const CLAUDE_TOOLS = [
       required: ["cliente", "veiculo_marca", "veiculo_modelo", "tipo_carrocaria"],
     },
   },
+  {
+    name: "criar_tarefa_research",
+    description: "Cria uma nova tarefa de pesquisa para o Agente Research. Só admins podem usar. Exemplos: pesquisar bodybuilder guidelines MAN, legislação de pesos, normas EN 12642.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        tema: { type: "string" as const, description: "Tema da pesquisa, ex: 'MAN TGS bodybuilder guidelines'" },
+        tipo: {
+          type: "string" as const,
+          enum: ["marca", "legal", "norma", "equip", "mercado", "tech", "geral"],
+          description: "Tipo: marca (chassis), legal (legislação), norma (EN/ISO), equip (equipamentos), mercado, tech, geral",
+        },
+        descricao: { type: "string" as const, description: "Descrição adicional do que pesquisar" },
+      },
+      required: ["tema", "tipo"],
+    },
+  },
+  {
+    name: "listar_tarefas_research",
+    description: "Lista tarefas de pesquisa do Agente Research — pendentes, em curso ou concluídas.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        estado: {
+          type: "string" as const,
+          enum: ["pendente", "em_curso", "concluido", "incorporado", "falhado", "todos"],
+          description: "Filtrar por estado (omitir para ver todos)",
+        },
+      },
+    },
+  },
 ]
 
 // ============================================
@@ -217,6 +248,10 @@ export async function executeTool(
       return verParque()
     case "criar_lead":
       return criarLead(toolInput, colaboradorId)
+    case "criar_tarefa_research":
+      return criarTarefaResearch(toolInput, colaboradorId)
+    case "listar_tarefas_research":
+      return listarTarefasResearch((toolInput.estado as string) || undefined)
     default:
       return JSON.stringify({ error: `Tool desconhecida: ${toolName}` })
   }
@@ -791,4 +826,89 @@ async function criarLead(
     lead_id: leadId,
     mensagem: `Lead ${leadId} criada com sucesso para ${input.cliente} — ${input.veiculo_marca} ${input.veiculo_modelo} (${input.tipo_carrocaria}).`,
   })
+}
+
+async function criarTarefaResearch(
+  input: Record<string, unknown>,
+  colaboradorId: string
+): Promise<string> {
+  const tema = input.tema as string
+  const tipo = input.tipo as string
+  const descricao = (input.descricao as string) || null
+
+  // Gerar código sequencial
+  const year = new Date().getFullYear()
+  const { count } = await supabase
+    .from("research_tasks")
+    .select("*", { count: "exact", head: true })
+    .like("codigo", `RT-${year}-%`)
+
+  const seq = String((count || 0) + 1).padStart(3, "0")
+  const slug = tema
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40)
+  const codigo = `RT-${year}-${seq}`
+  const pastaLocal = `_research/${codigo}-${slug}/`
+
+  const { data, error } = await supabase
+    .from("research_tasks")
+    .insert({
+      codigo,
+      tema,
+      tipo,
+      descricao,
+      solicitado_por: colaboradorId,
+      pasta_local: pastaLocal,
+      estado: "pendente",
+    })
+    .select()
+    .single()
+
+  if (error) {
+    return JSON.stringify({ sucesso: false, error: "Erro ao criar tarefa research" })
+  }
+
+  await audit({
+    entidade_tipo: "research_task",
+    entidade_id: data.id,
+    acao: "criar",
+    valor_novo: JSON.stringify({ codigo, tema, tipo }),
+    utilizador_id: colaboradorId,
+  })
+
+  return JSON.stringify({
+    sucesso: true,
+    codigo,
+    task_id: data.id,
+    pasta: pastaLocal,
+    mensagem: `Tarefa ${codigo} criada: "${tema}". Estado: pendente. O Agente Research vai executá-la.`,
+  })
+}
+
+async function listarTarefasResearch(estado?: string): Promise<string> {
+  let query = supabase
+    .from("research_tasks")
+    .select("codigo, tema, tipo, estado, solicitado_por, data_inicio, data_conclusao, fontes_consultadas, documentos_encontrados")
+    .order("created_at", { ascending: false })
+    .limit(20)
+
+  if (estado && estado !== "todos") {
+    query = query.eq("estado", estado)
+  }
+
+  const { data, error } = await query
+
+  if (error) {
+    return JSON.stringify({ sucesso: false, error: "Erro ao listar tarefas research" })
+  }
+
+  if (!data || data.length === 0) {
+    return JSON.stringify({ tarefas: [], mensagem: "Sem tarefas de pesquisa registadas" })
+  }
+
+  return JSON.stringify({ tarefas: data })
 }
