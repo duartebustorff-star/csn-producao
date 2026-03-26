@@ -5,5 +5,14 @@ _research/
 docs/
 supabase/
 
+# PDFs grandes de marcas de veículos (340MB) — causa erro 250MB no Vercel
+Marcas - Veiculos/
+
+# Knowledge base — não é necessário no deploy
+knowledge-base/
+
+# Cowork inbox
+_cowork/
+
 # Claude Code
 .claude/
