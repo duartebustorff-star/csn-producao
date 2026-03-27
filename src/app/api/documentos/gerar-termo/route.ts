@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
-import { createClient } from "@supabase/supabase-js"
-import fs from "fs"
-import path from "path"
+import { getServiceSupabase } from "@/lib/supabase"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function s(str: string | null | undefined): string {
+  if (!str) return "-"
+  return str
+    .replace(/\u2019|\u2018/g, "'")
+    .replace(/\u201c|\u201d/g, '"')
+    .replace(/\u2013|\u2014/g, "-")
+    .replace(/\u2026/g, "...")
+    .replace(/[^\x00-\xFF]/g, "?")
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +20,8 @@ export async function POST(req: NextRequest) {
     if (!obra_id) {
       return NextResponse.json({ error: "obra_id obrigatorio" }, { status: 400 })
     }
+
+    const supabase = getServiceSupabase()
 
     // Buscar obra
     const { data: obra, error: obraError } = await supabase
@@ -45,14 +50,14 @@ export async function POST(req: NextRequest) {
       .limit(1)
       .maybeSingle()
 
-    const matricula = obra.matricula || "-"
-    const vin = obra.vin || "-"
-    const marca = dav?.marca || "-"
-    const modelo = dav?.modelo || "-"
-    const cod_homologacao = dav?.cod_homologacao || "-"
+    const matricula = s(obra.matricula)
+    const vin = s(obra.vin)
+    const marca = s(dav?.marca)
+    const modelo = s(dav?.modelo)
+    const cod_homologacao = s(dav?.cod_homologacao)
     const peso_bruto = dav?.peso_bruto ? String(dav.peso_bruto) : "-"
     const tara_total = dav?.tara ? String(dav.tara) : "-"
-    const tipo_carrocaria = lead?.tipo_carrocaria || "-"
+    const tipo_carrocaria = s(lead?.tipo_carrocaria)
     const comprimento = lead?.comprimento_ext ? String(lead.comprimento_ext) : "-"
     const largura = lead?.largura_ext ? String(lead.largura_ext) : "-"
     const altura = lead?.altura_ext ? String(lead.altura_ext) : "-"
@@ -72,11 +77,11 @@ export async function POST(req: NextRequest) {
     const R = width - 56
     const W = R - L
 
-    // LOGO
+    // LOGO — fetch from public URL (compatible with Vercel serverless)
     try {
-      const logoPath = path.join(process.cwd(), "public", "logo-horizontal.png")
-      if (fs.existsSync(logoPath)) {
-        const logoBytes = fs.readFileSync(logoPath)
+      const logoRes = await fetch("https://csn-producao.vercel.app/logo-horizontal.png")
+      if (logoRes.ok) {
+        const logoBytes = new Uint8Array(await logoRes.arrayBuffer())
         const logoImg = await pdfDoc.embedPng(logoBytes)
         const logoDims = logoImg.scale(0.18)
         page.drawImage(logoImg, {
@@ -88,7 +93,7 @@ export async function POST(req: NextRequest) {
       }
     } catch {
       page.drawText("CSN", { x: width / 2 - 20, y: height - 70, size: 28, font: fontBold, color: BLACK })
-      page.drawText("TRANSFORMACAO DE VEICULOS", { x: width / 2 - 80, y: height - 86, size: 8, font: fontBold, color: BLACK })
+      page.drawText(s("TRANSFORMACAO DE VEICULOS"), { x: width / 2 - 80, y: height - 86, size: 8, font: fontBold, color: BLACK })
     }
 
     let y = height - 110
@@ -112,7 +117,7 @@ export async function POST(req: NextRequest) {
     ]
 
     for (const linha of textoIntro) {
-      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      page.drawText(s(linha), { x: L, y, size: 9, font: fontReg, color: BLACK })
       y -= 13
     }
     y -= 4
@@ -128,7 +133,7 @@ export async function POST(req: NextRequest) {
     ]
 
     for (const linha of textoConf) {
-      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      page.drawText(s(linha), { x: L, y, size: 9, font: fontReg, color: BLACK })
       y -= 13
     }
     y -= 16
@@ -249,7 +254,7 @@ export async function POST(req: NextRequest) {
 
     const { error: uploadError } = await supabase.storage
       .from("documentos")
-      .upload(storagePath, pdfBytes, { contentType: "application/pdf", upsert: true })
+      .upload(storagePath, Buffer.from(pdfBytes), { contentType: "application/pdf", upsert: true })
 
     if (uploadError) {
       console.error("Erro upload:", uploadError)
