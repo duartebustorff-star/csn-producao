@@ -47,7 +47,7 @@ async function generatePDF() {
   y -= 30;
   page.drawText(s('Controlo de Sistema'), { x: margin, y, size: 28, font: fontBold, color: black });
   y -= 22;
-  page.drawText(s('v7 -- 26 Marco 2026'), { x: margin, y, size: 14, font, color: gray });
+  page.drawText(s('v8 -- 27 Marco 2026'), { x: margin, y, size: 14, font, color: gray });
   y -= 40;
 
   // Separator
@@ -108,7 +108,7 @@ async function generatePDF() {
   const personas = [
     ['Luisa', 'Assistente CEO', 'Transversal', 'Fase 1'],
     ['Fernando', 'Chefe de Producao', 'Nivel 3 MES', 'Existe como Sr. Manuel'],
-    ['Carolina', 'Recursos Humanos', 'Nivel 4 ERP', 'DB pronta'],
+    ['Carolina', 'Recursos Humanos', 'Nivel 4 ERP', 'EM PRODUCAO'],
     ['Marta', 'Agente Comercial', 'Nivel 4 ERP', 'Fase 2'],
     ['Leonor', 'Aftersales', 'Nivel 4 ERP', 'Fase 2'],
     ['Irina', 'Fornecedores', 'Nivel 4 ERP', 'Fase 2'],
@@ -126,7 +126,7 @@ async function generatePDF() {
     page.drawText(s(nome), { x: margin + 4, y, size: 8, font: fontBold, color: black });
     page.drawText(s(funcao), { x: 140, y, size: 8, font, color: black });
     page.drawText(s(isa), { x: 310, y, size: 8, font: mono, color: darkGray });
-    const estadoColor = estado.includes('URGENTE') ? red : estado.includes('Existe') ? yellow : estado.includes('DB pronta') ? green : gray;
+    const estadoColor = estado.includes('URGENTE') ? red : estado.includes('Existe') ? yellow : estado.includes('EM PRODUCAO') || estado.includes('DB pronta') ? green : gray;
     page.drawText(s(estado), { x: 420, y, size: 8, font, color: estadoColor });
     y -= 14;
   }
@@ -186,7 +186,7 @@ async function generatePDF() {
     tx += tw + 4;
   }
 
-  page.drawText(s('CSN Opus -- Controlo de Sistema v7'), { x: margin, y: 40, size: 8, font, color: gray });
+  page.drawText(s('CSN Opus -- Controlo de Sistema v8'), { x: margin, y: 40, size: 8, font, color: gray });
   page.drawText(s('Pagina 2/4'), { x: W - margin - 50, y: 40, size: 8, font, color: gray });
 
   // ===== PAGE 3: AGENTE RESEARCH + MIGRATIONS =====
@@ -255,7 +255,7 @@ async function generatePDF() {
     y -= 14;
   }
 
-  page.drawText(s('CSN Opus -- Controlo de Sistema v7'), { x: margin, y: 40, size: 8, font, color: gray });
+  page.drawText(s('CSN Opus -- Controlo de Sistema v8'), { x: margin, y: 40, size: 8, font, color: gray });
   page.drawText(s('Pagina 3/4'), { x: W - margin - 50, y: 40, size: 8, font, color: gray });
 
   // ===== PAGE 4: PRONTIDAO AUDITORIA + PENDENTES =====
@@ -289,7 +289,7 @@ async function generatePDF() {
 
   const pendentes = [
     ['P1', 'Migration 015 -- ERP light (faturas, fornecedores)', red],
-    ['P2', 'Carolina -- persona + tools RH + PDF recibos', red],
+    ['P2', 'Carolina -- persona chat + tools RH dedicados', red],
     ['P3', 'Agente Documental', red],
     ['P4', 'Reescrever gerar-termo', red],
     ['P5', 'Migration 019 -- CSN Brain (marcas_veiculo)', yellow],
@@ -312,15 +312,15 @@ async function generatePDF() {
   y -= 30;
   page.drawLine({ start: { x: margin, y }, end: { x: W - margin, y }, thickness: 1, color: lightGray });
   y -= 16;
-  page.drawText(s('Gerado automaticamente pelo CSN Opus -- 26/03/2026 21:00 WET'), { x: margin, y, size: 8, font, color: gray });
+  page.drawText(s('Gerado automaticamente pelo CSN Opus -- 27/03/2026 00:30 WET'), { x: margin, y, size: 8, font, color: gray });
 
-  page.drawText(s('CSN Opus -- Controlo de Sistema v7'), { x: margin, y: 40, size: 8, font, color: gray });
+  page.drawText(s('CSN Opus -- Controlo de Sistema v8'), { x: margin, y: 40, size: 8, font, color: gray });
   page.drawText(s('Pagina 4/4'), { x: W - margin - 50, y: 40, size: 8, font, color: gray });
 
   // Save
   const bytes = await doc.save();
-  writeFileSync('docs/CSN-Controlo-Sistema-v7.pdf', bytes);
-  console.log('PDF generated: docs/CSN-Controlo-Sistema-v7.pdf');
+  writeFileSync('docs/CSN-Controlo-Sistema-v8.pdf', bytes);
+  console.log('PDF generated: docs/CSN-Controlo-Sistema-v8.pdf');
 }
 
 generatePDF().catch(console.error);
