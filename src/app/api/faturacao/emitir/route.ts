@@ -141,11 +141,11 @@ export async function POST(req: NextRequest) {
       clienteFatId = newCliente?.id || null
     }
 
-    // Guardar metadados na tabela faturas (masterway_id = invoicexpress_id)
+    // Guardar metadados na tabela faturas
     const { data: fatura, error: faturaErr } = await supabase
       .from("faturas")
       .insert({
-        masterway_id: String(invoice.id),
+        invoicexpress_id: String(invoice.id),
         obra_id,
         cliente_faturacao_id: clienteFatId,
         numero_fatura: invoice.sequence_number || null,
@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
         base_tributavel: invoice.before_taxes ?? 0,
         iva: invoice.taxes ?? 0,
         total: invoice.total ?? 0,
-        masterway_url: invoice.permalink || null,
+        invoicexpress_url: invoice.permalink || null,
         referencia_interna: `Obra ${obra_id}`,
       })
       .select()
