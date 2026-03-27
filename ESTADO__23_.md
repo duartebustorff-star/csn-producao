@@ -23,16 +23,20 @@ Carrega: `ESTADO__23_.md` + `docs/csn-architecture__23_.html` + ADRs relevantes
 
 ## SESSÃO 23 — RESUMO (27/03/2026)
 
-Decisão software faturação: Masterway em vez de InvoiceXpress. Migration 015 criada e corrida no Supabase. ADR-025 criado.
+Faturação certificada AT: decisão Cegid Vendus (plano Pro). Migration 015 corrida no Supabase. ADR-025 criado e actualizado. Recibos 2025 extraídos. Módulo financeiro planeado. Extrato BPI analisado.
 
-### Parte 1: Decisão Faturação Masterway
-- **ADR-025** criado: `docs/ADR-025-integracao-masterway.md`
-- Masterway escolhido: conta activa (3,75 EUR/mês), certificado AT, API REST
-- CSN Opus envia ordem → Masterway gera documento certificado com ATCUD + QR Code → devolve ID + PDF URL
+### Parte 1: Decisão Faturação — Cegid Vendus
+- **ADR-025** criado e actualizado: `docs/ADR-025-integracao-masterway.md`
+- Cegid Vendus escolhido: plano Pro (15,83 EUR/mês anual), certificado AT 2230
+- SAF-T automático com comunicação directa AT, ATCUD, assinatura digital, guias de transporte AT
+- API REST disponível imediatamente após subscrição (APPS > API)
+- Masterway rejeitada: sem SAF-T automático via API, não cobre requisitos fiscais completos
+- Cegid Invoicing Engine rejeitada: enterprise desnecessário para volume CSN
+- CSN Opus envia ordem → Cegid Vendus gera doc certificado (ATCUD + QR + assinatura digital) → devolve ID + PDF URL
 - Faturas no Supabase são metadados e referências externas (não documentos fiscais)
-- **Commit:** `a07b761`
+- **Commits:** `a07b761` (ADR original), `d32a6fa` (actualização Cegid Vendus)
 
-### Parte 2: Migration 015 — Faturação Masterway
+### Parte 2: Migration 015 — Faturação Masterway (tabelas)
 - **3 tabelas criadas no Supabase:** `clientes_faturacao`, `faturas`, `notas_credito`
 - Ficheiro: `supabase/015_faturas_masterway.sql`
 - Nível ISA-95: Nível 4 (ERP)
@@ -42,10 +46,26 @@ Decisão software faturação: Masterway em vez de InvoiceXpress. Migration 015 
 - `obra_id TEXT` → `obra_id INTEGER` na tabela `faturas` (match tipo `dossie_obra.id`)
 - **Commit:** `d80c2a4`
 
+### Parte 4: Recibos 2025 extraídos
+- João António: recibos Jan, Fev, Mar, Jul 2025 extraídos dos PDFs originais
+- Todos os 3 colaboradores: recibos Jul 2025 extraídos
+- Dados prontos para inserção na tabela `recibos_vencimento`
+
+### Parte 5: Módulo Financeiro planeado
+- **Migration 016 planeada:** `movimentos_bancarios`, `fornecedores`, campo `iban` em colaboradores e clientes
+- Objectivo: gestão financeira integrada com rastreabilidade bancária
+
+### Parte 6: Extrato BPI analisado
+- Extrato bancário BPI analisado e integrado na gestão documental
+- Identificado como tipo de documento a ingerir pelo Agente Documental
+- Classificação automática de movimentos bancários → associação a obras/fornecedores
+
 ### Notas técnicas da sessão:
-- Masterway API: `MASTERWAY_API_KEY` env var necessária (backend only)
-- Tabela `faturas`: metadados + referência Masterway, nunca documento fiscal
+- Cegid Vendus API: `CEGID_VENDUS_API_KEY` env var necessária (backend only)
+- Tabela `faturas`: campo `masterway_id` será renomeado para `vendus_id` na próxima migration
+- Tabela `faturas`: metadados + referência externa, nunca documento fiscal
 - `nivel_isa95` campo presente na migration (nível 4 ERP)
+- Extratos bancários: novo tipo documental para Agente Documental
 
 ---
 
@@ -58,7 +78,7 @@ Decisão software faturação: Masterway em vez de InvoiceXpress. Migration 015 
 | GitHub | ✅ duartebustorff-star/csn-producao |
 | Claude API | ✅ claude-sonnet-4-5 |
 | ANTHROPIC_API_KEY | ✅ Vercel env vars |
-| Masterway | ✅ Conta activa (3,75 EUR/mês) — API REST |
+| Cegid Vendus | ⚠️ Plano Pro a subscrever (15,83 EUR/mês) — cert AT 2230 |
 
 ---
 
@@ -70,15 +90,16 @@ obras · fases_obra · timetracking · templates_fases · notas_obra · calendar
 
 | Migration | Tabelas principais | Estado |
 |---|---|---|
-| **015** | **clientes_faturacao, faturas, notas_credito** | **✅ COMPLETA — Masterway** |
-| 016 | nao_conformidades, wps, wpqr, certificados_soldadores, inspecoes_soldadura | ❌ |
-| 017 | stocks, lotes_material, certificados_material, movimentos_stock | ❌ |
-| 018 | equipamentos_csn, manutencao_plano, avarias, formacoes, epis | ❌ |
-| 019 | marcas_veiculo, nomenclatura_marcas, qualidade_dados_marca, monitorizacao_marcas | ❌ |
-| 020 | equipamentos_carrocaria, tipos_carrocaria | ❌ |
+| **015** | **clientes_faturacao, faturas, notas_credito** | **✅ COMPLETA — Cegid Vendus (ADR-025)** |
+| **016** | **movimentos_bancarios, fornecedores, iban cols** | **⚠️ PLANEADA** |
+| 017 | nao_conformidades, wps, wpqr, certificados_soldadores, inspecoes_soldadura | ❌ |
+| 018 | stocks, lotes_material, certificados_material, movimentos_stock | ❌ |
+| 019 | equipamentos_csn, manutencao_plano, avarias, formacoes, epis | ❌ |
+| 020 | marcas_veiculo, nomenclatura_marcas, qualidade_dados_marca, monitorizacao_marcas | ❌ |
 | **021** | **colaboradores_rh, processamentos_mensais, recibos_vencimento** | **✅ COMPLETA** |
-| 022 | sops, work_instructions, cadernos_montagem, passos_caderno | ❌ |
-| 023 | analises_fea | ❌ |
+| 022 | equipamentos_carrocaria, tipos_carrocaria | ❌ |
+| 023 | sops, work_instructions, cadernos_montagem, passos_caderno | ❌ |
+| 024 | analises_fea | ❌ |
 
 ---
 
@@ -110,7 +131,7 @@ obras · fases_obra · timetracking · templates_fases · notas_obra · calendar
 | 022 | Agente Research: autónomo + fluxo tarefas | — |
 | 023 | Departamento Processos: SOPs + WIs multilingue | ISO 9001 cl. 8.1, EN 1090 |
 | 024 | Agente FEA: iLogic + Nastran + EN 12642 | EN 12642, ISO 9001 |
-| **025** | **Integração Masterway — faturação certificada AT** | **CIVA, ISA-95 nível 4** |
+| **025** | **Integração Cegid Vendus — faturação certificada AT** | **CIVA, ISA-95 nível 4** |
 
 ---
 
@@ -185,32 +206,56 @@ Peso:        MAX = (PBV×0.90) - Tara - ((Nº_lugares-1)×75) - Σequipamentos
 | `src/app/api/documentos/gerar-termo/route.ts` | ⚠️ Funcional mas formato errado |
 | `src/app/api/documentos/gerar-checklist/route.ts` | ✅ Funcional e aprovado |
 | `supabase/014_research_tasks.sql` | ✅ Corrida no Supabase |
-| `supabase/015_faturas_masterway.sql` | ✅ Corrida no Supabase (3 tabelas Masterway) |
+| `supabase/015_faturas_masterway.sql` | ✅ Corrida no Supabase (3 tabelas — Cegid Vendus) |
 | `supabase/021_carolina_salarios.sql` | ✅ Corrida no Supabase (3 tabelas + 15 recibos) |
-| `docs/ADR-025-integracao-masterway.md` | ✅ Decisão faturação Masterway |
+| `docs/ADR-025-integracao-masterway.md` | ✅ Decisão faturação Cegid Vendus |
 | `.vercelignore` | ✅ Exclui _research/, docs/, supabase/, Marcas - Veiculos/, knowledge-base/ |
 
 ---
 
-## FATURAÇÃO MASTERWAY — ✅ MIGRATION 015 COMPLETA
+## FATURAÇÃO CEGID VENDUS — ✅ MIGRATION 015 COMPLETA
 
 ### Decisão (ADR-025)
 - CSN Opus **não é** software de faturação certificado AT
-- Masterway: conta activa, 3,75 EUR/mês, certificado AT, API REST
-- Fluxo: CSN Opus envia ordem → Masterway gera doc certificado (ATCUD + QR) → devolve ID + PDF URL
+- Cegid Vendus: plano Pro, 15,83 EUR/mês (anual), certificado AT 2230
+- SAF-T automático com comunicação directa AT, ATCUD, assinatura digital, guias de transporte AT
+- API key disponível imediatamente após subscrição (APPS > API)
+- Fluxo: CSN Opus envia ordem → Cegid Vendus gera doc certificado (ATCUD + QR + assinatura digital) → devolve ID + PDF URL
+- SAF-T comunicado automaticamente à AT — sem intervenção manual
 
-### Tabelas DB
-- `clientes_faturacao` — nome, NIF, email, morada, masterway_client_id
-- `faturas` — numero_fatura, serie, masterway_id, obra_id (INTEGER FK), estado, tipo, valores, pdf_url
-- `notas_credito` — fatura_original_id FK, masterway_id, motivo, total
+### Alternativas rejeitadas
+- **Masterway:** conta activa (3,75 EUR/mês) mas sem SAF-T automático via API; não cobre requisitos fiscais completos
+- **Cegid Invoicing Engine:** enterprise; desnecessário para volume CSN
+- **InvoiceXpress:** custos superiores; migração abandonada
+
+### Tabelas DB (migration 015)
+- `clientes_faturacao` — nome, NIF, email, morada, masterway_client_id (renomear → vendus_client_id)
+- `faturas` — numero_fatura, serie, masterway_id (renomear → vendus_id), obra_id (INTEGER FK), estado, tipo, valores, pdf_url
+- `notas_credito` — fatura_original_id FK, masterway_id (renomear → vendus_id), motivo, total
 
 ### Env var necessária
-- `MASTERWAY_API_KEY` — backend only, nunca exposta ao frontend
+- `CEGID_VENDUS_API_KEY` — backend only, nunca exposta ao frontend
 
 ### Próximos passos faturação:
-- Implementar API route `/api/faturacao/emitir` (POST → Masterway API)
+- Subscrever plano Pro Cegid Vendus
+- Renomear campos `masterway_*` → `vendus_*` nas tabelas (migration 016 ou ALTER)
+- Implementar API route `/api/faturacao/emitir` (POST → Cegid Vendus API)
 - Implementar API route `/api/faturacao/listar` (GET faturas por obra)
 - UI de faturação no CSN Opus (admin-only)
+
+---
+
+## MÓDULO FINANCEIRO — ⚠️ PLANEADO (MIGRATION 016)
+
+### Tabelas planeadas
+- `movimentos_bancarios` — data, descricao, valor, saldo, banco, conta, obra_id, fornecedor_id, categoria
+- `fornecedores` — nome, NIF, morada, IBAN, contacto, notas, activo
+- Campo `iban` a adicionar em `colaboradores_rh` e `clientes_faturacao`
+
+### Extrato BPI
+- Extrato bancário BPI analisado como tipo documental
+- A ingerir pelo Agente Documental: classificação automática de movimentos → associação a obras/fornecedores
+- Reconciliação bancária automática: movimentos ↔ faturas emitidas ↔ recibos
 
 ---
 
@@ -219,17 +264,23 @@ Peso:        MAX = (PBV×0.90) - Tara - ((Nº_lugares-1)×75) - Σequipamentos
 ### Tabelas DB
 - `colaboradores_rh` — 3 colaboradores (Bohdan, José Júlio, João António)
 - `processamentos_mensais` — 6 meses (Out 2025–Mar 2026)
-- `recibos_vencimento` — 15 recibos (Out 2025–Fev 2026)
+- `recibos_vencimento` — 15+ recibos (Out 2025–Fev 2026 + Jul 2025 extraídos)
 
 ### Recibos Inseridos
 
 | Mês | Bohdan (líq.) | José Júlio (líq.) | João António (líq.) |
 |---|---|---|---|
+| Jul 2025 | ✅ extraído | ✅ extraído | ✅ extraído |
 | Out 2025 | 1043.52 | 1008.00 | 1008.00 |
 | Nov 2025 | 1029.87 | 994.35 | 994.35 |
 | Dez 2025 | 1043.52 | 1008.00 | 1008.00 |
 | Jan 2026 | 1092.94 | 1055.37 | 1055.37 |
 | Fev 2026 | 1083.84 | 523.15 (baixa 10/20 dias) | 1046.27 |
+
+### Recibos 2025 extraídos (sessão 23)
+- João António: Jan, Fev, Mar, Jul 2025
+- Todos (3 colaboradores): Jul 2025
+- Dados prontos para inserção na tabela `recibos_vencimento`
 
 ### API Endpoints
 - `GET /api/carolina/recibo?colaborador_rh_id=X&ano=Y&mes=Z` → PDF recibo
@@ -241,6 +292,7 @@ Peso:        MAX = (PBV×0.90) - Tara - ((Nº_lugares-1)×75) - Σequipamentos
 - Cards expansíveis por colaborador com botões PDF
 
 ### Próximos passos Carolina:
+- Inserir recibos 2025 extraídos no Supabase
 - Processar recibo Março 2026 (processamento_id=6 já existe)
 - Ligar `colaborador_id` FK quando tabela `colaboradores` for populada
 - Implementar persona Carolina no chat (system prompt + tools dedicados)
@@ -302,20 +354,21 @@ knowledge-base/               ❌ Não criada
 
 | # | Prioridade | Tarefa |
 |---|---|---|
-| P1 | 🔴 | Carolina — persona chat + tools RH dedicados |
-| P2 | 🔴 | Agente Documental |
-| P3 | 🔴 | Reescrever gerar-termo |
-| P4 | 🔴 | API routes faturação Masterway (/api/faturacao/*) |
-| P5 | 🟡 | Migration 019 — CSN Brain (marcas_veiculo) |
-| P6 | 🟡 | Migration 020 — equipamentos_carrocaria + tipos_carrocaria |
-| P7 | 🟡 | Seed Renault Master XDD ICE |
-| P8 | 🟡 | Função calcular_box_rules() |
-| P9 | 🟡 | Página Gestão de OTs no CSN Opus |
-| P10 | 🟡 | COC Electrónico IMT — deadline Jul 2026 |
-| P11 | ⚪ | Luísa — Assistente CEO |
-| P12 | ⚪ | Fernando — migrar Sr. Manuel com persona liderança |
-| P13 | ⚪ | Knowledge Base Nastran para Agente FEA |
-| P14 | ⚪ | Registar CSN como bodybuilder nos portais MAN, DAF, Iveco |
+| P1 | 🔴 | Subscrever Cegid Vendus Pro + API routes faturação |
+| P2 | 🔴 | Migration 016 — módulo financeiro (movimentos_bancarios, fornecedores, iban) |
+| P3 | 🔴 | Carolina — persona chat + tools RH dedicados |
+| P4 | 🔴 | Agente Documental (inclui ingestão extratos bancários) |
+| P5 | 🔴 | Reescrever gerar-termo |
+| P6 | 🔴 | Inserir recibos 2025 extraídos no Supabase |
+| P7 | 🟡 | Renomear campos masterway_* → vendus_* nas tabelas |
+| P8 | 🟡 | Migration 020 — CSN Brain (marcas_veiculo) |
+| P9 | 🟡 | Função calcular_box_rules() |
+| P10 | 🟡 | Página Gestão de OTs no CSN Opus |
+| P11 | 🟡 | COC Electrónico IMT — deadline Jul 2026 |
+| P12 | ⚪ | Luísa — Assistente CEO |
+| P13 | ⚪ | Fernando — migrar Sr. Manuel com persona liderança |
+| P14 | ⚪ | Knowledge Base Nastran para Agente FEA |
+| P15 | ⚪ | Registar CSN como bodybuilder nos portais MAN, DAF, Iveco |
 
 ---
 
@@ -336,7 +389,8 @@ knowledge-base/               ❌ Não criada
 - **ZIPs:** não commitar — extrair primeiro
 - **nivel_isa95:** campo a adicionar em TODAS as migrations futuras
 - **BRAVE_SEARCH_API_KEY:** opcional — Agente Research usa para web search (sem ela usa fetch_url)
-- **MASTERWAY_API_KEY:** backend only — nunca exposta ao frontend
+- **CEGID_VENDUS_API_KEY:** backend only — nunca exposta ao frontend
+- **Extratos bancários:** tipo documental para Agente Documental — reconciliação automática
 
 ---
 
