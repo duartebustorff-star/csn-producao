@@ -35,7 +35,10 @@
       "Bash(git mv:*)",
       "Bash(pdftotext C:/Users/Utilizador/Projectos-AI/csn-producao/docs/CSN-Controlo-Sistema-v8.pdf -)",
       "Bash(npx --yes puppeteer --version)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "WebFetch(domain:invoicexpress.com)",
+      "Bash(find /c/Users/Utilizador/Projectos-AI/csn-producao/supabase -name *fatura* -o -name *faturas*)",
+      "Bash(git rm:*)"
     ]
   }
 }
