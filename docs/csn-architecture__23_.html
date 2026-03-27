@@ -242,7 +242,7 @@ a { color:inherit; text-decoration:none; }
       <div style="font-size:16px;font-weight:700;color:var(--bright);margin-bottom:6px;">O CSN Opus é a implementação digital das normas que regulam o fabrico de carroçarias na UE. O CSN Brain é o produto comercial que vende este conhecimento ao mercado.</div>
       <div style="font-size:12px;color:#555;">Cada módulo existe porque uma norma obriga. Cada tabela guarda uma evidência. Cada documento gerado é uma prova de conformidade. A secção Prontidão para Auditoria é <strong style="color:var(--bright)">NUNCA removida</strong> de nenhuma versão deste documento.<br><br>
       <strong style="color:var(--bright)">CSN Technic</strong> — Commercial Vehicle Engineering · <strong style="color:var(--bright)">CSN Opus</strong> — sistema interno · <strong style="color:var(--bright)">CSN Brain</strong> — produto comercial SaaS<br><br>
-      <strong style="color:var(--d1)">v23 — 27/03/2026</strong> · 25 ADRs · 6 AI Personas · 10 Autonomous Agents · Agente Research ✅ funcional · 17 chat tools · Migration 015 Masterway ✅</div>
+      <strong style="color:var(--d1)">v23 — 27/03/2026</strong> · 25 ADRs · 6 AI Personas · 10 Autonomous Agents · Agente Research ✅ funcional · 17 chat tools · Migration 015 ✅ · Faturacao Cegid Vendus (ADR-025)</div>
     </div>
 
   <div class="tabs">
@@ -827,13 +827,14 @@ a { color:inherit; text-decoration:none; }
         </div>
         <div class="module-card">
           <div class="module-name">ERP light</div>
-          <div class="module-full">Faturação Masterway + Fornecedores</div>
-          <div class="module-norm">↳ Masterway API REST · Certificado AT · ADR-025</div>
-          <span class="card-badge badge-exists">MIGRATION 015 ✅ COMPLETA</span>
+          <div class="module-full">Faturação Cegid Vendus + Financeiro</div>
+          <div class="module-norm">↳ Cegid Vendus API REST · Cert AT 2230 · SAF-T auto · ADR-025</div>
+          <span class="card-badge badge-exists">MIGRATION 015 ✅ + 016 PLANEADA</span>
           <div class="module-tables">
             <span class="table-tag exists">clientes_faturacao</span>
             <span class="table-tag exists">faturas</span>
             <span class="table-tag exists">notas_credito</span>
+            <span class="table-tag missing">movimentos_bancarios</span>
             <span class="table-tag missing">fornecedores</span>
           </div>
         </div>
@@ -1277,7 +1278,7 @@ a { color:inherit; text-decoration:none; }
       <div class="pending-list">
         <div class="pending-item p1" style="border-color:var(--exists);opacity:.6;">
           <div class="pending-num">✅</div>
-          <div><div class="pending-title" style="color:var(--exists);">✅ Migration 015 — Faturação Masterway (COMPLETA)</div><div class="pending-desc">3 tabelas criadas (clientes_faturacao, faturas, notas_credito). Masterway API REST, certificado AT, ADR-025. Próximo: API routes /api/faturacao/*.</div></div>
+          <div><div class="pending-title" style="color:var(--exists);">✅ Migration 015 — Faturação Cegid Vendus (COMPLETA)</div><div class="pending-desc">3 tabelas criadas (clientes_faturacao, faturas, notas_credito). Cegid Vendus Pro, cert AT 2230, SAF-T auto, ADR-025. Próximo: subscrever + API routes.</div></div>
         </div>
         <div class="pending-item p1" style="border-color:var(--exists);opacity:.6;">
           <div class="pending-num">✅</div>
@@ -1285,46 +1286,50 @@ a { color:inherit; text-decoration:none; }
         </div>
         <div class="pending-item p1">
           <div class="pending-num">P1</div>
-          <div><div class="pending-title">🔴 Carolina — persona chat + tools RH dedicados</div><div class="pending-desc">System prompt Carolina, tools dedicados no chat, integração com colaboradores_rh.</div></div>
+          <div><div class="pending-title">🔴 Subscrever Cegid Vendus Pro + API routes faturação</div><div class="pending-desc">/api/faturacao/emitir (POST → Cegid Vendus API), /api/faturacao/listar (GET faturas por obra), UI admin faturação. Renomear masterway_* → vendus_*.</div></div>
         </div>
         <div class="pending-item p1">
           <div class="pending-num">P2</div>
-          <div><div class="pending-title">🔴 Agente Documental — URGENTE</div><div class="pending-desc">Tools: classificar_documento, registar_dav, registar_inspecao, registar_cit, registar_fam, verificar_completude_obra. Trigger: DAV + inspecção → gerar_termo.</div></div>
+          <div><div class="pending-title">🔴 Migration 016 — módulo financeiro</div><div class="pending-desc">movimentos_bancarios, fornecedores, campo IBAN em colaboradores_rh e clientes_faturacao. Ingestão extratos BPI.</div></div>
         </div>
         <div class="pending-item p1">
           <div class="pending-num">P3</div>
-          <div><div class="pending-title">🔴 Reescrever gerar-termo — formato real CSN</div><div class="pending-desc">Logo branco, texto jurídico, tabela dados veículo, tabela carroçaria, assinatura CEO, Certidão 3172-1374-8252.</div></div>
+          <div><div class="pending-title">🔴 Carolina — persona chat + tools RH dedicados</div><div class="pending-desc">System prompt Carolina, tools dedicados no chat, integração com colaboradores_rh. Inserir recibos 2025 extraídos.</div></div>
         </div>
         <div class="pending-item p1">
           <div class="pending-num">P4</div>
-          <div><div class="pending-title">🔴 API routes faturação Masterway</div><div class="pending-desc">/api/faturacao/emitir (POST → Masterway API), /api/faturacao/listar (GET faturas por obra), UI admin faturação.</div></div>
+          <div><div class="pending-title">🔴 Agente Documental (+ extratos bancários)</div><div class="pending-desc">Tools: classificar_documento, registar_dav, registar_inspecao, registar_cit, registar_fam, verificar_completude_obra. Novo: ingestão extratos bancários.</div></div>
         </div>
-        <div class="pending-item p2">
+        <div class="pending-item p1">
           <div class="pending-num">P5</div>
-          <div><div class="pending-title">🟡 Migration 019 — CSN Brain (marcas_veiculo)</div><div class="pending-desc">Tabelas: marcas_veiculo, nomenclatura_marcas, qualidade_dados_marca, monitorizacao_marcas. Base para Agente Inteligência de Marcas (ADR-016).</div></div>
+          <div><div class="pending-title">🔴 Reescrever gerar-termo — formato real CSN</div><div class="pending-desc">Logo branco, texto jurídico, tabela dados veículo, tabela carroçaria, assinatura CEO, Certidão 3172-1374-8252.</div></div>
         </div>
         <div class="pending-item p2">
           <div class="pending-num">P6</div>
-          <div><div class="pending-title">🟡 Função calcular_box_rules()</div><div class="pending-desc">Implementar lógica ADR-017: largura, comprimento, altura, peso — envelope automático por chassis + equipamento.</div></div>
+          <div><div class="pending-title">🟡 Migration 020 — CSN Brain (marcas_veiculo)</div><div class="pending-desc">Tabelas: marcas_veiculo, nomenclatura_marcas, qualidade_dados_marca, monitorizacao_marcas. Base para Agente Inteligência de Marcas (ADR-016).</div></div>
         </div>
         <div class="pending-item p2">
           <div class="pending-num">P7</div>
-          <div><div class="pending-title">🟡 Página Gestão de OTs no CSN Opus</div><div class="pending-desc">UI para criar, listar e gerir ordens de trabalho. Integração com _cowork/ (ADR-018).</div></div>
+          <div><div class="pending-title">🟡 Função calcular_box_rules()</div><div class="pending-desc">Implementar lógica ADR-017: largura, comprimento, altura, peso — envelope automático por chassis + equipamento.</div></div>
         </div>
         <div class="pending-item p2">
           <div class="pending-num">P8</div>
+          <div><div class="pending-title">🟡 Página Gestão de OTs no CSN Opus</div><div class="pending-desc">UI para criar, listar e gerir ordens de trabalho. Integração com _cowork/ (ADR-018).</div></div>
+        </div>
+        <div class="pending-item p2">
+          <div class="pending-num">P9</div>
           <div><div class="pending-title">🟡 COC Electrónico IMT — deadline Jul 2026</div><div class="pending-desc">Integração com portal IMT para emissão electrónica do COC multi-etapa.</div></div>
         </div>
         <div class="pending-item p3">
-          <div class="pending-num">P9</div>
+          <div class="pending-num">P10</div>
           <div><div class="pending-title">⚪ Luísa — Assistente CEO (Fase 1)</div><div class="pending-desc">Primeira AI Persona. Acesso total ao sistema. Agrega dados de todos os módulos.</div></div>
         </div>
         <div class="pending-item p3">
-          <div class="pending-num">P10</div>
+          <div class="pending-num">P11</div>
           <div><div class="pending-title">⚪ Fernando — migrar Sr. Manuel com persona liderança</div><div class="pending-desc">Persona com RAG liderança + inteligência emocional (ADR-021). Workers app com chat Fernando.</div></div>
         </div>
         <div class="pending-item p3">
-          <div class="pending-num">P11</div>
+          <div class="pending-num">P12</div>
           <div><div class="pending-title">⚪ Knowledge Base Nastran para Agente FEA</div><div class="pending-desc">RAG com Inventor Trenches, GitHub iLogic, Autodesk University. Base para ADR-024.</div></div>
         </div>
       </div>
