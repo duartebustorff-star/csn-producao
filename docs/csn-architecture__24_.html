@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Arquitectura v24</title>
+<style>
+  :root {
+    --csn-black: #1a1a1a;
+    --csn-dark: #2d2d2d;
+    --csn-accent: #e63946;
+    --csn-blue: #457b9d;
+    --csn-light: #f1faee;
+    --csn-green: #2a9d8f;
+    --csn-orange: #e9c46a;
+    --csn-gray: #6c757d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--csn-light); color: var(--csn-black); line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  header { background: var(--csn-black); color: white; padding: 30px; text-align: center; margin-bottom: 30px; }
+  header h1 { font-size: 2em; margin-bottom: 5px; }
+  header .subtitle { color: #aaa; font-size: 0.95em; }
+  header .version { color: var(--csn-accent); font-weight: bold; margin-top: 10px; }
+  h2 { color: var(--csn-black); border-bottom: 3px solid var(--csn-accent); padding-bottom: 8px; margin: 30px 0 15px; font-size: 1.4em; }
+  h3 { color: var(--csn-blue); margin: 20px 0 10px; font-size: 1.15em; }
+  .card { background: white; border-radius: 8px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .card-header { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; margin: 2px; }
+  .badge-green { background: #d4edda; color: #155724; }
+  .badge-yellow { background: #fff3cd; color: #856404; }
+  .badge-red { background: #f8d7da; color: #721c24; }
+  .badge-blue { background: #d1ecf1; color: #0c5460; }
+  .badge-gray { background: #e9ecef; color: #495057; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  th, td { padding: 10px 12px; text-align: left; border: 1px solid #dee2e6; font-size: 0.9em; }
+  th { background: var(--csn-dark); color: white; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+  @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+  .principle { padding: 12px 15px; background: #f8f9fa; border-left: 4px solid var(--csn-accent); margin: 8px 0; }
+  .principle strong { color: var(--csn-accent); }
+  .status-ok { color: var(--csn-green); font-weight: bold; }
+  .status-pending { color: var(--csn-orange); font-weight: bold; }
+  .status-missing { color: var(--csn-accent); font-weight: bold; }
+  .audit-section { border: 3px solid var(--csn-accent); border-radius: 8px; padding: 20px; margin: 20px 0; background: #fff5f5; }
+  .audit-section h2 { color: var(--csn-accent); border-color: var(--csn-accent); }
+  .progress-bar { height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 5px 0; }
+  .progress-fill { height: 100%; border-radius: 10px; transition: width 0.3s; }
+  .progress-fill.green { background: var(--csn-green); }
+  .progress-fill.yellow { background: var(--csn-orange); }
+  .progress-fill.red { background: var(--csn-accent); }
+  ul { margin: 5px 0 5px 20px; }
+  li { margin: 3px 0; font-size: 0.9em; }
+  .inviolable { background: #fff3cd; border: 2px dashed #856404; padding: 10px; margin: 10px 0; font-size: 0.85em; color: #856404; text-align: center; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CSN OPUS — ARQUITECTURA DO SISTEMA</h1>
+  <div class="subtitle">Carlos dos Santos Nascimento, Lda · Engenharia de Veículos Comerciais · Mafra</div>
+  <div class="version">v24 · Sessão 25 · 27 Março 2026</div>
+</header>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<h2>1. VISÃO GERAL</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <div class="card-header">CSN Technic Ecosystem — 3 Produtos</div>
+  <table>
+    <tr><th>Produto</th><th>Tipo</th><th>Descrição</th><th>Estado</th></tr>
+    <tr><td><strong>CSN Opus</strong></td><td>ERP Interno</td><td>Gestão de produção, RH, faturação, documentos</td><td><span class="badge badge-green">Em produção</span></td></tr>
+    <tr><td><strong>CSN Brain</strong></td><td>SaaS Configurador</td><td>Configurador técnico de carroçarias — "The engineering brain behind every body"</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td><strong>CSN Connect</strong></td><td>Portal B2B</td><td>Portal para staff comercial de concessionários (Marta como agente)</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header">Tech Stack</div>
+  <p><strong>Frontend/Backend:</strong> Next.js · TypeScript · Vercel</p>
+  <p><strong>Database:</strong> Supabase (PostgreSQL + RLS + Storage)</p>
+  <p><strong>AI:</strong> Claude API (Anthropic) · Modelo: claude-sonnet-4-20250514</p>
+  <p><strong>Faturação:</strong> InvoiceXpress API REST (cert AT 192)</p>
+  <p><strong>Repo:</strong> duartebustorff-star/csn-producao · Branch: main</p>
+  <p><strong>Deploy:</strong> csn-producao.vercel.app (manual — <code>npx vercel --prod</code>)</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>2. PRINCÍPIOS ARQUITECTURAIS</h2>
+<!-- ============================================================ -->
+
+<div class="principle"><strong>P1 — Regulamento antes de features:</strong> A base é a conformidade regulamentar (DL 132/2017, Reg. UE 1230/2012, Reg. 2018/858). Features derivam dos requisitos legais, não o contrário.</div>
+<div class="principle"><strong>P2 — Satellite Portal Pattern:</strong> Qualquer interface com externos (workers, clientes, dealers) é um satélite autónomo. Sem acesso directo ao Supabase. Recebe dados curados pushed do Opus. Escreve apenas em intake tables limitadas.</div>
+<div class="principle"><strong>P3 — Hierarquia normativa:</strong> Legislação EU → Legislação nacional (PT + país destino) → Directivas de montagem do fabricante. As três têm de ser satisfeitas simultaneamente.</div>
+<div class="principle"><strong>P4 — Equipamento ≠ Acessório:</strong> Equipamento (gruas, plataformas elevatórias, engate) tem impacto estrutural nos cálculos. Acessórios não. Distinção arquitecturalmente significativa.</div>
+<div class="principle"><strong>P5 — Documentos nunca sobrescritos:</strong> Sempre versão nova incrementada. Histórico completo no Git.</div>
+<div class="principle"><strong>P6 — Separação de preocupações:</strong> RH (pessoal/confidencial) separado de produção. Comercial (Marta/Connect) separado de operações internas.</div>
+<div class="principle"><strong>P7 — ISA-95:</strong> Cada componente mapeado a um nível ISA-95 (0-4). Agentes autónomos nos níveis 2-3. ERP no nível 4.</div>
+
+<!-- ============================================================ -->
+<h2>3. ARQUITECTURA EM 3 CAMADAS</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <div class="card-header">Camada 1 — Núcleo (Core)</div>
+  <p>Supabase (28 tabelas) + Next.js API Routes + Claude API + RLS + Storage</p>
+  <p>Migrations: 001 → 015 + 021 (~16 executadas)</p>
+</div>
+
+<div class="card">
+  <div class="card-header">Camada 2 — Personas (Interface Humana)</div>
+  <p>6 personas com chat interface, cada uma com tools e permissões específicas:</p>
+  <table>
+    <tr><th>Persona</th><th>Papel</th><th>Acesso</th><th>Estado</th></tr>
+    <tr><td>🎯 Luísa</td><td>Assistente CEO</td><td>Full access</td><td><span class="badge badge-green">Activa</span></td></tr>
+    <tr><td>🏭 Fernando</td><td>Chefe de Produção</td><td>Obras, fases, operadores</td><td><span class="badge badge-green">Activo</span></td></tr>
+    <tr><td>💼 Marta</td><td>Comercial</td><td>Leads, clientes, CSN Connect</td><td><span class="badge badge-green">Activa</span></td></tr>
+    <tr><td>🔧 Leonor</td><td>Pós-venda</td><td>Garantias, reclamações</td><td><span class="badge badge-blue">Definida</span></td></tr>
+    <tr><td>📦 Irina</td><td>Fornecedores</td><td>Compras, stock</td><td><span class="badge badge-blue">Definida</span></td></tr>
+    <tr><td>👤 Carolina</td><td>RH</td><td>Recibos, férias, faltas, declarações</td><td><span class="badge badge-green">Em produção</span></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header">Camada 3 — Agentes Autónomos (Sem Interface Humana)</div>
+  <p>10 agentes que correm autonomamente, sem chat. Executam tarefas de fundo:</p>
+  <table>
+    <tr><th>#</th><th>Agente</th><th>Função</th><th>ISA-95</th><th>Estado</th></tr>
+    <tr><td>1</td><td>Documental</td><td>Hub central de documentos: classificação, extracção, routing</td><td>3</td><td><span class="badge badge-green">Funcional</span></td></tr>
+    <tr><td>2</td><td>Compliance</td><td>Auditorias mensais automatizadas de conformidade</td><td>4</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>3</td><td>Marcas</td><td>Qualidade da tabela marcas_veiculo, dedup, enriquecimento</td><td>3</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>4</td><td>Notificações</td><td>Alertas, lembretes, escalation</td><td>3</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>5</td><td>Manutenção</td><td>Manutenção preventiva de equipamento fabril</td><td>2</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>6</td><td>Custos</td><td>Apuramento de custos por obra</td><td>4</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>7</td><td>Qualidade</td><td>ITP, inspecções, não-conformidades, EN 1090</td><td>3</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>8</td><td>Research</td><td>Pesquisa autónoma de informação técnica/normativa</td><td>4</td><td><span class="badge badge-green">Funcional</span></td></tr>
+    <tr><td>9</td><td>Financeiro</td><td>Reconciliação bancária, controlo de pagamentos</td><td>4</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>10</td><td>RH</td><td>Geração de recibos, cálculos salariais, declarações</td><td>4</td><td><span class="badge badge-blue">Em definição</span></td></tr>
+  </table>
+  <p style="margin-top:10px;font-size:0.85em;color:var(--csn-gray);">Nota: Agente RH é Camada 3 (autónomo, gera documentos e calcula). Carolina é Camada 2 (persona, mostra dashboards e fala com workers). São complementares.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>4. BASE DE DADOS — 28 TABELAS SUPABASE</h2>
+<!-- ============================================================ -->
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">Produção</div>
+    <ul>
+      <li>obras</li>
+      <li>fases_obra</li>
+      <li>dossie_obra</li>
+      <li>davs</li>
+      <li>fams</li>
+      <li>cits</li>
+      <li>certificados_matricula</li>
+      <li>leads</li>
+      <li>marcas_veiculo</li>
+      <li>modelos_veiculo</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header">RH (Carolina + Agente RH)</div>
+    <ul>
+      <li>colaboradores_rh</li>
+      <li>processamentos_mensais</li>
+      <li>recibos_vencimento <span class="badge badge-green">45 registos</span></li>
+      <li>pedidos_ferias_faltas</li>
+      <li>declaracoes_anuais</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header">Faturação (InvoiceXpress)</div>
+    <ul>
+      <li>clientes_faturacao</li>
+      <li>faturas <span class="badge badge-blue">invoicexpress_*</span></li>
+      <li>notas_credito <span class="badge badge-blue">invoicexpress_*</span></li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-header">Sistema</div>
+    <ul>
+      <li>colaboradores</li>
+      <li>chat_messages</li>
+      <li>documentos</li>
+      <li>notas_obra</li>
+      <li>research_tasks</li>
+      <li>research_results</li>
+      <li>+ outras auxiliares</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Migrations Executadas</div>
+  <table>
+    <tr><th>Migration</th><th>Descrição</th><th>Estado</th></tr>
+    <tr><td>001–012</td><td>Tabelas base, obras, fases, dossier, documentos, leads, marcas</td><td class="status-ok">✅</td></tr>
+    <tr><td>013</td><td>comprimento_ext, largura_ext, altura_ext em leads</td><td class="status-ok">✅</td></tr>
+    <tr><td>014</td><td>—</td><td class="status-missing">Não usada</td></tr>
+    <tr><td>015</td><td>Faturação: clientes_faturacao, faturas, notas_credito (invoicexpress_*)</td><td class="status-ok">✅</td></tr>
+    <tr><td>016</td><td>Financeiro: movimentos_bancarios, fornecedores, IBAN</td><td class="status-pending">Planeada</td></tr>
+    <tr><td>021</td><td>RH: colaboradores_rh, recibos_vencimento, férias, declarações</td><td class="status-ok">✅</td></tr>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<h2>5. API ROUTES</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <table>
+    <tr><th>Route</th><th>Método</th><th>Função</th></tr>
+    <tr><td>/api/chat</td><td>POST</td><td>Chat principal (Claude API + tools)</td></tr>
+    <tr><td>/api/gerar-termo</td><td>POST</td><td>Gera Termo de Responsabilidade PDF</td></tr>
+    <tr><td>/api/documentos/upload</td><td>POST</td><td>Upload + classificação + extracção automática</td></tr>
+    <tr><td>/api/documentos/list</td><td>GET</td><td>Lista documentos por tipo/obra</td></tr>
+    <tr><td>/api/faturacao/emitir</td><td>POST</td><td>Emite fatura via InvoiceXpress API</td></tr>
+    <tr><td>/api/faturacao/listar</td><td>GET</td><td>Lista faturas</td></tr>
+    <tr><td>/api/rh/recibo</td><td>GET/POST</td><td>Recibos de vencimento</td></tr>
+    <tr><td>/api/rh/declaracao-anual</td><td>GET/POST</td><td>Declarações anuais</td></tr>
+    <tr><td>/api/rh/colaboradores</td><td>GET</td><td>Lista colaboradores RH</td></tr>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<h2>6. CHAT TOOLS — 17</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <p>Tools disponíveis via Claude API function calling no chat principal:</p>
+  <div class="grid-3">
+    <div>
+      <h3>Produção</h3>
+      <ul>
+        <li>criar_obra</li>
+        <li>listar_obras</li>
+        <li>atualizar_fase</li>
+        <li>verificar_documentacao</li>
+        <li>gerar_termo</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Comercial</h3>
+      <ul>
+        <li>criar_lead</li>
+        <li>listar_leads</li>
+        <li>pesquisar_marca</li>
+        <li>calcular_peso_util</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Documentos / RH</h3>
+      <ul>
+        <li>upload_documento</li>
+        <li>listar_documentos</li>
+        <li>registar_nota</li>
+        <li>consultar_recibos</li>
+        <li>+ outros</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2>7. FATURAÇÃO — InvoiceXpress</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <div class="card-header">Integração InvoiceXpress (ADR-025)</div>
+  <p><strong>Certificado AT:</strong> 192</p>
+  <p><strong>Conta:</strong> carlosdossantosna</p>
+  <p><strong>Modelo:</strong> CSN Opus envia ordem → InvoiceXpress gera fatura certificada (ATCUD + QR) → envia email → devolve ID + PDF URL → Opus guarda metadados</p>
+  <p><strong>Env vars:</strong> INVOICEXPRESS_API_KEY, INVOICEXPRESS_ACCOUNT_NAME</p>
+  <p><strong>Nota:</strong> Cegid Vendus foi considerado e subscrito, mas decisão revertida para InvoiceXpress (sessão 24). Cancelar subscrição Vendus.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>8. RH — CAROLINA + AGENTE RH</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <div class="card-header">Colaboradores Activos</div>
+  <table>
+    <tr><th>ID</th><th>Nome</th><th>SS</th><th>Salário 2025</th><th>Salário 2026</th><th>Notas</th></tr>
+    <tr><td>1</td><td>Bohdan</td><td>7.5%</td><td>870€</td><td>920€</td><td>Reformado, contribuição reduzida</td></tr>
+    <tr><td>2</td><td>José Júlio</td><td>11%</td><td>870€</td><td>920€</td><td></td></tr>
+    <tr><td>3</td><td>João António</td><td>11%</td><td>870€</td><td>920€</td><td></td></tr>
+  </table>
+  <p style="margin-top:10px;"><strong>Recibos na DB:</strong> 45 (Jan2025 → Mar2026, 3 colaboradores × 15 meses, sem lacunas)</p>
+  <p><strong>Cada worker recebe 3 recibos/mês:</strong> salário + duodécimo férias + duodécimo natal (consolidados num registo)</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>9. CSN BRAIN — CONFIGURADOR (Planeado)</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <div class="card-header">5 Camadas de Conhecimento</div>
+  <table>
+    <tr><th>Camada</th><th>Conteúdo</th><th>Estado</th></tr>
+    <tr><td>1. Legislação</td><td>DL 132/2017, Reg. 1230/2012, Dir. 96/53/CE, Reg. 2018/858, GSR 2019/2144</td><td><span class="badge badge-yellow">Em definição</span></td></tr>
+    <tr><td>2. Chassis</td><td>Tabela marcas_veiculo + modelos_veiculo, mounting directives</td><td><span class="badge badge-blue">Parcial</span></td></tr>
+    <tr><td>3. Equipamento</td><td>Gruas (EN 12999), plataformas (EN 1756), engates (UNECE R55)</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>4. Carroçarias</td><td>Famílias basculante + plataforma (tipper + flatbed)</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+    <tr><td>5. Acessórios</td><td>Sem impacto estrutural nos cálculos</td><td><span class="badge badge-yellow">Planeado</span></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-header">Fórmulas Técnicas Chave</div>
+  <p><strong>Peso Útil:</strong> <code>(PBV × 0.90) - Tara - ((Nº_lugares - 1) × 75kg) - Σ(pesos equipamentos)</code></p>
+  <p style="font-size:0.85em;color:var(--csn-gray);">Ref: DL 132/2017 alínea e) + Reg. UE 1230/2012 ponto 2.6.2.2</p>
+  <p style="margin-top:10px;"><strong>Box Rules (dimensões carroçaria):</strong></p>
+  <ul>
+    <li>Largura mín = MAX(largura cabine, largura via extremidade eixo traseiro)</li>
+    <li>Largura máx = 2.55m</li>
+    <li>Comprimento mín = comprimento zona de carga do chassis</li>
+    <li>Comprimento máx = distância entre eixos × 1.667</li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2>10. ADRs — 25 DECISÕES REGISTADAS</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <p>Todos os ADRs estão em <code>docs/adr/</code> no repositório. Últimos relevantes:</p>
+  <table>
+    <tr><th>ADR</th><th>Decisão</th><th>Sessão</th></tr>
+    <tr><td>ADR-020</td><td>Carolina — 6ª persona RH</td><td>15</td></tr>
+    <tr><td>ADR-025</td><td>Integração InvoiceXpress para faturação certificada AT</td><td>25</td></tr>
+  </table>
+  <p style="margin-top:10px;font-size:0.85em;">Total: 25 ADRs (ADR-001 a ADR-025)</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>11. EQUIPAMENTO FABRIL</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <table>
+    <tr><th>Equipamento</th><th>Tipo</th><th>Notas</th></tr>
+    <tr><td>Bodor Laser</td><td>Corte laser</td><td>Operacional</td></tr>
+    <tr><td>Weinig Unimat 22E</td><td>Plaina 7 cabeças</td><td>Perfis macho-fêmea. Integração com Fernando planeada (foto de cada cabeça → validação vs ordem)</td></tr>
+  </table>
+  <p style="margin-top:10px;font-size:0.85em;color:var(--csn-gray);">Nota: KUKA robot não adquirido — remover de qualquer lista de equipamento existente.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>12. CANAIS DE COMUNICAÇÃO</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <p><strong>Twilio:</strong> VoIP + WhatsApp num único número</p>
+  <p><strong>Email:</strong> geral@carrocariascsn.pt</p>
+  <p><strong>Categorias de comunicação:</strong> Reactiva / Proactiva operacional / Proactiva agendada / Marketing (a documentar)</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>13. MERCADOS-ALVO E CANAIS</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <div class="card-header">Concessionários / Canais</div>
+  <p>Astara Retail, Grupo MCoutinho, Santogal, Salvador Caetano, C. Santos VP, Oneshop, Hydraplan</p>
+  <p><strong>Marcas:</strong> Fuso, Isuzu, Maxus, Renault, Mercedes, VW, Ford, MAN</p>
+  <p><strong>Mercados de exportação:</strong> Portugal, França, Alemanha, Espanha</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECÇÃO INVIOLÁVEL -->
+<!-- ============================================================ -->
+
+<div class="audit-section">
+  <div class="inviolable">⚠️ SECÇÃO INVIOLÁVEL — Nunca remover esta secção de qualquer versão do documento ⚠️</div>
+
+  <h2>14. PRONTIDÃO PARA AUDITORIA</h2>
+
+  <p>Certificações-alvo: ISO 9001 + EN 1090 + EN ISO 3834 + EN 12642</p>
+  <p>Mercados: PT + FR + DE + ES</p>
+
+  <h3>ISO 9001:2015 — Sistema de Gestão da Qualidade</h3>
+  <div class="progress-bar"><div class="progress-fill yellow" style="width: 15%"></div></div>
+  <p>15% — Processos parcialmente definidos no CSN Opus. Falta: política de qualidade formal, objectivos mensuráveis, auditorias internas, revisão pela gestão, controlo formal de documentos.</p>
+  <ul>
+    <li><span class="badge badge-green">Coberto</span> Rastreabilidade digital de obras</li>
+    <li><span class="badge badge-green">Coberto</span> Controlo de documentos (dossier digital por obra)</li>
+    <li><span class="badge badge-yellow">Parcial</span> Processos definidos (fases_obra no sistema)</li>
+    <li><span class="badge badge-red">Em falta</span> Política de qualidade formal</li>
+    <li><span class="badge badge-red">Em falta</span> Objectivos mensuráveis de qualidade</li>
+    <li><span class="badge badge-red">Em falta</span> Auditorias internas</li>
+    <li><span class="badge badge-red">Em falta</span> Revisão pela gestão</li>
+    <li><span class="badge badge-red">Em falta</span> Acções correctivas formais</li>
+  </ul>
+
+  <h3>EN 1090-1/-2 — Execução de Estruturas em Aço + Marcação CE</h3>
+  <div class="progress-bar"><div class="progress-fill red" style="width: 5%"></div></div>
+  <p>5% — Classe de execução EXC2 definida para basculantes. Falta quase tudo: WPS, WPQR, FPC, coordenador de soldadura, DoP.</p>
+  <ul>
+    <li><span class="badge badge-green">Coberto</span> Classe EXC2 definida</li>
+    <li><span class="badge badge-red">Em falta</span> WPS elaborados e qualificados (WPQR)</li>
+    <li><span class="badge badge-red">Em falta</span> Soldadores certificados EN ISO 9606-1</li>
+    <li><span class="badge badge-red">Em falta</span> Coordenador de soldadura (IWS/IWT)</li>
+    <li><span class="badge badge-red">Em falta</span> Manual FPC (Factory Production Control)</li>
+    <li><span class="badge badge-red">Em falta</span> ITP (Plano de Inspecção e Ensaio)</li>
+    <li><span class="badge badge-red">Em falta</span> DoP (Declaração de Desempenho)</li>
+    <li><span class="badge badge-red">Em falta</span> Marcação CE</li>
+  </ul>
+
+  <h3>EN ISO 3834-3 — Qualidade de Soldadura (Nível Standard)</h3>
+  <div class="progress-bar"><div class="progress-fill red" style="width: 5%"></div></div>
+  <p>5% — Vem com a EN 1090. Controlo de consumíveis, planeamento de soldadura, tratamento de NC.</p>
+  <ul>
+    <li><span class="badge badge-red">Em falta</span> Controlo de consumíveis de soldadura</li>
+    <li><span class="badge badge-red">Em falta</span> Procedimento de rastreabilidade de materiais</li>
+    <li><span class="badge badge-red">Em falta</span> Procedimento de não-conformidades</li>
+  </ul>
+
+  <h3>EN 12642 (L/XL) — Resistência Estrutural da Carroçaria</h3>
+  <div class="progress-bar"><div class="progress-fill red" style="width: 0%"></div></div>
+  <p>0% — Necessário ensaio ou cálculo FEA por modelo. Crítico para Alemanha.</p>
+  <ul>
+    <li><span class="badge badge-red">Em falta</span> Ensaio ou cálculo FEA</li>
+    <li><span class="badge badge-red">Em falta</span> Certificação por laboratório acreditado</li>
+    <li><span class="badge badge-red">Em falta</span> Etiqueta L/XL por modelo</li>
+  </ul>
+
+  <h3>Outras Normas de Suporte</h3>
+  <table>
+    <tr><th>Norma</th><th>Âmbito</th><th>Estado</th></tr>
+    <tr><td>EN ISO 15614-1</td><td>Qualificação WPS por ensaio</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>EN ISO 9606-1</td><td>Qualificação soldadores manuais</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>EN ISO 14732</td><td>Qualificação operadores soldadura mecanizada</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>EN 12640</td><td>Pontos de amarração para fixação de carga</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>EN 12195-1</td><td>Cálculo forças fixação de carga</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>EN ISO 5817</td><td>Níveis qualidade imperfeições soldadura</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>EN ISO 17637</td><td>Inspecção visual soldaduras</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>VDI 2700</td><td>Estado da arte fixação carga (Alemanha)</td><td><span class="badge badge-red">Em falta</span></td></tr>
+    <tr><td>UNECE R48/R73/R58</td><td>Iluminação, protecções laterais, para-choques</td><td><span class="badge badge-yellow">Parcial (checklist GSR a implementar)</span></td></tr>
+    <tr><td>Reg. 2018/858</td><td>Homologação veículos — COC multi-etapa</td><td><span class="badge badge-yellow">Parcial</span></td></tr>
+    <tr><td>Reg. 2019/2144 (GSR)</td><td>Segurança geral — AEB, sensores, câmaras</td><td><span class="badge badge-yellow">Parcial (checklist pendente)</span></td></tr>
+  </table>
+
+  <h3>Organismos de Certificação</h3>
+  <p>ISQ Oeiras (soldadores EN ISO 9606-1) · Bureau Veritas · TÜV · APCER · SGS · DEKRA · Prova Ímpar</p>
+
+  <h3>COC Eletrónico IMT</h3>
+  <p><strong>Deadline:</strong> Julho 2026</p>
+  <p>Integrar emissão de COC electrónico nos registos por obra do CSN Opus.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2>15. EQUIPA</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <table>
+    <tr><th>Nome</th><th>Função</th></tr>
+    <tr><td>Duarte Bustorff-Silva</td><td>CEO · Arquitecto do sistema</td></tr>
+    <tr><td>João António</td><td>Operador</td></tr>
+    <tr><td>Bohdan</td><td>Operador (reformado, SS 7.5%)</td></tr>
+    <tr><td>José Júlio</td><td>Operador</td></tr>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<h2>16. HISTÓRICO DE VERSÕES</h2>
+<!-- ============================================================ -->
+
+<div class="card">
+  <table>
+    <tr><th>Versão</th><th>Sessão</th><th>Data</th><th>Alterações</th></tr>
+    <tr><td>v24</td><td>25</td><td>27/03/2026</td><td>Rename masterway→invoicexpress. Migration 015 executada. Logo adicionado. gerar-termo OK. CIT fix. 45 recibos completos Jan25-Mar26. ADR-025.</td></tr>
+    <tr><td>v23</td><td>23</td><td>27/03/2026</td><td>Migration 015 faturação. ADR-025 Masterway→Vendus→InvoiceXpress. Routes RH movidas.</td></tr>
+    <tr><td>v22</td><td>22</td><td>—</td><td>Carolina RH. Migration 021.</td></tr>
+    <tr><td>v1–v21</td><td>1–21</td><td>—</td><td>Evolução progressiva do sistema.</td></tr>
+  </table>
+</div>
+
+<footer style="text-align:center; padding:30px; color:var(--csn-gray); font-size:0.85em; margin-top:40px; border-top:1px solid #dee2e6;">
+  CSN Opus · Carlos dos Santos Nascimento, Lda · NIF 500 861 790 · Mafra, Portugal<br>
+  Documento interno — não distribuir · Gerado sessão 25 · 27/03/2026
+</footer>
+
+</div>
+</body>
+</html>
