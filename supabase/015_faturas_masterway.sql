@@ -33,7 +33,7 @@ CREATE TABLE faturas (
   numero_fatura TEXT,
   serie TEXT,
   masterway_id TEXT UNIQUE,
-  obra_id TEXT REFERENCES dossie_obra(id),
+  obra_id INTEGER REFERENCES dossie_obra(id),
   cliente_faturacao_id INTEGER REFERENCES clientes_faturacao(id),
   estado TEXT DEFAULT 'rascunho' CHECK (estado IN ('rascunho', 'emitida', 'enviada', 'paga', 'anulada')),
   tipo TEXT DEFAULT 'fatura' CHECK (tipo IN ('fatura', 'fatura_recibo', 'nota_credito')),
