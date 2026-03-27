@@ -76,7 +76,7 @@ function SalariosTab() {
   const [selectedAnoDecl, setSelectedAnoDecl] = useState<Record<number, number>>({})
 
   useEffect(() => {
-    fetch("/api/carolina/colaboradores")
+    fetch("/api/rh/colaboradores")
       .then((r) => r.json())
       .then((data) => {
         setColabs(data)
@@ -194,7 +194,7 @@ function SalariosTab() {
                     <button
                       onClick={() => {
                         window.open(
-                          `/api/carolina/recibo?colaborador_rh_id=${c.id}&ano=${ano}&mes=${mes}`,
+                          `/api/rh/recibo?colaborador_rh_id=${c.id}&ano=${ano}&mes=${mes}`,
                           "_blank"
                         )
                       }}
@@ -220,7 +220,7 @@ function SalariosTab() {
                     <button
                       onClick={() => {
                         window.open(
-                          `/api/carolina/declaracao-anual?colaborador_rh_id=${c.id}&ano=${anoDecl}`,
+                          `/api/rh/declaracao-anual?colaborador_rh_id=${c.id}&ano=${anoDecl}`,
                           "_blank"
                         )
                       }}
