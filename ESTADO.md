@@ -1,154 +1,102 @@
 # CSN Opus — Estado do Sistema
-### Código interno: CSN-L4-ENG-SYS-026-2026
+### Codigo: CSN-L4-ENG-SYS-026-2026
 
-## Última sessão: 26 (28/03/2026)
-## Último commit: f008f32
-## Deploy: csn-producao.vercel.app ✅
-## Norma estruturante: ISA-95 / IEC 62264
+## Ultima sessao: 26 (28/03/2026) · Commit: 07baf0d · Deploy: csn-producao.vercel.app
+## Norma: ISA-95 / IEC 62264
 
 ---
 
-## Números
-- **Tabelas Supabase:** 30
-- **Migrations:** 001–016 + 021 (17 executadas)
-- **Chat Tools:** 20 (15 produção/comercial + 5 Carolina RH)
-- **ADRs:** 25
-- **Recibos:** 45 (Jan2025–Mar2026, 3 colaboradores)
-- **Obras activas:** 6 (L2026-001-01 a 06)
+## QUADRO CENTRAL — MODULOS OPUS POR NIVEL ISA-95
+
+| Nivel | Sigla | Sistema | Norma | Modulos CSN |
+|-------|-------|---------|-------|-------------|
+| L4 | BPL | ERP/CRM | ISA-95 Part 4 · B2MML | FIN · COM · ENG · QMS-L4 · CST · RSH |
+| L3 | MOM | MES | MESA-11 (11 funcoes) | PRD · QMS · MNT · PER · DOC · INV |
+| L2 | SUP | SCADA | IEC 62443 | Portal Producao · Qualidade · Manutencao |
+| L1 | SEN | PLC/Sensores | IEC 61131 · EN 17637 | Fotos · GSR · Inspeccao · Dimensional |
+| L0 | PHY | Maquinas | EN 1090 · EN 3834 · EN 12642 | Bodor · Weinig · Soldadura · Pintura |
+
+**Personas (abaixo do nucleo):** Luisa→Duarte · Marta→Dealers · Fernando→Workers · Carolina→Workers
 
 ---
 
-## CODIFICAÇÃO INTERNA DE DOCUMENTOS CSN
-
-Formato: `CSN-L[nível]-[secção]-[seq]-[ano]`
-
-| Código | Secção ISA-95 | Nível | Âmbito |
-|--------|--------------|-------|--------|
-| PRD | Production Operations | L0–L2 | Termos, checklists obra, fichas fase |
-| QMS | Quality Operations | L1–L2 | ITP, relatórios inspecção, NC |
-| MNT | Maintenance Operations | L2 | Planos manutenção, registos |
-| INV | Inventory Operations | L3 | Certificados material 3.1, encomendas |
-| PER | Personnel | L0–L3 | Qualificações soldador, certificados |
-| EQP | Equipment | L0–L2 | Fichas equipamento, calibração |
-| MAT | Material | L0–L3 | Rastreabilidade lotes, consumos |
-| FIN | Financial | L4 | Faturas, movimentos, reconciliação |
-| DOC | Document Management | L3 | DAVs, COCs, DoPs, Marcação CE |
-| RH | Human Resources | L3 | Recibos, férias, processamentos |
-| COM | Commercial | L4 | Propostas, leads, contratos |
-| ENG | Engineering | L4 | ADRs, arquitectura, sistema |
-
-### Documentos de fecho de sessão:
-- `CSN-L4-ENG-SYS-026-2026` — ESTADO.md (este documento)
-- `CSN-L4-ENG-SYS-025-2026` — csn-architecture__25_.html
-- `CSN-L4-ENG-CTR-011-2026` — CSN-Controlo-Sistema-v11.pdf
+## Numeros
+- **Tabelas:** 30 · **Migrations:** 17 · **Tools:** 20 · **ADRs:** 25 · **Recibos:** 45 · **Obras:** 6
 
 ---
 
-## REGISTO DE CONFORMIDADE ISA-95 / IEC 62264
+## MESA-11 Checklist (L3-MES)
 
-### IEC 62264-1 — Modelos e Terminologia
+| # | Funcao | Estado |
+|---|--------|--------|
+| 1 | Production Scheduling | ⚠️ PARCIAL |
+| 2 | Production Dispatching | ⚠️ PARCIAL |
+| 3 | Production Execution | ⚠️ PARCIAL |
+| 4 | Production Tracking | ✅ SIM |
+| 5 | Performance Analysis | ❌ NAO |
+| 6 | Quality Management | ⚠️ PARCIAL |
+| 7 | Maintenance Management | ❌ NAO |
+| 8 | Resource Management | ⚠️ PARCIAL |
+| 9 | Document Management | ✅ SIM |
+| 10 | Data Collection | ⚠️ PARCIAL |
+| 11 | Process Management | ❌ NAO |
 
-| Requisito | Estado | Notas |
-|-----------|--------|-------|
-| Hierarquia funcional (L0–L4) | ✅ SIM | 5 níveis mapeados |
-| Hierarquia equipamento | ✅ SIM | 1 site, 4 áreas, 4 work centers |
-| Fronteiras entre níveis | ✅ SIM | L3/L4 e L2/L3 claras |
-| Fluxo dados entre níveis | ⚠️ PARCIAL | Falta L0→L1→L2 |
-| Work Unit identification | ❌ NÃO | Não detalhado |
-| Capacidade por Work Center | ❌ NÃO | Não registada |
-
-### IEC 62264-2 — Modelos de Objectos
-
-| Requisito | Estado | Notas |
-|-----------|--------|-------|
-| Personnel classes | ✅ SIM | Operator, Supervisor, Manager |
-| Qualificações pessoal | ❌ NÃO | Faltam cert. soldadura EN 9606 |
-| Disponibilidade pessoal | ⚠️ PARCIAL | pedidos_ferias_faltas existe |
-| Material classes | ❌ NÃO | Sem tabela materiais |
-| Material lot tracking | ❌ NÃO | Crítico EN 1090 |
-| Stock actual | ❌ NÃO | |
-| Process segments | ✅ SIM | 9 fases em fases_obra |
-| Duração estimada vs real | ⚠️ PARCIAL | horas_reais sim, estimadas=0 |
-
-### IEC 62264-3 — Actividades MOM
-
-| Actividade | Estado | Notas |
-|------------|--------|-------|
-| Production: Definition | ✅ SIM | leads + tipo_carrocaria |
-| Production: Scheduling | ⚠️ PARCIAL | Sequência sim, datas não |
-| Production: Tracking | ✅ SIM | obras + fases_obra |
-| Production: Performance | ❌ NÃO | Sem KPIs |
-| Maintenance: todas | ❌ NÃO | Agente planeado |
-| Quality: Test Definition | ⚠️ PARCIAL | Checklist GSR planeado |
-| Quality: NC Management | ❌ NÃO | Exigido ISO 9001 |
-| Inventory: Material Receipt | ⚠️ PARCIAL | fornecedores existe |
-| Inventory: Consumption | ❌ NÃO | |
-| Inventory: Lot Tracking | ❌ NÃO | Crítico EN 1090 |
-
-### IEC 62264-4/5 — Integração
-
-| Requisito | Estado | Notas |
-|-----------|--------|-------|
-| Isolamento externo | ✅ SIM | Princípio P2 |
-| APIs L3↔L4 | ✅ SIM | 9 routes |
-| Integridade referencial | ✅ SIM | FKs |
-| B2MML / Standards | ⚠️ PARCIAL | JSON, não B2MML |
-
-### Resumo conformidade: 28 requisitos — 10 conformes (36%) · 7 parciais (25%) · 11 não conformes (39%)
+**Score:** 2 completas · 6 parciais · 3 em falta
 
 ---
 
-## Sessão 26 — O que foi feito
+## Conformidade ISA-95
 
-### P1 ✅ InvoiceXpress Emitir (L4-FIN)
-- Fatura teste: Vesauto NIF 501316272, obra L2026-001-01, 2100€+IVA
-- Código fatura: CSN-L4-FIN-001-2026
-- Bug davs(*) corrigido (commit f008f32)
-
-### P2 ✅ Migration 016 (L4-FIN)
-- fornecedores + movimentos_bancarios + IBAN cols → 30 tabelas
-
-### P3 ✅ 5 Carolina RH Chat Tools (L3-RH)
-- consultar_recibos, pedir_ferias, saldo_ferias, dados_pessoais, resumo_rh_mensal
+| Parte IEC 62264 | Req. | Conf. | Parcial | N/Conf. |
+|-----------------|------|-------|---------|---------|
+| Parte 1 — Modelos | 6 | 3 | 1 | 2 |
+| Parte 2 — Objectos | 8 | 2 | 2 | 4 |
+| Parte 3 — MOM | 10 | 2 | 3 | 5 |
+| Parte 4 — Integracao | 4 | 3 | 1 | 0 |
+| **TOTAL** | **28** | **10 (36%)** | **7 (25%)** | **11 (39%)** |
 
 ---
 
-## Commits sessão 26
-- `15e5c01` — feat: 5 Carolina RH chat tools (L3-RH)
-- `ff60961` — fix: audit type gerar_documento (L3-DOC)
-- `930a94e` — fix: force rebuild emitir route (L4-FIN)
-- `f008f32` — fix: emitir route remover join davs (L4-FIN)
+## Codificacao: CSN-L[nivel]-[seccao]-[seq]-[ano]
+
+PRD (Production) · QMS (Quality) · MNT (Maintenance) · INV (Inventory) · PER (Personnel) · EQP (Equipment) · MAT (Material) · FIN (Financial) · DOC (Documents) · RH (HR) · COM (Commercial) · ENG (Engineering)
 
 ---
 
-## Pendentes por nível ISA-95
+## Sessao 26
 
-### L0 — Processo Físico (PRD/PER/EQP)
-- [ ] Qualificação soldadores EN ISO 9606-1 → CSN-L0-PER-xxx-2026
-- [ ] Qualificação WPS EN ISO 15614-1 → CSN-L0-PRD-xxx-2026
+- **P1 ✅** InvoiceXpress testado (L4-FIN) — Vesauto NIF 501316272, 2100€+IVA
+- **P2 ✅** Migration 016 (L4-FIN) — fornecedores + movimentos_bancarios + IBAN
+- **P3 ✅** 5 Carolina tools (L3-RH) — recibos, ferias, saldo, dados, resumo
 
-### L1 — Sensing & Control (QMS)
-- [ ] Checklist GSR por obra → CSN-L1-QMS-xxx-2026
-- [ ] Inspecção visual soldaduras EN ISO 17637 → CSN-L1-QMS-xxx-2026
-- [ ] Controlo dimensional pós-montagem → CSN-L1-QMS-xxx-2026
+## Commits: 15e5c01 · ff60961 · 930a94e · f008f32
 
-### L2 — Supervisão (PRD/MNT/QMS)
-- [ ] Portal Produção Sr. Manuel → CSN-L2-PRD-xxx-2026
-- [ ] Agente Qualidade (ITP, NC) → CSN-L2-QMS-xxx-2026
-- [ ] Agente Manutenção preventiva → CSN-L2-MNT-xxx-2026
+---
 
-### L3 — Operações (DOC/RH/INV/MAT)
-- [ ] Agente RH 11º agente autónomo → CSN-L3-RH-xxx-2026
-- [ ] Pipeline documental end-to-end → CSN-L3-DOC-xxx-2026
-- [ ] Tabela materiais + rastreabilidade lotes → CSN-L3-MAT-xxx-2026
-- [ ] NORMAS.md no repo root → CSN-L3-DOC-xxx-2026
+## Pendentes por nivel
 
-### L4 — Negócio (FIN/COM/ENG)
+### L0-PHY
+- [ ] Qualificacao soldadores EN 9606-1 → CSN-L0-PER-xxx
+- [ ] Qualificacao WPS EN 15614-1 → CSN-L0-PRD-xxx
+
+### L1-SEN
+- [ ] Checklist GSR → CSN-L1-QMS-xxx
+- [ ] Inspeccao visual EN 17637 → CSN-L1-QMS-xxx
+
+### L2-SUP
+- [ ] Portal Producao Sr. Manuel → CSN-L2-PRD-PRT
+- [ ] Agente Qualidade → CSN-L2-QMS-AGT
+- [ ] Agente Manutencao → CSN-L2-MNT-AGT
+
+### L3-MOM
+- [ ] Agente RH 11o agente → CSN-L3-RH-AGT
+- [ ] Pipeline documental → CSN-L3-DOC
+- [ ] Tabela materiais + lotes → CSN-L3-MAT
+
+### L4-BPL
 - [ ] Apagar fatura duplicada IX 253708521
-- [ ] Remover CEGID_VENDUS_API_KEY do Vercel
-- [ ] Cancelar Cegid Vendus
-- [ ] Campo NIF na tabela leads → CSN-L4-COM-xxx-2026
-- [ ] BPI ingestion 841 movimentos → CSN-L4-FIN-xxx-2026
-- [ ] COC Eletrónico IMT jul/2026 → CSN-L4-DOC-xxx-2026
-- [ ] Production Schedule → CSN-L4-PRD-xxx-2026
-- [ ] Dashboards → CSN-L4-ENG-xxx-2026
+- [ ] Remover CEGID_VENDUS_API_KEY
+- [ ] NIF na tabela leads → CSN-L4-COM
+- [ ] BPI ingestion → CSN-L4-FIN
+- [ ] COC Electronico IMT jul/2026 → CSN-L4-DOC
+- [ ] Dashboards por departamento → CSN-L4-ENG
