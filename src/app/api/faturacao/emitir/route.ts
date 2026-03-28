@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     // Buscar dados da obra + lead + davs
     const { data: obra, error: obraErr } = await supabase
       .from("obras")
-      .select("*, leads(*), davs(*)")
+      .select("*, leads(*)")
       .eq("id", obra_id)
       .single()
 
