@@ -3,7 +3,7 @@ import { getServiceSupabase } from "./supabase"
 interface AuditEntry {
   entidade_tipo: string
   entidade_id: string
-  acao: "criar" | "atualizar" | "eliminar" | "mudar_estado"
+  acao: "criar" | "atualizar" | "eliminar" | "mudar_estado" | "gerar_documento"
   campo_alterado?: string
   valor_anterior?: string
   valor_novo?: string
