@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Arquitectura v25 · ISA-95</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;--border:#1e1e1e;--border2:#2a2a2a;--text:#888;--text2:#bbb;--bright:#f0f0f0;--accent:#f97316;--blue:#3b82f6;--green:#22c55e;--emerald:#10b981;--purple:#a78bfa;--amber:#f59e0b;--red:#ef4444;--gray:#6b7280;--cyan:#06b6d4;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--l0:#ef4444;--l1:#f97316;--l2:#f59e0b;--l3:#10b981;--l4:#3b82f6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(249,115,22,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,.015) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:40px 28px 80px}
+.header{border-bottom:1px solid var(--border);padding-bottom:28px;margin-bottom:36px;display:flex;justify-content:space-between;align-items:flex-end}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--accent);margin-bottom:8px}
+.h1{font-size:28px;font-weight:800;color:var(--bright);letter-spacing:-.03em;line-height:1;margin-bottom:6px}.h1 span{color:var(--accent)}
+.h1-sub{font-size:14px;font-weight:400;color:var(--blue);font-family:var(--mono);margin-top:4px}
+.subtitle{font-size:12px;color:#444;font-family:var(--mono)}
+.header-meta{text-align:right}.meta-item{font-family:var(--mono);font-size:10px;color:#333;margin-bottom:4px}.meta-item span{color:#555}
+.part{margin-bottom:48px;border-left:3px solid var(--border);padding-left:20px}
+.part-header{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--accent);margin-bottom:4px}
+.part-title{font-size:18px;font-weight:700;color:var(--bright);margin-bottom:4px}
+.part-ref{font-family:var(--mono);font-size:10px;color:#444;margin-bottom:16px}
+.section{margin-bottom:28px}
+.section-title{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.section-title .num{color:var(--accent);font-weight:700}.section-title .label{color:#555;text-transform:uppercase}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:10px;transition:border-color .2s}.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.card p{font-size:12px;color:var(--text);margin-bottom:3px}.card p strong{color:var(--text2)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:11px}
+th{background:var(--bg3);color:#555;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:6px 8px;text-align:left;border:1px solid var(--border)}
+td{padding:6px 8px;border:1px solid var(--border);color:var(--text)}tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;padding:2px 7px;border-radius:3px;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.05em}
+.badge-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.badge-amber{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.badge-red{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.badge-blue{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+.badge-gray{background:rgba(107,114,128,.1);color:var(--gray);border:1px solid rgba(107,114,128,.2)}
+.principle{padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);margin:5px 0;font-size:11px}
+.principle strong{color:var(--accent);font-family:var(--mono);font-size:10px}
+ul{margin:4px 0 4px 14px}li{margin:2px 0;font-size:11px;color:var(--text)}
+.compliance{background:rgba(59,130,246,.03);border:1px solid rgba(59,130,246,.15);border-radius:6px;padding:12px;margin:8px 0}
+.compliance-title{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--blue);margin-bottom:6px;font-weight:700}
+.compliance table th{background:rgba(59,130,246,.08);color:var(--blue)}
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:3px;margin:14px 0}
+.pyramid-row{display:flex;align-items:center;gap:10px;width:100%}
+.pyramid-bar{height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em}
+.p-label{font-family:var(--mono);font-size:9px;color:#444;width:65px;text-align:right;flex-shrink:0}
+.progress-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:4px 0;border:1px solid var(--border)}
+.progress-fill{height:100%;border-radius:3px}.progress-fill.green{background:var(--green)}.progress-fill.amber{background:var(--amber)}.progress-fill.red{background:var(--red)}
+.audit-section{border:2px solid var(--red);border-radius:6px;padding:20px;margin:20px 0;background:rgba(239,68,68,.03)}
+.inviolable{background:rgba(239,68,68,.08);border:1px dashed rgba(239,68,68,.4);padding:8px;margin:0 0 12px;font-family:var(--mono);font-size:9px;color:var(--red);text-align:center;font-weight:600;letter-spacing:.1em}
+.code-section{background:rgba(249,115,22,.03);border:1px solid rgba(249,115,22,.15);border-radius:6px;padding:16px;margin:12px 0}
+.code-section .card-title{color:var(--accent);border-color:rgba(249,115,22,.2)}
+.footer{text-align:center;padding:30px;color:#333;font-family:var(--mono);font-size:10px;margin-top:40px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div>
+    <div class="eyebrow">CARLOS DOS SANTOS NASCIMENTO, LDA</div>
+    <div class="h1">CSN <span>OPUS</span> — ARQUITECTURA</div>
+    <div class="h1-sub">ISA-95 / IEC 62264 · Codigo: CSN-L4-ENG-SYS-025-2026</div>
+    <div class="subtitle">Engenharia de Veiculos Comerciais · Mafra · NIF 500 861 790</div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-item"><span>VERSION</span> v25</div>
+    <div class="meta-item"><span>SESSAO</span> 26</div>
+    <div class="meta-item"><span>DATA</span> 28/03/2026</div>
+    <div class="meta-item"><span>NORMA</span> ISA-95 / IEC 62264</div>
+    <div class="meta-item"><span>TABELAS</span> 30</div>
+    <div class="meta-item"><span>TOOLS</span> 20</div>
+    <div class="meta-item"><span>CONFORMIDADE</span> 36%</div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- CODIFICACAO INTERNA -->
+<!-- ================================================================ -->
+<div class="code-section">
+  <div class="card-title">SISTEMA DE CODIFICACAO INTERNA CSN — BASEADO EM ISA-95</div>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:10px"><strong>Formato:</strong> <code style="color:var(--accent)">CSN-L[nivel]-[seccao]-[seq]-[ano]</code> — Todos os documentos produzidos pela CSN devem ter codigo interno.</p>
+  <table>
+    <tr><th>Codigo</th><th>Seccao ISA-95</th><th>Nivel</th><th>Ambito</th><th>Exemplos</th></tr>
+    <tr><td style="color:var(--accent)">PRD</td><td>Production Operations</td><td>L0–L2</td><td>Termos, checklists obra, fichas fase</td><td>CSN-L0-PRD-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">QMS</td><td>Quality Operations</td><td>L1–L2</td><td>ITP, relatorios inspeccao, NC</td><td>CSN-L1-QMS-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">MNT</td><td>Maintenance Operations</td><td>L2</td><td>Planos manutencao, registos</td><td>CSN-L2-MNT-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">INV</td><td>Inventory Operations</td><td>L3</td><td>Certificados material 3.1, encomendas</td><td>CSN-L3-INV-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">PER</td><td>Personnel</td><td>L0–L3</td><td>Qualificacoes soldador, certificados</td><td>CSN-L0-PER-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">EQP</td><td>Equipment</td><td>L0–L2</td><td>Fichas equipamento, calibracao</td><td>CSN-L0-EQP-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">MAT</td><td>Material</td><td>L0–L3</td><td>Rastreabilidade lotes, consumos</td><td>CSN-L0-MAT-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">FIN</td><td>Financial</td><td>L4</td><td>Faturas, movimentos, reconciliacao</td><td>CSN-L4-FIN-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">DOC</td><td>Document Management</td><td>L3</td><td>DAVs, COCs, DoPs, Marcacao CE</td><td>CSN-L3-DOC-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">RH</td><td>Human Resources</td><td>L3</td><td>Recibos, ferias, processamentos</td><td>CSN-L3-RH-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">COM</td><td>Commercial</td><td>L4</td><td>Propostas, leads, contratos</td><td>CSN-L4-COM-001-2026</td></tr>
+    <tr><td style="color:var(--accent)">ENG</td><td>Engineering / System</td><td>L4</td><td>ADRs, arquitectura, controlo</td><td>CSN-L4-ENG-025-2026</td></tr>
+  </table>
+  <p style="font-size:10px;color:#444;margin-top:8px"><strong>Documentos sessao 26:</strong> CSN-L4-ENG-SYS-025-2026 (este doc) · CSN-L4-ENG-CTR-011-2026 (controlo v11) · CSN-L4-ENG-SYS-026-2026 (ESTADO.md)</p>
+</div>
+
+<!-- ================================================================ -->
+<!-- PART 1 — IEC 62264-1 -->
+<!-- ================================================================ -->
+<div class="part">
+  <div class="part-header">ISA-95 PARTE 1</div>
+  <div class="part-title">Modelos e Terminologia</div>
+  <div class="part-ref">IEC 62264-1 — Functional Hierarchy · Equipment Hierarchy · Functional Data Flow</div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">1.1</span><span class="label">Hierarquia Funcional (L0–L4)</span></div>
+    <div class="pyramid">
+      <div class="pyramid-row"><div class="p-label" style="color:var(--l4)">L4</div><div class="pyramid-bar" style="width:100%;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:var(--l4)">BUSINESS — Opus ERP · Luisa · Marta · Financeiro · Compliance · Custos · Brain · Connect</div></div>
+      <div class="pyramid-row"><div class="p-label" style="color:var(--l3)">L3</div><div class="pyramid-bar" style="width:85%;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--l3)">MOM — Documental · Research · Marcas · Notificacoes · Agente RH · Fernando · Carolina</div></div>
+      <div class="pyramid-row"><div class="p-label" style="color:var(--l2)">L2</div><div class="pyramid-bar" style="width:65%;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:var(--l2)">SUPERVISAO — Qualidade · Manutencao · Sr. Manuel · Portal Producao</div></div>
+      <div class="pyramid-row"><div class="p-label" style="color:var(--l1)">L1</div><div class="pyramid-bar" style="width:50%;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.25);color:var(--l1)">SENSING — Fotos validacao · Checklist GSR · Inspeccao visual · Dimensional</div></div>
+      <div class="pyramid-row"><div class="p-label" style="color:var(--l0)">L0</div><div class="pyramid-bar" style="width:40%;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:var(--l0)">PROCESSO — Bodor Laser · Weinig · Soldadura · Pintura · Montagem</div></div>
+    </div>
+    <div class="compliance"><div class="compliance-title">REGISTO CONFORMIDADE · HIERARQUIA FUNCIONAL</div>
+      <table>
+        <tr><th>Requisito IEC 62264-1</th><th>CSN Estado</th></tr>
+        <tr><td>Niveis 0-4 definidos e mapeados</td><td><span class="badge badge-green">SIM</span></td></tr>
+        <tr><td>Fronteiras L3/L4 e L2/L3 claras</td><td><span class="badge badge-green">SIM</span></td></tr>
+        <tr><td>Fluxo dados entre todos os niveis</td><td><span class="badge badge-amber">PARCIAL</span> — falta L0→L1→L2</td></tr>
+        <tr><td>Sem bypass de niveis</td><td><span class="badge badge-amber">PARCIAL</span> — satelites ok, falta L0-L1-L2</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">1.2</span><span class="label">Hierarquia de Equipamento</span></div>
+    <div class="card"><table>
+      <tr><th>Nivel</th><th>Entidade CSN</th><th>Codigo</th></tr>
+      <tr><td style="color:var(--bright)">Enterprise</td><td>Carlos dos Santos Nascimento, Lda</td><td>CSN</td></tr>
+      <tr><td style="color:var(--bright)">Site</td><td>Fabrica Mafra</td><td>CSN-MAFRA</td></tr>
+      <tr><td style="color:var(--bright)">Area: Corte</td><td>Bodor Laser + Weinig</td><td>CSN-MAFRA-CRT</td></tr>
+      <tr><td style="color:var(--bright)">Area: Estrutura</td><td>Assemblagem + Soldadura</td><td>CSN-MAFRA-EST</td></tr>
+      <tr><td style="color:var(--bright)">Area: Acabamento</td><td>Pintura + Montagem</td><td>CSN-MAFRA-ACB</td></tr>
+      <tr><td style="color:var(--bright)">Area: Expedicao</td><td>Parque + Pesagem + Docs</td><td>CSN-MAFRA-EXP</td></tr>
+    </table></div>
+    <div class="compliance"><div class="compliance-title">REGISTO CONFORMIDADE · HIERARQUIA EQUIPAMENTO</div>
+      <table>
+        <tr><th>Requisito IEC 62264-1</th><th>CSN Estado</th></tr>
+        <tr><td>Enterprise/Site/Area definidos</td><td><span class="badge badge-green">SIM</span></td></tr>
+        <tr><td>Work Centers mapeados</td><td><span class="badge badge-green">SIM</span> — 4 work centers</td></tr>
+        <tr><td>Work Units identificados</td><td><span class="badge badge-red">NAO</span></td></tr>
+        <tr><td>Capacidade registada</td><td><span class="badge badge-red">NAO</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">1.3</span><span class="label">Plataforma Tecnologica</span></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">TECH STACK</div>
+        <p><strong>Frontend/Backend:</strong> Next.js · TypeScript · Vercel</p>
+        <p><strong>Database:</strong> Supabase (PostgreSQL + RLS) — 30 tabelas</p>
+        <p><strong>AI:</strong> Claude API · claude-sonnet-4-20250514</p>
+        <p><strong>Faturacao:</strong> InvoiceXpress (cert AT 192) <span class="badge badge-green">Testado</span></p>
+        <p><strong>Repo:</strong> duartebustorff-star/csn-producao</p>
+      </div>
+      <div class="card"><div class="card-title">3 PRODUTOS</div><table>
+        <tr><th>Produto</th><th>Nivel</th><th>Estado</th></tr>
+        <tr><td><strong style="color:var(--bright)">CSN Opus</strong></td><td>L0–L4</td><td><span class="badge badge-green">Producao</span></td></tr>
+        <tr><td><strong style="color:var(--bright)">CSN Brain</strong></td><td>L4</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+        <tr><td><strong style="color:var(--bright)">CSN Connect</strong></td><td>Satelite</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PART 2 — IEC 62264-2 -->
+<!-- ================================================================ -->
+<div class="part">
+  <div class="part-header">ISA-95 PARTE 2</div>
+  <div class="part-title">Modelos de Objectos e Atributos</div>
+  <div class="part-ref">IEC 62264-2 — Personnel · Equipment · Material · Process Segment</div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">2.1</span><span class="label">Personnel Model</span></div>
+    <div class="card"><div class="card-title">PESSOAL FISICO (L0)</div><table>
+      <tr><th>ID</th><th>Nome</th><th>Funcao ISA-95</th><th>Area</th><th>Codigo</th><th>SS</th></tr>
+      <tr><td>1</td><td>Bohdan</td><td>Operator</td><td>CRT/EST/ACB</td><td>CSN-L0-PER-001</td><td>7.5%</td></tr>
+      <tr><td>2</td><td>Jose Julio</td><td>Operator</td><td>ACB</td><td>CSN-L0-PER-002</td><td>11%</td></tr>
+      <tr><td>3</td><td>Joao Antonio</td><td>Operator</td><td>EST/ACB</td><td>CSN-L0-PER-003</td><td>11%</td></tr>
+      <tr><td>—</td><td>Duarte Bustorff-Silva</td><td>Manager</td><td>Todas</td><td>CSN-L4-PER-001</td><td>—</td></tr>
+    </table></div>
+    <div class="card"><div class="card-title">PERSONAS DIGITAIS (CAMADA 2)</div><table>
+      <tr><th>Persona</th><th>Funcao ISA-95</th><th>Nivel</th><th>Codigo</th><th>Estado</th></tr>
+      <tr><td>🎯 Luisa</td><td>Executive Assistant</td><td>L4</td><td>CSN-L4-PER-LUI</td><td><span class="badge badge-green">Activa</span></td></tr>
+      <tr><td>🏭 Fernando</td><td>Production Supervisor</td><td>L3</td><td>CSN-L3-PER-FER</td><td><span class="badge badge-green">Activo</span></td></tr>
+      <tr><td>💼 Marta</td><td>Sales Coordinator</td><td>L4</td><td>CSN-L4-PER-MAR</td><td><span class="badge badge-green">Activa</span></td></tr>
+      <tr><td>👤 Carolina</td><td>HR Coordinator</td><td>L3</td><td>CSN-L3-PER-CAR</td><td><span class="badge badge-green">Producao</span></td></tr>
+      <tr><td>🔧 Leonor</td><td>After-Sales</td><td>L4</td><td>CSN-L4-PER-LEO</td><td><span class="badge badge-blue">Definida</span></td></tr>
+      <tr><td>📦 Irina</td><td>Procurement</td><td>L4</td><td>CSN-L4-PER-IRI</td><td><span class="badge badge-blue">Definida</span></td></tr>
+    </table></div>
+    <div class="card"><div class="card-title">AGENTES AUTONOMOS (CAMADA 3)</div><table>
+      <tr><th>#</th><th>Agente</th><th>Funcao ISA-95</th><th>Nivel</th><th>Codigo</th><th>Estado</th></tr>
+      <tr><td>1</td><td>Documental</td><td>Document Mgmt</td><td>L3</td><td>CSN-L3-DOC-AGT</td><td><span class="badge badge-green">Funcional</span></td></tr>
+      <tr><td>2</td><td>Compliance</td><td>QA Audit</td><td>L4</td><td>CSN-L4-QMS-AGT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>3</td><td>Marcas</td><td>Master Data</td><td>L3</td><td>CSN-L3-ENG-AGT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>4</td><td>Notificacoes</td><td>Event Mgmt</td><td>L3</td><td>CSN-L3-PRD-NTF</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>5</td><td>Manutencao</td><td>Maint Execution</td><td>L2</td><td>CSN-L2-MNT-AGT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>6</td><td>Custos</td><td>Cost Accounting</td><td>L4</td><td>CSN-L4-FIN-CST</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>7</td><td>Qualidade</td><td>Quality Test</td><td>L2</td><td>CSN-L2-QMS-AGT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>8</td><td>Research</td><td>Eng Support</td><td>L4</td><td>CSN-L4-ENG-RSH</td><td><span class="badge badge-green">Funcional</span></td></tr>
+      <tr><td>9</td><td>Financeiro</td><td>Financial Recon</td><td>L4</td><td>CSN-L4-FIN-AGT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>10</td><td>RH</td><td>Payroll Processing</td><td>L3</td><td>CSN-L3-RH-AGT</td><td><span class="badge badge-blue">Em def.</span></td></tr>
+    </table></div>
+    <div class="compliance"><div class="compliance-title">REGISTO CONFORMIDADE · PERSONNEL MODEL</div><table>
+      <tr><th>Requisito IEC 62264-2</th><th>CSN Estado</th></tr>
+      <tr><td>Personnel classes definidas</td><td><span class="badge badge-green">SIM</span></td></tr>
+      <tr><td>Qualificacoes registadas</td><td><span class="badge badge-red">NAO</span> — faltam cert. EN 9606</td></tr>
+      <tr><td>Disponibilidade rastreavel</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+      <tr><td>Pessoa → Work Center</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    </table></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">2.2</span><span class="label">Equipment + Material Models</span></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">EQUIPAMENTO (L0-EQP)</div><table>
+        <tr><th>Work Center</th><th>Codigo</th><th>Estado</th></tr>
+        <tr><td>Bodor Laser</td><td>CSN-L0-EQP-001</td><td><span class="badge badge-green">Op.</span></td></tr>
+        <tr><td>Weinig Unimat 22E</td><td>CSN-L0-EQP-002</td><td><span class="badge badge-green">Op.</span></td></tr>
+        <tr><td>Posto soldadura</td><td>CSN-L0-EQP-003</td><td><span class="badge badge-green">Op.</span></td></tr>
+        <tr><td>Cabine pintura</td><td>CSN-L0-EQP-004</td><td><span class="badge badge-green">Op.</span></td></tr>
+      </table></div>
+      <div class="card"><div class="card-title">MATERIAL (L0-MAT)</div>
+        <p>Chapa aco · Perfis tubulares · Madeira (taipais) · Consumiveis soldadura · Tinta · Ferragens</p>
+        <p style="margin-top:6px"><span class="badge badge-red">Sem tabela materiais</span> <span class="badge badge-red">Sem lot tracking</span> <span class="badge badge-red">Sem stock</span></p>
+      </div>
+    </div>
+    <div class="compliance"><div class="compliance-title">REGISTO CONFORMIDADE · EQUIPMENT + MATERIAL</div><table>
+      <tr><th>Requisito IEC 62264-2</th><th>CSN Estado</th></tr>
+      <tr><td>Equipment classes e capacidade</td><td><span class="badge badge-amber">PARCIAL</span> — classes sim, capacidade nao</td></tr>
+      <tr><td>Material classes e lot tracking</td><td><span class="badge badge-red">NAO</span> — critico EN 1090</td></tr>
+      <tr><td>Stock actual no sistema</td><td><span class="badge badge-red">NAO</span></td></tr>
+    </table></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">2.3</span><span class="label">Process Segment</span></div>
+    <div class="card"><div class="card-title">9 FASES — SEQUENCIA PADRAO POR OBRA</div><table>
+      <tr><th>Fase</th><th>Segmento ISA-95</th><th>Area</th><th>Codigo doc</th></tr>
+      <tr><td>F1 Corte</td><td>Material Processing</td><td>CRT</td><td>CSN-L0-PRD-F1</td></tr>
+      <tr><td>F2 Assemblagem</td><td>Assembly</td><td>EST</td><td>CSN-L0-PRD-F2</td></tr>
+      <tr><td>F3 Soldadura</td><td>Joining</td><td>EST</td><td>CSN-L0-PRD-F3</td></tr>
+      <tr><td>F4 Pintura carrocaria</td><td>Surface Treatment</td><td>ACB</td><td>CSN-L0-PRD-F4</td></tr>
+      <tr><td>F5 Pintura taipais</td><td>Surface Treatment</td><td>ACB</td><td>CSN-L0-PRD-F5</td></tr>
+      <tr><td>F6 Montagem veiculo</td><td>Final Assembly</td><td>ACB</td><td>CSN-L0-PRD-F6</td></tr>
+      <tr><td>F7 Acabamentos</td><td>Finishing</td><td>ACB</td><td>CSN-L0-PRD-F7</td></tr>
+      <tr><td>F8 Pesagem</td><td>Quality Test</td><td>EXP</td><td>CSN-L1-QMS-F8</td></tr>
+      <tr><td>F9 Termo</td><td>Documentation</td><td>EXP</td><td>CSN-L3-DOC-F9</td></tr>
+    </table></div>
+    <div class="compliance"><div class="compliance-title">REGISTO CONFORMIDADE · PROCESS SEGMENT</div><table>
+      <tr><th>Requisito IEC 62264-2</th><th>CSN Estado</th></tr>
+      <tr><td>Segments definidos e sequenciados</td><td><span class="badge badge-green">SIM</span> — 9 fases, fase_numero</td></tr>
+      <tr><td>Recursos por segmento</td><td><span class="badge badge-amber">PARCIAL</span> — responsavel sim, equipamento nao</td></tr>
+      <tr><td>Duracao estimada vs real</td><td><span class="badge badge-amber">PARCIAL</span> — reais sim, estimadas=0</td></tr>
+    </table></div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PART 3 — IEC 62264-3 -->
+<!-- ================================================================ -->
+<div class="part">
+  <div class="part-header">ISA-95 PARTE 3</div>
+  <div class="part-title">Manufacturing Operations Management</div>
+  <div class="part-ref">IEC 62264-3 — Production · Maintenance · Quality · Inventory Operations</div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">3.1</span><span class="label">Production Operations (PRD)</span></div>
+    <div class="card"><table>
+      <tr><th>Actividade ISA-95</th><th>Componente CSN</th><th>Codigo</th><th>Estado</th></tr>
+      <tr><td>Definition Mgmt</td><td>leads + tipo_carrocaria + dimensoes + Box Rules</td><td>L4-COM</td><td><span class="badge badge-green">SIM</span></td></tr>
+      <tr><td>Resource Mgmt</td><td>colaboradores_rh + responsavel em fases</td><td>L3-PER</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+      <tr><td>Detailed Scheduling</td><td>fases_obra (sequencia sim, datas nao)</td><td>L3-PRD</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+      <tr><td>Dispatching</td><td>responsavel por fase (manual)</td><td>L3-PRD</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+      <tr><td>Execution Mgmt</td><td>Fernando + Sr. Manuel</td><td>L2-PRD</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+      <tr><td>Data Collection</td><td>horas_reais, estados, fotos</td><td>L1-PRD</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+      <tr><td>Tracking</td><td>obras + fases_obra + estados + dashboard</td><td>L3-PRD</td><td><span class="badge badge-green">SIM</span></td></tr>
+      <tr><td>Performance Analysis</td><td>—</td><td>L4-PRD</td><td><span class="badge badge-red">NAO</span></td></tr>
+    </table>
+    <p style="margin-top:6px"><strong>Obras activas:</strong> 6 (L2026-001-01 a 06) · Grupo JAP · Renault Master · Caixa Aberta</p></div>
+  </div>
+
+  <div class="grid-3">
+    <div class="section">
+      <div class="section-title"><span class="num">3.2</span><span class="label">Maintenance (MNT)</span></div>
+      <div class="card"><table>
+        <tr><th>Actividade</th><th>Estado</th></tr>
+        <tr><td>Maint Definition</td><td><span class="badge badge-red">NAO</span></td></tr>
+        <tr><td>Maint Scheduling</td><td><span class="badge badge-red">NAO</span></td></tr>
+        <tr><td>Maint Execution</td><td><span class="badge badge-amber">PLAN</span></td></tr>
+        <tr><td>Maint Tracking</td><td><span class="badge badge-red">NAO</span></td></tr>
+      </table></div>
+    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">3.3</span><span class="label">Quality (QMS)</span></div>
+      <div class="card"><table>
+        <tr><th>Actividade</th><th>Estado</th></tr>
+        <tr><td>Test Definition</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+        <tr><td>Test Execution</td><td><span class="badge badge-amber">PLAN</span></td></tr>
+        <tr><td>Data Collection</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+        <tr><td>NC Management</td><td><span class="badge badge-red">NAO</span></td></tr>
+      </table></div>
+    </div>
+    <div class="section">
+      <div class="section-title"><span class="num">3.4</span><span class="label">Inventory (INV)</span></div>
+      <div class="card"><table>
+        <tr><th>Actividade</th><th>Estado</th></tr>
+        <tr><td>Material Receipt</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+        <tr><td>Material Storage</td><td><span class="badge badge-red">NAO</span></td></tr>
+        <tr><td>Consumption</td><td><span class="badge badge-red">NAO</span></td></tr>
+        <tr><td>Lot Tracking</td><td><span class="badge badge-red">NAO</span></td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="compliance"><div class="compliance-title">REGISTO CONFORMIDADE · MOM (TODAS AS OPERACOES)</div><table>
+    <tr><th>Parte IEC 62264</th><th>Req.</th><th>Conf.</th><th>Parcial</th><th>N/Conf.</th></tr>
+    <tr><td>Parte 1 — Modelos</td><td>6</td><td>3</td><td>1</td><td>2</td></tr>
+    <tr><td>Parte 2 — Objectos</td><td>8</td><td>2</td><td>2</td><td>4</td></tr>
+    <tr><td>Parte 3 — MOM</td><td>10</td><td>2</td><td>3</td><td>5</td></tr>
+    <tr><td>Parte 4 — Integracao</td><td>4</td><td>3</td><td>1</td><td>0</td></tr>
+    <tr style="background:rgba(249,115,22,.08)"><td><strong>TOTAL</strong></td><td><strong>28</strong></td><td><strong>10 (36%)</strong></td><td><strong>7 (25%)</strong></td><td><strong>11 (39%)</strong></td></tr>
+  </table></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PART 4 — IEC 62264-4/5 -->
+<!-- ================================================================ -->
+<div class="part">
+  <div class="part-header">ISA-95 PARTE 4</div>
+  <div class="part-title">Integracao e Troca de Informacao</div>
+  <div class="part-ref">IEC 62264-4/5 — APIs · Satelites · Base de Dados</div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">4.1</span><span class="label">API Routes & Chat Tools</span></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">API ROUTES POR NIVEL</div><table>
+        <tr><th>Route</th><th>ISA</th></tr>
+        <tr><td style="color:var(--accent)">/api/chat</td><td>L3–L4</td></tr>
+        <tr><td style="color:var(--accent)">/api/documentos/*</td><td>L3-DOC</td></tr>
+        <tr><td style="color:var(--accent)">/api/faturacao/emitir</td><td>L4-FIN</td></tr>
+        <tr><td style="color:var(--accent)">/api/faturacao/listar</td><td>L4-FIN</td></tr>
+        <tr><td style="color:var(--accent)">/api/rh/*</td><td>L3-RH</td></tr>
+        <tr><td style="color:var(--accent)">/api/obras</td><td>L2-PRD</td></tr>
+      </table></div>
+      <div class="card"><div class="card-title">20 CHAT TOOLS POR NIVEL</div>
+        <p style="color:var(--l2)"><strong>L2-PRD (5):</strong> criar_obra, listar_obras, atualizar_fase, verificar_doc, gerar_termo</p>
+        <p style="color:var(--l3)"><strong>L3-DOC (3):</strong> upload_documento, listar_documentos, registar_nota</p>
+        <p style="color:var(--l3)"><strong>L3-RH (5):</strong> consultar_recibos, pedir_ferias, saldo_ferias, dados_pessoais, resumo_rh_mensal</p>
+        <p style="color:var(--l4)"><strong>L4-COM (4):</strong> criar_lead, listar_leads, pesquisar_marca, calcular_peso_util</p>
+        <p style="color:var(--l4)"><strong>L4-ENG (3):</strong> iniciar_pesquisa, ver_resultados, listar_pesquisas</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">4.2</span><span class="label">Portais Satelite (Principio P2)</span></div>
+    <div class="card"><table>
+      <tr><th>Portal</th><th>Utilizadores</th><th>Escrita</th><th>Codigo</th><th>Estado</th></tr>
+      <tr><td>Portal Producao (Sr. Manuel)</td><td>Workers L0</td><td>producao_eventos</td><td>CSN-L2-PRD-PRT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>Portal Cliente</td><td>Clientes</td><td>Intake limitado</td><td>CSN-L4-COM-PRT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+      <tr><td>CSN Connect</td><td>Concessionarios</td><td>Pedidos</td><td>CSN-L4-COM-CNT</td><td><span class="badge badge-amber">Planeado</span></td></tr>
+    </table></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span class="num">4.3</span><span class="label">Base de Dados — 30 Tabelas</span></div>
+    <div class="grid-3">
+      <div class="card"><div class="card-title">L0–L2: PRODUCAO (10)</div><ul><li>obras</li><li>fases_obra</li><li>dossie_obra</li><li>davs</li><li>fams</li><li>cits</li><li>certificados_matricula</li><li>leads</li><li>marcas_veiculo</li><li>modelos_veiculo</li></ul></div>
+      <div class="card"><div class="card-title">L3: OPERACOES (8)</div><ul><li>colaboradores_rh</li><li>processamentos_mensais</li><li>recibos_vencimento</li><li>pedidos_ferias_faltas</li><li>declaracoes_anuais</li><li>documentos</li><li>research_tasks</li><li>research_results</li></ul></div>
+      <div class="card"><div class="card-title">L4: NEGOCIO (7+)</div><ul><li>clientes_faturacao</li><li>faturas</li><li>notas_credito</li><li>fornecedores</li><li>movimentos_bancarios</li><li>colaboradores</li><li>chat_messages</li><li>audit_log</li></ul></div>
+    </div>
+  </div>
+
+  <div class="compliance"><div class="compliance-title">REGISTO CONFORMIDADE · INTEGRACAO</div><table>
+    <tr><th>Requisito IEC 62264-4/5</th><th>CSN Estado</th></tr>
+    <tr><td>Isolamento externo (P2)</td><td><span class="badge badge-green">SIM</span></td></tr>
+    <tr><td>APIs L3↔L4 definidas</td><td><span class="badge badge-green">SIM</span></td></tr>
+    <tr><td>Integridade referencial</td><td><span class="badge badge-green">SIM</span></td></tr>
+    <tr><td>B2MML / Standards</td><td><span class="badge badge-amber">PARCIAL</span> — JSON</td></tr>
+  </table></div>
+</div>
+
+<!-- ================================================================ -->
+<!-- MERCADOS + FATURACAO -->
+<!-- ================================================================ -->
+<div class="part">
+  <div class="part-header">CONTEXTO COMERCIAL</div>
+  <div class="part-title">Mercados, Faturacao e Comunicacao</div>
+  <div class="part-ref">L4-COM / L4-FIN</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">CONCESSIONARIOS (CSN-L4-COM)</div>
+      <p>Astara Retail · MCoutinho · Santogal · Salvador Caetano · C. Santos VP · Oneshop · Hydraplan</p>
+      <p><strong>Marcas:</strong> Fuso, Isuzu, Maxus, Renault, Mercedes, VW, Ford, MAN</p>
+      <p><strong>Exportacao:</strong> PT · FR · DE · ES</p>
+    </div>
+    <div class="card"><div class="card-title">INVOICEXPRESS (CSN-L4-FIN)</div>
+      <p><strong>Cert AT:</strong> 192 · <strong>Conta:</strong> carlosdossantosna</p>
+      <p><span class="badge badge-green">Testado</span> Vesauto NIF 501316272, 2100€+IVA</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- SECCAO INVIOLAVEL -->
+<!-- ================================================================ -->
+<div class="audit-section">
+  <div class="inviolable">⚠ SECCAO INVIOLAVEL — Nunca remover esta seccao ⚠</div>
+
+  <div class="part-header" style="color:var(--red)">PRONTIDAO PARA AUDITORIA</div>
+  <p style="color:var(--text2);margin-bottom:12px">ISO 9001 + EN 1090 + EN ISO 3834 + EN 12642 · Mercados: PT + FR + DE + ES</p>
+
+  <div class="grid-2">
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">ISO 9001:2015 (CSN-L4-QMS)</div>
+      <div class="progress-bar"><div class="progress-fill amber" style="width:15%"></div></div><p>15%</p>
+      <ul><li><span class="badge badge-green">OK</span> Rastreabilidade · Controlo docs</li><li><span class="badge badge-amber">PARC</span> Processos definidos</li><li><span class="badge badge-red">FALTA</span> Politica QMS · Objectivos · Auditorias · Revisao · Correctivas</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">EN 1090-1/-2 (CSN-L1-QMS)</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:5%"></div></div><p>5%</p>
+      <ul><li><span class="badge badge-green">OK</span> EXC2 definida</li><li><span class="badge badge-red">FALTA</span> WPS · WPQR · Soldadores · Coord. · FPC · ITP · DoP · CE</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">EN ISO 3834-3 (CSN-L1-QMS)</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:5%"></div></div><p>5%</p>
+      <ul><li><span class="badge badge-red">FALTA</span> Consumiveis · Rastreabilidade · NC</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">EN 12642 L/XL (CSN-L1-QMS)</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:0%"></div></div><p>0% — Critico DE</p>
+      <ul><li><span class="badge badge-red">FALTA</span> FEA · Lab · Etiqueta</li></ul>
+    </div>
+  </div>
+
+  <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+    <div class="card-title">NORMAS DE SUPORTE</div>
+    <table>
+      <tr><th>Norma</th><th>Ambito</th><th>Codigo CSN</th><th>Estado</th></tr>
+      <tr><td>EN ISO 15614-1</td><td>Qualificacao WPS</td><td>CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>EN ISO 9606-1</td><td>Soldadores manuais</td><td>CSN-L0-PER</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>EN ISO 14732</td><td>Operadores mecanizados</td><td>CSN-L0-PER</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>EN 12640</td><td>Pontos amarracao</td><td>CSN-L0-PRD</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>EN 12195-1</td><td>Forcas fixacao</td><td>CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>EN ISO 5817</td><td>Imperfeicoes soldadura</td><td>CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>EN ISO 17637</td><td>Inspeccao visual</td><td>CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>VDI 2700</td><td>Fixacao carga (DE)</td><td>CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td></tr>
+      <tr><td>UNECE R48/R73/R58</td><td>Iluminacao, proteccoes</td><td>CSN-L1-QMS</td><td><span class="badge badge-amber">Parcial</span></td></tr>
+      <tr><td>Reg. 2018/858</td><td>COC multi-etapa</td><td>CSN-L4-DOC</td><td><span class="badge badge-amber">Parcial</span></td></tr>
+      <tr><td>Reg. 2019/2144</td><td>GSR</td><td>CSN-L1-QMS</td><td><span class="badge badge-amber">Parcial</span></td></tr>
+    </table>
+    <p style="margin-top:6px"><strong>Organismos:</strong> ISQ · Bureau Veritas · TUV · APCER · SGS · DEKRA · Prova Impar</p>
+    <p><strong>COC Electronico IMT (CSN-L4-DOC) — Deadline: Julho 2026</strong></p>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- EQUIPA + HISTORICO -->
+<!-- ================================================================ -->
+<div class="section">
+  <div class="section-title"><span class="num">—</span><span class="label">Equipa</span></div>
+  <div class="card"><table>
+    <tr><th>Nome</th><th>Funcao ISA-95</th><th>Nivel</th><th>Codigo</th></tr>
+    <tr><td>Duarte Bustorff-Silva</td><td>CEO · System Architect</td><td>L4</td><td>CSN-L4-PER-001</td></tr>
+    <tr><td>Joao Antonio</td><td>Operator (soldadura, acabamentos)</td><td>L0</td><td>CSN-L0-PER-003</td></tr>
+    <tr><td>Bohdan</td><td>Operator (corte, assemblagem) — SS 7.5%</td><td>L0</td><td>CSN-L0-PER-001</td></tr>
+    <tr><td>Jose Julio</td><td>Operator (pintura)</td><td>L0</td><td>CSN-L0-PER-002</td></tr>
+  </table></div>
+</div>
+
+<div class="section">
+  <div class="section-title"><span class="num">—</span><span class="label">Historico</span></div>
+  <div class="card"><table>
+    <tr><th>Ver</th><th>Sessao</th><th>Data</th><th>Codigo</th><th>Alteracoes</th></tr>
+    <tr><td>v25</td><td>26</td><td>28/03</td><td>CSN-L4-ENG-SYS-025-2026</td><td>ISA-95 full. Codificacao interna. M016. 5 Carolina tools. IX testado. 30 tab, 20 tools.</td></tr>
+    <tr><td>v24</td><td>25</td><td>27/03</td><td>—</td><td>masterway→IX. M015. 45 recibos. ADR-025.</td></tr>
+    <tr><td>v23</td><td>23</td><td>27/03</td><td>—</td><td>M015 faturacao. Routes RH.</td></tr>
+    <tr><td>v1–22</td><td>1–22</td><td>—</td><td>—</td><td>Evolucao progressiva.</td></tr>
+  </table></div>
+  <div class="card"><p>25 ADRs em <code style="color:var(--accent)">docs/adr/</code> · Ultimos: ADR-020 (Carolina) · ADR-025 (InvoiceXpress)</p></div>
+</div>
+
+<div class="footer">CSN OPUS · ISA-95 / IEC 62264 · CSN-L4-ENG-SYS-025-2026 · CARLOS DOS SANTOS NASCIMENTO, LDA · NIF 500 861 790 · MAFRA</div>
+
+</div>
+</body>
+</html>
