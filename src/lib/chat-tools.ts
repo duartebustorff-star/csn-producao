@@ -168,35 +168,31 @@ export const CLAUDE_TOOLS = [
       required: ["cliente", "veiculo_marca", "veiculo_modelo", "tipo_carrocaria"],
     },
   },
+  // ── NOVOS ──────────────────────────────────────────────
   {
-    name: "criar_tarefa_research",
-    description: "Cria uma nova tarefa de pesquisa para o Agente Research. Só admins podem usar. Exemplos: pesquisar bodybuilder guidelines MAN, legislação de pesos, normas EN 12642.",
+    name: "gerar_termo_responsabilidade",
+    description: "Gera o PDF do Termo de Responsabilidade para uma obra. Requer que a obra tenha DAV, inspeção Controlauto e dados de carroçaria completos. Usar quando a inspeção Controlauto é recebida.",
     input_schema: {
       type: "object" as const,
       properties: {
-        tema: { type: "string" as const, description: "Tema da pesquisa, ex: 'MAN TGS bodybuilder guidelines'" },
-        tipo: {
-          type: "string" as const,
-          enum: ["marca", "legal", "norma", "equip", "mercado", "tech", "geral"],
-          description: "Tipo: marca (chassis), legal (legislação), norma (EN/ISO), equip (equipamentos), mercado, tech, geral",
-        },
-        descricao: { type: "string" as const, description: "Descrição adicional do que pesquisar" },
+        obra_id: { type: "string" as const, description: "ID da obra (ex: L2026-001-01)" },
       },
-      required: ["tema", "tipo"],
+      required: ["obra_id"],
     },
   },
   {
-    name: "listar_tarefas_research",
-    description: "Lista tarefas de pesquisa do Agente Research — pendentes, em curso ou concluídas.",
+    name: "gerar_checklist_entrega",
+    description: "Gera o PDF do Checklist de Entrega com 4 fotos do veículo. Usar quando a obra está pronta para entrega e o operador já tirou as 4 fotos.",
     input_schema: {
       type: "object" as const,
       properties: {
-        estado: {
-          type: "string" as const,
-          enum: ["pendente", "em_curso", "concluido", "incorporado", "falhado", "todos"],
-          description: "Filtrar por estado (omitir para ver todos)",
-        },
+        obra_id: { type: "string" as const, description: "ID da obra" },
+        foto_1_base64: { type: "string" as const, description: "Foto frontal em base64" },
+        foto_2_base64: { type: "string" as const, description: "Foto traseira em base64" },
+        foto_3_base64: { type: "string" as const, description: "Foto lateral esquerda em base64" },
+        foto_4_base64: { type: "string" as const, description: "Foto lateral direita em base64" },
       },
+      required: ["obra_id", "foto_1_base64", "foto_2_base64", "foto_3_base64", "foto_4_base64"],
     },
   },
 ]
@@ -248,10 +244,17 @@ export async function executeTool(
       return verParque()
     case "criar_lead":
       return criarLead(toolInput, colaboradorId)
-    case "criar_tarefa_research":
-      return criarTarefaResearch(toolInput, colaboradorId)
-    case "listar_tarefas_research":
-      return listarTarefasResearch((toolInput.estado as string) || undefined)
+    // ── NOVOS ──────────────────────────────────────────────
+    case "gerar_termo_responsabilidade":
+      return gerarTermoResponsabilidade(toolInput.obra_id as string)
+    case "gerar_checklist_entrega":
+      return gerarChecklistEntrega(
+        toolInput.obra_id as string,
+        toolInput.foto_1_base64 as string,
+        toolInput.foto_2_base64 as string,
+        toolInput.foto_3_base64 as string,
+        toolInput.foto_4_base64 as string,
+      )
     default:
       return JSON.stringify({ error: `Tool desconhecida: ${toolName}` })
   }
@@ -308,7 +311,6 @@ async function iniciarTimer(
   obraId: string,
   faseId: number
 ): Promise<string> {
-  // Verificar se já tem timer ativo
   const { data: timerAtivo } = await supabase
     .from("timetracking")
     .select("*")
@@ -323,7 +325,6 @@ async function iniciarTimer(
     })
   }
 
-  // Criar timer
   const { data: timer, error } = await supabase
     .from("timetracking")
     .insert({
@@ -337,7 +338,6 @@ async function iniciarTimer(
 
   if (error) return JSON.stringify({ error: "Erro ao iniciar timer" })
 
-  // Marcar fase como em_curso se estava pendente
   await supabase
     .from("fases_obra")
     .update({ estado: "em_curso", started_at: new Date().toISOString() })
@@ -369,13 +369,11 @@ async function pararTimer(colaboradorId: string): Promise<string> {
   const inicio = new Date(timer.inicio)
   const duracaoMinutos = Math.round(((fim.getTime() - inicio.getTime()) / 60000) * 100) / 100
 
-  // Atualizar timer
   await supabase
     .from("timetracking")
     .update({ fim: fim.toISOString(), duracao_minutos: duracaoMinutos })
     .eq("id", timer.id)
 
-  // Somar horas à fase
   const duracaoHoras = Math.round((duracaoMinutos / 60) * 100) / 100
   const { data: fase } = await supabase
     .from("fases_obra")
@@ -409,7 +407,6 @@ async function concluirFase(
   obraId: string,
   faseId: number
 ): Promise<string> {
-  // Parar timer se ativo nesta fase
   const { data: timerAtivo } = await supabase
     .from("timetracking")
     .select("*")
@@ -422,7 +419,6 @@ async function concluirFase(
     await pararTimer(colaboradorId)
   }
 
-  // Marcar fase como concluída
   const { error } = await supabase
     .from("fases_obra")
     .update({ estado: "concluido", completed_at: new Date().toISOString() })
@@ -437,7 +433,6 @@ async function concluirFase(
     utilizador_id: colaboradorId, metadata: { obra_id: obraId },
   })
 
-  // Buscar próxima fase da mesma obra
   const { data: faseAtual } = await supabase
     .from("fases_obra")
     .select("fase_numero")
@@ -460,7 +455,6 @@ async function concluirFase(
         .eq("id", proxima.id)
       proximaFase = proxima
     } else {
-      // Verificar se todas as fases estão concluídas
       const { data: fasesPendentes } = await supabase
         .from("fases_obra")
         .select("id")
@@ -536,8 +530,8 @@ async function listarObras(estado: string): Promise<string> {
       id: obra.id,
       lead_id: obra.lead_id,
       vin: obra.vin,
-      cliente: lead?.cliente || "—",
-      tipo: lead?.tipo_carrocaria || "—",
+      cliente: lead?.cliente || "?",
+      tipo: lead?.tipo_carrocaria || "?",
       estado: obra.estado,
       lugar_parque: obra.lugar_parque,
       progresso: `${progresso}%`,
@@ -563,7 +557,7 @@ async function registarAusencia(
       data_fim: dataFim,
       tipo,
       notas,
-      aprovado: tipo === "baixa", // baixas auto-aprovadas
+      aprovado: tipo === "baixa",
     })
     .select()
     .single()
@@ -617,7 +611,6 @@ async function verificarDocumentacao(obraId: string): Promise<string> {
   if (!obra) return JSON.stringify({ error: "Obra não encontrada" })
   if (!obra.vin) return JSON.stringify({ obra_id: obraId, status: "sem_vin", mensagem: "Obra sem VIN atribuído" })
 
-  // Check DAV
   const { data: dav } = await supabase
     .from("davs")
     .select("id, cod_homologacao, matricula, marca, modelo, completo")
@@ -634,7 +627,6 @@ async function verificarDocumentacao(obraId: string): Promise<string> {
     })
   }
 
-  // Check FAM
   let fam = null
   if (dav.cod_homologacao) {
     const { data: famData } = await supabase
@@ -656,7 +648,6 @@ async function verificarDocumentacao(obraId: string): Promise<string> {
 }
 
 async function receberVeiculo(vin: string, lugarParque: number): Promise<string> {
-  // Find obra
   const { data: obra } = await supabase
     .from("obras")
     .select("id, estado")
@@ -665,7 +656,6 @@ async function receberVeiculo(vin: string, lugarParque: number): Promise<string>
 
   if (!obra) return JSON.stringify({ error: `Nenhuma obra encontrada para VIN ${vin}` })
 
-  // Check spot
   const { data: lugar } = await supabase
     .from("lugares_parque")
     .select("ocupado")
@@ -675,7 +665,6 @@ async function receberVeiculo(vin: string, lugarParque: number): Promise<string>
   if (!lugar) return JSON.stringify({ error: `Lugar ${lugarParque} não existe` })
   if (lugar.ocupado) return JSON.stringify({ error: `Lugar ${lugarParque} já está ocupado` })
 
-  // Assign
   await supabase
     .from("lugares_parque")
     .update({ ocupado: true, obra_id: obra.id, updated_at: new Date().toISOString() })
@@ -736,7 +725,6 @@ async function criarLead(
   const ano = new Date().getFullYear()
   const prefix = `L${ano}-`
 
-  // 1. Gerar ID sequencial
   const { data: lastLead } = await supabase
     .from("leads")
     .select("id")
@@ -752,7 +740,6 @@ async function criarLead(
   }
   const leadId = `${prefix}${String(nextNum).padStart(3, "0")}`
 
-  // 2. Verificar duplicados por matrícula ou VIN
   const matricula = input.matricula as string | undefined
   const vin = input.vin as string | undefined
 
@@ -773,7 +760,6 @@ async function criarLead(
     }
   }
 
-  // 3. Inserir na tabela leads
   const { error } = await supabase.from("leads").insert({
     id: leadId,
     cliente: input.cliente as string,
@@ -807,7 +793,6 @@ async function criarLead(
     return JSON.stringify({ sucesso: false, error: "Erro ao criar lead no sistema" })
   }
 
-  // 4. Audit log
   await audit({
     entidade_tipo: "lead",
     entidade_id: leadId,
@@ -828,87 +813,174 @@ async function criarLead(
   })
 }
 
-async function criarTarefaResearch(
-  input: Record<string, unknown>,
-  colaboradorId: string
-): Promise<string> {
-  const tema = input.tema as string
-  const tipo = input.tipo as string
-  const descricao = (input.descricao as string) || null
+// ── NOVOS HANDLERS ─────────────────────────────────────────────────────────
 
-  // Gerar código sequencial
-  const year = new Date().getFullYear()
-  const { count } = await supabase
-    .from("research_tasks")
-    .select("*", { count: "exact", head: true })
-    .like("codigo", `RT-${year}-%`)
-
-  const seq = String((count || 0) + 1).padStart(3, "0")
-  const slug = tema
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 40)
-  const codigo = `RT-${year}-${seq}`
-  const pastaLocal = `_research/${codigo}-${slug}/`
-
-  const { data, error } = await supabase
-    .from("research_tasks")
-    .insert({
-      codigo,
-      tema,
-      tipo,
-      descricao,
-      solicitado_por: colaboradorId,
-      pasta_local: pastaLocal,
-      estado: "pendente",
-    })
-    .select()
+async function gerarTermoResponsabilidade(obraId: string): Promise<string> {
+  // 1. Buscar obra + lead
+  const { data: obra } = await supabase
+    .from("obras")
+    .select("*, leads(*)")
+    .eq("id", obraId)
     .single()
 
-  if (error) {
-    return JSON.stringify({ sucesso: false, error: "Erro ao criar tarefa research" })
+  if (!obra) return JSON.stringify({ error: "Obra não encontrada" })
+  if (!obra.vin) return JSON.stringify({ error: "Obra sem VIN. Associe um veículo primeiro." })
+
+  // 2. Buscar DAV pelo VIN
+  const { data: dav } = await supabase
+    .from("davs")
+    .select("*")
+    .eq("vin", obra.vin)
+    .maybeSingle()
+
+  if (!dav) return JSON.stringify({
+    error: `Falta DAV para VIN ${obra.vin}. Envie o DAV pelo Documental primeiro.`,
+  })
+
+  // 3. Buscar inspeção Controlauto mais recente
+  const { data: insp } = await supabase
+    .from("inspecoes")
+    .select("*")
+    .eq("matricula", dav.matricula)
+    .order("data_inspecao", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (!insp) return JSON.stringify({
+    error: "Falta inspeção Controlauto. Envie o guia de serviço pelo Documental.",
+  })
+
+  const lead = obra.leads as Record<string, unknown> | null
+
+  // 4. Chamar endpoint de geração
+  const payload = {
+    obra_id: obraId,
+    // Veículo (do DAV)
+    marca: dav.marca || "",
+    modelo: dav.modelo || "",
+    matricula: dav.matricula || "",
+    vin: obra.vin,
+    cod_homologacao: dav.cod_homologacao || "",
+    // Carroçaria (do lead/obra)
+    tipo_carrocaria: lead?.tipo_carrocaria || obra.tipo_carrocaria || "",
+    comprimento: lead?.comprimento || obra.comprimento || "",
+    largura: lead?.largura || obra.largura || "",
+    altura: lead?.altura || obra.altura || "",
+    dist_eixo_frente: lead?.dist_eixo_frente || "",
+    dist_eixo_retaguarda: lead?.dist_eixo_retaguarda || "",
+    // Pesos (da inspeção)
+    tara_total: insp.peso_estatico_total || insp.tara_total || "",
+    tara_frontal: insp.peso_eixo1 || insp.tara_frontal || "",
+    tara_traseira: insp.peso_eixo2 || insp.tara_traseira || "",
+    peso_bruto: dav.campo_37_massa_maxima || "",
   }
 
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/documentos/gerar-termo`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+
+  if (!resp.ok) return JSON.stringify({ error: "Erro ao gerar PDF do Termo" })
+
+  const result = await resp.json()
+
+  // 5. Guardar referência no dossie_obra
+  await supabase.from("dossie_obra").upsert({
+    obra_id: obraId,
+    tipo_documento: "TERM",
+    storage_path: result.storage_path,
+    gerado_em: new Date().toISOString(),
+  })
+
   await audit({
-    entidade_tipo: "research_task",
-    entidade_id: data.id,
-    acao: "criar",
-    valor_novo: JSON.stringify({ codigo, tema, tipo }),
-    utilizador_id: colaboradorId,
+    entidade_tipo: "obra", entidade_id: obraId,
+    acao: "gerar_documento",
+    utilizador_id: "system",
+    metadata: { tipo: "TERM", storage_path: result.storage_path },
   })
 
   return JSON.stringify({
     sucesso: true,
-    codigo,
-    task_id: data.id,
-    pasta: pastaLocal,
-    mensagem: `Tarefa ${codigo} criada: "${tema}". Estado: pendente. O Agente Research vai executá-la.`,
+    mensagem: "Termo de Responsabilidade gerado com sucesso.",
+    download_url: result.download_url,
+    storage_path: result.storage_path,
   })
 }
 
-async function listarTarefasResearch(estado?: string): Promise<string> {
-  let query = supabase
-    .from("research_tasks")
-    .select("codigo, tema, tipo, estado, solicitado_por, data_inicio, data_conclusao, fontes_consultadas, documentos_encontrados")
-    .order("created_at", { ascending: false })
-    .limit(20)
+async function gerarChecklistEntrega(
+  obraId: string,
+  foto1: string,
+  foto2: string,
+  foto3: string,
+  foto4: string,
+): Promise<string> {
+  // 1. Buscar obra
+  const { data: obra } = await supabase
+    .from("obras")
+    .select("*, leads(cliente, tipo_carrocaria)")
+    .eq("id", obraId)
+    .single()
 
-  if (estado && estado !== "todos") {
-    query = query.eq("estado", estado)
+  if (!obra) return JSON.stringify({ error: "Obra não encontrada" })
+
+  // 2. Buscar DAV para dados do veículo
+  const { data: dav } = await supabase
+    .from("davs")
+    .select("marca, modelo, matricula")
+    .eq("vin", obra.vin || "")
+    .maybeSingle()
+
+  const lead = obra.leads as Record<string, unknown> | null
+
+  const payload = {
+    obra_id: obraId,
+    marca: dav?.marca || "",
+    modelo: dav?.modelo || "",
+    matricula: dav?.matricula || obra.matricula || "",
+    vin: obra.vin || "",
+    tipo_carrocaria: lead?.tipo_carrocaria || "",
+    cliente: lead?.cliente || "",
+    data_entrega: new Date().toLocaleDateString("pt-PT"),
+    fotos: [foto1, foto2, foto3, foto4],
+    legendas: ["Frente", "Retaguarda", "Lateral Esq.", "Lateral Dir."],
   }
 
-  const { data, error } = await query
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/documentos/gerar-checklist`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
 
-  if (error) {
-    return JSON.stringify({ sucesso: false, error: "Erro ao listar tarefas research" })
-  }
+  if (!resp.ok) return JSON.stringify({ error: "Erro ao gerar PDF do Checklist" })
 
-  if (!data || data.length === 0) {
-    return JSON.stringify({ tarefas: [], mensagem: "Sem tarefas de pesquisa registadas" })
-  }
+  const result = await resp.json()
 
-  return JSON.stringify({ tarefas: data })
+  // 3. Guardar no dossie_obra
+  await supabase.from("dossie_obra").upsert({
+    obra_id: obraId,
+    tipo_documento: "CHKL",
+    storage_path: result.storage_path,
+    gerado_em: new Date().toISOString(),
+  })
+
+  // 4. Marcar obra como entregue
+  await supabase
+    .from("obras")
+    .update({ estado: "entregue", updated_at: new Date().toISOString() })
+    .eq("id", obraId)
+
+  await audit({
+    entidade_tipo: "obra", entidade_id: obraId,
+    acao: "gerar_documento",
+    utilizador_id: "system",
+    metadata: { tipo: "CHKL", storage_path: result.storage_path },
+  })
+
+  return JSON.stringify({
+    sucesso: true,
+    mensagem: "Checklist de Entrega gerado. Obra marcada como entregue.",
+    download_url: result.download_url,
+    storage_path: result.storage_path,
+  })
 }
