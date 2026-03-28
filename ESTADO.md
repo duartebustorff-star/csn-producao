@@ -1,7 +1,9 @@
 # CSN Opus — Estado do Sistema
-### Codigo: CSN-L4-ENG-SYS-026-2026
+### Codigo: CSN-L4-ENG-SYS-027-2026
+### Produzido: 28/03/2026 16:10 (Lisboa)
+### Sessao: 27
 
-## Ultima sessao: 26 (28/03/2026) · Commit: 07baf0d · Deploy: csn-producao.vercel.app
+## Commit: a54d459 · Deploy: csn-producao.vercel.app
 ## Norma: ISA-95 / IEC 62264
 
 ---
@@ -21,7 +23,7 @@
 ---
 
 ## Numeros
-- **Tabelas:** 30 · **Migrations:** 17 · **Tools:** 20 · **ADRs:** 25 · **Recibos:** 45 · **Obras:** 6
+- **Tabelas:** 30 · **Migrations:** 17 · **Tools:** 20 · **ADRs:** 26 · **Recibos:** 45 · **Obras:** 6
 
 ---
 
@@ -45,58 +47,82 @@
 
 ---
 
-## Conformidade ISA-95
-
-| Parte IEC 62264 | Req. | Conf. | Parcial | N/Conf. |
-|-----------------|------|-------|---------|---------|
-| Parte 1 — Modelos | 6 | 3 | 1 | 2 |
-| Parte 2 — Objectos | 8 | 2 | 2 | 4 |
-| Parte 3 — MOM | 10 | 2 | 3 | 5 |
-| Parte 4 — Integracao | 4 | 3 | 1 | 0 |
-| **TOTAL** | **28** | **10 (36%)** | **7 (25%)** | **11 (39%)** |
+## Conformidade ISA-95: 28 req — 10 (36%) conf · 7 (25%) parcial · 11 (39%) n/conf
 
 ---
 
 ## Codificacao: CSN-L[nivel]-[seccao]-[seq]-[ano]
 
-PRD (Production) · QMS (Quality) · MNT (Maintenance) · INV (Inventory) · PER (Personnel) · EQP (Equipment) · MAT (Material) · FIN (Financial) · DOC (Documents) · RH (HR) · COM (Commercial) · ENG (Engineering)
+PRD · QMS · MNT · INV · PER · EQP · MAT · FIN · DOC · RH · COM · ENG
 
 ---
 
-## Sessao 26
+## Fornecedores de producao (sessao 27)
 
-- **P1 ✅** InvoiceXpress testado (L4-FIN) — Vesauto NIF 501316272, 2100€+IVA
-- **P2 ✅** Migration 016 (L4-FIN) — fornecedores + movimentos_bancarios + IBAN
-- **P3 ✅** 5 Carolina tools (L3-RH) — recibos, ferias, saldo, dados, resumo
-
-## Commits: 15e5c01 · ff60961 · 930a94e · f008f32
+| Fornecedor | Material | ISA-95 | Email |
+|-----------|----------|--------|-------|
+| Chagas | Aco, tubos, perfis, aluminio | L0-MAT | chagas.pt |
+| Coprial | Gases soldadura (O2, H2, Arco 15) + equipamentos | L0-MAT + L0-EQP | coprial.pt |
+| Polifer | Tinta | L0-MAT | — |
+| Pecol | Parafusos, colas, silicone, fio solda, consumiveis | L0-MAT | pecol.pt |
+| Madeicentro | Madeira / taipais | L0-MAT | — |
 
 ---
 
-## Pendentes por nivel
+## Sessao 27 — 28/03/2026
+
+### ✅ Limpeza Vercel
+- CEGID_VENDUS_API_KEY removida
+- Name/Value removidas — 6 vars limpas
+
+### ✅ ADR-026
+- Auditoria ISA-95 dos 25 ADRs
+- 13 alinhados · 5 reclassificar · 4 supersedidos · 3 novo ADR
+- INDEX.md actualizado
+
+### ✅ Cowork Email Ingestion
+- 660 emails Jan-Mar 2026 em PDF
+- 994 registos INDICE.xlsx
+- 65 leads re-mapeadas
+- Tarefa semanal CSN-L3-DOC-TSK-001-2026 criada
+- 2025 em curso (Dez feito, Nov-Jan a processar)
+
+### ✅ Mapeamento fornecedores
+- 5 fornecedores producao identificados
+
+## Commits: a54d459
+
+---
+
+## Pendentes sessao 28
+
+### PRIORITARIO
+- [ ] Migration 017 — materiais + lotes + consumos (MESA #11)
+- [ ] Skills Agente Documental por fornecedor (5)
+- [ ] Tools Agente Documental (classificar, associar, registar)
 
 ### L0-PHY
-- [ ] Qualificacao soldadores EN 9606-1 → CSN-L0-PER-xxx
-- [ ] Qualificacao WPS EN 15614-1 → CSN-L0-PRD-xxx
-
-### L1-SEN
-- [ ] Checklist GSR → CSN-L1-QMS-xxx
-- [ ] Inspeccao visual EN 17637 → CSN-L1-QMS-xxx
+- [ ] Qualificacao soldadores EN 9606-1
+- [ ] Qualificacao WPS EN 15614-1
 
 ### L2-SUP
-- [ ] Portal Producao Sr. Manuel → CSN-L2-PRD-PRT
-- [ ] Agente Qualidade → CSN-L2-QMS-AGT
-- [ ] Agente Manutencao → CSN-L2-MNT-AGT
+- [ ] Portal Producao Sr. Manuel
 
 ### L3-MOM
-- [ ] Agente RH 11o agente → CSN-L3-RH-AGT
-- [ ] Pipeline documental → CSN-L3-DOC
-- [ ] Tabela materiais + lotes → CSN-L3-MAT
+- [ ] Agente RH 11o agente
+- [ ] Pipeline documental end-to-end
 
 ### L4-BPL
-- [ ] Apagar fatura duplicada IX 253708521
-- [ ] Remover CEGID_VENDUS_API_KEY
-- [ ] NIF na tabela leads → CSN-L4-COM
-- [ ] BPI ingestion → CSN-L4-FIN
-- [ ] COC Electronico IMT jul/2026 → CSN-L4-DOC
-- [ ] Dashboards por departamento → CSN-L4-ENG
+- [ ] Apagar fatura IX 253708521
+- [ ] Cancelar Vendus
+- [ ] BPI ingestion · COC Electronico · Dashboards · KPIs
+
+---
+
+## Dados de referencia
+- **Vesauto NIF:** 501316272
+- **Colaboradores:** Bohdan (id=1), Jose Julio (id=2), Joao Antonio (id=3)
+- **InvoiceXpress:** carlosdossantosna, cert AT 192
+- **Repo:** duartebustorff-star/csn-producao
+- **Local:** C:\Users\Utilizador\Projectos-AI\csn-producao
+- **Email repo:** C:\Users\Utilizador\Extratos\CSN-Email-Repositorio
