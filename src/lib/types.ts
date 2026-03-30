@@ -8,6 +8,7 @@ export interface Colaborador {
   role: 'admin' | 'worker'
   ativo: boolean
   created_at: string
+  colaborador_rh_id?: number
 }
 
 export interface Lead {
@@ -86,6 +87,7 @@ export interface FaseObra {
   started_at: string | null
   completed_at: string | null
   created_at: string
+  colaborador_rh_id?: number
 }
 
 export interface Timetracking {
@@ -108,6 +110,7 @@ export interface Mensagem {
   content: string
   metadata: Record<string, unknown> | null
   created_at: string
+  colaborador_rh_id?: number
 }
 
 export interface NotaObra {
@@ -117,6 +120,7 @@ export interface NotaObra {
   texto: string
   tipo: 'nota' | 'problema' | 'material' | 'foto'
   created_at: string
+  colaborador_rh_id?: number
 }
 
 export interface DocumentoRH {
@@ -129,6 +133,7 @@ export interface DocumentoRH {
   dados_extraidos: DadosCIT | null
   uploaded_by: string
   created_at: string
+  colaborador_rh_id?: number
 }
 
 export interface DadosCIT {
@@ -179,6 +184,7 @@ export interface Calendario {
   descricao: string | null
   colaboradores_ids: string[] | null
   created_at: string
+  colaborador_rh_id?: number
 }
 
 export interface Ausencia {
