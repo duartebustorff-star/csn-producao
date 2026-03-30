@@ -1,6 +1,7 @@
 "use client"
 
 import { t, type Lang } from "@/lib/translations"
+import type { WorkerMode } from "@/app/page"
 
 export type View = "chat" | "obras" | "leads" | "documentos" | "rh" | "dashboard"
 
@@ -9,6 +10,7 @@ interface BottomNavProps {
   onChange: (view: View) => void
   lang: Lang
   isAdmin: boolean
+  workerMode?: WorkerMode | null
 }
 
 const ICONS: Record<View, string> = {
@@ -20,10 +22,17 @@ const ICONS: Record<View, string> = {
   dashboard: "📊",
 }
 
-export default function BottomNav({ active, onChange, lang, isAdmin }: BottomNavProps) {
-  const views: View[] = isAdmin
-    ? ["chat", "obras", "leads", "documentos", "rh", "dashboard"]
-    : ["chat", "obras", "documentos", "rh"]
+export default function BottomNav({ active, onChange, lang, isAdmin, workerMode }: BottomNavProps) {
+  let views: View[]
+
+  if (isAdmin) {
+    views = ["chat", "obras", "leads", "documentos", "rh", "dashboard"]
+  } else if (workerMode === "pessoal") {
+    views = ["rh", "chat"]
+  } else {
+    // producao
+    views = ["chat", "obras", "documentos"]
+  }
 
   return (
     <nav className="border-t border-border bg-background/80 backdrop-blur-sm sticky bottom-0 z-40 md:hidden">
@@ -33,9 +42,7 @@ export default function BottomNav({ active, onChange, lang, isAdmin }: BottomNav
             key={view}
             onClick={() => onChange(view)}
             className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
-              active === view
-                ? "text-accent"
-                : "text-muted hover:text-foreground"
+              active === view ? "text-accent" : "text-muted hover:text-foreground"
             }`}
           >
             <span className="text-lg">{ICONS[view]}</span>
