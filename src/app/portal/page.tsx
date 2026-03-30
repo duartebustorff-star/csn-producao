@@ -211,16 +211,16 @@ export default function PortalTrabalhador() {
         )}
         <div className="doors">
           <button className="door door-fernando" onClick={() => { setScreen("fernando"); setFernandoTab("ponto") }}>
-            <div className="door-icon">F</div>
-            <div className="door-name">Fernando</div>
-            <div className="door-desc">Producao</div>
-            <div className="door-items">Ponto · Obras · Fases</div>
+            <div className="door-icon">P</div>
+            <div className="door-name">Producao</div>
+            <div className="door-desc">Ponto · Obras · Fases</div>
+            <div className="door-items">L3-PRD</div>
           </button>
           <button className="door door-carolina" onClick={() => { setScreen("carolina"); setCarolinaTab("recibos"); loadRecibos() }}>
-            <div className="door-icon">C</div>
-            <div className="door-name">Carolina</div>
-            <div className="door-desc">Recursos Humanos</div>
-            <div className="door-items">Recibos · Ferias · Dados</div>
+            <div className="door-icon">RH</div>
+            <div className="door-name">RH</div>
+            <div className="door-desc">Recibos · Ferias · Dados</div>
+            <div className="door-items">L3-RH</div>
           </button>
         </div>
       </div>
@@ -236,8 +236,8 @@ export default function PortalTrabalhador() {
         <div className="header">
           <button className="btn-back" onClick={goBack}>&#8592;</button>
           <div className="header-info">
-            <span className="header-name">Fernando</span>
-            <span className="header-cat">Producao · L3-PRD</span>
+            <span className="header-name">Producao</span>
+            <span className="header-cat">L3-PRD</span>
           </div>
           <button className="btn-outline" onClick={logout}>Sair</button>
         </div>
@@ -317,8 +317,8 @@ export default function PortalTrabalhador() {
       <div className="header">
         <button className="btn-back" onClick={goBack}>&#8592;</button>
         <div className="header-info">
-          <span className="header-name">Carolina</span>
-          <span className="header-cat">Recursos Humanos · L3-RH</span>
+          <span className="header-name">Recursos Humanos</span>
+          <span className="header-cat">L3-RH</span>
         </div>
         <button className="btn-outline" onClick={logout}>Sair</button>
       </div>
