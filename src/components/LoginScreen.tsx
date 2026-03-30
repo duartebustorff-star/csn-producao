@@ -3,30 +3,14 @@
 import { useState } from "react"
 import type { Colaborador } from "@/lib/types"
 
-const COLABORADORES_PREVIEW = [
-  { id: "duarte", nome: "Duarte", funcao: "Gestor", avatar: "📋" },
-  { id: "bohdan", nome: "Bohdan", funcao: "Operador", avatar: "⚙️" },
-  { id: "joao", nome: "João António", funcao: "Operador", avatar: "🔧" },
-  { id: "jose", nome: "José Julio", funcao: "Operador", avatar: "🎨" },
-]
-
 export default function LoginScreen({
   onLogin,
 }: {
   onLogin: (c: Colaborador) => void
 }) {
-  const [step, setStep] = useState<"select" | "pin">("select")
-  const [selected, setSelected] = useState<(typeof COLABORADORES_PREVIEW)[0] | null>(null)
   const [pin, setPin] = useState("")
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
-
-  const handleSelect = (colab: (typeof COLABORADORES_PREVIEW)[0]) => {
-    setSelected(colab)
-    setPin("")
-    setError(false)
-    setStep("pin")
-  }
 
   const handlePinDigit = (digit: string) => {
     if (pin.length >= 4) return
@@ -45,13 +29,12 @@ export default function LoginScreen({
   }
 
   const submitPin = async (pinCode: string) => {
-    if (!selected) return
     setLoading(true)
     try {
-      const res = await fetch("/api/auth", {
+      const res = await fetch("/api/auth/pin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ colaborador_id: selected.id, pin: pinCode }),
+        body: JSON.stringify({ pin: pinCode }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -67,47 +50,13 @@ export default function LoginScreen({
     setLoading(false)
   }
 
-  // Ecrã de seleção de colaborador
-  if (step === "select") {
-    return (
-      <div className="flex h-dvh flex-col items-center justify-center bg-background px-4">
-        <div className="mb-8 flex justify-center">
-          <img src="/horizontal_black_assinatura.png" alt="CSN Produção" className="h-24 brightness-0 invert" />
-        </div>
-        <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
-          {COLABORADORES_PREVIEW.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => handleSelect(c)}
-              className="flex flex-col items-center gap-2 rounded-2xl bg-card p-6 transition-all hover:bg-card-hover active:scale-95"
-            >
-              <span className="text-4xl">{c.avatar}</span>
-              <span className="font-medium text-foreground">{c.nome}</span>
-              <span className="text-muted text-xs">{c.funcao}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // Ecrã de PIN
   return (
     <div className="flex h-dvh flex-col items-center justify-center bg-background px-4">
-      <button
-        onClick={() => setStep("select")}
-        className="absolute top-4 left-4 text-muted hover:text-foreground text-sm"
-      >
-        ← Voltar
-      </button>
-
-      <div className="mb-8 text-center">
-        <span className="text-5xl">{selected?.avatar}</span>
-        <h2 className="mt-3 text-xl font-semibold text-foreground">
-          {selected?.nome}
-        </h2>
-        <p className="text-muted text-sm mt-1">Introduz o PIN</p>
+      <div className="mb-6 flex justify-center">
+        <img src="/horizontal_black_assinatura.png" alt="CSN" className="h-24 brightness-0 invert" />
       </div>
+
+      <p className="text-muted text-sm mb-8">Introduz o teu PIN</p>
 
       {/* PIN dots */}
       <div className={`flex gap-3 mb-8 ${error ? "shake" : ""}`}>
@@ -129,7 +78,7 @@ export default function LoginScreen({
         <p className="text-danger text-sm mb-4">PIN errado</p>
       )}
 
-      {/* Teclado numérico */}
+      {/* Numpad */}
       <div className="grid grid-cols-3 gap-3 w-full max-w-[240px]">
         {["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "←"].map(
           (key) => {
