@@ -45,7 +45,7 @@ const MESES = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set"
 
 type Screen = "doors" | "fernando" | "carolina"
 type FernandoTab = "ponto" | "obras"
-type CarolinaTab = "recibos" | "dados"
+type CarolinaTab = "recibos" | "baixas" | "dados"
 
 export default function PortalTrabalhador() {
   const [session, setSession] = useState<Session | null>(null)
@@ -62,6 +62,15 @@ export default function PortalTrabalhador() {
   const [recibos, setRecibos] = useState<Recibo[]>([])
   const [selectedObra, setSelectedObra] = useState<Obra | null>(null)
   const [elapsed, setElapsed] = useState(0)
+
+  // CIT form
+  const [citInicio, setCitInicio] = useState("")
+  const [citFim, setCitFim] = useState("")
+  const [citTipo, setCitTipo] = useState("inicial")
+  const [citFile, setCitFile] = useState<File | null>(null)
+  const [citMsg, setCitMsg] = useState("")
+  const [citLoading, setCitLoading] = useState(false)
+  const [baixas, setBaixas] = useState<{id: number; data_inicio: string; data_fim: string; numero_dias: number; tipo_cit: string; created_at: string}[]>([])
 
   const handleLogin = async () => {
     if (pin.length !== 4) return
@@ -105,6 +114,41 @@ export default function PortalTrabalhador() {
       setRecibos(data.recibos || [])
     } catch { /* */ }
   }, [session])
+
+  const loadBaixas = useCallback(async () => {
+    if (!session) return
+    try {
+      const res = await fetch(`/api/cits/lista?colaborador_id=${session.colaborador_id}`)
+      const data = await res.json()
+      setBaixas(data.cits || [])
+    } catch { /* */ }
+  }, [session])
+
+  const submitCit = async () => {
+    if (!session || !citInicio || !citFim) return
+    setCitLoading(true)
+    setCitMsg("")
+    try {
+      const form = new FormData()
+      if (citFile) form.append("file", citFile)
+      form.append("colaborador_id", session.colaborador_id)
+      form.append("colaborador_rh_id", String(session.colaborador_rh_id))
+      form.append("nome", session.nome)
+      form.append("data_inicio", citInicio)
+      form.append("data_fim", citFim)
+      form.append("tipo_cit", citTipo)
+      const res = await fetch("/api/cits/upload", { method: "POST", body: form })
+      const data = await res.json()
+      if (res.ok) {
+        setCitMsg(data.mensagem || "Baixa registada")
+        setCitInicio(""); setCitFim(""); setCitFile(null); setCitTipo("inicial")
+        loadBaixas()
+      } else {
+        setCitMsg(data.error || "Erro ao submeter")
+      }
+    } catch { setCitMsg("Erro de ligacao") }
+    setCitLoading(false)
+  }
 
   useEffect(() => {
     if (session) { loadTimer(); loadObras() }
@@ -219,7 +263,7 @@ export default function PortalTrabalhador() {
           <button className="door door-carolina" onClick={() => { setScreen("carolina"); setCarolinaTab("recibos"); loadRecibos() }}>
             <div className="door-icon">RH</div>
             <div className="door-name">RH</div>
-            <div className="door-desc">Recibos · Ferias · Dados</div>
+            <div className="door-desc">Recibos · Baixas · Dados</div>
             <div className="door-items">L3-RH</div>
           </button>
         </div>
@@ -324,6 +368,7 @@ export default function PortalTrabalhador() {
       </div>
       <div className="tabs">
         <button className={`tab ${carolinaTab === "recibos" ? "tab-active" : ""}`} onClick={() => { setCarolinaTab("recibos"); loadRecibos() }}>Recibos</button>
+        <button className={`tab ${carolinaTab === "baixas" ? "tab-active" : ""}`} onClick={() => { setCarolinaTab("baixas"); loadBaixas() }}>Baixas</button>
         <button className={`tab ${carolinaTab === "dados" ? "tab-active" : ""}`} onClick={() => setCarolinaTab("dados")}>Dados</button>
       </div>
       <div className="content">
@@ -337,6 +382,51 @@ export default function PortalTrabalhador() {
                     <div className="recibo-left"><span className="recibo-mes">{MESES[r.mes]}</span><span className="recibo-ano">{r.ano}</span></div>
                     <div className="recibo-right"><span className="recibo-val">{Number(r.liquido).toFixed(2)}€</span><span className="recibo-num">#{r.numero_recibo}</span></div>
                   </a>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {carolinaTab === "baixas" && (
+          <div>
+            <div className="section-title">Registar baixa</div>
+            <div className="section-sub">Fotografa ou carrega o CIT</div>
+            <div className="card">
+              <div className="form-row">
+                <label className="form-label">Tipo</label>
+                <select className="form-input" value={citTipo} onChange={e => setCitTipo(e.target.value)}>
+                  <option value="inicial">Inicial</option>
+                  <option value="prorrogacao">Prorrogacao</option>
+                </select>
+              </div>
+              <div className="form-row">
+                <label className="form-label">Data inicio</label>
+                <input className="form-input" type="date" value={citInicio} onChange={e => setCitInicio(e.target.value)} />
+              </div>
+              <div className="form-row">
+                <label className="form-label">Data fim</label>
+                <input className="form-input" type="date" value={citFim} onChange={e => setCitFim(e.target.value)} />
+              </div>
+              <div className="form-row">
+                <label className="form-label">Foto / PDF</label>
+                <input className="form-file" type="file" accept="image/*,application/pdf" capture="environment" onChange={e => setCitFile(e.target.files?.[0] || null)} />
+              </div>
+              <button className="btn-submit" onClick={submitCit} disabled={citLoading || !citInicio || !citFim}>
+                {citLoading ? "A enviar..." : "Submeter baixa"}
+              </button>
+              {citMsg && <div className={`cit-msg ${citMsg.includes("Erro") ? "cit-err" : "cit-ok"}`}>{citMsg}</div>}
+            </div>
+            {baixas.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div className="section-title">Historico</div>
+                {baixas.map(b => (
+                  <div key={b.id} className="card">
+                    <div className="card-row">
+                      <span className="card-num">{b.tipo_cit === "prorrogacao" ? "Prorrogacao" : "Inicial"}</span>
+                      <span className="card-sub">{b.numero_dias} dias</span>
+                    </div>
+                    <div className="card-detail">{b.data_inicio} → {b.data_fim}</div>
+                  </div>
                 ))}
               </div>
             )}
@@ -461,6 +551,20 @@ const globalCSS = `
   .data-row:last-child { border-bottom: none; }
   .data-label { font-size: 12px; color: #666; }
   .data-val { font-size: 13px; font-weight: 600; }
+
+  /* FORM (CIT) */
+  .form-row { margin-bottom: 12px; }
+  .form-label { display: block; font-size: 11px; color: #666; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .form-input { width: 100%; padding: 10px 12px; border: 1px solid #333; border-radius: 8px; background: #0a0a0a; color: #fff; font-size: 14px; }
+  .form-input:focus { outline: none; border-color: #3b82f6; }
+  .form-file { width: 100%; padding: 10px 0; color: #999; font-size: 13px; }
+  .form-file::file-selector-button { padding: 8px 16px; border: 1px solid #333; border-radius: 8px; background: #1a1a1a; color: #fff; font-size: 13px; cursor: pointer; margin-right: 12px; }
+  .btn-submit { width: 100%; padding: 14px; border: none; border-radius: 10px; background: #3b82f6; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+  .btn-submit:disabled { background: #222; color: #555; cursor: default; }
+  .btn-submit:active:not(:disabled) { background: #2563eb; }
+  .cit-msg { margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 13px; }
+  .cit-ok { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+  .cit-err { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
 
   /* LANDSCAPE */
   @media (orientation: landscape) and (max-height: 500px) {
