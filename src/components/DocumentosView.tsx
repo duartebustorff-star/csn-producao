@@ -39,8 +39,121 @@ function formatDateShort(dateStr: string): string {
   }
 }
 
+type ProducaoCategoria = "manuais" | "procedimentos" | "checklists" | "instrucoes"
+
+const PRODUCAO_CATALOG: Record<ProducaoCategoria, { label: string; icon: string; docs: { key: string; title: string; subtitle: string }[] }> = {
+  manuais: {
+    label: "Manuais",
+    icon: "📘",
+    docs: [
+      { key: "politica_qualidade", title: "Manual de Política da Qualidade", subtitle: "Diretrizes gerais da qualidade" },
+      { key: "ambito_sgq", title: "Manual de Âmbito SGQ", subtitle: "Âmbito, exclusões e fronteiras do SGQ" },
+      { key: "contexto", title: "Manual de Contexto Organizacional", subtitle: "Contexto e partes interessadas" },
+    ],
+  },
+  procedimentos: {
+    label: "Procedimentos",
+    icon: "🧩",
+    docs: [
+      { key: "fornecedores", title: "Procedimento de Fornecedores", subtitle: "Seleção e aprovação de fornecedores" },
+      { key: "equipamentos", title: "Procedimento de Equipamentos", subtitle: "Controlo e calibração" },
+      { key: "formacoes", title: "Procedimento de Formação", subtitle: "Registos e qualificação de pessoal" },
+    ],
+  },
+  checklists: {
+    label: "Checklists qualidade",
+    icon: "✅",
+    docs: [
+      { key: "auditorias", title: "Checklist de Auditorias Internas", subtitle: "Controlos e evidências de auditoria" },
+      { key: "nao_conformidades", title: "Checklist de Não Conformidades", subtitle: "Registo e tratamento de NC" },
+      { key: "revisao_gestao", title: "Checklist de Revisão da Gestão", subtitle: "Avaliação periódica do SGQ" },
+    ],
+  },
+  instrucoes: {
+    label: "Instruções de trabalho",
+    icon: "🛠️",
+    docs: [
+      { key: "objetivos_qualidade", title: "Instruções por Objetivos de Qualidade", subtitle: "Metas operacionais por processo" },
+      { key: "contexto", title: "Instruções de Contexto e Segurança", subtitle: "Requisitos operacionais de contexto" },
+    ],
+  },
+}
+
+function ProductionDocsView() {
+  const [categoria, setCategoria] = useState<ProducaoCategoria>("manuais")
+  const [downloading, setDownloading] = useState<string | null>(null)
+
+  const openDoc = async (key: string) => {
+    setDownloading(key)
+    try {
+      const res = await fetch(`/api/sgq/pacote-auditoria?tipo=${key}`)
+      if (!res.ok) throw new Error("Erro ao gerar documento")
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = res.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") || `${key}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch {
+      // ignore
+    } finally {
+      setDownloading(null)
+    }
+  }
+
+  const active = PRODUCAO_CATALOG[categoria]
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="px-4 py-3 border-b border-border">
+        <div className="flex gap-2 flex-wrap">
+          {(Object.keys(PRODUCAO_CATALOG) as ProducaoCategoria[]).map((key) => (
+            <button
+              key={key}
+              onClick={() => setCategoria(key)}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors ${
+                categoria === key ? "bg-accent text-white" : "bg-card text-muted hover:text-foreground"
+              }`}
+            >
+              <span>{PRODUCAO_CATALOG[key].icon}</span>
+              <span>{PRODUCAO_CATALOG[key].label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+        {active.docs.map((doc) => (
+          <button
+            key={doc.key + doc.title}
+            onClick={() => openDoc(doc.key)}
+            disabled={downloading !== null}
+            className="w-full bg-card hover:bg-card-hover disabled:opacity-60 rounded-xl px-4 py-3 flex items-center gap-3 text-left transition-colors"
+          >
+            <span className="text-lg">{active.icon}</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{doc.title}</p>
+              <p className="text-xs text-muted truncate">{doc.subtitle}</p>
+            </div>
+            <span className="text-xs text-muted">{downloading === doc.key ? "A gerar..." : "PDF"}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function DocumentosView({ user }: { user: Colaborador }) {
   const isAdmin = user.role === "admin"
+
+  // Worker in Modo Produção: show production document categories
+  if (!isAdmin) {
+    return <ProductionDocsView />
+  }
+
   const [section, setSection] = useState<DocSection>(isAdmin ? "veiculos" : "rh")
   const [activeType, setActiveType] = useState<DocSubType>(isAdmin ? "davs" : "cits")
   const [counts, setCounts] = useState<Counts>({ davs: 0, fams: 0, inspecoes: 0, cits: 0, outros: 0 })

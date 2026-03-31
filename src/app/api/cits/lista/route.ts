@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   const { data: cits, error } = await supabase
     .from("cits")
-    .select("id, data_inicio, data_fim, numero_dias, tipo_cit, created_at")
+    .select("id, data_inicio, data_fim, numero_dias, tipo_cit, url_ficheiro, created_at")
     .eq("colaborador_id", colaboradorId)
     .order("created_at", { ascending: false })
 

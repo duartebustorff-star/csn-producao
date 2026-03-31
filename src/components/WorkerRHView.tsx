@@ -10,6 +10,14 @@ interface Recibo {
   liquido: number
 }
 
+interface CITItem {
+  id: number
+  data_inicio: string | null
+  data_fim: string | null
+  numero_dias: number | null
+  url_ficheiro: string | null
+}
+
 interface ContaCorrenteMes {
   ano: number
   mes: number
@@ -30,7 +38,9 @@ const MESES = ["", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "J
 
 export default function WorkerRHView({ user }: { user: Colaborador }) {
   const [recibos, setRecibos] = useState<Recibo[]>([])
+  const [cits, setCits] = useState<CITItem[]>([])
   const [contaCorrente, setContaCorrente] = useState<ContaCorrenteData | null>(null)
+  const [loadingCits, setLoadingCits] = useState(true)
   const [loadingConta, setLoadingConta] = useState(true)
   const [loading, setLoading] = useState(true)
   const [expandedYears, setExpandedYears] = useState<Record<number, boolean>>({})
@@ -51,6 +61,26 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
   useEffect(() => {
     loadRecibos()
   }, [loadRecibos])
+
+  useEffect(() => {
+    const loadCits = async () => {
+      if (!user.id) {
+        setLoadingCits(false)
+        return
+      }
+      try {
+        const res = await fetch(`/api/cits/lista?colaborador_id=${user.id}`)
+        const data = await res.json()
+        setCits(data.cits || [])
+      } catch {
+        // ignore
+      } finally {
+        setLoadingCits(false)
+      }
+    }
+
+    loadCits()
+  }, [user.id])
 
   useEffect(() => {
     const loadContaCorrente = async () => {
@@ -163,6 +193,50 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
                       ))}
                     </div>
                   )}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        <div className="border-t border-border" />
+
+        {/* ===== CITS ===== */}
+        <section>
+          <h2 className="text-sm font-medium text-foreground mb-1">Baixas médicas (CIT)</h2>
+          <p className="text-xs text-muted mb-3">Períodos de incapacidade temporária</p>
+
+          {loadingCits && <p className="text-muted text-sm">A carregar...</p>}
+          {!loadingCits && cits.length === 0 && (
+            <div className="rounded-xl bg-card p-4 text-center">
+              <p className="text-muted text-sm">Sem CITs registados</p>
+            </div>
+          )}
+
+          <div className="space-y-1">
+            {cits.map((cit) => {
+              const inicio = cit.data_inicio ? new Date(cit.data_inicio).toLocaleDateString("pt-PT") : "—"
+              const fim = cit.data_fim ? new Date(cit.data_fim).toLocaleDateString("pt-PT") : "—"
+              return (
+                <div key={cit.id} className="rounded-xl bg-card p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{inicio} → {fim}</p>
+                      <p className="text-xs text-muted">{cit.numero_dias ?? 0} dias</p>
+                    </div>
+                    {cit.url_ficheiro ? (
+                      <a
+                        href={cit.url_ficheiro}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs px-2.5 py-1.5 rounded-lg bg-accent/15 text-accent hover:bg-accent/25 transition-colors"
+                      >
+                        Ver / Descarregar PDF
+                      </a>
+                    ) : (
+                      <span className="text-xs text-muted">PDF indisponível</span>
+                    )}
+                  </div>
                 </div>
               )
             })}
