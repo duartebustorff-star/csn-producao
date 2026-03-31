@@ -14,12 +14,12 @@ interface BottomNavProps {
 }
 
 const ICONS: Record<View, string> = {
-  chat: "­ƒÆ¼",
-  obras: "­ƒÅù´©Å",
-  leads: "­ƒôï",
-  documentos: "­ƒôé",
-  rh: "­ƒæñ",
-  dashboard: "­ƒôè",
+  chat: "ğŸ’¬",
+  obras: "ğŸ—ï¸",
+  leads: "ğŸ“‹",
+  documentos: "ğŸ“‚",
+  rh: "ğŸ‘¤",
+  dashboard: "ğŸ“Š",
 }
 
 export default function BottomNav({ active, onChange, lang, isAdmin, workerMode }: BottomNavProps) {
@@ -31,7 +31,7 @@ export default function BottomNav({ active, onChange, lang, isAdmin, workerMode 
     views = ["rh", "chat"]
   } else {
     // producao
-    views = ["chat", "obras", "dashboard", "documentos"]
+    views = ["chat", "obras", "documentos"]
   }
 
   return (
