@@ -12,6 +12,7 @@ import RHView from "@/components/RHView"
 import WorkerRHView from "@/components/WorkerRHView"
 import DocumentosView from "@/components/DocumentosView"
 import LeadsView from "@/components/LeadsView"
+import WorkerDashboard from "@/components/WorkerDashboard"
 import type { Colaborador } from "@/lib/types"
 import type { Lang } from "@/lib/translations"
 
@@ -157,6 +158,7 @@ export default function Home() {
           {activeView === "documentos" && <DocumentosView user={user} />}
           {activeView === "rh" && (isAdmin ? <RHView user={user} /> : <WorkerRHView user={user} />)}
           {activeView === "dashboard" && isAdmin && <DashboardView />}
+          {activeView === "dashboard" && !isAdmin && workerMode === "producao" && <WorkerDashboard user={user} />}
         </main>
 
         <BottomNav
