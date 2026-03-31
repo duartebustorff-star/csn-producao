@@ -33,6 +33,7 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
   const [contaCorrente, setContaCorrente] = useState<ContaCorrenteData | null>(null)
   const [loadingConta, setLoadingConta] = useState(true)
   const [loading, setLoading] = useState(true)
+  const [expandedYears, setExpandedYears] = useState<Record<number, boolean>>({})
 
   const formatEur = (v: number) =>
     new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
@@ -77,6 +78,25 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
     window.open(`/api/rh/recibo?colaborador_rh_id=${user.colaborador_rh_id}&ano=${r.ano}&mes=${r.mes}`, "_blank")
   }
 
+  const openResumoAnual = (ano: number) => {
+    window.open(`/api/rh/resumo-anual?colaborador_rh_id=${user.colaborador_rh_id}&ano=${ano}`, "_blank")
+  }
+
+  const recibosByYear = recibos.reduce<Record<number, Recibo[]>>((acc, r) => {
+    if (!acc[r.ano]) acc[r.ano] = []
+    acc[r.ano].push(r)
+    return acc
+  }, {})
+
+  const anos = Object.keys(recibosByYear).map(Number).sort((a, b) => b - a)
+  const isAnoCompleto = (ano: number) => {
+    const meses = new Set(recibosByYear[ano]?.map((r) => r.mes) || [])
+    return meses.size === 12
+  }
+
+  const totalAno = (ano: number) =>
+    (recibosByYear[ano] || []).reduce((s, r) => s + Number(r.liquido || 0), 0)
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="p-4 space-y-6 pb-24">
@@ -92,17 +112,60 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
               <p className="text-muted text-sm">Sem recibos disponiveis</p>
             </div>
           )}
-          <div className="space-y-1">
-            {recibos.map((r) => (
-              <button
-                key={`${r.ano}-${r.mes}`}
-                onClick={() => openRecibo(r)}
-                className="w-full flex items-center justify-between p-3 rounded-xl bg-card hover:bg-card-hover transition-colors"
-              >
-                <p className="text-sm font-medium text-foreground">{MESES[r.mes]} {r.ano}</p>
-                <span className="text-muted text-xs">Abrir PDF</span>
-              </button>
-            ))}
+          <div className="space-y-2">
+            {anos.map((ano) => {
+              const expanded = expandedYears[ano] ?? false
+              const rows = (recibosByYear[ano] || []).slice().sort((a, b) => b.mes - a.mes)
+              const anoCompleto = isAnoCompleto(ano)
+              return (
+                <div key={ano} className="rounded-xl bg-card p-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setExpandedYears((prev) => ({ ...prev, [ano]: !expanded }))}
+                      className="flex-1 flex items-center justify-between px-2 py-2 rounded-lg hover:bg-card-hover transition-colors"
+                    >
+                      <div className="text-left">
+                        <p className="text-sm font-medium text-foreground">{ano}</p>
+                        <p className="text-[11px] text-muted">
+                          {rows.length} recibos · total {formatEur(totalAno(ano))}
+                        </p>
+                      </div>
+                      <span className="text-xs text-muted">{expanded ? "▲" : "▼"}</span>
+                    </button>
+                    <button
+                      onClick={() => openResumoAnual(ano)}
+                      disabled={!anoCompleto}
+                      className={`text-xs px-2.5 py-2 rounded-lg transition-colors ${
+                        anoCompleto
+                          ? "bg-accent/15 text-accent hover:bg-accent/25"
+                          : "bg-background text-muted cursor-not-allowed"
+                      }`}
+                      title={anoCompleto ? "Gerar resumo anual PDF" : "Ano incompleto (faltam meses)"}
+                    >
+                      Resumo PDF
+                    </button>
+                  </div>
+
+                  {expanded && (
+                    <div className="mt-1 space-y-1">
+                      {rows.map((r) => (
+                        <button
+                          key={`${r.ano}-${r.mes}`}
+                          onClick={() => openRecibo(r)}
+                          className="w-full flex items-center justify-between p-2.5 rounded-lg bg-background hover:bg-card-hover transition-colors"
+                        >
+                          <p className="text-sm text-foreground">{MESES[r.mes]}</p>
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-foreground">{formatEur(Number(r.liquido || 0))}</span>
+                            <span className="text-muted text-xs">Abrir PDF</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </section>
 
