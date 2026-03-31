@@ -23,14 +23,14 @@ interface KpiData {
     allocation_efficiency: KpiValue
   }
   obra_actual: {
-    obra_id: number
+    obra_id: string
     descricao: string
-    cliente: string
-    chassis: string
+    chassis: string | null
     total_fases: number
     fases_concluidas: number
     fase_actual: string | null
-    progresso: number
+    percentagem: number
+    inicio_timer: string
   } | null
 }
 
@@ -92,6 +92,36 @@ function StatCard({ label, value, unit, iso }: { label: string; value: number | 
   )
 }
 
+function ThroughputBar({
+  label,
+  value,
+  maxValue,
+  tone = "var(--color-text-secondary)",
+}: {
+  label: string
+  value: number | null
+  maxValue: number
+  tone?: string
+}) {
+  const safeValue = value ?? 0
+  const pct = maxValue > 0 ? Math.min(100, Math.round((safeValue / maxValue) * 100)) : 0
+
+  return (
+    <div className="bg-card rounded-lg p-3.5">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-xs text-muted">{label}</span>
+        <span className="text-sm font-medium text-foreground">{safeValue} fases</span>
+      </div>
+      <div className="h-2 bg-background rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${pct}%`, backgroundColor: tone }}
+        />
+      </div>
+    </div>
+  )
+}
+
 export default function WorkerDashboard({ user }: { user: Colaborador }) {
   const [data, setData] = useState<KpiData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -135,7 +165,10 @@ export default function WorkerDashboard({ user }: { user: Colaborador }) {
   }
 
   const { kpis, obra_actual } = data
-  const progresso = obra_actual ? Math.round(obra_actual.progresso) : 0
+  const progresso = obra_actual ? Math.round(obra_actual.percentagem) : 0
+  const throughputWeek = kpis.throughput_semana.valor ?? 0
+  const throughputMonth = kpis.throughput_mes.valor ?? 0
+  const throughputMax = Math.max(1, throughputWeek, throughputMonth)
 
   return (
     <div className="h-full overflow-y-auto p-4 space-y-4">
@@ -163,7 +196,7 @@ export default function WorkerDashboard({ user }: { user: Colaborador }) {
         <div className="text-[10px] uppercase tracking-wider text-muted/60 mb-2">
           Actividade
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <StatCard
             label="Horas semana"
             value={kpis.horas_semana.valor}
@@ -176,17 +209,22 @@ export default function WorkerDashboard({ user }: { user: Colaborador }) {
             unit="h"
             iso="Actual production time"
           />
-          <StatCard
-            label="Fases semana"
+        </div>
+        <div className="text-[10px] uppercase tracking-wider text-muted/60 mb-2">
+          Throughput
+        </div>
+        <div className="space-y-2">
+          <ThroughputBar
+            label="Fases concluídas (semana)"
             value={kpis.throughput_semana.valor}
-            unit="fases"
-            iso="Throughput rate"
+            maxValue={throughputMax}
+            tone="#378ADD"
           />
-          <StatCard
-            label="Fases mês"
+          <ThroughputBar
+            label="Fases concluídas (mês)"
             value={kpis.throughput_mes.valor}
-            unit="fases"
-            iso="Throughput rate"
+            maxValue={throughputMax}
+            tone="#1D9E75"
           />
         </div>
       </div>
@@ -199,8 +237,10 @@ export default function WorkerDashboard({ user }: { user: Colaborador }) {
         {obra_actual ? (
           <div className="bg-card rounded-xl p-4">
             <div className="flex justify-between items-baseline mb-1">
-              <span className="text-sm font-medium text-foreground">{obra_actual.descricao}</span>
-              <span className="text-xs text-muted">{obra_actual.chassis}</span>
+              <span className="text-sm font-medium text-foreground">
+                {obra_actual.descricao}
+              </span>
+              <span className="text-xs text-muted">{obra_actual.chassis || "—"}</span>
             </div>
             {obra_actual.fase_actual && (
               <div className="text-xs text-muted mb-3">
