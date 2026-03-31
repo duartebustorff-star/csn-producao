@@ -10,11 +10,32 @@ interface Recibo {
   liquido: number
 }
 
+interface ContaCorrenteMes {
+  ano: number
+  mes: number
+  devido: number
+  pago: number
+  saldo_mes: number
+  saldo_acumulado: number
+}
+
+interface ContaCorrenteData {
+  saldo_atual: number
+  total_devido: number
+  total_pago: number
+  historico: ContaCorrenteMes[]
+}
+
 const MESES = ["", "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
 
 export default function WorkerRHView({ user }: { user: Colaborador }) {
   const [recibos, setRecibos] = useState<Recibo[]>([])
+  const [contaCorrente, setContaCorrente] = useState<ContaCorrenteData | null>(null)
+  const [loadingConta, setLoadingConta] = useState(true)
   const [loading, setLoading] = useState(true)
+
+  const formatEur = (v: number) =>
+    new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
 
   const loadRecibos = useCallback(async () => {
     if (!user.colaborador_rh_id) { setLoading(false); return }
@@ -29,6 +50,28 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
   useEffect(() => {
     loadRecibos()
   }, [loadRecibos])
+
+  useEffect(() => {
+    const loadContaCorrente = async () => {
+      if (!user.colaborador_rh_id) {
+        setLoadingConta(false)
+        return
+      }
+      try {
+        const res = await fetch(`/api/rh/conta-corrente?colaborador_rh_id=${user.colaborador_rh_id}`)
+        const data = await res.json()
+        if (res.ok) {
+          setContaCorrente(data)
+        }
+      } catch {
+        // ignore
+      } finally {
+        setLoadingConta(false)
+      }
+    }
+
+    loadContaCorrente()
+  }, [user.colaborador_rh_id])
 
   const openRecibo = (r: Recibo) => {
     window.open(`/api/rh/recibo?colaborador_rh_id=${user.colaborador_rh_id}&ano=${r.ano}&mes=${r.mes}`, "_blank")
@@ -61,6 +104,78 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
               </button>
             ))}
           </div>
+        </section>
+
+        <div className="border-t border-border" />
+
+        {/* ===== CONTA CORRENTE ===== */}
+        <section>
+          <h2 className="text-sm font-medium text-foreground mb-1">Conta corrente</h2>
+          <p className="text-xs text-muted mb-3">Recibos líquidos vs pagamentos por transferência</p>
+
+          {loadingConta && <p className="text-muted text-sm">A carregar...</p>}
+
+          {!loadingConta && !contaCorrente && (
+            <div className="rounded-xl bg-card p-4 text-center">
+              <p className="text-muted text-sm">Sem dados de conta corrente</p>
+            </div>
+          )}
+
+          {!loadingConta && contaCorrente && (
+            <div className="space-y-3">
+              <div className="rounded-xl bg-card p-4">
+                <p className="text-xs text-muted mb-1">Saldo actual</p>
+                <p className={`text-xl font-semibold ${
+                  contaCorrente.saldo_atual > 0 ? "text-amber-400" : contaCorrente.saldo_atual < 0 ? "text-emerald-400" : "text-foreground"
+                }`}>
+                  {formatEur(contaCorrente.saldo_atual)}
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-lg bg-background p-2">
+                    <p className="text-muted">Total devido</p>
+                    <p className="text-foreground font-medium">{formatEur(contaCorrente.total_devido)}</p>
+                  </div>
+                  <div className="rounded-lg bg-background p-2">
+                    <p className="text-muted">Total pago</p>
+                    <p className="text-foreground font-medium">{formatEur(contaCorrente.total_pago)}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-xl bg-card p-2">
+                <p className="px-2 pt-2 pb-1 text-xs text-muted">Histórico mensal</p>
+                <div className="space-y-1 max-h-64 overflow-y-auto">
+                  {contaCorrente.historico.map((m) => (
+                    <div key={`${m.ano}-${m.mes}`} className="rounded-lg bg-background p-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-sm font-medium text-foreground">{MESES[m.mes]} {m.ano}</p>
+                        <p className={`text-xs font-medium ${m.saldo_mes > 0 ? "text-amber-400" : m.saldo_mes < 0 ? "text-emerald-400" : "text-muted"}`}>
+                          {formatEur(m.saldo_mes)}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-[11px]">
+                        <div>
+                          <p className="text-muted">Devido</p>
+                          <p className="text-foreground">{formatEur(m.devido)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted">Pago</p>
+                          <p className="text-foreground">{formatEur(m.pago)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted">Acumulado</p>
+                          <p className="text-foreground">{formatEur(m.saldo_acumulado)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {contaCorrente.historico.length === 0 && (
+                    <p className="text-center text-xs text-muted py-4">Sem movimentos cruzados</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         <div className="border-t border-border" />
