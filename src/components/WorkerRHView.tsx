@@ -112,6 +112,10 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
     window.open(`/api/rh/resumo-anual?colaborador_rh_id=${user.colaborador_rh_id}&ano=${ano}`, "_blank")
   }
 
+  const openDeclaracaoRendimentos = (ano: number) => {
+    window.open(`/api/rh/declaracao-rendimentos?colaborador_rh_id=${user.colaborador_rh_id}&ano=${ano}`, "_blank")
+  }
+
   const recibosByYear = recibos.reduce<Record<number, Recibo[]>>((acc, r) => {
     if (!acc[r.ano]) acc[r.ano] = []
     acc[r.ano].push(r)
@@ -173,6 +177,13 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
                       title={anoCompleto ? "Gerar resumo anual PDF" : "Ano incompleto (faltam meses)"}
                     >
                       Resumo PDF
+                    </button>
+                    <button
+                      onClick={() => openDeclaracaoRendimentos(ano)}
+                      className="text-xs px-2.5 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+                      title="Descarregar Declaração Anual de Remunerações"
+                    >
+                      Declaração
                     </button>
                   </div>
 
