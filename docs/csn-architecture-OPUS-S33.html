@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Arquitectura S33 · ISA-95</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--bg2:#0f0f0f;--bg3:#141414;--border:#1e1e1e;--border2:#2a2a2a;--text:#888;--text2:#bbb;--bright:#f0f0f0;--accent:#f97316;--blue:#3b82f6;--green:#22c55e;--emerald:#10b981;--purple:#a78bfa;--amber:#f59e0b;--red:#ef4444;--gray:#6b7280;--cyan:#06b6d4;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--l0:#ef4444;--l1:#f97316;--l2:#f59e0b;--l3:#10b981;--l4:#3b82f6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(249,115,22,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,.015) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.page{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:40px 28px 80px}
+.header{border-bottom:1px solid var(--border);padding-bottom:28px;margin-bottom:36px;display:flex;justify-content:space-between;align-items:flex-end}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--accent);margin-bottom:8px}
+.h1{font-size:28px;font-weight:800;color:var(--bright);letter-spacing:-.03em;line-height:1;margin-bottom:6px}.h1 span{color:var(--accent)}
+.h1-sub{font-size:14px;font-weight:400;color:var(--blue);font-family:var(--mono);margin-top:4px}
+.subtitle{font-size:12px;color:#444;font-family:var(--mono)}
+.header-meta{text-align:right}.meta-item{font-family:var(--mono);font-size:10px;color:#333;margin-bottom:4px}.meta-item span{color:#555}
+.part{margin-bottom:48px;border-left:3px solid var(--border);padding-left:20px}
+.part-header{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--accent);margin-bottom:4px}
+.part-title{font-size:18px;font-weight:700;color:var(--bright);margin-bottom:4px}
+.part-ref{font-family:var(--mono);font-size:10px;color:#444;margin-bottom:16px}
+.section{margin-bottom:28px}
+.section-title{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.section-title .num{color:var(--accent);font-weight:700}.section-title .label{color:#555;text-transform:uppercase}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:10px}.card:hover{border-color:var(--border2)}
+.card-title{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.05em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.card p{font-size:12px;color:var(--text);margin-bottom:3px}.card p strong{color:var(--text2)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:11px}
+th{background:var(--bg3);color:#555;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:6px 8px;text-align:left;border:1px solid var(--border)}
+td{padding:6px 8px;border:1px solid var(--border);color:var(--text)}tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;padding:2px 7px;border-radius:3px;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.05em}
+.badge-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.badge-amber{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.badge-red{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.badge-blue{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+.badge-gray{background:rgba(107,114,128,.1);color:var(--gray);border:1px solid rgba(107,114,128,.2)}
+.badge-purple{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.badge-cyan{background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.2)}
+.badge-new{background:rgba(16,185,129,.15);color:var(--emerald);border:1px solid rgba(16,185,129,.3)}
+.principle{padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);margin:5px 0;font-size:11px}
+.principle strong{color:var(--accent);font-family:var(--mono);font-size:10px}
+ul{margin:4px 0 4px 14px}li{margin:2px 0;font-size:11px;color:var(--text)}
+.compliance{background:rgba(59,130,246,.03);border:1px solid rgba(59,130,246,.15);border-radius:6px;padding:12px;margin:8px 0}
+.compliance-title{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--blue);margin-bottom:6px;font-weight:700}
+.compliance table th{background:rgba(59,130,246,.08);color:var(--blue)}
+.level-row{display:flex;align-items:center;gap:8px;margin:4px 0;padding:8px 12px;border-radius:6px;flex-wrap:wrap}
+.level-tag{font-family:var(--mono);font-size:10px;font-weight:700;width:30px;flex-shrink:0}
+.level-sig{font-family:var(--mono);font-size:10px;font-weight:600;width:35px;flex-shrink:0}
+.level-sys{font-family:var(--mono);font-size:10px;width:55px;flex-shrink:0;color:var(--text2)}
+.level-norm{font-family:var(--mono);font-size:9px;width:180px;flex-shrink:0;color:#555}
+.level-modules{font-size:11px;flex:1}.level-modules .badge{margin:1px 2px}
+.progress-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:4px 0;border:1px solid var(--border)}
+.progress-fill{height:100%;border-radius:3px}.progress-fill.green{background:var(--green)}.progress-fill.amber{background:var(--amber)}.progress-fill.red{background:var(--red)}.progress-fill.blue{background:var(--blue)}
+.audit-section{border:2px solid var(--red);border-radius:6px;padding:20px;margin:20px 0;background:rgba(239,68,68,.03)}
+.inviolable{background:rgba(239,68,68,.08);border:1px dashed rgba(239,68,68,.4);padding:8px;margin:0 0 12px;font-family:var(--mono);font-size:9px;color:var(--red);text-align:center;font-weight:600;letter-spacing:.1em}
+.code-section{background:rgba(249,115,22,.03);border:1px solid rgba(249,115,22,.15);border-radius:6px;padding:16px;margin:12px 0}
+.code-section .card-title{color:var(--accent);border-color:rgba(249,115,22,.2)}
+.personas-section{background:rgba(167,139,250,.03);border:1px solid rgba(167,139,250,.15);border-radius:6px;padding:16px;margin:12px 0}
+.personas-section .card-title{color:var(--purple);border-color:rgba(167,139,250,.2)}
+.new-section{background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.15);border-radius:6px;padding:16px;margin:12px 0}
+.new-section .card-title{color:var(--emerald);border-color:rgba(16,185,129,.2)}
+.kpi-section{background:rgba(16,185,129,.03);border:1px solid rgba(16,185,129,.15);border-radius:6px;padding:16px;margin:12px 0}
+.kpi-section .card-title{color:var(--emerald);border-color:rgba(16,185,129,.2)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:10px 0}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px;text-align:center}
+.stat-num{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);display:block}
+.stat-label{font-family:var(--mono);font-size:9px;color:#555;display:block;margin-top:2px}
+.footer{text-align:center;padding:30px;color:#333;font-family:var(--mono);font-size:10px;margin-top:40px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div>
+    <div class="eyebrow">CARLOS DOS SANTOS NASCIMENTO, LDA</div>
+    <div class="h1">CSN <span>OPUS</span> — ARQUITECTURA</div>
+    <div class="h1-sub">Sistema integrado ISA-95 / IEC 62264</div>
+    <div class="subtitle">Codigo: CSN-L4-ENG-SYS-033-2026 · Mafra · NIF 500 861 790</div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-item"><span>SESSAO</span> S33</div>
+    <div class="meta-item"><span>DATA</span> 31/03/2026</div>
+    <div class="meta-item"><span>COMMIT</span> 7a7e5c7</div>
+    <div class="meta-item"><span>NORMA</span> ISA-95 / IEC 62264</div>
+    <div class="meta-item"><span>TABELAS</span> 33</div>
+    <div class="meta-item"><span>TOOLS API</span> 25</div>
+    <div class="meta-item"><span>AGENTES</span> 11</div>
+    <div class="meta-item"><span>MESA-11</span> 2/9/0</div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-box"><span class="stat-num">33</span><span class="stat-label">Tabelas</span></div>
+  <div class="stat-box"><span class="stat-num">19</span><span class="stat-label">Migrations</span></div>
+  <div class="stat-box"><span class="stat-num">25</span><span class="stat-label">Tools API</span></div>
+  <div class="stat-box"><span class="stat-num">27</span><span class="stat-label">ADRs</span></div>
+  <div class="stat-box"><span class="stat-num">11</span><span class="stat-label">Agentes</span></div>
+  <div class="stat-box"><span class="stat-num">5</span><span class="stat-label">Skills DOC</span></div>
+  <div class="stat-box"><span class="stat-num">3928</span><span class="stat-label">e-Fatura</span></div>
+  <div class="stat-box"><span class="stat-num">45</span><span class="stat-label">Recibos</span></div>
+  <div class="stat-box"><span class="stat-num">2153</span><span class="stat-label">Mov. Banc.</span></div>
+</div>
+
+<!-- QUADRO CENTRAL -->
+<div class="card" style="border:2px solid var(--accent);background:rgba(249,115,22,.03);margin-top:24px">
+  <div class="card-title" style="color:var(--accent);border-color:rgba(249,115,22,.2)">QUADRO CENTRAL — ESTRUTURA CSN OPUS POR NIVEL ISA-95</div>
+  <p style="margin-bottom:10px;color:var(--text2);font-size:12px">ISA-95 e a linguagem organizacional obrigatoria. Todo componente, tabela, agente e documento tem nivel atribuido. Este sistema NAO e um ERP — e um sistema ISA-95 integrado com capacidades ERP/MES/SCADA organizadas por nivel.</p>
+  <div class="level-row" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)">
+    <span class="level-tag" style="color:var(--l4)">L4</span><span class="level-sig" style="color:var(--l4)">BPL</span><span class="level-sys">ERP/CRM</span>
+    <span class="level-norm">ISA-95 P4 · ISO 9001 · ISO 14001 · ISO 31000</span>
+    <span class="level-modules"><span class="badge badge-blue">FIN</span> <span class="badge badge-blue">COM</span> <span class="badge badge-blue">ENG</span> <span class="badge badge-blue">QMS-L4</span> <span class="badge badge-blue">RH</span></span>
+  </div>
+  <div class="level-row" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)">
+    <span class="level-tag" style="color:var(--l3)">L3</span><span class="level-sig" style="color:var(--l3)">MOM</span><span class="level-sys">MES</span>
+    <span class="level-norm">MESA-11 · ISO 22400 (34+4) · ISO 45001 · ISO 55001</span>
+    <span class="level-modules"><span class="badge badge-green">PRD</span> <span class="badge badge-green">QMS</span> <span class="badge badge-new">MNT ↑S33</span> <span class="badge badge-green">PER</span> <span class="badge badge-green">DOC</span> <span class="badge badge-green">INV</span></span>
+  </div>
+  <div class="level-row" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2)">
+    <span class="level-tag" style="color:var(--l2)">L2</span><span class="level-sig" style="color:var(--l2)">SUP</span><span class="level-sys">SCADA</span>
+    <span class="level-norm">IEC 62443 · ISO 50001 (Bodor 60kW)</span>
+    <span class="level-modules">Portal Trabalhador — Duas Portas (Producao + Pessoal)</span>
+  </div>
+  <div class="level-row" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2)">
+    <span class="level-tag" style="color:var(--l1)">L1</span><span class="level-sig" style="color:var(--l1)">SEN</span><span class="level-sys">PLC</span>
+    <span class="level-norm">IEC 61131 · EN 17637</span>
+    <span class="level-modules">Fotos validacao · Checklist GSR · Inspeccao dimensional</span>
+  </div>
+  <div class="level-row" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2)">
+    <span class="level-tag" style="color:var(--l0)">L0</span><span class="level-sig" style="color:var(--l0)">PHY</span><span class="level-sys">Maquinas</span>
+    <span class="level-norm">EN 1090 · EN ISO 3834 · EN 12642</span>
+    <span class="level-modules">Bodor Laser 60kW · Weinig · Soldadura MAG/MIG · Montagem</span>
+  </div>
+  <div style="margin-top:12px;padding-top:10px;border-top:1px dashed rgba(167,139,250,.3)">
+    <p style="color:var(--purple);font-family:var(--mono);font-size:10px;font-weight:600;margin-bottom:6px">PERSONAS CAMADA 2 — INTERFACES HUMANAS (PRODUZEM NADA — REGRA INVIOLAVEL)</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span class="badge badge-purple">Fernando → Workers (L3-PRD)</span>
+      <span class="badge badge-purple">Luisa → Duarte (L4-BPL)</span>
+      <span class="badge badge-purple">Marta → Clientes + CSN Connect (L4-COM)</span>
+      <span class="badge badge-purple">Carolina → RH/Pessoal (L3-RH)</span>
+      <span class="badge badge-purple">Leonor → Aftersales (L4-COM)</span>
+      <span class="badge badge-red">Agente Roteador ❌ Por construir</span>
+    </div>
+  </div>
+</div>
+
+<!-- NOVIDADES S33 -->
+<div class="new-section" style="margin-top:20px">
+  <div class="card-title">NOVIDADES SESSAO S33 — 31/03/2026</div>
+  <div class="grid-2">
+    <div>
+      <p><span class="badge badge-new">NOVO</span> <strong style="color:var(--text2)">Obras Internas MNT-001 a MNT-004</strong></p>
+      <p style="font-size:11px;margin:4px 0 10px">Limpeza, manutencao, organizacao e formacao como trabalho produtivo. MESA-11 Maintenance: NAO → PARCIAL.</p>
+      <p><span class="badge badge-new">NOVO</span> <strong style="color:var(--text2)">Endpoint KPIs ISO 22400</strong></p>
+      <p style="font-size:11px;margin-top:4px">/api/kpis/worker live. 6 KPIs calculaveis. Testado: Bohdan throughput_mes=6.</p>
+    </div>
+    <div>
+      <p><span class="badge badge-new">NOVO</span> <strong style="color:var(--text2)">Conta Corrente por IBAN</strong></p>
+      <p style="font-size:11px;margin:4px 0 10px">2.153 mov. BPI importados. Match IBAN. Saldos validados Jan 2025+. Frontend pendente S34.</p>
+      <p><span class="badge badge-new">NOVO</span> <strong style="color:var(--text2)">Portal Duas Portas deployed</strong></p>
+      <p style="font-size:11px;margin-top:4px">ModeSelector + workerMode + BottomNav por modo. afe0ede.</p>
+    </div>
+  </div>
+  <table style="margin-top:10px">
+    <tr><th>Trabalhador</th><th>IBAN</th><th>Recibos</th><th>Pago</th><th>Saldo</th></tr>
+    <tr><td>Bohdan</td><td style="font-family:var(--mono);font-size:9px">PT50534054...184</td><td>€15.700,96</td><td>€15.261,23</td><td><span class="badge badge-amber">€439,73</span></td></tr>
+    <tr><td>Jose Julio</td><td style="font-family:var(--mono);font-size:9px">PT50001000...168</td><td>€14.495,71</td><td>€13.602,79</td><td><span class="badge badge-amber">€892,92</span></td></tr>
+    <tr><td>Joao Antonio</td><td style="font-family:var(--mono);font-size:9px">PT50004554...412</td><td>€16.785,45</td><td>€16.526,13</td><td><span class="badge badge-amber">€259,32</span></td></tr>
+  </table>
+</div>
+
+<!-- ISO 22400 -->
+<div class="kpi-section" style="margin-top:16px">
+  <div class="card-title">ISO 22400-1/2:2014 — KPIs MOM — TODOS OBRIGATORIOS (34+4)</div>
+  <p style="font-size:11px;margin-bottom:8px">Endpoint: <span style="color:var(--emerald);font-family:var(--mono)">/api/kpis/worker?colaborador_id=X</span></p>
+  <table>
+    <tr><th>KPI ISO 22400</th><th>Formula CSN</th><th>Estado</th></tr>
+    <tr><td>Worker Efficiency Ratio</td><td>horas_estimadas / horas_reais</td><td><span class="badge badge-green">CALCULAVEL</span></td></tr>
+    <tr><td>Actual Production Time (semana + mes)</td><td>SUM(duracao_minutos)</td><td><span class="badge badge-green">CALCULAVEL</span></td></tr>
+    <tr><td>Throughput Rate (semana + mes)</td><td>fases concluidas / periodo</td><td><span class="badge badge-green">CALCULAVEL</span></td></tr>
+    <tr><td>Allocation Efficiency</td><td>% tempo producao vs total</td><td><span class="badge badge-green">CALCULAVEL</span></td></tr>
+    <tr><td>Setup Ratio</td><td>tempo F1+F2 / tempo total obra</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>Production Process Ratio</td><td>tempo real / tempo estimado obra</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>Schedule Attainment</td><td>obras entregues / obras planeadas</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>OEE Bodor laser</td><td>Disponibilidade x Performance x Qualidade</td><td><span class="badge badge-red">FUTURO — L1 sensor</span></td></tr>
+    <tr><td>First Pass Yield</td><td>% fases sem retrabalho</td><td><span class="badge badge-red">FUTURO — campo retrabalho</span></td></tr>
+    <tr><td>Quality Ratio / Scrap Rate</td><td>pecas OK vs desperdicadas</td><td><span class="badge badge-red">FUTURO — consumos material</span></td></tr>
+    <tr><td>KPIs energia (35-38)</td><td>Consumo Bodor 60kW</td><td><span class="badge badge-red">FUTURO — smart meter</span></td></tr>
+  </table>
+</div>
+
+<!-- PORTAL DUAS PORTAS -->
+<div class="card" style="margin-top:16px;border-color:rgba(245,158,11,.25)">
+  <div class="card-title" style="color:var(--amber)">PORTAL TRABALHADOR — DUAS PORTAS (L2-SUP) — DEPLOYED S33</div>
+  <div class="grid-2">
+    <div>
+      <p style="font-family:var(--mono);font-size:9px;color:var(--accent);margin-bottom:8px">MODO PRODUCAO — botao grande — acesso directo</p>
+      <span class="badge badge-purple" style="margin:2px">Chat Fernando</span>
+      <span class="badge badge-purple" style="margin:2px">Obras + Fases</span>
+      <span class="badge badge-purple" style="margin:2px">Timer / Ponto</span>
+      <span class="badge badge-green" style="margin:2px">KPIs ISO 22400</span>
+      <span class="badge badge-amber" style="margin:2px">WorkerDashboard ← S34</span>
+      <span class="badge badge-new" style="margin:2px">Obras MNT</span>
+    </div>
+    <div>
+      <p style="font-family:var(--mono);font-size:9px;color:var(--cyan);margin-bottom:8px">MODO PESSOAL — re-auth PIN obrigatorio</p>
+      <span class="badge badge-cyan" style="margin:2px">Recibos por ano</span>
+      <span class="badge badge-cyan" style="margin:2px">Baixas / CITs</span>
+      <span class="badge badge-cyan" style="margin:2px">Docs Pessoais</span>
+      <span class="badge badge-cyan" style="margin:2px">Dados Pessoais</span>
+      <span class="badge badge-amber" style="margin:2px">Conta Corrente ← S34</span>
+    </div>
+  </div>
+</div>
+
+<!-- AGENTES NUCLEO -->
+<div class="part" style="margin-top:32px">
+  <div class="part-header">CAMADA 3 — NUCLEO</div>
+  <div class="part-title">11 Agentes Autonomos</div>
+  <div class="part-ref">Todo o trabalho real e feito aqui. Personas (Camada 2) sao interfaces humanas apenas — nao produzem nada.</div>
+  <table>
+    <tr><th>#</th><th>Agente</th><th>Nivel ISA-95</th><th>Responsabilidade</th><th>Estado</th></tr>
+    <tr><td>1</td><td>Agente Producao</td><td style="color:var(--l3);font-family:var(--mono)">L3-PRD</td><td>Obras, fases, timer, KPIs ISO 22400, dashboards</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td>2</td><td>Agente Qualidade</td><td style="color:var(--l3);font-family:var(--mono)">L3-QMS</td><td>Inspeccoes EN 1090, ensaios, rastreabilidade</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>3</td><td>Agente Manutencao</td><td style="color:var(--l3);font-family:var(--mono)">L3-MNT</td><td>Equipamentos, MTBF, preventiva, obras internas MNT</td><td><span class="badge badge-new">PARCIAL ↑</span></td></tr>
+    <tr><td>4</td><td>Agente Documental</td><td style="color:var(--l3);font-family:var(--mono)">L3-DOC</td><td>Classificacao, extracao, 5 skills por fornecedor</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td>5</td><td>Agente Inventario</td><td style="color:var(--l3);font-family:var(--mono)">L3-INV</td><td>Stock, consumos, lotes material, FIFO</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>6</td><td>Agente Financeiro</td><td style="color:var(--l4);font-family:var(--mono)">L4-FIN</td><td>Faturacao InvoiceXpress, e-fatura 3928, tesouraria</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td>7</td><td>Agente Comercial</td><td style="color:var(--l4);font-family:var(--mono)">L4-COM</td><td>Leads, propostas, clientes — persona Marta</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td>8</td><td>Agente Tecnico</td><td style="color:var(--l4);font-family:var(--mono)">L4-ENG</td><td>Homologacao, FAMs, DAVs, COC electronico Jul/2026</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td>9</td><td>Agente Marketing</td><td style="color:var(--l4);font-family:var(--mono)">L4-COM</td><td>Conteudo, CSN Connect (portal B2B)</td><td><span class="badge badge-gray">PLANEADO</span></td></tr>
+    <tr><td>10</td><td>Agente Legal</td><td style="color:var(--l4);font-family:var(--mono)">L4-BPL</td><td>Compliance, RGPD, contratos</td><td><span class="badge badge-gray">PLANEADO</span></td></tr>
+    <tr><td>11</td><td>Agente RH</td><td style="color:var(--l3);font-family:var(--mono)">L3-RH</td><td>Recibos, payroll, CITs, conta corrente — Carolina</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+  </table>
+</div>
+
+<!-- MESA-11 -->
+<div class="card">
+  <div class="card-title">MESA-11 — CHECKLIST OBRIGATORIO PARA OPUS-MOM (L3-MES)</div>
+  <table>
+    <tr><th>#</th><th>Funcao MESA-11</th><th>Modulo</th><th>Notas S33</th><th>Estado</th></tr>
+    <tr><td>1</td><td>Resource Allocation</td><td>PRD</td><td>colaboradores + obras + obras internas MNT</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>2</td><td>Operations Scheduling</td><td>PRD</td><td>fases_obra com estimativas hora</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>3</td><td>Dispatching Production</td><td>PRD</td><td>timer + atribuicao manual</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>4</td><td>Document Control</td><td>DOC</td><td>Agente Documental + 5 skills</td><td><span class="badge badge-green">COMPLETO</span></td></tr>
+    <tr><td>5</td><td>Data Collection</td><td>PER/INV</td><td>timetracking + e-fatura + mov. bancarios</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>6</td><td>Labor Management</td><td>RH</td><td>recibos + CITs + ausencias + conta corrente</td><td><span class="badge badge-green">COMPLETO</span></td></tr>
+    <tr><td>7</td><td>Quality Management</td><td>QMS</td><td>inspeccoes visuais basicas</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>8</td><td>Process Management</td><td>PRD</td><td>9 fases template + obras internas</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>9</td><td>Maintenance Management</td><td>MNT</td><td>MNT-001 a MNT-004 criadas — era NAO</td><td><span class="badge badge-new">PARCIAL ↑</span></td></tr>
+    <tr><td>10</td><td>Product Tracking</td><td>PRD</td><td>VIN + estados obra</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td>11</td><td>Performance Analysis</td><td>PRD</td><td>endpoint live 6 KPIs, dashboard pendente S34</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+  </table>
+  <p style="margin-top:8px;font-size:11px"><strong style="color:var(--text2)">Score S33:</strong> <span style="color:var(--green)">2 completas</span> · <span style="color:var(--amber)">9 parciais</span> · <span style="color:var(--green)">0 em falta</span> <span style="color:#444">(era 2/7/2 em S32)</span></p>
+</div>
+
+<!-- CONFORMIDADE ISA-95 -->
+<div class="compliance" style="margin-top:16px">
+  <div class="compliance-title">CONFORMIDADE ISA-95 — TABELA COMPLETA S33</div>
+  <table>
+    <tr><th>Nivel</th><th>Modulo</th><th>Estado</th></tr>
+    <tr><td style="color:var(--l4);font-family:var(--mono)">L4-BPL</td><td>FIN — Faturacao InvoiceXpress (AT cert 192)</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l4);font-family:var(--mono)">L4-BPL</td><td>COM — Leads + Marta</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l4);font-family:var(--mono)">L4-BPL</td><td>ENG — DAVs, FAMs, COC homologacao</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l3);font-family:var(--mono)">L3-MOM</td><td>PRD — Obras, fases, 9 fases template</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l3);font-family:var(--mono)">L3-MOM</td><td>QMS — Inspeccoes EN 1090</td><td><span class="badge badge-amber">PARCIAL</span></td></tr>
+    <tr><td style="color:var(--l3);font-family:var(--mono)">L3-MOM</td><td>MNT — Obras internas MNT-001 a MNT-004</td><td><span class="badge badge-new">PARCIAL ↑ era NAO</span></td></tr>
+    <tr><td style="color:var(--l3);font-family:var(--mono)">L3-MOM</td><td>PER — Timetracking, timer, 6 KPIs ISO 22400</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l3);font-family:var(--mono)">L3-MOM</td><td>DOC — Agente Documental, 5 skills</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l3);font-family:var(--mono)">L3-MOM</td><td>INV — e-Fatura 3928 + Mov. Bancarios 2153</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l3);font-family:var(--mono)">L3-RH</td><td>RH — Recibos 45, CITs, ausencias, conta corrente</td><td><span class="badge badge-green">OPERACIONAL</span></td></tr>
+    <tr><td style="color:var(--l0);font-family:var(--mono)">L0-PER</td><td>Perfis producao (Fernando)</td><td><span class="badge badge-gray">PLANEADO</span></td></tr>
+    <tr><td style="color:var(--l2);font-family:var(--mono)">L2-SUP</td><td>SCADA</td><td><span class="badge badge-gray">FUTURO</span></td></tr>
+    <tr><td style="color:var(--l1);font-family:var(--mono)">L1-SEN</td><td>Sensores Bodor</td><td><span class="badge badge-gray">FUTURO</span></td></tr>
+    <tr><td style="color:var(--l0);font-family:var(--mono)">L0-PHY</td><td>Bodor laser 60kW · Weinig</td><td><span class="badge badge-blue">ACTIVO</span></td></tr>
+  </table>
+</div>
+
+<!-- CODIFICACAO -->
+<div class="code-section" style="margin-top:16px">
+  <div class="card-title">CODIFICACAO INTERNA — <code style="color:var(--accent)">CSN-L[nivel]-[seccao]-[seq]-[ano]</code></div>
+  <table>
+    <tr><th>Codigo</th><th>Seccao ISA-95</th><th>Nivel</th><th>Ambito</th></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">PRD</td><td>Production Operations</td><td>L0–L2</td><td>Termos, checklists, fichas fase</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">QMS</td><td>Quality Operations</td><td>L1–L2</td><td>ITP, relatorios NC, inspeccoes</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">MNT</td><td>Maintenance Operations</td><td>L2–L3</td><td>Planos manutencao, obras internas</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">INV</td><td>Inventory Operations</td><td>L3</td><td>Cert. material 3.1, encomendas</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">PER</td><td>Personnel</td><td>L0–L3</td><td>Qualificacoes, certificados soldadores</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">FIN</td><td>Financial</td><td>L4</td><td>Faturas, movimentos, reconciliacao</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">DOC</td><td>Document Management</td><td>L3</td><td>DAVs, COCs, DoPs, CE</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">RH</td><td>Human Resources</td><td>L3</td><td>Recibos, ferias, CITs, conta corrente</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">COM</td><td>Commercial</td><td>L4</td><td>Propostas, leads, contratos</td></tr>
+    <tr><td style="color:var(--accent);font-family:var(--mono)">ENG</td><td>Engineering / System</td><td>L4</td><td>ADRs, arquitectura, controlo sessao</td></tr>
+  </table>
+</div>
+
+<!-- AUDITORIA INVIOLAVEL -->
+<div class="audit-section" style="margin-top:24px">
+  <div class="inviolable">⚠ SECCAO INVIOLAVEL — NUNCA REMOVER ⚠</div>
+  <div class="part-header" style="color:var(--red)">PRONTIDAO PARA AUDITORIA</div>
+  <p style="color:var(--text2);margin-bottom:16px;font-size:12px">Trio PRR/Portugal 2030: <strong>ISO 9001 + ISO 14001 + ISO 45001</strong> · Mercados: PT + FR + DE + ES</p>
+  <div class="grid-2">
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">ISO 9001:2015 — 35%</div>
+      <div class="progress-bar"><div class="progress-fill amber" style="width:35%"></div></div>
+      <ul><li><span class="badge badge-green">OK</span> Processos, registos, controlo docs</li><li><span class="badge badge-red">FALTA</span> Auditorias internas · Revisao gestao · Correctivas</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">Reg. 2018/858 · COC Multi-etapa — 40%</div>
+      <div class="progress-bar"><div class="progress-fill amber" style="width:40%"></div></div>
+      <ul><li><span class="badge badge-green">OK</span> COC dados, VIN tracking</li><li><span class="badge badge-red">DEADLINE JUL/2026</span> COC electronico IMT</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">EN 1090-1/-2 EXC2 — 20%</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:20%"></div></div>
+      <ul><li><span class="badge badge-green">OK</span> Rastreabilidade material</li><li><span class="badge badge-red">FALTA</span> WPS · WPQR · FPC · ITP · DoP · CE · Coord. soldadura</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">EN ISO 3834-3 — 15%</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:15%"></div></div>
+      <ul><li><span class="badge badge-red">FALTA</span> Consumiveis · Rastreabilidade juntas · NC soldadura</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">EN 12642 L/XL — 10%</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:10%"></div></div>
+      <ul><li><span class="badge badge-green">OK</span> Modelo definido, EXC2</li><li><span class="badge badge-red">FALTA</span> Ensaio FEA · Lab. acreditado · Etiqueta por modelo</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">ISO 22400 KPIs MOM — 30%</div>
+      <div class="progress-bar"><div class="progress-fill blue" style="width:30%"></div></div>
+      <ul><li><span class="badge badge-green">OK</span> 6 KPIs calculaveis, endpoint live</li><li><span class="badge badge-red">FALTA</span> WorkerDashboard, 28+ KPIs restantes</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">ISO 14001 — Gestao Ambiental — 5%</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:5%"></div></div>
+      <ul><li><span class="badge badge-red">FALTA</span> SGQ ambiental, registo residuos, metas</li></ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+      <div class="card-title">ISO 45001 — Seguranca Trabalho — 5%</div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:5%"></div></div>
+      <ul><li><span class="badge badge-red">FALTA</span> Avaliacoes risco por posto, registo acidentes/incidentes</li></ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:10px;background:rgba(239,68,68,.02);border-color:rgba(239,68,68,.15)">
+    <div class="card-title">NORMAS DE SUPORTE + REQUISITOS POR MERCADO</div>
+    <table>
+      <tr><th>Norma</th><th>Codigo CSN</th><th>Estado</th><th>Mercado</th></tr>
+      <tr><td>EN ISO 15614-1 · WPS/WPQR</td><td style="font-family:var(--mono);font-size:9px">CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td><td>PT/FR/DE/ES</td></tr>
+      <tr><td>EN ISO 9606-1 · Soldadores</td><td style="font-family:var(--mono);font-size:9px">CSN-L0-PER</td><td><span class="badge badge-red">Falta</span></td><td>PT/FR/DE/ES</td></tr>
+      <tr><td>EN ISO 14732 · Robot KUKA</td><td style="font-family:var(--mono);font-size:9px">CSN-L0-PER</td><td><span class="badge badge-red">Falta</span></td><td>PT/FR/DE/ES</td></tr>
+      <tr><td>EN 12195-1 · Calculo fixacao carga</td><td style="font-family:var(--mono);font-size:9px">CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td><td>PT/FR/DE/ES</td></tr>
+      <tr><td>EN ISO 5817 · Imperfeicoes soldadura</td><td style="font-family:var(--mono);font-size:9px">CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td><td>PT/FR/DE/ES</td></tr>
+      <tr><td>VDI 2700 · Fixacao carga DE</td><td style="font-family:var(--mono);font-size:9px">CSN-L1-QMS</td><td><span class="badge badge-red">Falta</span></td><td><strong>DE critico</strong></td></tr>
+      <tr><td>UNECE R48/R73/R58 · Iluminacao/proteccoes</td><td style="font-family:var(--mono);font-size:9px">CSN-L1-QMS</td><td><span class="badge badge-amber">Parcial</span></td><td>EU obrig.</td></tr>
+      <tr><td>Reg. 2019/2144 · GSR</td><td style="font-family:var(--mono);font-size:9px">CSN-L1-QMS</td><td><span class="badge badge-amber">Parcial</span></td><td>EU obrig.</td></tr>
+      <tr><td>ISO 50001 · Energia Bodor 60kW</td><td style="font-family:var(--mono);font-size:9px">CSN-L2-SUP</td><td><span class="badge badge-red">Falta</span></td><td>L3-MOM</td></tr>
+    </table>
+    <p style="margin-top:8px;font-size:11px"><strong style="color:var(--text2)">Organismos:</strong> ISQ · Bureau Veritas · TUV · APCER · SGS · DEKRA · Prova Impar</p>
+    <p style="font-size:11px;margin-top:4px"><strong style="color:var(--red)">COC Electronico IMT — DEADLINE JULHO 2026</strong></p>
+  </div>
+</div>
+
+<!-- PENDENTES S34 -->
+<div class="card" style="margin-top:24px;border-color:rgba(249,115,22,.3)">
+  <div class="card-title" style="color:var(--accent)">PENDENTES PRIORITARIOS — SESSAO 34</div>
+  <table>
+    <tr><th>Pri.</th><th>Item</th><th>Detalhe</th></tr>
+    <tr><td><span class="badge badge-red">1</span></td><td>BottomNav.tsx encoding</td><td style="font-family:var(--mono);font-size:10px">git show 7a7e5c7:src/.../BottomNav.tsx | Out-File ... -Encoding utf8</td></tr>
+    <tr><td><span class="badge badge-red">2</span></td><td>WorkerDashboard frontend</td><td>Gauge eficiencia + barras throughput + progresso obra — consome /api/kpis/worker</td></tr>
+    <tr><td><span class="badge badge-amber">3</span></td><td>Conta Corrente</td><td>Endpoint /api/rh/conta-corrente + vista Modo Pessoal</td></tr>
+    <tr><td><span class="badge badge-amber">4</span></td><td>Agente Roteador</td><td>Recebe email/WhatsApp/upload — classifica — distribui para personas correctas</td></tr>
+    <tr><td><span class="badge badge-amber">5</span></td><td>LoginScreen BUG</td><td>Nomes da DB nao hardcoded</td></tr>
+    <tr><td><span class="badge badge-amber">6</span></td><td>ADR-028 + ADR-029</td><td>Portal Trabalhador + ISO 22400 KPIs</td></tr>
+    <tr><td><span class="badge badge-gray">7</span></td><td>emails_indice</td><td>Importacao INDICE_v4 — 18.169 registos</td></tr>
+    <tr><td><span class="badge badge-gray">8</span></td><td>src/app/portal duplicado</td><td>Apagar pasta duplicada</td></tr>
+  </table>
+</div>
+
+<div class="footer">
+  <p>CSN — Engenharia de Veiculos Comerciais · Mafra, Portugal · NIF 500 861 790</p>
+  <p style="margin-top:4px">csn-architecture-OPUS-S33.html · Sessao 33 · 31/03/2026 · Commit 7a7e5c7 · Documento interno — nao distribuir</p>
+</div>
+
+</div>
+</body>
+</html>
