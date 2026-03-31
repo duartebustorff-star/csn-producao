@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
       .eq("colaborador_id", colaboradorId)
       .is("fim", null)
       .limit(1)
-      .single()
+      .maybeSingle()
 
     // 7. Progresso obra actual (% fases concluídas)
     let obraProgresso = null
@@ -77,15 +77,29 @@ export async function GET(req: NextRequest) {
         .select("estado")
         .eq("obra_id", timerActivo.obra_id)
 
+      const { data: obraAtual } = await supabase
+        .from("obras")
+        .select("id, matricula, vin, leads(cliente, tipo_carrocaria)")
+        .eq("id", timerActivo.obra_id)
+        .maybeSingle()
+
       if (fasesObra && fasesObra.length > 0) {
         const concluidas = fasesObra.filter(f => f.estado === "concluido").length
+        const lead = (obraAtual?.leads as { cliente?: string; tipo_carrocaria?: string } | null) || null
+        const descricao = lead?.tipo_carrocaria
+          ? `${timerActivo.obra_id} · ${lead.tipo_carrocaria}`
+          : timerActivo.obra_id
+        const chassis = obraAtual?.matricula || obraAtual?.vin || null
+
         obraProgresso = {
           obra_id: timerActivo.obra_id,
           fase_actual: (timerActivo.fases_obra as any)?.nome || null,
           inicio_timer: timerActivo.inicio,
           total_fases: fasesObra.length,
           fases_concluidas: concluidas,
-          percentagem: Math.round((concluidas / fasesObra.length) * 100)
+          percentagem: Math.round((concluidas / fasesObra.length) * 100),
+          descricao,
+          chassis
         }
       }
     }
