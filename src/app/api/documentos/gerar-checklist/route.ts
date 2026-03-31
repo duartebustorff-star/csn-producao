@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
-import { createClient } from "@supabase/supabase-js"
+import { getServiceSupabase } from "@/lib/supabase"
 import { readFileSync } from "fs"
 import { join } from "path"
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 function s(str: string | null | undefined): string {
   if (!str) return "-"
@@ -22,6 +17,7 @@ function s(str: string | null | undefined): string {
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = getServiceSupabase()
     const body = await req.json()
     const {
       obra_id, marca, modelo, matricula, vin,
