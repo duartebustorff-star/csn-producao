@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServiceSupabase } from "@/lib/supabase"
 
+export async function GET() {
+  try {
+    const supabase = getServiceSupabase()
+    const { data, error } = await supabase
+      .from("colaboradores")
+      .select("id, nome, funcao, avatar, lang, role, ativo, created_at")
+      .eq("ativo", true)
+      .order("nome", { ascending: true })
+
+    if (error) {
+      return NextResponse.json({ error: "Erro ao carregar colaboradores" }, { status: 500 })
+    }
+
+    return NextResponse.json({ colaboradores: data || [] })
+  } catch {
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 })
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { colaborador_id, pin } = await req.json()
