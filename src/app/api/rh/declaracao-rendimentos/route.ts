@@ -56,7 +56,6 @@ export async function GET(req: NextRequest) {
   const GRAY = rgb(0.4, 0.4, 0.4)
   const LIGHT = rgb(0.95, 0.95, 0.95)
   const LINE = rgb(0.82, 0.82, 0.82)
-  const ORANGE = rgb(0.976, 0.576, 0.043)
 
   const m = 42
   const W = 595 - 2 * m
@@ -70,10 +69,10 @@ export async function GET(req: NextRequest) {
     page.drawText(s(titulo), { x: m + 32, y: y - 13, size: 8, font: bold, color: BLACK })
   }
 
-  page.drawRectangle({ x: 0, y: 836, width: 595, height: 6, color: ORANGE })
+  page.drawRectangle({ x: 0, y: 836, width: 595, height: 6, color: BLACK })
   page.drawText(s("DECLARACAO ANUAL DE RENDIMENTOS"), { x: m, y, size: 15, font: bold, color: BLACK })
   y -= 16
-  page.drawText(s(`Ano de referencia: ${ano}`), { x: m, y, size: 10, font: bold, color: ORANGE })
+  page.drawText(s(`Ano de referencia: ${ano}`), { x: m, y, size: 10, font: bold, color: BLACK })
   y -= 12
   page.drawText(s("Artigo 119. do CIRS"), { x: m, y, size: 8, font, color: GRAY })
 
