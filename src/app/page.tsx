@@ -153,7 +153,7 @@ export default function Home() {
           <div className={`absolute inset-0 ${activeView === "chat" ? "" : "hidden"}`}>
             <ChatView user={user} />
           </div>
-          {activeView === "obras" && <ObrasView lang={lang} />}
+          {activeView === "obras" && <ObrasView lang={lang} colaboradorId={user.id} />}
           {activeView === "leads" && isAdmin && <LeadsView user={user} />}
           {activeView === "documentos" && <DocumentosView user={user} />}
           {activeView === "rh" && (isAdmin ? <RHView user={user} /> : <WorkerRHView user={user} />)}
