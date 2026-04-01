@@ -128,9 +128,6 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
     return meses.size === 12
   }
 
-  const totalAno = (ano: number) =>
-    (recibosByYear[ano] || []).reduce((s, r) => s + Number(r.liquido || 0), 0)
-
   return (
     <div className="h-full overflow-y-auto">
       <div className="p-4 space-y-6 pb-24">
@@ -161,7 +158,7 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
                       <div className="text-left">
                         <p className="text-sm font-medium text-foreground">{ano}</p>
                         <p className="text-[11px] text-muted">
-                          {rows.length} recibos · total {formatEur(totalAno(ano))}
+                          {rows.length} recibos
                         </p>
                       </div>
                       <span className="text-xs text-muted">{expanded ? "▲" : "▼"}</span>
@@ -190,17 +187,18 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
                   {expanded && (
                     <div className="mt-1 space-y-1">
                       {rows.map((r) => (
-                        <button
+                        <div
                           key={`${r.ano}-${r.mes}`}
-                          onClick={() => openRecibo(r)}
-                          className="w-full flex items-center justify-between p-2.5 rounded-lg bg-background hover:bg-card-hover transition-colors"
+                          className="w-full flex items-center justify-between p-2.5 rounded-lg bg-background"
                         >
-                          <p className="text-sm text-foreground">{MESES[r.mes]}</p>
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-foreground">{formatEur(Number(r.liquido || 0))}</span>
-                            <span className="text-muted text-xs">Abrir PDF</span>
-                          </div>
-                        </button>
+                          <p className="text-sm text-foreground">{MESES[r.mes]} {r.ano}</p>
+                          <button
+                            onClick={() => openRecibo(r)}
+                            className="text-xs px-2.5 py-1.5 rounded-lg bg-accent/15 text-accent hover:bg-accent/25 transition-colors"
+                          >
+                            Download PDF
+                          </button>
+                        </div>
                       ))}
                     </div>
                   )}
