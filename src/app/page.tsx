@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import LoginScreen from "@/components/LoginScreen"
 import Header from "@/components/Header"
 import ModeSelector from "@/components/ModeSelector"
@@ -23,6 +23,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [activeView, setActiveView] = useState<View>("chat")
   const [workerMode, setWorkerMode] = useState<WorkerMode | null>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
+  const [cameraFeedback, setCameraFeedback] = useState<string | null>(null)
+  const [lastPhasePhotoUrl, setLastPhasePhotoUrl] = useState<string | null>(null)
 
   useEffect(() => {
     try {
@@ -68,13 +71,32 @@ export default function Home() {
 
   const lang = user.lang as Lang
   const isAdmin = user.role === "admin"
+  const isWorkerProducao = !isAdmin && workerMode === "producao"
+
+  const uploadPhasePhoto = async (file: File) => {
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("colaborador_id", user.id)
+    try {
+      const res = await fetch("/api/timer/foto-fase", { method: "POST", body: formData })
+      const data = await res.json()
+      if (!res.ok) {
+        setCameraFeedback(data.error || "Erro ao associar foto")
+        return
+      }
+      setCameraFeedback("Foto associada à fase ativa com sucesso.")
+      setLastPhasePhotoUrl(data.foto_url || null)
+    } catch {
+      setCameraFeedback("Erro de ligação ao enviar foto.")
+    }
+  }
 
   // Workers: show ModeSelector before entering the app
   if (!isAdmin && !workerMode) {
     return (
       <ModeSelector
         user={user}
-        onSelectProducao={() => { setWorkerMode("producao"); setActiveView("chat") }}
+        onSelectProducao={() => { setWorkerMode("producao"); setActiveView("fernando") }}
         onSelectPessoal={() => { setWorkerMode("pessoal"); setActiveView("rh") }}
         onLogout={handleLogout}
       />
@@ -91,7 +113,7 @@ export default function Home() {
         </div>
         <nav className="flex-1 py-2">
           {(isAdmin || workerMode === "producao") && (
-            <SidebarButton active={activeView === "chat"} onClick={() => setActiveView("chat")} icon="💬" label="Chat" />
+            <SidebarButton active={activeView === "chat" || activeView === "fernando"} onClick={() => setActiveView("fernando")} icon="💬" label="Fernando" />
           )}
           {(isAdmin || workerMode === "producao") && (
             <SidebarButton active={activeView === "obras"} onClick={() => setActiveView("obras")} icon="🏗️" label="Obras" />
@@ -150,15 +172,74 @@ export default function Home() {
         )}
 
         <main className="flex-1 min-h-0 relative">
-          <div className={`absolute inset-0 ${activeView === "chat" ? "" : "hidden"}`}>
-            <ChatView user={user} />
-          </div>
-          {activeView === "obras" && <ObrasView lang={lang} colaboradorId={user.id} />}
-          {activeView === "leads" && isAdmin && <LeadsView user={user} />}
-          {activeView === "documentos" && <DocumentosView user={user} />}
-          {activeView === "rh" && (isAdmin ? <RHView user={user} /> : <WorkerRHView user={user} />)}
-          {activeView === "dashboard" && isAdmin && <DashboardView />}
-          {activeView === "dashboard" && !isAdmin && workerMode === "producao" && <WorkerDashboard user={user} />}
+          {isWorkerProducao && activeView !== "documentos" ? (
+            <>
+              <div className="hidden md:grid md:grid-cols-2 h-full">
+                <div className="border-r border-border min-h-0">
+                  <ObrasView lang={lang} colaboradorId={user.id} />
+                </div>
+                <div className="min-h-0">
+                  <ChatView user={user} />
+                </div>
+              </div>
+
+              <div className="md:hidden h-full">
+                {(activeView === "fernando" || activeView === "chat") && <ChatView user={user} />}
+                {activeView === "obras" && <ObrasView lang={lang} colaboradorId={user.id} />}
+                {activeView === "camera" && (
+                  <div className="h-full overflow-y-auto p-4 space-y-4">
+                    <section className="bg-card rounded-xl p-4 space-y-3">
+                      <h2 className="text-sm font-medium text-foreground">Câmara</h2>
+                      <p className="text-xs text-muted">
+                        Tira foto e associa automaticamente à fase ativa.
+                      </p>
+                      <button
+                        onClick={() => cameraInputRef.current?.click()}
+                        className="w-full rounded-lg bg-accent/15 text-accent hover:bg-accent/25 transition-colors px-4 py-3 text-sm font-medium"
+                      >
+                        Abrir câmara
+                      </button>
+                      <input
+                        ref={cameraInputRef}
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0]
+                          if (f) uploadPhasePhoto(f)
+                          e.currentTarget.value = ""
+                        }}
+                      />
+                      {cameraFeedback && <p className="text-xs text-muted">{cameraFeedback}</p>}
+                      {lastPhasePhotoUrl && (
+                        <div className="space-y-2">
+                          <p className="text-xs text-muted">Última foto capturada</p>
+                          <img
+                            src={lastPhasePhotoUrl}
+                            alt="Última foto da fase ativa"
+                            className="w-full max-h-64 object-cover rounded-lg border border-border"
+                          />
+                        </div>
+                      )}
+                    </section>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={`absolute inset-0 ${activeView === "chat" ? "" : "hidden"}`}>
+                <ChatView user={user} />
+              </div>
+              {activeView === "obras" && <ObrasView lang={lang} colaboradorId={user.id} />}
+              {activeView === "leads" && isAdmin && <LeadsView user={user} />}
+              {activeView === "documentos" && <DocumentosView user={user} />}
+              {activeView === "rh" && (isAdmin ? <RHView user={user} /> : <WorkerRHView user={user} />)}
+              {activeView === "dashboard" && isAdmin && <DashboardView />}
+              {activeView === "dashboard" && !isAdmin && workerMode === "producao" && <WorkerDashboard user={user} />}
+            </>
+          )}
         </main>
 
         <BottomNav

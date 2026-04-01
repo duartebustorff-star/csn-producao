@@ -1,9 +1,9 @@
 "use client"
 
-import { t, type Lang } from "@/lib/translations"
+import type { Lang } from "@/lib/translations"
 import type { WorkerMode } from "@/app/page"
 
-export type View = "chat" | "obras" | "leads" | "documentos" | "rh" | "dashboard"
+export type View = "chat" | "obras" | "leads" | "documentos" | "rh" | "dashboard" | "fernando" | "camera"
 
 interface BottomNavProps {
   active: View
@@ -20,6 +20,19 @@ const ICONS: Record<View, string> = {
   documentos: "📂",
   rh: "👤",
   dashboard: "📊",
+  fernando: "🤖",
+  camera: "📷",
+}
+
+const LABELS: Record<View, string> = {
+  chat: "Chat",
+  obras: "Obras",
+  leads: "Leads",
+  documentos: "Documentos",
+  rh: "RH",
+  dashboard: "Dashboard",
+  fernando: "Fernando",
+  camera: "Câmara",
 }
 
 export default function BottomNav({ active, onChange, lang, isAdmin, workerMode }: BottomNavProps) {
@@ -31,7 +44,7 @@ export default function BottomNav({ active, onChange, lang, isAdmin, workerMode 
     views = ["rh", "chat"]
   } else {
     // producao
-    views = ["chat", "obras", "documentos"]
+    views = ["obras", "fernando", "camera"]
   }
 
   return (
@@ -46,7 +59,7 @@ export default function BottomNav({ active, onChange, lang, isAdmin, workerMode 
             }`}
           >
             <span className="text-lg">{ICONS[view]}</span>
-            <span className="text-xs font-medium">{t(lang, view)}</span>
+            <span className="text-xs font-medium">{LABELS[view]}</span>
           </button>
         ))}
       </div>
