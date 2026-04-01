@@ -48,6 +48,12 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
   const formatEur = (v: number) =>
     new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(v)
 
+  const getReciboEstado = (ano: number, mes: number): "Provisório" | "Final" => {
+    const agora = new Date()
+    const limite = new Date(ano, mes + 1, 0, 23, 59, 59, 999)
+    return agora <= limite ? "Provisório" : "Final"
+  }
+
   const loadRecibos = useCallback(async () => {
     if (!user.colaborador_rh_id) { setLoading(false); return }
     try {
@@ -191,7 +197,16 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
                           key={`${r.ano}-${r.mes}`}
                           className="w-full flex items-center justify-between p-2.5 rounded-lg bg-background"
                         >
-                          <p className="text-sm text-foreground">{MESES[r.mes]} {r.ano}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-foreground">{MESES[r.mes]} {r.ano}</p>
+                            <span className={`text-[11px] px-2 py-0.5 rounded-full ${
+                              getReciboEstado(r.ano, r.mes) === "Final"
+                                ? "bg-emerald-500/15 text-emerald-400"
+                                : "bg-amber-500/15 text-amber-400"
+                            }`}>
+                              {getReciboEstado(r.ano, r.mes)}
+                            </span>
+                          </div>
                           <button
                             onClick={() => openRecibo(r)}
                             className="text-xs px-2.5 py-1.5 rounded-lg bg-accent/15 text-accent hover:bg-accent/25 transition-colors"
