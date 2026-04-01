@@ -41,6 +41,24 @@ function formatDateShort(dateStr: string): string {
 
 type ProducaoCategoria = "manuais" | "procedimentos" | "checklists" | "instrucoes"
 
+const MANUAIS_MAQUINAS: { href: string; title: string; subtitle: string }[] = [
+  {
+    href: "/manuais/fronius-transteel-4000-pulse.pdf",
+    title: "Fronius Transteel 4000 Pulse",
+    subtitle: "Manual do equipamento",
+  },
+  {
+    href: "/manuais/bodor-chapa.pdf",
+    title: "Bodor Laser — Chapa",
+    subtitle: "Manual de operação",
+  },
+  {
+    href: "/manuais/bodor-tubo.pdf",
+    title: "Bodor Laser — Tubo",
+    subtitle: "Manual de operação",
+  },
+]
+
 const PRODUCAO_CATALOG: Record<ProducaoCategoria, { label: string; icon: string; docs: { key: string; title: string; subtitle: string }[] }> = {
   manuais: {
     label: "Manuais",
@@ -123,6 +141,26 @@ function ProductionDocsView() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="px-4 py-3 border-b border-border space-y-2">
+        <h2 className="text-sm font-medium text-foreground mb-2">Manuais de Máquinas</h2>
+        {MANUAIS_MAQUINAS.map((m) => (
+          <a
+            key={m.href}
+            href={m.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full bg-card hover:bg-card-hover rounded-xl px-4 py-3 flex items-center gap-3 text-left transition-colors border border-border"
+          >
+            <span className="text-lg">⚙️</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{m.title}</p>
+              <p className="text-xs text-muted truncate">{m.subtitle}</p>
+            </div>
+            <span className="text-xs text-accent shrink-0">Abrir ↗</span>
+          </a>
+        ))}
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
