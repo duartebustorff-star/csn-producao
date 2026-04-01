@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus - Arquitectura S32</title>
+<style>
+:root { --bg: #0f1117; --card: #1a1d27; --border: #2a2d37; --text: #e8e6e0; --muted: #8a8880; --accent: #7F77DD; --green: #4CAF50; --amber: #FF9800; --red: #F44336; --teal: #5DCAA5; --purple: #AFA9EC; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 20px; max-width: 1100px; margin: 0 auto; }
+h1 { color: var(--accent); font-size: 1.5rem; margin-bottom: 4px; }
+h2 { color: var(--accent); font-size: 1.1rem; margin: 24px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+h3 { color: var(--teal); font-size: 0.95rem; margin: 16px 0 6px; }
+.subtitle { color: var(--muted); font-size: 0.8rem; margin-bottom: 16px; }
+.code { color: var(--accent); font-size: 0.75rem; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 0.8rem; }
+th { background: var(--accent); color: #fff; text-align: left; padding: 6px 8px; font-weight: 600; }
+td { padding: 5px 8px; border-bottom: 1px solid var(--border); }
+tr:hover { background: rgba(127,119,221,0.05); }
+.green { color: var(--green); font-weight: 600; }
+.amber { color: var(--amber); font-weight: 600; }
+.red { color: var(--red); font-weight: 600; }
+.teal { color: var(--teal); font-weight: 600; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 8px 0; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin: 2px; }
+.tag-green { background: rgba(76,175,80,0.15); color: var(--green); }
+.tag-amber { background: rgba(255,152,0,0.15); color: var(--amber); }
+.tag-red { background: rgba(244,67,54,0.15); color: var(--red); }
+.tag-teal { background: rgba(93,202,165,0.15); color: var(--teal); }
+.tag-purple { background: rgba(175,169,236,0.15); color: var(--purple); }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.flow-box { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-size: 0.8rem; }
+.flow-arrow { color: var(--muted); }
+.big-number { font-size: 2rem; font-weight: 700; color: var(--accent); }
+.footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.7rem; }
+@media (max-width: 700px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<h1>CSN Opus - Arquitectura do Sistema</h1>
+<p class="subtitle">Carlos dos Santos Nascimento, Lda - Engenharia de Veiculos Comerciais</p>
+<p class="code">CSN-L4-ENG-SYS-032-2026 | Sessao 32 | 30/03/2026 | Commit 53d7a6c</p>
+
+<!-- ============ ISA-95 ============ -->
+<h2>Quadro Central - Modulos por Nivel ISA-95</h2>
+<table>
+<tr><th>Nivel</th><th>Sigla</th><th>Sistema</th><th>Normas Governantes</th><th>Modulos CSN</th></tr>
+<tr><td>L4</td><td>BPL</td><td>ERP/CRM</td><td>ISA-95 Part 4 / B2MML · <strong>ISO 9001</strong> (qualidade) · <strong>ISO 14001</strong> (ambiente) · ISO 31000 (risco)</td><td>FIN COM ENG QMS-L4 CST RSH</td></tr>
+<tr><td>L3</td><td>MOM</td><td>MES</td><td>MESA-11 · <strong>ISO 22400</strong> (34 KPIs) · <strong>ISO 45001</strong> (seguranca trabalho) · ISO 55001 (activos)</td><td>PRD QMS MNT PER DOC INV</td></tr>
+<tr><td>L2</td><td>SUP</td><td>SCADA</td><td>IEC 62443 (ciberseguranca) · <strong>ISO 50001</strong> (energia — Bodor 60kW)</td><td>Portal Producao / Portal Pessoal</td></tr>
+<tr><td>L1</td><td>SEN</td><td>PLC/Sensores</td><td>IEC 61131 / EN 17637</td><td>Fotos GSR Inspeccao Dimensional</td></tr>
+<tr><td>L0</td><td>PHY</td><td>Maquinas</td><td>EN 1090 / EN 3834 / EN 12642</td><td>Bodor Weinig Soldadura Pintura</td></tr>
+</table>
+
+<!-- ============ ISO 22400 ============ -->
+<h2>ISO 22400 - KPIs para Manufacturing Operations Management</h2>
+<div class="card" style="border-color: var(--accent);">
+<p><strong>Norma adoptada:</strong> ISO 22400-1:2014 + ISO 22400-2:2014</p>
+<p style="margin-top:4px; font-size:0.85rem;">Define 34 KPIs padronizados para o nivel L3-MOM, organizados em 3 niveis hierarquicos: elementos de medicao, KPIs basicos, e KPIs abrangentes. Alinhada com IEC 62264 (ISA-95).</p>
+</div>
+
+<h3>KPIs Prioritarios CSN</h3>
+<table>
+<tr><th>KPI ISO 22400</th><th>Formula CSN</th><th>Fonte de Dados</th><th>Estado</th></tr>
+<tr><td>Worker Efficiency Ratio</td><td>horas_estimadas / horas_reais por fase</td><td>fases_obra + timetracking</td><td class="green">JA TEMOS</td></tr>
+<tr><td>Actual Production Time</td><td>SUM(duracao_minutos) por colaborador</td><td>timetracking</td><td class="green">JA TEMOS</td></tr>
+<tr><td>Throughput Rate</td><td>fases concluidas / semana</td><td>fases_obra (completed_at)</td><td class="green">JA TEMOS</td></tr>
+<tr><td>Production Process Ratio</td><td>tempo real obra / tempo estimado</td><td>fases_obra agregado</td><td class="green">JA TEMOS</td></tr>
+<tr><td>Schedule Attainment</td><td>obras entregues / obras planeadas</td><td>obras (estado)</td><td class="green">JA TEMOS</td></tr>
+<tr><td>Allocation Efficiency</td><td>% tempo em producao vs total</td><td>timetracking vs calendario</td><td class="amber">PARCIAL</td></tr>
+<tr><td>Setup Ratio</td><td>tempo F1+F2 / tempo total obra</td><td>fases_obra por tipo</td><td class="amber">PARCIAL</td></tr>
+<tr><td>OEE (Bodor laser)</td><td>Disponibilidade x Performance x Qualidade</td><td>Precisa L1 sensores</td><td class="red">FUTURO</td></tr>
+<tr><td>First Pass Yield</td><td>% fases sem retrabalho</td><td>Precisa campo retrabalho</td><td class="red">FUTURO</td></tr>
+<tr><td>Quality Ratio / Scrap Rate</td><td>pecas OK vs desperdicadas</td><td>Precisa consumos material</td><td class="red">FUTURO</td></tr>
+</table>
+
+<div class="card">
+<p><strong>Principio:</strong> O Agente Producao (nucleo L3, Camada 3) calcula os KPIs e gera os dashboards. Nao e codigo estatico. O agente agrega dados do timetracking e fases_obra, calcula os KPIs ISO 22400, e empurra os resultados para o frontend.</p>
+</div>
+
+<!-- ============ TWO DOORS ============ -->
+<h2>Portal Colaborador - Arquitectura Duas Portas</h2>
+
+<h3>Fluxo de Acesso</h3>
+<div class="flow">
+<div class="flow-box" style="border-color:var(--muted);">Login PIN</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color:var(--accent); font-size:1.1rem; padding:12px 20px;"><strong>Producao</strong></div>
+<div class="flow-box" style="border-color:var(--teal);">Area Pessoal</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color:var(--amber);">Re-auth PIN</div>
+</div>
+
+<div class="grid2">
+<div class="card" style="border-color: var(--accent);">
+<h3 style="margin-top:0;">Modo Producao</h3>
+<p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Botao grande (3x). Entra directo.</p>
+<span class="tag tag-purple">Chat Fernando</span>
+<span class="tag tag-purple">Obras + Fases</span>
+<span class="tag tag-purple">Timer / Ponto</span>
+<span class="tag tag-purple">Docs Producao</span>
+<span class="tag tag-green">KPIs ISO 22400</span>
+<span class="tag tag-green">Processos / Instrucoes</span>
+</div>
+<div class="card" style="border-color: var(--teal);">
+<h3 style="margin-top:0; color:var(--teal);">Modo Pessoal</h3>
+<p style="font-size:0.8rem; color:var(--muted); margin-bottom:8px;">Botao pequeno. Pede PIN outra vez.</p>
+<span class="tag tag-teal">Recibos (por ano)</span>
+<span class="tag tag-teal">Ferias (FUTURO)</span>
+<span class="tag tag-teal">Baixas / CITs</span>
+<span class="tag tag-teal">Docs Pessoais</span>
+<span class="tag tag-teal">Dados Pessoais</span>
+<span class="tag tag-green">Comunicacoes</span>
+</div>
+</div>
+
+<p style="font-size:0.85rem; color:var(--muted); margin-top:8px;">Benchmark: Factorial HR (factorialhr.pt) — Barcelona, ~1B$ avaliacao. CSN adopta filosofia self-service para area pessoal + lado producao que Factorial nao tem.</p>
+
+<div class="card" style="border-color: var(--green); margin-top: 16px;">
+<p style="font-size:0.85rem;"><strong>Trio certificacao PRR/Portugal 2030:</strong> ISO 9001 (qualidade) + ISO 14001 (ambiente) + ISO 45001 (seguranca). Norma KPIs: ISO 22400 (34+4). Norma energia: ISO 50001. Total: 14 normas governantes no sistema Opus.</p>
+</div>
+
+<!-- ============ AGENTS ============ -->
+<h2>11 Agentes do Nucleo (Camada 3)</h2>
+<table>
+<tr><th>#</th><th>Agente</th><th>Nivel ISA-95</th><th>Responsabilidade</th></tr>
+<tr><td>1</td><td>Agente Producao</td><td>L3-PRD</td><td>Obras, fases, timer, <strong>KPIs ISO 22400</strong>, dashboards</td></tr>
+<tr><td>2</td><td>Agente Qualidade</td><td>L3-QMS</td><td>Inspeccoes, EN 1090, ensaios, rastreabilidade</td></tr>
+<tr><td>3</td><td>Agente Manutencao</td><td>L3-MNT</td><td>Equipamentos, MTBF, preventiva</td></tr>
+<tr><td>4</td><td>Agente Documental</td><td>L3-DOC</td><td>Classificacao, extracao, skills por fornecedor</td></tr>
+<tr><td>5</td><td>Agente Inventario</td><td>L3-INV</td><td>Stock, consumos, lotes material</td></tr>
+<tr><td>6</td><td>Agente Financeiro</td><td>L4-FIN</td><td>Faturacao, InvoiceXpress, e-fatura, tesouraria</td></tr>
+<tr><td>7</td><td>Agente Comercial</td><td>L4-COM</td><td>Leads, propostas, clientes, Marta</td></tr>
+<tr><td>8</td><td>Agente Tecnico</td><td>L4-ENG</td><td>Homologacao, FAMs, DAVs, COC</td></tr>
+<tr><td>9</td><td>Agente Marketing</td><td>L4-COM</td><td>Conteudo, CSN Connect</td></tr>
+<tr><td>10</td><td>Agente Legal</td><td>L4-BPL</td><td>Compliance, RGPD, contratos</td></tr>
+<tr><td>11</td><td>Agente RH</td><td>L3-RH</td><td>Recibos, payroll, portal pessoal, Carolina</td></tr>
+</table>
+
+<!-- ============ PERSONAS ============ -->
+<h2>Personas (Camada 2 - Interface)</h2>
+<div class="card">
+<p style="font-size:0.85rem;"><strong>Personas produzem NADA.</strong> Sao interfaces de comunicacao apenas. Todo o trabalho e feito pelos agentes do nucleo (Camada 3).</p>
+</div>
+<div class="grid3">
+<div class="card"><strong>Marta</strong><br><span style="font-size:0.75rem;">Externa/comercial. CSN Connect.</span></div>
+<div class="card"><strong>Sr. Manuel</strong><br><span style="font-size:0.75rem;">Chao de fabrica. Producao.</span></div>
+<div class="card"><strong>Carolina</strong><br><span style="font-size:0.75rem;">RH/pessoal. Recibos, ferias.</span></div>
+<div class="card"><strong>Fernando</strong><br><span style="font-size:0.75rem;">L0-PER. Qualificacoes producao.</span></div>
+<div class="card"><strong>Luisa</strong><br><span style="font-size:0.75rem;">Qualidade. Inspeccoes.</span></div>
+<div class="card"><strong>Carlos</strong><br><span style="font-size:0.75rem;">Gestao. Overview.</span></div>
+</div>
+
+<!-- ============ MESA-11 ============ -->
+<h2>MESA-11 Checklist (L3-MES)</h2>
+<table>
+<tr><th>#</th><th>Funcao</th><th>Estado</th><th>Nota</th></tr>
+<tr><td>1</td><td>Production Scheduling</td><td class="amber">PARCIAL</td><td>Fases com estimativas hora</td></tr>
+<tr><td>2</td><td>Production Dispatching</td><td class="amber">PARCIAL</td><td>Atribuicao manual responsavel</td></tr>
+<tr><td>3</td><td>Production Execution</td><td class="amber">PARCIAL</td><td>Timer + chat Fernando</td></tr>
+<tr><td>4</td><td>Production Tracking</td><td class="green">SIM</td><td>Timer + portal + fases_obra</td></tr>
+<tr><td>5</td><td>Performance Analysis</td><td class="amber">PARCIAL</td><td>ISO 22400 adoptada, dados existem, dashboard por fazer</td></tr>
+<tr><td>6</td><td>Quality Management</td><td class="amber">PARCIAL</td><td>Inspeccao visual, rastreabilidade basica</td></tr>
+<tr><td>7</td><td>Maintenance Management</td><td class="red">NAO</td><td></td></tr>
+<tr><td>8</td><td>Resource Management</td><td class="amber">PARCIAL</td><td>Portal RH + colaboradores + ausencias</td></tr>
+<tr><td>9</td><td>Document Management</td><td class="green">SIM</td><td>Agente Documental + 13 skills</td></tr>
+<tr><td>10</td><td>Data Collection</td><td class="amber">PARCIAL</td><td>Portal ponto + CIT upload + e-fatura</td></tr>
+<tr><td>11</td><td>Process Management</td><td class="red">NAO</td><td></td></tr>
+</table>
+<p style="font-size:0.85rem;"><strong>Score:</strong> 2 completas / 7 parciais / 2 em falta</p>
+
+<!-- ============ AUDIT ============ -->
+<h2>Prontidao para Auditoria</h2>
+<table>
+<tr><th>Norma</th><th>Objectivo</th><th>Coberto</th><th>Falta</th><th>%</th></tr>
+<tr><td>ISO 9001:2015</td><td>SGQ base</td><td>Processos, docs, registos</td><td>Auditorias internas, revisao gestao</td><td>35%</td></tr>
+<tr><td>Reg. 2018/858</td><td>Homologacao CE</td><td>COC dados, VIN tracking</td><td>COC electronico (Jul/2026)</td><td>40%</td></tr>
+<tr><td>EN 1090-1/-2</td><td>Estruturas aco</td><td>Rastreabilidade material</td><td>WPS, WPQR, FPC manual</td><td>20%</td></tr>
+<tr><td>EN 12642 L/XL</td><td>Resist. estrutural</td><td>Modelo definido</td><td>Ensaio/calculo FEA</td><td>10%</td></tr>
+<tr><td>EN ISO 3834-3</td><td>Qualidade soldadura</td><td>Vem com EN 1090</td><td>Consumiveis, coord. soldadura</td><td>15%</td></tr>
+<tr><td><strong>ISO 22400</strong></td><td><strong>KPIs MOM</strong></td><td><strong>5 KPIs calculaveis</strong></td><td><strong>Dashboard, 10+ KPIs</strong></td><td><strong>30%</strong></td></tr>
+<tr><td><strong>ISO 14001</strong></td><td><strong>Gestao ambiental</strong></td><td>Consciencia residuos</td><td>Sistema gestao ambiental completo</td><td>5%</td></tr>
+<tr><td><strong>ISO 45001</strong></td><td><strong>Seguranca trabalho</strong></td><td>EPIs basicos</td><td>Avaliacoes risco, registo acidentes</td><td>5%</td></tr>
+<tr><td><strong>ISO 50001</strong></td><td><strong>Gestao energia</strong></td><td>Bodor identificado (60kW)</td><td>Contador inteligente, baseline</td><td>5%</td></tr>
+<tr><td>VDI 2700</td><td>Fixacao carga (DE)</td><td>Modelo base</td><td>Calculos EN 12195-1</td><td>10%</td></tr>
+</table>
+
+<!-- ============ NUMBERS ============ -->
+<h2>Numeros do Sistema</h2>
+<div class="grid3">
+<div class="card" style="text-align:center;"><div class="big-number">33</div>Tabelas</div>
+<div class="card" style="text-align:center;"><div class="big-number">19</div>Migrations</div>
+<div class="card" style="text-align:center;"><div class="big-number">24</div>Tools (API)</div>
+<div class="card" style="text-align:center;"><div class="big-number">27</div>ADRs</div>
+<div class="card" style="text-align:center;"><div class="big-number">11</div>Agentes</div>
+<div class="card" style="text-align:center;"><div class="big-number">13</div>Skills</div>
+<div class="card" style="text-align:center;"><div class="big-number">3928</div>e-Fatura</div>
+<div class="card" style="text-align:center;"><div class="big-number">45</div>Recibos</div>
+<div class="card" style="text-align:center;"><div class="big-number">29K</div>Emails</div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<div class="footer">
+<p>CSN - Engenharia de Veiculos Comerciais | Mafra, Portugal | NIF 500 861 790</p>
+<p>Documento interno - nao distribuir | csn-architecture-OPUS-S32.html | 30/03/2026</p>
+</div>
+
+</body>
+</html>
