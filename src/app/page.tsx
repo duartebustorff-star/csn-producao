@@ -12,6 +12,7 @@ import RHView from "@/components/RHView"
 import WorkerRHView from "@/components/WorkerRHView"
 import DocumentosView from "@/components/DocumentosView"
 import LeadsView from "@/components/LeadsView"
+import RoteadorView from "@/components/RoteadorView"
 import WorkerDashboard from "@/components/WorkerDashboard"
 import type { Colaborador } from "@/lib/types"
 import type { Lang } from "@/lib/translations"
@@ -133,6 +134,9 @@ export default function Home() {
           {isAdmin && (
             <SidebarButton active={activeView === "dashboard"} onClick={() => setActiveView("dashboard")} icon="📊" label="Dashboard" />
           )}
+          {isAdmin && (
+            <SidebarButton active={activeView === "roteador"} onClick={() => setActiveView("roteador")} icon="🧭" label="Roteador" />
+          )}
         </nav>
         <div className="border-t border-border p-3">
           <div className="flex items-center gap-2 lg:gap-3">
@@ -238,6 +242,7 @@ export default function Home() {
               {activeView === "rh" && (isAdmin ? <RHView user={user} /> : <WorkerRHView user={user} />)}
               {activeView === "dashboard" && isAdmin && <DashboardView />}
               {activeView === "dashboard" && !isAdmin && workerMode === "producao" && <WorkerDashboard user={user} />}
+              {activeView === "roteador" && isAdmin && <RoteadorView user={user} />}
             </>
           )}
         </main>

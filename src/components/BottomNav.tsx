@@ -3,7 +3,16 @@
 import type { Lang } from "@/lib/translations"
 import type { WorkerMode } from "@/app/page"
 
-export type View = "chat" | "obras" | "leads" | "documentos" | "rh" | "dashboard" | "fernando" | "camera"
+export type View =
+  | "chat"
+  | "obras"
+  | "leads"
+  | "documentos"
+  | "rh"
+  | "dashboard"
+  | "roteador"
+  | "fernando"
+  | "camera"
 
 interface BottomNavProps {
   active: View
@@ -20,6 +29,7 @@ const ICONS: Record<View, string> = {
   documentos: "📂",
   rh: "👤",
   dashboard: "📊",
+  roteador: "🧭",
   fernando: "🤖",
   camera: "📷",
 }
@@ -31,6 +41,7 @@ const LABELS: Record<View, string> = {
   documentos: "Documentos",
   rh: "RH",
   dashboard: "Dashboard",
+  roteador: "Roteador",
   fernando: "Fernando",
   camera: "Câmara",
 }
@@ -39,7 +50,7 @@ export default function BottomNav({ active, onChange, lang, isAdmin, workerMode 
   let views: View[]
 
   if (isAdmin) {
-    views = ["chat", "obras", "leads", "documentos", "rh", "dashboard"]
+    views = ["chat", "obras", "leads", "documentos", "rh", "dashboard", "roteador"]
   } else if (workerMode === "pessoal") {
     views = ["rh", "chat"]
   } else {
