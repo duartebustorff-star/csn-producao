@@ -1,0 +1,30 @@
+# CSN Opus — Regras de Contexto
+
+## OBRIGATÓRIO NO INÍCIO DE CADA SESSÃO
+
+Antes de qualquer resposta, lê SEMPRE estes ficheiros por esta ordem:
+
+1. `ESTADO.OPUS.S[número mais alto].md` na raiz do projecto
+2. O ficheiro `csn-architecture-OPUS-S[número mais alto].html` em `docs/`
+3. O ficheiro `CSN-Controlo-OPUS-S[número mais alto].pdf` em `docs/`
+
+Estes três documentos contêm TODO o contexto do sistema:
+- Arquitectura ISA-95 completa
+- Estado actual de todos os módulos
+- Agentes núcleo e personas
+- Normas e certificações
+- Decisões arquitecturais (ADRs)
+- Pendentes e prioridades
+- Regras de código e git
+
+Sem ler estes ficheiros, não respondas. O contexto está lá, não nas tuas suposições.
+
+## PROTOCOLO DE FECHO DE SESSÃO
+
+No fim de cada sessão gerar SEMPRE 4 documentos com número de sessão incrementado:
+
+1. `ESTADO.OPUS.SXX.md` — na raiz (substitui o anterior) e em `docs/` (arquivo)
+2. `CSN-Controlo-OPUS-SXX.pdf` — em `docs/`
+3. `csn-architecture-OPUS-SXX.html` — em `docs/`
+
+NUNCA sobrescrever ficheiros existentes. Sempre número incrementado.
