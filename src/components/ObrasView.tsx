@@ -23,11 +23,21 @@ interface ObraWithDocs extends Obra {
   has_fam?: boolean
 }
 
-export default function ObrasView({ lang }: { lang: Lang }) {
+interface TimerData {
+  id: number
+  inicio: string
+  fase_obra_id: number
+  obra_id: string
+}
+
+export default function ObrasView({ lang, colaboradorId }: { lang: Lang; colaboradorId: string }) {
   const [obras, setObras] = useState<ObraWithDocs[]>([])
   const [selectedObra, setSelectedObra] = useState<ObraWithDocs | null>(null)
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>("todas")
+  const [selectedMntId, setSelectedMntId] = useState<string | null>(null)
+  const [timer, setTimer] = useState<TimerData | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
 
   const fetchObras = useCallback(async () => {
     try {
@@ -38,16 +48,67 @@ export default function ObrasView({ lang }: { lang: Lang }) {
     setLoading(false)
   }, [filter])
 
+  const fetchTimer = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/timer?colaborador_id=${colaboradorId}`)
+      const data = await res.json()
+      setTimer(data.timer || null)
+    } catch {
+      setTimer(null)
+    }
+  }, [colaboradorId])
+
   useEffect(() => {
     fetchObras()
   }, [fetchObras])
+
+  useEffect(() => {
+    fetchTimer()
+    const i = setInterval(fetchTimer, 30000)
+    return () => clearInterval(i)
+  }, [fetchTimer])
+
+  const postTimerAction = async (payload: Record<string, unknown>) => {
+    setActionLoading(true)
+    try {
+      await fetch("/api/timer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ colaborador_id: colaboradorId, ...payload }),
+      })
+      await fetchObras()
+      await fetchTimer()
+    } finally {
+      setActionLoading(false)
+    }
+  }
 
   if (selectedObra) {
     return <ObraDetail obra={selectedObra} onClose={() => { setSelectedObra(null); fetchObras() }} />
   }
 
+  const mntObras = obras
+    .filter((o) => String(o.id).startsWith("MNT-"))
+    .sort((a, b) => a.id.localeCompare(b.id))
+  const obrasSemMnt = obras.filter((o) => !String(o.id).startsWith("MNT-"))
+  const selectedMnt = mntObras.find((o) => o.id === selectedMntId) || null
+
+  const getNextFaseDisponivel = (obra: ObraWithDocs): FaseObra | null => {
+    const fases = (obra.fases_obra || []).slice().sort((a, b) => a.fase_numero - b.fase_numero)
+    const emCurso = fases.find((f) => f.estado === "em_curso")
+    if (emCurso) return emCurso
+    for (const fase of fases) {
+      if (fase.estado !== "pendente") continue
+      const anterioresOk = fases
+        .filter((f) => f.fase_numero < fase.fase_numero)
+        .every((f) => f.estado === "concluido")
+      if (anterioresOk) return fase
+    }
+    return null
+  }
+
   // Group by lead
-  const byLead = obras.reduce<Record<string, ObraWithDocs[]>>((acc, obra) => {
+  const byLead = obrasSemMnt.reduce<Record<string, ObraWithDocs[]>>((acc, obra) => {
     const key = obra.lead_id || "sem_lead"
     if (!acc[key]) acc[key] = []
     acc[key].push(obra)
@@ -78,6 +139,102 @@ export default function ObrasView({ lang }: { lang: Lang }) {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        {/* MNT internal works */}
+        {!loading && mntObras.length > 0 && (
+          <section className="space-y-3">
+            <div className="px-1">
+              <p className="text-xs text-muted">Obras internas MNT</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {mntObras.map((obra) => {
+                const fases = obra.fases_obra || []
+                const done = fases.filter((f) => f.estado === "concluido").length
+                const total = fases.length
+                const pct = total > 0 ? Math.round((done / total) * 100) : 0
+                return (
+                  <button
+                    key={obra.id}
+                    onClick={() => setSelectedMntId(obra.id)}
+                    className={`rounded-2xl p-4 text-left border transition-colors ${
+                      selectedMntId === obra.id
+                        ? "bg-accent/15 border-accent"
+                        : "bg-card hover:bg-card-hover border-border"
+                    }`}
+                  >
+                    <p className="font-mono text-lg font-semibold text-foreground">{obra.id}</p>
+                    <p className="text-xs text-muted mt-1">{done}/{total} fases · {pct}%</p>
+                  </button>
+                )
+              })}
+            </div>
+
+            {selectedMnt && (
+              <div className="bg-card rounded-2xl p-3 space-y-2">
+                <p className="text-sm font-medium text-foreground">Fases {selectedMnt.id}</p>
+                {(selectedMnt.fases_obra || [])
+                  .slice()
+                  .sort((a, b) => a.fase_numero - b.fase_numero)
+                  .map((fase) => {
+                    const next = getNextFaseDisponivel(selectedMnt)
+                    const isCurrentTimer = timer?.fase_obra_id === fase.id
+                    const canStart = next?.id === fase.id && !timer
+                    const canComplete = isCurrentTimer || fase.estado === "em_curso"
+                    const blockedByOtherTimer = !!timer && !isCurrentTimer
+                    const isBlocked =
+                      fase.estado !== "concluido" &&
+                      !canStart &&
+                      !canComplete
+                    return (
+                      <div key={fase.id} className="rounded-lg bg-background p-2.5 flex items-center justify-between gap-2">
+                        <div>
+                          <p className="text-sm text-foreground flex items-center gap-1.5">
+                            <span>F{fase.fase_numero} · {fase.nome}</span>
+                            {isBlocked && <span className="text-muted" title="Fase bloqueada">🔒</span>}
+                          </p>
+                          <p className="text-[11px] text-muted">{fase.estado}</p>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {isCurrentTimer ? (
+                            <button
+                              onClick={() => postTimerAction({ action: "stop" })}
+                              disabled={actionLoading}
+                              className="text-xs px-2 py-1 rounded-lg bg-danger/15 text-danger hover:bg-danger/25"
+                            >
+                              Parar
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => postTimerAction({ action: "start", obra_id: selectedMnt.id, fase_id: fase.id })}
+                              disabled={!canStart || blockedByOtherTimer || actionLoading}
+                              className={`text-xs px-2 py-1 rounded-lg ${
+                                canStart && !blockedByOtherTimer
+                                  ? "bg-accent/15 text-accent hover:bg-accent/25"
+                                  : "bg-card text-muted cursor-not-allowed"
+                              }`}
+                            >
+                              Iniciar
+                            </button>
+                          )}
+                          <button
+                            onClick={() => postTimerAction({ action: "complete", obra_id: selectedMnt.id, fase_id: fase.id })}
+                            disabled={!canComplete || blockedByOtherTimer || actionLoading}
+                            className={`text-xs px-2 py-1 rounded-lg ${
+                              canComplete && !blockedByOtherTimer
+                                ? "bg-success/15 text-success hover:bg-success/25"
+                                : "bg-card text-muted cursor-not-allowed"
+                            }`}
+                          >
+                            Concluir
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+              </div>
+            )}
+          </section>
+        )}
+
         {loading ? (
           <p className="text-center text-muted text-sm py-12">{t(lang, "a_pensar")}</p>
         ) : Object.keys(byLead).length === 0 ? (

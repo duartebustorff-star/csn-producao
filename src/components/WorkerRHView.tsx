@@ -122,6 +122,10 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
     window.open(`/api/rh/declaracao-rendimentos?colaborador_rh_id=${user.colaborador_rh_id}&ano=${ano}`, "_blank")
   }
 
+  const openExtractoPagamentos = (ano: number) => {
+    window.open(`/api/rh/extracto-pagamentos?colaborador_rh_id=${user.colaborador_rh_id}&ano=${ano}`, "_blank")
+  }
+
   const recibosByYear = recibos.reduce<Record<number, Recibo[]>>((acc, r) => {
     if (!acc[r.ano]) acc[r.ano] = []
     acc[r.ano].push(r)
@@ -187,6 +191,13 @@ export default function WorkerRHView({ user }: { user: Colaborador }) {
                       title="Descarregar Declaração Anual de Remunerações"
                     >
                       Declaração
+                    </button>
+                    <button
+                      onClick={() => openExtractoPagamentos(ano)}
+                      className="text-xs px-2.5 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+                      title="Descarregar Extracto Anual de Pagamentos"
+                    >
+                      Extracto PDF
                     </button>
                   </div>
 
