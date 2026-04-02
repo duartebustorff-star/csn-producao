@@ -15,8 +15,8 @@ from pathlib import Path
 from supabase import create_client
 
 # ── Config ──────────────────────────────────────────────────────────
-BATCH_SIZE = 10
-BATCH_PAUSE = 10  # segundos entre batches (rate limit Voyage AI)
+BATCH_SIZE = 50
+BATCH_PAUSE = 1  # segundos entre batches
 API_URL = "https://csn-producao.vercel.app/api/embeddings/gerar"
 TIMEOUT = 120  # segundos por request (PDFs grandes)
 
