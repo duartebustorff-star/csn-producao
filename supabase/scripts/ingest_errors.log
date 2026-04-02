@@ -1,0 +1,790 @@
+2026-04-02 15:54:27,084 | doc_id=3 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:54:34,840 | doc_id=6 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:36,995 | doc_id=7 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:38,757 | doc_id=8 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:40,802 | doc_id=9 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:42,079 | doc_id=10 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:54:43,274 | doc_id=11 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:46,745 | doc_id=12 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:48,881 | doc_id=13 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:51,004 | doc_id=14 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:52,385 | doc_id=15 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:53,801 | doc_id=16 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:54:57,441 | doc_id=17 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:54:58,973 | doc_id=18 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:00,481 | doc_id=19 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:01,935 | doc_id=20 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:55:03,788 | doc_id=21 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:07,512 | doc_id=22 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:09,008 | doc_id=23 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:10,405 | doc_id=24 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:12,677 | doc_id=25 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:13,854 | doc_id=26 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:15,486 | doc_id=27 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:16,109 | doc_id=28 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:17,567 | doc_id=29 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:19,109 | doc_id=30 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:20,522 | doc_id=31 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:23,991 | doc_id=32 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:55:28,583 | doc_id=34 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:30,397 | doc_id=35 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:36,729 | doc_id=38 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:55:38,608 | doc_id=39 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:55:40,258 | doc_id=40 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:42,246 | doc_id=41 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:45,597 | doc_id=42 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:55:47,407 | doc_id=43 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:48,962 | doc_id=44 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:50,179 | doc_id=45 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:51,777 | doc_id=46 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:55:53,485 | doc_id=47 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:54,896 | doc_id=48 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:56,542 | doc_id=49 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:58,224 | doc_id=50 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:55:59,691 | doc_id=51 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:03,444 | doc_id=52 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:04,830 | doc_id=53 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:56:06,583 | doc_id=54 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:08,142 | doc_id=55 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:10,562 | doc_id=56 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:12,020 | doc_id=57 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:56:13,750 | doc_id=58 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:56:16,068 | doc_id=59 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:18,229 | doc_id=60 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:19,790 | doc_id=61 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:23,559 | doc_id=62 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:25,301 | doc_id=63 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:28,989 | doc_id=65 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:30,718 | doc_id=66 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:32,472 | doc_id=67 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:56:39,262 | doc_id=70 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:41,170 | doc_id=71 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:45,039 | doc_id=72 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:46,786 | doc_id=73 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:56:48,590 | doc_id=74 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:50,274 | doc_id=75 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:56:52,390 | doc_id=76 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:53,911 | doc_id=77 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:55,769 | doc_id=78 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:57,390 | doc_id=79 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:58,066 | doc_id=80 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:56:58,766 | doc_id=81 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:02,664 | doc_id=82 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:04,461 | doc_id=83 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:05,768 | doc_id=84 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:07,072 | doc_id=85 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:09,366 | doc_id=86 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:11,226 | doc_id=87 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:13,114 | doc_id=88 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:16,042 | doc_id=89 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:17,620 | doc_id=90 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:19,366 | doc_id=91 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:23,630 | doc_id=92 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:25,140 | doc_id=93 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:26,927 | doc_id=94 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:28,939 | doc_id=95 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:57:32,775 | doc_id=97 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:34,151 | doc_id=98 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:45,102 | doc_id=101 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:49,062 | doc_id=102 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:51,043 | doc_id=103 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:52,336 | doc_id=104 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:54,212 | doc_id=105 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:57:56,089 | doc_id=106 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:57:57,781 | doc_id=107 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:57:59,446 | doc_id=108 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:01,404 | doc_id=109 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:03,622 | doc_id=110 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:58:05,409 | doc_id=111 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:09,255 | doc_id=112 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:11,344 | doc_id=113 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:12,960 | doc_id=114 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:14,259 | doc_id=115 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:16,448 | doc_id=116 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:18,255 | doc_id=117 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:20,090 | doc_id=118 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:21,554 | doc_id=119 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:23,222 | doc_id=120 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:24,977 | doc_id=121 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:28,781 | doc_id=122 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:30,563 | doc_id=123 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:36,442 | doc_id=125 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:43,555 | doc_id=128 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:45,879 | doc_id=129 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:48,899 | doc_id=130 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:50,770 | doc_id=131 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:54,596 | doc_id=132 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:58:56,341 | doc_id=133 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:58:58,269 | doc_id=134 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:00,068 | doc_id=135 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:01,990 | doc_id=136 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:04,245 | doc_id=137 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:59:05,961 | doc_id=138 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:07,462 | doc_id=139 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:09,093 | doc_id=140 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:10,825 | doc_id=141 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:14,801 | doc_id=142 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:16,303 | doc_id=143 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:59:17,021 | doc_id=144 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 15:59:19,136 | doc_id=145 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:59:20,931 | doc_id=146 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:59:22,912 | doc_id=147 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 15:59:24,076 | doc_id=148 | status=502 | {"error":"Voyage AI error: {\"detail\":\"You have not yet added your payment method in the billing page and will have reduced rate limits of 3 RPM and 10K TPM. To unlock our standard rate limits, plea
+2026-04-02 16:00:13,904 | doc_id=168 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:00:25,416 | doc_id=172 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:00:55,054 | doc_id=185 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:01:44,865 | doc_id=205 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:02:45,218 | doc_id=227 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:02:45,795 | doc_id=228 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:02:51,482 | doc_id=230 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:03:04,711 | doc_id=235 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:03:38,308 | doc_id=249 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:04:38,682 | doc_id=272 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:04:50,020 | doc_id=276 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:04:56,872 | doc_id=279 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:04:58,773 | doc_id=280 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:05:33,232 | doc_id=293 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:05:36,746 | doc_id=296 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:05:37,257 | doc_id=297 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:06:10,109 | doc_id=317 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:06:14,405 | doc_id=319 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:15,847 | doc_id=320 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:17,771 | doc_id=321 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:21,555 | doc_id=322 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:23,655 | doc_id=323 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:25,491 | doc_id=324 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:27,267 | doc_id=325 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:29,563 | doc_id=326 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:34,554 | doc_id=327 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:06:36,471 | doc_id=328 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:38,389 | doc_id=329 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:40,776 | doc_id=330 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:42,836 | doc_id=331 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:46,561 | doc_id=332 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:48,389 | doc_id=333 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:50,111 | doc_id=334 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:51,720 | doc_id=335 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:53,513 | doc_id=336 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:55,075 | doc_id=337 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:56,711 | doc_id=338 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:06:58,669 | doc_id=339 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:00,756 | doc_id=340 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:02,531 | doc_id=341 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:05,831 | doc_id=342 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:07,274 | doc_id=343 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:08,500 | doc_id=344 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:10,288 | doc_id=345 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:11,673 | doc_id=346 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:07:18,984 | doc_id=348 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:07:35,299 | doc_id=355 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:07:37,160 | doc_id=356 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:07:39,077 | doc_id=357 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:07:45,292 | doc_id=360 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:08:20,820 | doc_id=373 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:09:20,700 | doc_id=395 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:09:24,004 | doc_id=396 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:09:30,620 | doc_id=399 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:09:41,346 | doc_id=403 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:09:41,862 | doc_id=404 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:09:46,274 | doc_id=406 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:10:21,606 | doc_id=421 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:10:25,525 | doc_id=422 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:11:03,880 | doc_id=432 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:11:04,702 | doc_id=433 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:12:06,881 | doc_id=458 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:12:12,686 | doc_id=461 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:12:19,661 | doc_id=464 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:12:21,554 | doc_id=465 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:13:30,606 | doc_id=484 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:14:29,303 | doc_id=507 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:15:04,940 | doc_id=522 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:15:24,995 | doc_id=531 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:15:49,275 | doc_id=541 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:17:34,105 | doc_id=550 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:18:24,650 | doc_id=571 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:18:28,668 | doc_id=572 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:18:31,650 | doc_id=573 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:18:32,935 | doc_id=574 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:18:48,191 | doc_id=581 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:18:57,115 | doc_id=584 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:19:07,635 | doc_id=589 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:19:09,327 | doc_id=590 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:19:15,040 | doc_id=592 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:19:57,581 | doc_id=611 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:21:20,894 | doc_id=642 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:07,585 | doc_id=663 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:09,075 | doc_id=664 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:10,492 | doc_id=665 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:12,023 | doc_id=666 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:13,429 | doc_id=667 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:19,159 | doc_id=670 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:20,649 | doc_id=671 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:22:23,244 | doc_id=672 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:23:20,147 | doc_id=696 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:23:26,690 | doc_id=699 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:26:21,504 | doc_id=728 | status=500 | {"error":"Erro download: {\"url\":\"https://oysfxhlzilazeznpaafc.supabase.co/storage/v1/object/documentos/email/CSN-DEP-COMERCIAL-NUNO-BAPTISTA/SEM-REF_ANEXO_2025-03-13_La_Point_Camp_s_II__Lda.pdf\"}"
+2026-04-02 16:26:26,925 | doc_id=731 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:26:42,818 | doc_id=738 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:26:44,813 | doc_id=739 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:26:46,674 | doc_id=740 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:26:58,622 | doc_id=745 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:27:00,291 | doc_id=746 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:28:39,714 | doc_id=782 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:28:48,274 | doc_id=786 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:29:13,797 | doc_id=798 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:29:16,344 | doc_id=799 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:29:27,439 | doc_id=804 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:29:53,835 | doc_id=814 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:29:56,123 | doc_id=815 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:29:59,389 | doc_id=816 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:30:47,192 | doc_id=833 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:30:49,682 | doc_id=834 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:30:53,741 | doc_id=836 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:31:23,020 | doc_id=850 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:31:38,983 | doc_id=856 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:11,651 | doc_id=3 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:18,787 | doc_id=10 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:31,470 | doc_id=17 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:33,882 | doc_id=20 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:45,202 | doc_id=32 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:47,638 | doc_id=38 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:48,438 | doc_id=39 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:51,016 | doc_id=42 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:32:54,432 | doc_id=46 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:33:04,848 | doc_id=53 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:33:09,322 | doc_id=57 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:33:10,974 | doc_id=58 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:33:19,564 | doc_id=67 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:33:24,079 | doc_id=73 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:33:28,756 | doc_id=75 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:08,363 | doc_id=95 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:16,987 | doc_id=106 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:17,571 | doc_id=107 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:23,030 | doc_id=110 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:43,875 | doc_id=132 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:49,838 | doc_id=137 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:52,880 | doc_id=140 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:34:56,181 | doc_id=143 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:58,562 | doc_id=145 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:34:59,392 | doc_id=146 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:00,312 | doc_id=147 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:02,158 | doc_id=168 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:02,805 | doc_id=172 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:03,699 | doc_id=185 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:04,359 | doc_id=205 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:05,183 | doc_id=227 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:05,834 | doc_id=228 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:08,152 | doc_id=230 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:08,855 | doc_id=235 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:09,460 | doc_id=249 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:10,101 | doc_id=272 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:10,820 | doc_id=276 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:11,592 | doc_id=279 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:12,281 | doc_id=280 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:12,838 | doc_id=293 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:13,424 | doc_id=296 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:13,942 | doc_id=297 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:14,610 | doc_id=317 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:15,261 | doc_id=319 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:16,885 | doc_id=320 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:17,515 | doc_id=321 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:18,201 | doc_id=322 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:18,820 | doc_id=323 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:19,475 | doc_id=324 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:20,102 | doc_id=325 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:20,788 | doc_id=326 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:25,288 | doc_id=327 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:25,923 | doc_id=328 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:26,551 | doc_id=329 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:27,315 | doc_id=330 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:28,143 | doc_id=331 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:28,750 | doc_id=332 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:29,649 | doc_id=333 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:30,261 | doc_id=334 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:30,925 | doc_id=335 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:31,558 | doc_id=336 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:32,182 | doc_id=337 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:32,838 | doc_id=338 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:33,463 | doc_id=339 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:34,102 | doc_id=340 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:34,697 | doc_id=341 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:35,322 | doc_id=342 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:35,888 | doc_id=343 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:36,548 | doc_id=344 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:37,158 | doc_id=345 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:37,822 | doc_id=346 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:35:42,212 | doc_id=348 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:43,189 | doc_id=355 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:35:44,085 | doc_id=356 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:35:45,254 | doc_id=357 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:35:45,907 | doc_id=360 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:46,707 | doc_id=373 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:47,801 | doc_id=395 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:35:49,632 | doc_id=396 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:35:50,232 | doc_id=399 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:50,798 | doc_id=403 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:51,308 | doc_id=404 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:51,969 | doc_id=406 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:52,723 | doc_id=421 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:53,366 | doc_id=422 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:54,001 | doc_id=432 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:54,480 | doc_id=433 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:55,183 | doc_id=458 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:55,865 | doc_id=461 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:56,522 | doc_id=464 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:57,177 | doc_id=465 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:57,799 | doc_id=484 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:58,424 | doc_id=507 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:35:58,962 | doc_id=522 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:00,626 | doc_id=531 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:01,278 | doc_id=541 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:01,882 | doc_id=550 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:02,455 | doc_id=571 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:03,278 | doc_id=572 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:03,977 | doc_id=573 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:04,601 | doc_id=574 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:08,259 | doc_id=581 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:08,818 | doc_id=584 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:09,522 | doc_id=589 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:10,100 | doc_id=590 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:10,746 | doc_id=592 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:11,557 | doc_id=611 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:12,505 | doc_id=642 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:13,161 | doc_id=663 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:13,762 | doc_id=664 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:14,361 | doc_id=665 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:14,937 | doc_id=666 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:15,548 | doc_id=667 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:16,115 | doc_id=670 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:16,885 | doc_id=671 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:17,535 | doc_id=672 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:18,180 | doc_id=696 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:18,818 | doc_id=699 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:21,060 | doc_id=731 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:21,609 | doc_id=738 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:22,194 | doc_id=739 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:23,402 | doc_id=740 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:24,115 | doc_id=745 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:25,020 | doc_id=746 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:25,891 | doc_id=782 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:26,459 | doc_id=786 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:27,192 | doc_id=798 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:28,713 | doc_id=799 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:29,316 | doc_id=804 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:29,873 | doc_id=814 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:30,970 | doc_id=815 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:36:32,864 | doc_id=816 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:36:34,178 | doc_id=833 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:35,559 | doc_id=834 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:36,187 | doc_id=836 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:36,838 | doc_id=850 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:37,396 | doc_id=856 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:41,384 | doc_id=863 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:43,175 | doc_id=864 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:36:53,089 | doc_id=868 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:37:21,756 | doc_id=883 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:37:23,990 | doc_id=884 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:37:29,962 | doc_id=887 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:37:32,202 | doc_id=889 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:37:41,875 | doc_id=894 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:37:47,314 | doc_id=896 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:38:20,755 | doc_id=913 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:38:32,583 | doc_id=918 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:38:34,154 | doc_id=919 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:38:52,075 | doc_id=927 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:39:02,099 | doc_id=932 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:39:25,000 | doc_id=937 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:39:30,001 | doc_id=939 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:39:34,487 | doc_id=941 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:39:39,175 | doc_id=943 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:39:45,497 | doc_id=946 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:39:53,779 | doc_id=949 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:40:32,354 | doc_id=968 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:40:58,352 | doc_id=981 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:41:36,049 | doc_id=997 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:41:38,213 | doc_id=998 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:41:51,928 | doc_id=1003 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:42:19,177 | doc_id=1017 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:43:38,693 | doc_id=1056 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:44:13,432 | doc_id=1071 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:44:15,102 | doc_id=1072 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:44:25,419 | doc_id=1077 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:44:30,398 | doc_id=1080 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:31,501 | doc_id=1081 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:32,971 | doc_id=1082 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:34,197 | doc_id=1083 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:35,580 | doc_id=1084 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:37,014 | doc_id=1085 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:38,320 | doc_id=1086 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:39,593 | doc_id=1087 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:44:40,837 | doc_id=1088 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:15,953 | doc_id=1105 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:45:24,073 | doc_id=1109 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:25,911 | doc_id=1110 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:27,883 | doc_id=1111 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:29,604 | doc_id=1112 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:31,653 | doc_id=1113 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:33,354 | doc_id=1114 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:35,273 | doc_id=1115 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:38,474 | doc_id=1117 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:41,111 | doc_id=1118 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:42,473 | doc_id=1119 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:45:46,271 | doc_id=1121 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:46:02,500 | doc_id=1129 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:47:20,366 | doc_id=1164 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:48:08,676 | doc_id=1179 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:48:14,039 | doc_id=1182 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:48:55,200 | doc_id=1203 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:48:56,812 | doc_id=1204 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:49:01,678 | doc_id=1207 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:49:03,222 | doc_id=1208 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:49:42,702 | doc_id=1223 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:50:28,895 | doc_id=1243 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:51:28,588 | doc_id=1266 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:51:41,065 | doc_id=1269 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:53:07,712 | doc_id=1300 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:53:16,346 | doc_id=1305 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:53:18,128 | doc_id=1306 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:53:27,319 | doc_id=1311 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:53:32,384 | doc_id=1314 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:53:38,812 | doc_id=1317 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:53:59,178 | doc_id=1327 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:54:00,385 | doc_id=1328 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:54:02,799 | doc_id=1329 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:54:10,961 | doc_id=1333 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:54:29,579 | doc_id=1341 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:54:31,039 | doc_id=1342 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:54:46,212 | doc_id=1348 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:54:47,703 | doc_id=1349 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:08,877 | doc_id=1356 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:10,896 | doc_id=1357 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:18,230 | doc_id=1360 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:27,475 | doc_id=1364 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:33,906 | doc_id=1367 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:42,709 | doc_id=1370 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:49,245 | doc_id=1373 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:52,180 | doc_id=1375 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:55:53,845 | doc_id=1376 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:04,611 | doc_id=1381 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:19,594 | doc_id=1387 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:23,713 | doc_id=1389 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:25,544 | doc_id=1390 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:27,331 | doc_id=1391 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:33,327 | doc_id=1394 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:34,584 | doc_id=1395 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:41,584 | doc_id=1398 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:56:50,832 | doc_id=1403 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:57:01,572 | doc_id=1408 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:57:20,396 | doc_id=1417 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:57:25,917 | doc_id=1419 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:57:55,738 | doc_id=1432 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:57:57,588 | doc_id=1433 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:57:58,861 | doc_id=1434 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 16:57:59,909 | doc_id=1435 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:58:33,265 | doc_id=1449 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:58:43,752 | doc_id=1454 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:58:45,597 | doc_id=1455 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:58:54,069 | doc_id=1458 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:58:55,809 | doc_id=1459 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:59:06,230 | doc_id=1463 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 16:59:11,638 | doc_id=1465 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:59:29,088 | doc_id=1472 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:59:41,590 | doc_id=1475 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:59:49,028 | doc_id=1478 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:59:51,126 | doc_id=1479 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 16:59:56,851 | doc_id=1482 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:00:45,174 | doc_id=1501 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:01:08,794 | doc_id=1509 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:01:31,704 | doc_id=1514 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:01:42,701 | doc_id=1518 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:01:50,606 | doc_id=1520 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:01:54,273 | doc_id=1522 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:02:00,041 | doc_id=1524 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:02:24,957 | doc_id=1532 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:02:32,997 | doc_id=1535 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:02:40,788 | doc_id=1539 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:03:00,108 | doc_id=1546 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:03:15,176 | doc_id=1552 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 17:03:26,057 | doc_id=1557 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 17:03:27,602 | doc_id=1558 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 17:03:30,290 | doc_id=1559 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 17:03:32,200 | doc_id=1560 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 17:03:37,138 | doc_id=1562 | status=500 | {"error":"Invalid PDF structure"}
+2026-04-02 17:04:05,527 | doc_id=1570 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:04:18,230 | doc_id=1575 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:04:27,652 | doc_id=1579 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:05:26,996 | doc_id=1601 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:05:35,781 | doc_id=1605 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:06:01,689 | doc_id=1616 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:07:26,612 | doc_id=1654 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:07:55,988 | doc_id=1663 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:08:22,567 | doc_id=1674 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:09:07,547 | doc_id=1692 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:09:19,911 | doc_id=1697 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:09:24,026 | doc_id=1699 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:09:25,747 | doc_id=1700 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:09:28,122 | doc_id=1701 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:09:44,312 | doc_id=1707 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:10:33,198 | doc_id=1721 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:10:46,206 | doc_id=1728 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:13:36,568 | doc_id=1744 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:13:44,246 | doc_id=1746 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:14:05,929 | doc_id=1751 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:14:33,728 | doc_id=1756 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:03,269 | doc_id=1765 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:05,204 | doc_id=1766 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:07,055 | doc_id=1767 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:27,104 | doc_id=1771 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:49,942 | doc_id=1778 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:51,315 | doc_id=1779 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:56,295 | doc_id=1781 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:15:57,616 | doc_id=1782 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:16:08,683 | doc_id=1785 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:16:14,355 | doc_id=1788 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:16:18,347 | doc_id=1790 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:16:23,479 | doc_id=1793 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:16:25,170 | doc_id=1794 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:17:32,527 | doc_id=1818 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:17:37,561 | doc_id=1821 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:18:11,064 | doc_id=1838 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:18:23,188 | doc_id=1844 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:18:27,233 | doc_id=1846 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:18:50,692 | doc_id=1858 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:18:52,459 | doc_id=1859 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:18:54,385 | doc_id=1860 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:18:55,977 | doc_id=1861 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:19:32,274 | doc_id=1878 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:19:34,149 | doc_id=1879 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:19:35,389 | doc_id=1880 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:19:46,853 | doc_id=1885 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:19:54,322 | doc_id=1887 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:20:51,847 | doc_id=1910 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:20:53,395 | doc_id=1911 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:21:05,889 | doc_id=1917 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:21:34,409 | doc_id=1931 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:21:36,055 | doc_id=1932 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:21:39,245 | doc_id=1934 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:21:51,778 | doc_id=1941 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:21:53,133 | doc_id=1942 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:22:22,728 | doc_id=1954 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:22:43,240 | doc_id=1964 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:22:49,800 | doc_id=1967 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:23:57,434 | doc_id=1988 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:24:07,778 | doc_id=1994 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:24:33,867 | doc_id=2005 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:12,714 | doc_id=2022 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:35,887 | doc_id=2034 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:38,062 | doc_id=2035 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:40,007 | doc_id=2036 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:41,676 | doc_id=2037 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:43,465 | doc_id=2038 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:45,542 | doc_id=2039 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:47,640 | doc_id=2040 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:25:51,214 | doc_id=2041 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:26:10,493 | doc_id=2051 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:26:12,050 | doc_id=2052 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:26:19,750 | doc_id=2055 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:26:27,311 | doc_id=2060 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:26:59,368 | doc_id=2076 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:27:28,280 | doc_id=2089 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:27:32,092 | doc_id=2091 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:28:10,854 | doc_id=2113 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:29:35,054 | doc_id=2157 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:29:37,202 | doc_id=2158 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:29:39,014 | doc_id=2159 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:30:22,104 | doc_id=2176 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:30:24,019 | doc_id=2177 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:30:25,959 | doc_id=2178 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:30:53,177 | doc_id=2191 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:31:03,643 | doc_id=2196 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:31:05,188 | doc_id=2197 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:31:35,005 | doc_id=2213 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:31:38,564 | doc_id=2215 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:32:09,521 | doc_id=2232 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:32:21,653 | doc_id=2238 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:32:57,628 | doc_id=2257 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:01,808 | doc_id=2259 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:06,598 | doc_id=2261 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:19,308 | doc_id=2267 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 17:33:44,495 | doc_id=2279 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:51,135 | doc_id=2282 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:53,231 | doc_id=2283 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:54,719 | doc_id=2284 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:56,676 | doc_id=2285 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:33:58,423 | doc_id=2286 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:34:05,809 | doc_id=2290 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:34:18,724 | doc_id=2297 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:34:20,273 | doc_id=2298 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:34:21,860 | doc_id=2299 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:34:23,001 | doc_id=2300 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:34:40,911 | doc_id=2308 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:35:27,417 | doc_id=2327 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:35:29,704 | doc_id=2328 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:35:35,451 | doc_id=2331 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:35:50,637 | doc_id=2335 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:35:52,398 | doc_id=2336 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:35:54,004 | doc_id=2337 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:36:07,153 | doc_id=2344 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:36:35,226 | doc_id=2355 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:36:37,863 | doc_id=2356 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:09,774 | doc_id=2372 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:17,221 | doc_id=2376 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:18,606 | doc_id=2377 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:35,098 | doc_id=2385 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:40,536 | doc_id=2388 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:41,045 | doc_id=2389 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:44,564 | doc_id=2391 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:37:46,403 | doc_id=2392 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:38:34,947 | doc_id=2419 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:39:19,770 | doc_id=2442 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:39:23,238 | doc_id=2445 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:39:25,736 | doc_id=2447 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:39:42,152 | doc_id=2456 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:40:29,096 | doc_id=2477 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:41:02,030 | doc_id=2492 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:41:10,464 | doc_id=2496 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:42:31,228 | doc_id=2533 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:23,151 | doc_id=2582 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:28,334 | doc_id=2584 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:33,540 | doc_id=2586 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:37,409 | doc_id=2588 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:47,739 | doc_id=2594 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:51,901 | doc_id=2596 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:53,672 | doc_id=2597 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:55,059 | doc_id=2598 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:44:58,790 | doc_id=2600 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:45:04,741 | doc_id=2603 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:45:09,641 | doc_id=2605 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:48:09,030 | doc_id=2684 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:48:16,869 | doc_id=2688 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:48:28,574 | doc_id=2694 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 17:48:45,825 | doc_id=2702 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:49:01,301 | doc_id=2709 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:49:25,555 | doc_id=2721 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:50:24,440 | doc_id=2739 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:50:26,370 | doc_id=2740 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 17:50:28,089 | doc_id=2741 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:50:35,698 | doc_id=2744 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:51:13,767 | doc_id=2755 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:51:28,735 | doc_id=2762 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:52:09,263 | doc_id=2779 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 17:52:26,356 | doc_id=2787 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:53:03,894 | doc_id=2805 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:53:11,345 | doc_id=2809 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:53:18,807 | doc_id=2812 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 17:53:47,277 | doc_id=2825 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:53:59,582 | doc_id=2831 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:54:07,767 | doc_id=2835 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:55:09,666 | doc_id=2862 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:55:10,808 | doc_id=2863 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:55:52,377 | doc_id=2883 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:56:24,119 | doc_id=2898 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:56:25,587 | doc_id=2899 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:56:43,865 | doc_id=2908 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:56:52,535 | doc_id=2912 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:56:58,540 | doc_id=2915 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:57:11,255 | doc_id=2921 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:57:28,077 | doc_id=2929 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 17:57:38,514 | doc_id=2933 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:58:48,103 | doc_id=2963 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:58:49,860 | doc_id=2964 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:58:51,418 | doc_id=2965 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:58:52,939 | doc_id=2966 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:58:54,928 | doc_id=2967 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:58:57,752 | doc_id=2968 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:58:59,277 | doc_id=2969 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 17:59:04,981 | doc_id=2972 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:00:03,209 | doc_id=2973 | status=500 | {"error":"Erro download: {\"url\":\"https://oysfxhlzilazeznpaafc.supabase.co/storage/v1/object/documentos/email/ANT-NIO-PIRES/SEM-REF_ANEXO_2024-10-02_desenho_fm_12_4x2.pdf\"}"}
+2026-04-02 18:00:46,499 | doc_id=2992 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:08,939 | doc_id=3002 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:21,871 | doc_id=3007 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:26,059 | doc_id=3008 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:29,405 | doc_id=3009 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:33,406 | doc_id=3010 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:37,435 | doc_id=3011 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:41,297 | doc_id=3012 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:44,962 | doc_id=3013 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:48,917 | doc_id=3015 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:01:56,384 | doc_id=3018 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:02:36,557 | doc_id=3039 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:02:59,941 | doc_id=3050 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:03:01,577 | doc_id=3051 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:03:05,268 | doc_id=3053 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:03:06,628 | doc_id=3054 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:03:21,166 | doc_id=3059 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:21,625 | doc_id=3089 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:23,251 | doc_id=3090 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:24,863 | doc_id=3091 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:26,707 | doc_id=3092 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:28,423 | doc_id=3093 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:30,335 | doc_id=3094 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:32,433 | doc_id=3095 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:34,630 | doc_id=3096 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:37,038 | doc_id=3097 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:39,055 | doc_id=3098 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:42,035 | doc_id=3099 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:43,846 | doc_id=3100 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:45,624 | doc_id=3101 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:47,532 | doc_id=3102 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:49,516 | doc_id=3103 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:51,632 | doc_id=3104 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:52,358 | doc_id=3105 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:54,613 | doc_id=3106 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:56,908 | doc_id=3107 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:04:59,030 | doc_id=3108 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:01,664 | doc_id=3110 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:02,195 | doc_id=3111 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:02,695 | doc_id=3112 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:03,177 | doc_id=3113 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:03,713 | doc_id=3114 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:04,220 | doc_id=3115 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:04,815 | doc_id=3116 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:05,391 | doc_id=3117 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:06,989 | doc_id=3118 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:07,529 | doc_id=3119 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:08,132 | doc_id=3120 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:08,691 | doc_id=3121 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:09,292 | doc_id=3122 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:09,900 | doc_id=3123 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:10,572 | doc_id=3124 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:11,120 | doc_id=3125 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:11,715 | doc_id=3126 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:33,888 | doc_id=3137 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:35,548 | doc_id=3138 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:42,066 | doc_id=3141 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:44,901 | doc_id=3142 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:51,118 | doc_id=3145 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:05:57,271 | doc_id=3148 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:06:03,819 | doc_id=3151 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:06:04,574 | doc_id=3152 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:06:06,452 | doc_id=3153 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:06:07,735 | doc_id=3154 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:06:40,011 | doc_id=3169 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:06:45,256 | doc_id=3172 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:07:04,777 | doc_id=3182 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 18:07:39,464 | doc_id=3200 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:08:13,316 | doc_id=3216 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:08:20,651 | doc_id=3219 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:08:32,147 | doc_id=3225 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:08:36,875 | doc_id=3227 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:01,032 | doc_id=3239 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:03,292 | doc_id=3240 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:05,390 | doc_id=3241 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:07,083 | doc_id=3242 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:27,768 | doc_id=3252 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:29,741 | doc_id=3253 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:32,261 | doc_id=3254 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:40,915 | doc_id=3259 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:09:42,624 | doc_id=3260 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:10:10,918 | doc_id=3270 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 18:10:23,029 | doc_id=3276 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:10:30,758 | doc_id=3280 | status=500 | {"error":"Erro insert: unsupported Unicode escape sequence"}
+2026-04-02 18:10:45,025 | doc_id=3287 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:10:48,783 | doc_id=3289 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:11:07,336 | doc_id=3297 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:11:30,154 | doc_id=3309 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:11:51,094 | doc_id=3317 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:11:57,639 | doc_id=3320 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:12:05,022 | doc_id=3324 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:12:11,895 | doc_id=3327 | status=422 | {"error":"PDF sem texto extraível"}
+2026-04-02 18:12:13,639 | doc_id=3328 | status=422 | {"error":"PDF sem texto extraível"}
