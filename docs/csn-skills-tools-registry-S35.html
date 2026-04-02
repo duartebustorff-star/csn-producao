@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Skill & Tool Registry S35</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap');
+:root{
+  --bg:#07080d;--s:#0d0f18;--s2:#12141f;--b:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.12);
+  --text:#c8ccd8;--muted:#555a70;
+  --skill:#15803d;--skillbg:#051a0d;--skillt:#86efac;
+  --tool:#7c3aed;--toolbg:#1a0f3a;--toolt:#c4b5fd;
+  --ok:#16a34a;--par:#d97706;--fut:#4f46e5;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;padding:28px;}
+.header{margin-bottom:28px;border-left:3px solid var(--skill);padding-left:18px;}
+.header h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:4px;}
+.header .meta{color:var(--muted);font-size:10px;letter-spacing:1px;text-transform:uppercase;}
+
+h2{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b);}
+h2.sk{color:var(--skillt);border-color:var(--skill);}
+h2.tl{color:var(--toolt);border-color:var(--tool);}
+
+/* TREE */
+.tree{margin-bottom:16px;}
+.tree-node{padding:3px 0 3px 16px;border-left:1px solid var(--b);position:relative;font-size:10px;}
+.tree-node::before{content:"├─";position:absolute;left:-2px;color:var(--muted);font-size:9px;}
+.tree-node:last-child::before{content:"└─";}
+.tree-folder{font-weight:600;color:var(--skillt);}
+.tree-file{color:var(--text);}
+.tree-root{font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:12px;padding-bottom:4px;margin-bottom:4px;border-bottom:1px solid var(--b);}
+.tree-group{padding-left:16px;border-left:1px solid var(--b);}
+.badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:600;margin-left:6px;}
+.bok{background:#052e16;color:#4ade80;}
+.bpar{background:#431407;color:#fcd34d;}
+.bfut{background:#1e1b4b;color:#a5b4fc;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:16px;}
+th{background:var(--s2);color:var(--muted);text-align:left;padding:6px 8px;font-weight:500;font-size:9px;letter-spacing:0.5px;text-transform:uppercase;border-bottom:1px solid var(--b2);}
+td{padding:5px 8px;border-bottom:1px solid var(--b);}
+tr:hover td{background:var(--s);}
+.col-date{color:var(--muted);white-space:nowrap;}
+.col-type-s{color:var(--skillt);font-weight:600;}
+.col-type-t{color:var(--toolt);font-weight:600;}
+.col-path{color:var(--text);font-family:'JetBrains Mono',monospace;}
+.col-isa{color:var(--muted);white-space:nowrap;}
+.col-access-r{color:#7dd3fc;}
+.col-access-w{color:#fca5a5;}
+
+/* GUIDE BOX */
+.guide{background:var(--s);border:1px solid var(--b2);border-radius:10px;padding:16px 20px;margin-bottom:16px;}
+.guide h3{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--b);}
+.guide h3.sk{color:var(--skillt);}
+.guide h3.tl{color:var(--toolt);}
+.steps{list-style:none;counter-reset:step;}
+.steps li{counter-increment:step;padding:5px 0 5px 28px;position:relative;font-size:10px;border-bottom:1px solid var(--b);}
+.steps li:last-child{border-bottom:none;}
+.steps li::before{content:counter(step);position:absolute;left:0;background:var(--s2);color:var(--muted);width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;top:5px;}
+code{background:var(--s2);padding:1px 5px;border-radius:3px;font-size:9px;color:#fcd34d;}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.footer{margin-top:24px;padding-top:14px;border-top:1px solid var(--b);color:var(--muted);font-size:9px;display:flex;justify-content:space-between;}
+@media(max-width:700px){.g2{grid-template-columns:1fr;}body{padding:14px;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CSN Opus — Skill &amp; Tool Registry</h1>
+  <div class="meta">S35 · 02/04/2026 · Anthropic Agent Skills Standard · ISA-95/IEC 62264</div>
+</div>
+
+<!-- ESTRUTURA -->
+<h2 class="sk">Estrutura de Pastas</h2>
+<div class="g2">
+<div>
+<div class="tree">
+  <div class="tree-root">skills/</div>
+  <div class="tree-group">
+    <div class="tree-node"><span class="tree-file">SKILL-GUIDE.md</span> <span class="badge bok">✓ criado</span></div>
+    <div class="tree-node"><span class="tree-file">REGISTRY.md</span> <span class="badge bok">✓ criado</span></div>
+    <div class="tree-node"><span class="tree-folder">_global/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bok">✓ criado</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">producao/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">rh/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">financeiro/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">comercial/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">engenharia/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">qualidade/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">manutencao/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">inventario/</span>
+      <div class="tree-group"><div class="tree-node"><span class="tree-file">SKILL.md</span> <span class="badge bfut">S36</span></div></div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">fornecedores/</span>
+      <div class="tree-group">
+        <div class="tree-node"><span class="tree-folder">chagas/</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-folder">dhollandia/</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-folder">bielco/</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-folder">pecol/</span> <span class="badge bfut">S36</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div>
+<div class="tree">
+  <div class="tree-root">tools/</div>
+  <div class="tree-group">
+    <div class="tree-node"><span class="tree-file">REGISTRY.md</span> <span class="badge bfut">S36</span></div>
+    <div class="tree-node"><span class="tree-folder">_global/</span>
+      <div class="tree-group">
+        <div class="tree-node"><span class="tree-file">supabase.md</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-file">storage.md</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-file">auth.md</span> <span class="badge bfut">S36</span></div>
+      </div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">producao/</span>
+      <div class="tree-group">
+        <div class="tree-node"><span class="tree-file">timer.md</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-file">obras.md</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-file">kpis.md</span> <span class="badge bfut">S36</span></div>
+      </div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">rh/</span>
+      <div class="tree-group">
+        <div class="tree-node"><span class="tree-file">recibos.md</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-file">declaracoes.md</span> <span class="badge bfut">S36</span></div>
+      </div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">financeiro/</span>
+      <div class="tree-group">
+        <div class="tree-node"><span class="tree-file">efatura.md</span> <span class="badge bfut">S36</span></div>
+        <div class="tree-node"><span class="tree-file">fornecedores.md</span> <span class="badge bfut">S36</span></div>
+      </div>
+    </div>
+    <div class="tree-node"><span class="tree-folder">documental/</span>
+      <div class="tree-group">
+        <div class="tree-node"><span class="tree-file">roteador.md</span> <span class="badge bfut">S36</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- COMO CRIAR -->
+<h2 class="sk">Como Criar um Skill</h2>
+<div class="guide">
+  <h3 class="sk">Processo — Claude Code lê o SKILL-GUIDE.md e sabe o que fazer</h3>
+  <ol class="steps">
+    <li>Identificar o domínio: qual dept. ISA-95? fornecedor ou departamento?</li>
+    <li>Criar a pasta: <code>mkdir -p skills/[dept]/</code> ou <code>skills/fornecedores/[nome]/</code></li>
+    <li>Criar <code>SKILL.md</code> com campos obrigatórios: name, version, date, isa95_level, department, norm, status</li>
+    <li>Escrever: Contexto + Instruções + Tools disponíveis (read-only) + Exemplos + Escalação</li>
+    <li>Adicionar linha ao <code>skills/REGISTRY.md</code> com data/hora, tipo, caminho, nível, estado</li>
+    <li><code>git add skills/ && git commit -m "skill: [nome] — [dept] ISA-95 [nivel]" && git push</code></li>
+  </ol>
+</div>
+
+<h2 class="tl">Como Criar uma Tool</h2>
+<div class="guide">
+  <h3 class="tl">Processo — endpoint API + documentação</h3>
+  <ol class="steps">
+    <li>Identificar necessidade: que dados? leitura ou escrita? que tabela Supabase?</li>
+    <li>Criar endpoint: <code>src/app/api/[dept]/[nome]/route.ts</code></li>
+    <li>Criar doc: <code>tools/[dept]/[nome].md</code> com: route, method, isa95_level, access (read/write), input, output, tabelas</li>
+    <li>Adicionar linha ao <code>skills/REGISTRY.md</code> com data/hora, tipo tool, rota, acesso, estado</li>
+    <li><code>git add src/app/api/ tools/ && git commit -m "tool: /api/[dept]/[nome]" && git push</code></li>
+    <li>Deploy: <code>npx vercel --prod</code></li>
+  </ol>
+</div>
+
+<!-- REGISTRY LOG SKILLS -->
+<h2 class="sk">Log de Skills</h2>
+<table>
+<tr><th>Data/Hora</th><th>Tipo</th><th>Caminho</th><th>ISA-95</th><th>Estado</th><th>Descrição</th></tr>
+<tr><td class="col-date">02/04/2026</td><td class="col-type-s">skill</td><td class="col-path">skills/SKILL-GUIDE.md</td><td class="col-isa">Transversal</td><td><span class="badge bok">activo</span></td><td>Guia criação skills e tools</td></tr>
+<tr><td class="col-date">02/04/2026</td><td class="col-type-s">skill</td><td class="col-path">skills/REGISTRY.md</td><td class="col-isa">Transversal</td><td><span class="badge bok">activo</span></td><td>Log permanente skills e tools</td></tr>
+<tr><td class="col-date">02/04/2026</td><td class="col-type-s">skill</td><td class="col-path">skills/_global/SKILL.md</td><td class="col-isa">Transversal</td><td><span class="badge bok">activo</span></td><td>Contexto CSN, ISA-95, normas</td></tr>
+<tr><td class="col-date">S36</td><td class="col-type-s">skill</td><td class="col-path">skills/producao/SKILL.md</td><td class="col-isa">L3-PRD</td><td><span class="badge bfut">planeado</span></td><td>Obras, fases, KPIs, timer</td></tr>
+<tr><td class="col-date">S36</td><td class="col-type-s">skill</td><td class="col-path">skills/rh/SKILL.md</td><td class="col-isa">L3-PER</td><td><span class="badge bfut">planeado</span></td><td>Recibos, férias, CITs</td></tr>
+<tr><td class="col-date">S36</td><td class="col-type-s">skill</td><td class="col-path">skills/fornecedores/chagas/SKILL.md</td><td class="col-isa">L3-DOC</td><td><span class="badge bfut">planeado</span></td><td>Chagas — aço e perfis</td></tr>
+<tr><td class="col-date">S36</td><td class="col-type-s">skill</td><td class="col-path">skills/fornecedores/dhollandia/SKILL.md</td><td class="col-isa">L3-DOC</td><td><span class="badge bfut">planeado</span></td><td>Dhollandia — tail lifts</td></tr>
+</table>
+
+<!-- REGISTRY LOG TOOLS -->
+<h2 class="tl">Log de Tools</h2>
+<table>
+<tr><th>Sessão</th><th>Tipo</th><th>Rota</th><th>ISA-95</th><th>Acesso</th><th>Estado</th><th>Descrição</th></tr>
+<tr><td class="col-date">S32</td><td class="col-type-t">tool</td><td class="col-path">/api/timer/iniciar</td><td class="col-isa">L3-PRD</td><td class="col-access-w">escrita</td><td><span class="badge bok">activo</span></td><td>Inicia timer trabalhador</td></tr>
+<tr><td class="col-date">S32</td><td class="col-type-t">tool</td><td class="col-path">/api/timer/parar</td><td class="col-isa">L3-PRD</td><td class="col-access-w">escrita</td><td><span class="badge bok">activo</span></td><td>Para timer trabalhador</td></tr>
+<tr><td class="col-date">S32</td><td class="col-type-t">tool</td><td class="col-path">/api/kpis/worker</td><td class="col-isa">L3-PRD</td><td class="col-access-r">leitura</td><td><span class="badge bok">activo</span></td><td>KPIs ISO 22400 por worker</td></tr>
+<tr><td class="col-date">S32</td><td class="col-type-t">tool</td><td class="col-path">/api/obras/fases</td><td class="col-isa">L3-PRD</td><td class="col-access-r">leitura</td><td><span class="badge bok">activo</span></td><td>Fases por obra</td></tr>
+<tr><td class="col-date">S33</td><td class="col-type-t">tool</td><td class="col-path">/api/rh/recibos</td><td class="col-isa">L3-PER</td><td class="col-access-r">leitura</td><td><span class="badge bok">activo</span></td><td>Recibos por colaborador</td></tr>
+<tr><td class="col-date">S33</td><td class="col-type-t">tool</td><td class="col-path">/api/rh/declaracao</td><td class="col-isa">L3-PER</td><td class="col-access-r">leitura</td><td><span class="badge bok">activo</span></td><td>Declaração art. 119 CIRS</td></tr>
+<tr><td class="col-date">S34</td><td class="col-type-t">tool</td><td class="col-path">/api/roteador</td><td class="col-isa">L3-DOC</td><td class="col-access-w">escrita</td><td><span class="badge bok">activo</span></td><td>Classifica doc via Claude API</td></tr>
+<tr><td class="col-date">S34</td><td class="col-type-t">tool</td><td class="col-path">/api/faturacao/emitir</td><td class="col-isa">L4-FIN</td><td class="col-access-w">escrita</td><td><span class="badge bok">activo</span></td><td>Emite fatura InvoiceXpress</td></tr>
+<tr><td class="col-date">S34</td><td class="col-type-t">tool</td><td class="col-path">/api/fornecedores/conta-corrente</td><td class="col-isa">L4-FIN</td><td class="col-access-r">leitura</td><td><span class="badge bok">activo</span></td><td>Faturado vs pago por NIF</td></tr>
+<tr><td class="col-date">S34</td><td class="col-type-t">tool</td><td class="col-path">/api/mnt/001..004</td><td class="col-isa">L3-MNT</td><td class="col-access-w">escrita</td><td><span class="badge bok">activo</span></td><td>Ciclos manutenção Bodor</td></tr>
+<tr><td class="col-date">S36</td><td class="col-type-t">tool</td><td class="col-path">/api/embeddings</td><td class="col-isa">L3-DOC</td><td class="col-access-w">escrita</td><td><span class="badge bfut">planeado</span></td><td>RAG — pgvector migration 025</td></tr>
+<tr><td class="col-date">S36</td><td class="col-type-t">tool</td><td class="col-path">/api/whatsapp/webhook</td><td class="col-isa">Fronteira</td><td class="col-access-w">escrita</td><td><span class="badge bfut">planeado</span></td><td>Canal WhatsApp entrada</td></tr>
+<tr><td class="col-date">S36</td><td class="col-type-t">tool</td><td class="col-path">/api/telegram/webhook</td><td class="col-isa">Fronteira</td><td class="col-access-w">escrita</td><td><span class="badge bfut">planeado</span></td><td>Canal Telegram entrada</td></tr>
+</table>
+
+<div class="footer">
+  <span>CSN Opus S35 · Carlos dos Santos Nascimento, Lda · NIF 500 861 790</span>
+  <span>02/04/2026 · duartebustorff-star/csn-producao</span>
+</div>
+</body>
+</html>
