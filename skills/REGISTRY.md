@@ -18,7 +18,7 @@
 | 02/04/2026 00:00 | skill | skills/manutencao/SKILL.md | L3-MNT | planeado | Bodor, Fronius, ciclos MNT |
 | 02/04/2026 00:00 | skill | skills/inventario/SKILL.md | L3-INV | planeado | Materiais, lotes, consumos |
 | 02/04/2026 16:30 | skill | skills/fornecedores/chagas/SKILL.md | L3-DOC | activo | Chagas — aco, perfis, chapa, conta corrente, pipeline docs |
-| 02/04/2026 00:00 | skill | skills/fornecedores/dhollandia/SKILL.md | L3-DOC | planeado | Dhollandia — tail lifts |
+| 02/04/2026 17:00 | skill | skills/fornecedores/dhollandia/SKILL.md | L3-DOC | activo | Dhollandia — tail lifts, 12 faturas 48.773 EUR, EN 1756, escalacao |
 | 02/04/2026 00:00 | skill | skills/fornecedores/bielco/SKILL.md | L3-DOC | planeado | Bielco — painéis alumínio |
 | 02/04/2026 00:00 | skill | skills/fornecedores/pecol/SKILL.md | L3-DOC | planeado | Pecol — fixações |
 
