@@ -17,7 +17,7 @@
 | 02/04/2026 00:00 | skill | skills/qualidade/SKILL.md | L3-QMS | planeado | EN 1090, EN ISO 3834 |
 | 02/04/2026 00:00 | skill | skills/manutencao/SKILL.md | L3-MNT | planeado | Bodor, Fronius, ciclos MNT |
 | 02/04/2026 00:00 | skill | skills/inventario/SKILL.md | L3-INV | planeado | Materiais, lotes, consumos |
-| 02/04/2026 00:00 | skill | skills/fornecedores/chagas/SKILL.md | L3-DOC | planeado | Chagas — aço/perfis |
+| 02/04/2026 16:30 | skill | skills/fornecedores/chagas/SKILL.md | L3-DOC | activo | Chagas — aco, perfis, chapa, conta corrente, pipeline docs |
 | 02/04/2026 00:00 | skill | skills/fornecedores/dhollandia/SKILL.md | L3-DOC | planeado | Dhollandia — tail lifts |
 | 02/04/2026 00:00 | skill | skills/fornecedores/bielco/SKILL.md | L3-DOC | planeado | Bielco — painéis alumínio |
 | 02/04/2026 00:00 | skill | skills/fornecedores/pecol/SKILL.md | L3-DOC | planeado | Pecol — fixações |
@@ -57,7 +57,7 @@
 | ~~1~~ | ~~skill~~ | ~~skills/_global/SKILL.md~~ | ~~Transversal~~ | ~~Criado S35~~ |
 | ~~2~~ | ~~skill~~ | ~~skills/producao/SKILL.md~~ | ~~L3-PRD~~ | ~~Criado S36~~ |
 | ~~3~~ | ~~skill~~ | ~~skills/rh/SKILL.md~~ | ~~L3-PER~~ | ~~Criado S36~~ |
-| 4 | skill | skills/fornecedores/chagas/SKILL.md | L3-DOC | Criar skill Chagas |
+| ~~4~~ | ~~skill~~ | ~~skills/fornecedores/chagas/SKILL.md~~ | ~~L3-DOC~~ | ~~Criado S36~~ |
 | 4 | tool | /api/embeddings | L3-DOC | RAG — pgvector migration 025 |
 | 5 | tool | /api/whatsapp/webhook | Fronteira | Canal WhatsApp entrada |
 | 6 | tool | /api/telegram/webhook | Fronteira | Canal Telegram entrada |
