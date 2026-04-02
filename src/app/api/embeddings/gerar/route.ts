@@ -40,10 +40,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Erro download: ${dlErr?.message}` }, { status: 500 })
     }
 
-    // 3. Extrair texto do PDF (pdf-parse v1.x)
+    // 3. Extrair texto do PDF (pdf-parse v1.x — import directo para evitar test file)
     const arrayBuffer = await fileData.arrayBuffer()
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParse = require("pdf-parse") as (buf: Buffer) => Promise<{ text: string; numpages: number }>
+    const pdfParse = require("pdf-parse/lib/pdf-parse.js") as (buf: Buffer) => Promise<{ text: string; numpages: number }>
     const parsed = await pdfParse(Buffer.from(arrayBuffer))
     const textoCompleto = parsed.text?.trim()
 
