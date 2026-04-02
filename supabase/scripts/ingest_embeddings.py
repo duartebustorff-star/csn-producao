@@ -16,7 +16,7 @@ from supabase import create_client
 
 # ── Config ──────────────────────────────────────────────────────────
 BATCH_SIZE = 10
-BATCH_PAUSE = 2  # segundos entre batches
+BATCH_PAUSE = 10  # segundos entre batches (rate limit Voyage AI)
 API_URL = "https://csn-producao.vercel.app/api/embeddings/gerar"
 TIMEOUT = 120  # segundos por request (PDFs grandes)
 
@@ -57,22 +57,43 @@ def main():
         format="%(asctime)s | %(message)s",
     )
 
-    # ── Buscar documentos pendentes ──────────────────────────────────
-    # IDs já processados
-    resp = sb.table("embeddings") \
-        .select("documento_id") \
-        .not_.is_("documento_id", "null") \
-        .execute()
-    done_ids = {r["documento_id"] for r in resp.data}
+    # ── Buscar documentos pendentes (com paginacao) ────────────────────
+    PAGE_SIZE = 1000
 
-    # Documentos de email com storage_path
-    resp = sb.table("documentos") \
-        .select("id, nome_ficheiro, storage_path, fornecedor_id") \
-        .eq("origem", "email") \
-        .not_.is_("storage_path", "null") \
-        .order("id") \
-        .execute()
-    todos = [d for d in resp.data if d["id"] not in done_ids]
+    # IDs já processados (paginar tambem)
+    done_ids = set()
+    offset = 0
+    while True:
+        resp = sb.table("embeddings") \
+            .select("documento_id") \
+            .not_.is_("documento_id", "null") \
+            .range(offset, offset + PAGE_SIZE - 1) \
+            .execute()
+        for r in resp.data:
+            done_ids.add(r["documento_id"])
+        if len(resp.data) < PAGE_SIZE:
+            break
+        offset += PAGE_SIZE
+    print(f"Embeddings ja existentes: {len(done_ids)}")
+
+    # Documentos de email com storage_path (paginar)
+    all_docs = []
+    offset = 0
+    while True:
+        resp = sb.table("documentos") \
+            .select("id, nome_ficheiro, storage_path, fornecedor_id") \
+            .eq("origem", "email") \
+            .not_.is_("storage_path", "null") \
+            .order("id") \
+            .range(offset, offset + PAGE_SIZE - 1) \
+            .execute()
+        all_docs.extend(resp.data)
+        if len(resp.data) < PAGE_SIZE:
+            break
+        offset += PAGE_SIZE
+    print(f"Total documentos email: {len(all_docs)}")
+
+    todos = [d for d in all_docs if d["id"] not in done_ids]
 
     total = len(todos)
     if total == 0:
