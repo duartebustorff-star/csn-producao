@@ -47,7 +47,9 @@
 | S34 | tool | /api/mnt/002 | L3-MNT | escrita | activo | Ciclo MNT-002 |
 | S34 | tool | /api/mnt/003 | L3-MNT | escrita | activo | Ciclo MNT-003 |
 | S34 | tool | /api/mnt/004 | L3-MNT | escrita | activo | Ciclo MNT-004 |
-| S36 | migration | supabase/025_embeddings_rag.sql | L3-DOC | escrita | activo | pgvector + tabela embeddings (vector 1536, HNSW) |
+| S36 | migration | supabase/025_embeddings_rag.sql | L3-DOC | escrita | activo | pgvector + tabela embeddings |
+| S36 | migration | supabase/025b_fix_vector_dims.sql | L3-DOC | escrita | activo | vector 1024 (Voyage AI voyage-3) + HNSW cosine |
+| S36 | tool | /api/embeddings/gerar | L3-DOC | escrita | activo | RAG: extrai PDF + Voyage AI embedding → tabela embeddings |
 
 ---
 
@@ -60,7 +62,7 @@
 | ~~3~~ | ~~skill~~ | ~~skills/rh/SKILL.md~~ | ~~L3-PER~~ | ~~Criado S36~~ |
 | ~~4~~ | ~~skill~~ | ~~skills/fornecedores/chagas/SKILL.md~~ | ~~L3-DOC~~ | ~~Criado S36~~ |
 | ~~5~~ | ~~migration~~ | ~~025_embeddings_rag.sql~~ | ~~L3-DOC~~ | ~~Aplicado S36~~ |
-| 5 | tool | /api/embeddings | L3-DOC | Endpoint escrita embeddings (por criar) |
+| ~~6~~ | ~~tool~~ | ~~/api/embeddings/gerar~~ | ~~L3-DOC~~ | ~~Criado S36 — Voyage AI~~ |
 | 5 | tool | /api/whatsapp/webhook | Fronteira | Canal WhatsApp entrada |
 | 6 | tool | /api/telegram/webhook | Fronteira | Canal Telegram entrada |
 | 7 | tool | /api/email/roteador | Fronteira | IMAP automático geral@ |
