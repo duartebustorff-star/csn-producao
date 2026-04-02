@@ -8,9 +8,9 @@
 
 | Data/Hora | Tipo | Caminho | ISA-95 | Estado | Descrição |
 |-----------|------|---------|--------|--------|-----------|
-| 02/04/2026 00:00 | skill | skills/_global/SKILL.md | Transversal | planeado | Contexto CSN, normas, ISA-95 |
-| 02/04/2026 00:00 | skill | skills/producao/SKILL.md | L3-PRD | planeado | Obras, fases, timer, KPIs |
-| 02/04/2026 00:00 | skill | skills/rh/SKILL.md | L3-PER | planeado | Recibos, férias, CITs |
+| 02/04/2026 00:00 | skill | skills/_global/SKILL.md | Transversal | activo | Contexto CSN, normas, ISA-95 |
+| 02/04/2026 16:00 | skill | skills/producao/SKILL.md | L3-PRD | activo | KPIs ISO 22400 (KPI-1..20), 9 fases, metas, escalacao |
+| 02/04/2026 16:00 | skill | skills/rh/SKILL.md | L3-PER | activo | KPIs RH/Seguranca (RH-1..4, S-1..8), recibos, CITs, ferias |
 | 02/04/2026 00:00 | skill | skills/financeiro/SKILL.md | L4-FIN | planeado | e-Fatura, conta corrente |
 | 02/04/2026 00:00 | skill | skills/comercial/SKILL.md | L4-COM | planeado | Leads, DAVs, orçamentos |
 | 02/04/2026 00:00 | skill | skills/engenharia/SKILL.md | L4-ENG | planeado | COC, DoP, CE marking |
@@ -54,9 +54,10 @@
 
 | Prioridade | Tipo | Nome | ISA-95 | Notas |
 |-----------|------|------|--------|-------|
-| 1 | skill | skills/_global/SKILL.md | Transversal | Criar contexto base CSN |
-| 2 | skill | skills/producao/SKILL.md | L3-PRD | Criar skill produção |
-| 3 | skill | skills/fornecedores/chagas/SKILL.md | L3-DOC | Criar skill Chagas |
+| ~~1~~ | ~~skill~~ | ~~skills/_global/SKILL.md~~ | ~~Transversal~~ | ~~Criado S35~~ |
+| ~~2~~ | ~~skill~~ | ~~skills/producao/SKILL.md~~ | ~~L3-PRD~~ | ~~Criado S36~~ |
+| ~~3~~ | ~~skill~~ | ~~skills/rh/SKILL.md~~ | ~~L3-PER~~ | ~~Criado S36~~ |
+| 4 | skill | skills/fornecedores/chagas/SKILL.md | L3-DOC | Criar skill Chagas |
 | 4 | tool | /api/embeddings | L3-DOC | RAG — pgvector migration 025 |
 | 5 | tool | /api/whatsapp/webhook | Fronteira | Canal WhatsApp entrada |
 | 6 | tool | /api/telegram/webhook | Fronteira | Canal Telegram entrada |
