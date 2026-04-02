@@ -47,6 +47,7 @@
 | S34 | tool | /api/mnt/002 | L3-MNT | escrita | activo | Ciclo MNT-002 |
 | S34 | tool | /api/mnt/003 | L3-MNT | escrita | activo | Ciclo MNT-003 |
 | S34 | tool | /api/mnt/004 | L3-MNT | escrita | activo | Ciclo MNT-004 |
+| S36 | migration | supabase/025_embeddings_rag.sql | L3-DOC | escrita | activo | pgvector + tabela embeddings (vector 1536, HNSW) |
 
 ---
 
@@ -58,7 +59,8 @@
 | ~~2~~ | ~~skill~~ | ~~skills/producao/SKILL.md~~ | ~~L3-PRD~~ | ~~Criado S36~~ |
 | ~~3~~ | ~~skill~~ | ~~skills/rh/SKILL.md~~ | ~~L3-PER~~ | ~~Criado S36~~ |
 | ~~4~~ | ~~skill~~ | ~~skills/fornecedores/chagas/SKILL.md~~ | ~~L3-DOC~~ | ~~Criado S36~~ |
-| 4 | tool | /api/embeddings | L3-DOC | RAG — pgvector migration 025 |
+| ~~5~~ | ~~migration~~ | ~~025_embeddings_rag.sql~~ | ~~L3-DOC~~ | ~~Aplicado S36~~ |
+| 5 | tool | /api/embeddings | L3-DOC | Endpoint escrita embeddings (por criar) |
 | 5 | tool | /api/whatsapp/webhook | Fronteira | Canal WhatsApp entrada |
 | 6 | tool | /api/telegram/webhook | Fronteira | Canal Telegram entrada |
 | 7 | tool | /api/email/roteador | Fronteira | IMAP automático geral@ |
