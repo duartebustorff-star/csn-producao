@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — KPIs ISA-95</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap');
+
+:root {
+  --bg: #07080d;
+  --surface: #0d0f18;
+  --surface2: #12141f;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.12);
+  --text: #c8ccd8;
+  --muted: #555a70;
+  --l4: #7c3aed; --l4bg: #1a0f3a; --l4t: #c4b5fd;
+  --l3p: #1d4ed8; --l3pbg: #0a1530; --l3pt: #93c5fd;
+  --l3q: #0f766e; --l3qbg: #051a18; --l3qt: #5eead4;
+  --l3m: #b45309; --l3mbg: #1a0e02; --l3mt: #fcd34d;
+  --l3i: #15803d; --l3ibg: #051a0d; --l3it: #86efac;
+  --l2:  #0369a1; --l2bg:  #021525; --l2t:  #7dd3fc;
+  --ls:  #9f1239; --lsbg:  #1a0509; --lst:  #fda4af;
+  --ok:  #16a34a; --par: #b45309; --fut: #4f46e5; --sen: #374151;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 32px;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 32px;
+  border-left: 3px solid var(--l4);
+  padding-left: 20px;
+}
+
+.header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.header .meta {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.layer {
+  margin-bottom: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.layer-header {
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: filter 0.15s;
+}
+
+.layer-header:hover { filter: brightness(1.1); }
+
+.layer-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.layer-norm {
+  font-size: 9px;
+  margin-left: auto;
+  opacity: 0.6;
+  letter-spacing: 0.5px;
+}
+
+.layer-toggle {
+  font-size: 10px;
+  opacity: 0.4;
+  transition: transform 0.2s;
+}
+
+.layer-body {
+  padding: 14px 18px 16px;
+  display: none;
+}
+
+.layer.open .layer-body { display: block; }
+.layer.open .layer-toggle { transform: rotate(90deg); }
+
+/* Layer colours */
+.l4-layer  .layer-header { background: var(--l4bg);  } .l4-layer  .layer-label { color: var(--l4t);  } .l4-layer  { border-color: var(--l4);  }
+.l3p-layer .layer-header { background: var(--l3pbg); } .l3p-layer .layer-label { color: var(--l3pt); } .l3p-layer { border-color: var(--l3p); }
+.l3q-layer .layer-header { background: var(--l3qbg); } .l3q-layer .layer-label { color: var(--l3qt); } .l3q-layer { border-color: var(--l3q); }
+.l3m-layer .layer-header { background: var(--l3mbg); } .l3m-layer .layer-label { color: var(--l3mt); } .l3m-layer { border-color: var(--l3m); }
+.l3i-layer .layer-header { background: var(--l3ibg); } .l3i-layer .layer-label { color: var(--l3it); } .l3i-layer { border-color: var(--l3i); }
+.l2-layer  .layer-header { background: var(--l2bg);  } .l2-layer  .layer-label { color: var(--l2t);  } .l2-layer  { border-color: var(--l2);  }
+.ls-layer  .layer-header { background: var(--lsbg);  } .ls-layer  .layer-label { color: var(--lst);  } .ls-layer  { border-color: var(--ls);  }
+
+.grid { display: grid; gap: 10px; }
+.g4 { grid-template-columns: repeat(4, 1fr); }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.g2 { grid-template-columns: repeat(2, 1fr); }
+
+.dept {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px 12px;
+  transition: border-color 0.15s;
+}
+
+.dept:hover { border-color: var(--border2); }
+
+.dept-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.kpis { list-style: none; }
+
+.kpis li {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.kpis li:last-child { border-bottom: none; }
+
+.kpi-code {
+  font-size: 8.5px;
+  color: var(--muted);
+  min-width: 38px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.kpi-name { font-size: 9.5px; color: var(--text); flex: 1; }
+
+.badge {
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 8px;
+  font-weight: 600;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+}
+
+.b-ok  { background: #052e16; color: #4ade80; }
+.b-par { background: #431407; color: #fcd34d; }
+.b-fut { background: #1e1b4b; color: #a5b4fc; }
+.b-sen { background: #1c1917; color: #a8a29e; }
+
+.dept-footer { margin-top: 8px; }
+
+/* dept accent colours */
+.dc  .dept-name { color: var(--l4t);  }
+.df  .dept-name { color: var(--l3it); }
+.de  .dept-name { color: var(--l3mt); }
+.dq4 .dept-name { color: #fca5a5; }
+.dp  .dept-name { color: var(--l3pt); }
+.dq3 .dept-name { color: var(--l3qt); }
+.dmn .dept-name { color: var(--l3mt); }
+.di  .dept-name { color: var(--l3it); }
+.den .dept-name { color: var(--l2t);  }
+.ds  .dept-name { color: var(--lst);  }
+.drh .dept-name { color: #e879f9; }
+
+.norm-tag {
+  font-size: 8px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 9px;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+  .g4 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(2, 1fr); }
+  body { padding: 16px; }
+}
+
+@media (max-width: 600px) {
+  .g4, .g3, .g2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CSN Opus — KPIs por Nível ISA-95</h1>
+  <div class="meta">ISO 22400 · ISO 9001 · ISO 45001 · ISO 55001 · ISO 50001 · ISO 14001 · S36 · 02/04/2026 · Skills mapeados: producao (20 KPIs) + rh (12 KPIs)</div>
+</div>
+
+<!-- L4 -->
+<div class="layer l4-layer open">
+  <div class="layer-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="layer-toggle">▶</span>
+    <div class="layer-label">L4-BPL — Negócio</div>
+    <div class="layer-norm">ISO 9001 · ISO 14001 · ISO 31000</div>
+  </div>
+  <div class="layer-body">
+    <div class="grid g4">
+      <div class="dept dc">
+        <div class="dept-name">Comercial <span class="norm-tag">ISO 9001</span></div>
+        <ul class="kpis">
+          <li><span class="kpi-code">L4-C1</span><span class="kpi-name">Taxa conversão leads</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">L4-C2</span><span class="kpi-name">Tempo resposta proposta</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">L4-C3</span><span class="kpi-name">Prazo entrega COC</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">L4-C4</span><span class="kpi-name">Satisfação cliente</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+      <div class="dept df">
+        <div class="dept-name">Financeiro <span class="norm-tag">ISO 9001</span></div>
+        <ul class="kpis">
+          <li><span class="kpi-code">L4-F1</span><span class="kpi-name">Faturado vs pago por NIF</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">L4-F2</span><span class="kpi-name">Prazo médio recebimento</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">L4-F3</span><span class="kpi-name">Prazo médio pagamento</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">L4-F4</span><span class="kpi-name">Volume faturação mensal</span><span class="badge b-ok">activo</span></li>
+        </ul>
+      </div>
+      <div class="dept de">
+        <div class="dept-name">Engenharia <span class="norm-tag">Reg 2018/858</span></div>
+        <ul class="kpis">
+          <li><span class="kpi-code">L4-E1</span><span class="kpi-name">COCs emitidos por período</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">L4-E2</span><span class="kpi-name">DoPs emitidas</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">L4-E3</span><span class="kpi-name">Obras por fase / estado</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">L4-E4</span><span class="kpi-name">Prazo médio obra</span><span class="badge b-par">parcial</span></li>
+        </ul>
+      </div>
+      <div class="dept dq4">
+        <div class="dept-name">Qualidade L4 <span class="norm-tag">ISO 9001</span></div>
+        <ul class="kpis">
+          <li><span class="kpi-code">L4-Q1</span><span class="kpi-name">Não conformidades abertas</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">L4-Q2</span><span class="kpi-name">Acções correctivas abertas</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">L4-Q3</span><span class="kpi-name">Resultados auditorias</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">L4-Q4</span><span class="kpi-name">Satisfação cliente QMS</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- L3-PRD -->
+<div class="layer l3p-layer open">
+  <div class="layer-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="layer-toggle">▶</span>
+    <div class="layer-label">L3-MOM — Produção (PRD)</div>
+    <div class="layer-norm">ISO 22400 · MESA-11 · 20 KPIs</div>
+  </div>
+  <div class="layer-body">
+    <div class="grid g4">
+      <div class="dept dp">
+        <div class="dept-name">Eficiência Trabalhador</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-1</span><span class="kpi-name">Worker efficiency (WE)</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">KPI-2</span><span class="kpi-name">Worker load ratio (WLR)</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">KPI-3</span><span class="kpi-name">Allocation efficiency (AE)</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">KPI-4</span><span class="kpi-name">Actual prod. time (APT)</span><span class="badge b-ok">activo</span></li>
+        </ul>
+      </div>
+      <div class="dept dp">
+        <div class="dept-name">Eficiência Produção</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-5</span><span class="kpi-name">Throughput rate (TR)</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">KPI-6</span><span class="kpi-name">Production process ratio (PPR)</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">KPI-7</span><span class="kpi-name">Schedule attainment (SA)</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">KPI-8</span><span class="kpi-name">Production loss ratio (PLR)</span><span class="badge b-par">parcial</span></li>
+        </ul>
+      </div>
+      <div class="dept dp">
+        <div class="dept-name">Eficiência Equipamento</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-9</span><span class="kpi-name">OEE overall equipment eff.</span><span class="badge b-sen">sensor L1</span></li>
+          <li><span class="kpi-code">KPI-10</span><span class="kpi-name">NEEI net equipment eff.</span><span class="badge b-sen">sensor L1</span></li>
+          <li><span class="kpi-code">KPI-11</span><span class="kpi-name">Equipment load ratio (ELR)</span><span class="badge b-sen">sensor L1</span></li>
+          <li><span class="kpi-code">KPI-12</span><span class="kpi-name">Setup ratio (SeR)</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+      <div class="dept dp">
+        <div class="dept-name">Qualidade Produção</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-13</span><span class="kpi-name">Quality ratio (QR)</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">KPI-14</span><span class="kpi-name">First pass yield (FPY)</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">KPI-15</span><span class="kpi-name">Scrap ratio (SR)</span><span class="badge b-fut">mig. 017</span></li>
+          <li><span class="kpi-code">KPI-16</span><span class="kpi-name">Rework ratio (RR)</span><span class="badge b-fut">mig. 017</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- L3-QMS -->
+<div class="layer l3q-layer open">
+  <div class="layer-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="layer-toggle">▶</span>
+    <div class="layer-label">L3-MOM — Qualidade (QMS)</div>
+    <div class="layer-norm">ISO 22400 · EN 1090 · EN ISO 3834</div>
+  </div>
+  <div class="layer-body">
+    <div class="grid g3">
+      <div class="dept dq3">
+        <div class="dept-name">Soldadura EN ISO 3834</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">Q-1</span><span class="kpi-name">WPS qualificados activos</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">Q-2</span><span class="kpi-name">Soldadores certificados / total</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">Q-3</span><span class="kpi-name">Taxa inspeção visual 100%</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">Q-4</span><span class="kpi-name">Taxa NDT juntas críticas</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+      <div class="dept dq3">
+        <div class="dept-name">Estrutural EN 1090</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">Q-5</span><span class="kpi-name">DoPs emitidas por obra</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">Q-6</span><span class="kpi-name">% obras com marcação CE</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">Q-7</span><span class="kpi-name">Não conformidades por obra</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">Q-8</span><span class="kpi-name">Rastreabilidade materiais %</span><span class="badge b-fut">mig. 017</span></li>
+        </ul>
+      </div>
+      <div class="dept dq3">
+        <div class="dept-name">Processo ISO 22400</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-17</span><span class="kpi-name">Process capability index (PCI)</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">KPI-18</span><span class="kpi-name">Finished goods ratio (FGR)</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">KPI-19</span><span class="kpi-name">Integrated goods ratio (IGR)</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">KPI-20</span><span class="kpi-name">Actual/planned scrap ratio</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- L3-MNT -->
+<div class="layer l3m-layer open">
+  <div class="layer-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="layer-toggle">▶</span>
+    <div class="layer-label">L3-MOM — Manutenção (MNT)</div>
+    <div class="layer-norm">ISO 22400 · ISO 55001 · 6 KPIs</div>
+  </div>
+  <div class="layer-body">
+    <div class="grid g3">
+      <div class="dept dmn">
+        <div class="dept-name">Disponibilidade Equipamento</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-21</span><span class="kpi-name">MOTBF mean op. time betw. fail.</span><span class="badge b-sen">sensor L1</span></li>
+          <li><span class="kpi-code">KPI-22</span><span class="kpi-name">MTTR mean time to repair</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">KPI-23</span><span class="kpi-name">Equipment downtime ratio</span><span class="badge b-sen">sensor L1</span></li>
+        </ul>
+      </div>
+      <div class="dept dmn">
+        <div class="dept-name">Manutenção Planeada</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-24</span><span class="kpi-name">Planned maintenance ratio</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">KPI-25</span><span class="kpi-name">Preventive maintenance ratio</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">KPI-26</span><span class="kpi-name">Corrective maintenance ratio</span><span class="badge b-par">parcial</span></li>
+        </ul>
+      </div>
+      <div class="dept dmn">
+        <div class="dept-name">Activos ISO 55001</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">A-1</span><span class="kpi-name">Bodor 78K€ — utilização %</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">A-2</span><span class="kpi-name">Custo manutenção / valor activo</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">A-3</span><span class="kpi-name">MNT-001..004 ciclos completos</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">A-4</span><span class="kpi-name">Tempo médio ciclo MNT</span><span class="badge b-par">parcial</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- L3-INV + RH -->
+<div class="layer l3i-layer open">
+  <div class="layer-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="layer-toggle">▶</span>
+    <div class="layer-label">L3-MOM — Inventário · RH (INV · PER)</div>
+    <div class="layer-norm">ISO 22400 · ISO 45001 · EN ISO 3834</div>
+  </div>
+  <div class="layer-body">
+    <div class="grid g3">
+      <div class="dept di">
+        <div class="dept-name">Materiais ISO 22400</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-27</span><span class="kpi-name">Raw material utilization</span><span class="badge b-fut">mig. 017</span></li>
+          <li><span class="kpi-code">KPI-28</span><span class="kpi-name">Inventory turns (IT)</span><span class="badge b-fut">mig. 017</span></li>
+          <li><span class="kpi-code">KPI-29</span><span class="kpi-name">Consumo material / obra</span><span class="badge b-fut">mig. 017</span></li>
+          <li><span class="kpi-code">I-1</span><span class="kpi-name">Rastreabilidade lote → obra</span><span class="badge b-fut">mig. 017</span></li>
+        </ul>
+      </div>
+      <div class="dept di">
+        <div class="dept-name">Fornecedores</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">I-2</span><span class="kpi-name">Prazo entrega vs prometido</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">I-3</span><span class="kpi-name">Conformidade lote (cert. 3.1)</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">I-4</span><span class="kpi-name">Fornecedores activos com NIF</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">I-5</span><span class="kpi-name">Faturado / pago por fornecedor</span><span class="badge b-ok">activo</span></li>
+        </ul>
+      </div>
+      <div class="dept drh">
+        <div class="dept-name">RH ISO 45001</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">RH-1</span><span class="kpi-name">Taxa absentismo (CITs/dias)</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">RH-2</span><span class="kpi-name">Horas trabalhadas / mês</span><span class="badge b-ok">activo</span></li>
+          <li><span class="kpi-code">RH-3</span><span class="kpi-name">Horas extra / total</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">RH-4</span><span class="kpi-name">Acidentes / incidentes</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- L2 ENERGIA -->
+<div class="layer l2-layer open">
+  <div class="layer-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="layer-toggle">▶</span>
+    <div class="layer-label">L2-SUP — Energia e Ambiente</div>
+    <div class="layer-norm">ISO 50001 · ISO 14001 · ISO 22400 KPIs 35–38</div>
+  </div>
+  <div class="layer-body">
+    <div class="grid g2">
+      <div class="dept den">
+        <div class="dept-name">Energia ISO 50001 + ISO 22400</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">KPI-35</span><span class="kpi-name">Energy ratio (ER)</span><span class="badge b-sen">smart meter</span></li>
+          <li><span class="kpi-code">KPI-36</span><span class="kpi-name">Energy specific consumption (ESC)</span><span class="badge b-sen">smart meter</span></li>
+          <li><span class="kpi-code">KPI-37</span><span class="kpi-name">Primary energy consumption (PEC)</span><span class="badge b-sen">smart meter</span></li>
+          <li><span class="kpi-code">KPI-38</span><span class="kpi-name">Renewable energy ratio (RER)</span><span class="badge b-sen">smart meter</span></li>
+        </ul>
+      </div>
+      <div class="dept den">
+        <div class="dept-name">Ambiente ISO 14001</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">M-1</span><span class="kpi-name">Resíduos produzidos / obra</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">M-2</span><span class="kpi-name">Taxa reciclagem resíduos</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">M-3</span><span class="kpi-name">Consumo gases O2 · N2 · Arco15</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">M-4</span><span class="kpi-name">Emissões CO2 estimadas</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEGURANÇA -->
+<div class="layer ls-layer open">
+  <div class="layer-header" onclick="this.parentElement.classList.toggle('open')">
+    <span class="layer-toggle">▶</span>
+    <div class="layer-label">Transversal — Segurança e Saúde</div>
+    <div class="layer-norm">ISO 45001 · L3-L0</div>
+  </div>
+  <div class="layer-body">
+    <div class="grid g4">
+      <div class="dept ds">
+        <div class="dept-name">Incidentes</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">S-1</span><span class="kpi-name">Acidentes com baixa / ano</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">S-2</span><span class="kpi-name">Near misses registados</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+      <div class="dept ds">
+        <div class="dept-name">CITs / Ausências</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">S-3</span><span class="kpi-name">Dias CIT por trabalhador</span><span class="badge b-par">parcial</span></li>
+          <li><span class="kpi-code">S-4</span><span class="kpi-name">Taxa absentismo %</span><span class="badge b-par">parcial</span></li>
+        </ul>
+      </div>
+      <div class="dept ds">
+        <div class="dept-name">Formação</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">S-5</span><span class="kpi-name">Horas formação / trabalhador</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">S-6</span><span class="kpi-name">Certificações activas EN 9606</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+      <div class="dept ds">
+        <div class="dept-name">Avaliação Risco</div>
+        <ul class="kpis">
+          <li><span class="kpi-code">S-7</span><span class="kpi-name">% postos com avaliação risco</span><span class="badge b-fut">futuro</span></li>
+          <li><span class="kpi-code">S-8</span><span class="kpi-name">EPIs entregues / registados</span><span class="badge b-fut">futuro</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEGENDA -->
+<div class="legend">
+  <div class="leg-item"><span class="badge b-ok">activo</span> calculável agora com dados existentes</div>
+  <div class="leg-item"><span class="badge b-par">parcial</span> dados parciais — precisa completar</div>
+  <div class="leg-item"><span class="badge b-fut">futuro</span> requer nova infra (migration, feature)</div>
+  <div class="leg-item"><span class="badge b-sen">sensor / smart meter</span> requer L1/L2 hardware</div>
+</div>
+
+<div class="footer">
+  <span>CSN Opus S36 · Carlos dos Santos Nascimento, Lda · NIF 500 861 790 · Mafra, Portugal</span>
+  <span>02/04/2026 · HEAD: 1e9e723 · duartebustorff-star/csn-producao</span>
+</div>
+
+<script>
+document.querySelectorAll('.layer-header').forEach(h => {
+  h.addEventListener('click', () => {
+    h.parentElement.classList.toggle('open');
+  });
+});
+</script>
+
+</body>
+</html>

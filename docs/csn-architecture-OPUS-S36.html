@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Arquitectura S36</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap');
+:root {
+  --bg:#07080d; --s:#0d0f18; --s2:#12141f; --b:rgba(255,255,255,0.06); --b2:rgba(255,255,255,0.12);
+  --text:#c8ccd8; --muted:#555a70;
+  --ext:#374151; --extbg:#0f1117; --extt:#9ca3af;
+  --front:#d97706; --frontbg:#1a0e02; --frontt:#fcd34d;
+  --nucleo:#dc2626; --nucleobg:#1a0505; --nucleot:#fca5a5;
+  --l4:#7c3aed; --l4bg:#1a0f3a; --l4t:#c4b5fd;
+  --l3:#1d4ed8; --l3bg:#0a1530; --l3t:#93c5fd;
+  --skill:#15803d; --skillbg:#051a0d; --skillt:#86efac;
+  --tool:#7c3aed; --toolbg:#1a0f3a; --toolt:#c4b5fd;
+  --db:#0369a1; --dbbg:#021525; --dbt:#7dd3fc;
+  --l210:#374151; --l210bg:#0f1117; --l210t:#9ca3af;
+  --rag:#d97706; --ragbg:#1a0e02; --ragt:#fcd34d;
+  --ok:#16a34a; --par:#d97706; --fut:#4f46e5;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;padding:28px;}
+.header{margin-bottom:28px;border-left:3px solid var(--l4);padding-left:18px;}
+.header h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:4px;}
+.header .meta{color:var(--muted);font-size:10px;letter-spacing:1px;text-transform:uppercase;}
+.layer{border-radius:12px;margin-bottom:8px;border:1px solid;overflow:hidden;}
+.lh{padding:10px 18px;display:flex;align-items:center;gap:12px;}
+.ll{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.ln{font-size:9px;margin-left:auto;opacity:0.6;letter-spacing:0.5px;}
+.lb{padding:12px 18px 14px;}
+.ext-layer{border-color:var(--ext);} .ext-layer .lh{background:var(--extbg);} .ext-layer .ll{color:var(--extt);}
+.front-layer{border-color:var(--front);} .front-layer .lh{background:var(--frontbg);} .front-layer .ll{color:var(--frontt);}
+.nucleo-layer{border-color:var(--nucleo);} .nucleo-layer .lh{background:var(--nucleobg);} .nucleo-layer .ll{color:var(--nucleot);}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.box{border-radius:8px;padding:10px 12px;border:1px solid var(--b);}
+.box-title{font-family:'Syne',sans-serif;font-weight:600;font-size:11px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--b);}
+.box-items{list-style:none;}
+.box-items li{padding:1.5px 0;font-size:9.5px;color:var(--text);display:flex;gap:5px;align-items:baseline;}
+.box-items li::before{content:"·";color:var(--muted);flex-shrink:0;}
+.bext{background:#0f1117;} .bext .box-title{color:var(--extt);}
+.bfront{background:#1a1200;} .bfront .box-title{color:var(--frontt);}
+.bl4{background:#140b28;} .bl4 .box-title{color:var(--l4t);}
+.bl3{background:#060e1e;} .bl3 .box-title{color:var(--l3t);}
+.bskill{background:#051a0d;} .bskill .box-title{color:var(--skillt);}
+.btool{background:#140b28;} .btool .box-title{color:var(--toolt);}
+.bdb{background:#021525;} .bdb .box-title{color:var(--dbt);}
+.bl210{background:#0f1117;} .bl210 .box-title{color:var(--l210t);}
+.brag{background:#1a0e02;border:1px solid var(--rag);} .brag .box-title{color:var(--ragt);}
+.arrow{text-align:center;padding:5px 0;font-size:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.arr-down{color:var(--front);} .arr-up{color:var(--ok);} .arr-both{color:var(--db);}
+.arr-label{font-size:9px;}
+.badge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:8px;font-weight:600;margin-left:4px;}
+.bok{background:#052e16;color:#4ade80;} .bpar{background:#431407;color:#fcd34d;} .bfut{background:#1e1b4b;color:#a5b4fc;} .bsen{background:#1c1917;color:#a8a29e;}
+.bnew{background:#1a0e02;color:#fcd34d;border:1px solid #d97706;}
+.rule{background:#1a0000;border:1px solid var(--nucleo);border-radius:6px;padding:10px 14px;text-align:center;font-size:10px;color:var(--nucleot);margin-top:10px;letter-spacing:0.5px;}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.flow-box{background:#1a1200;border:1px solid var(--front);border-radius:6px;padding:6px 10px;font-size:9.5px;color:var(--frontt);white-space:nowrap;}
+.flow-arr{color:var(--front);font-size:12px;}
+.flow-green{background:#051a0d;border-color:var(--ok);color:#4ade80;}
+.flow-blue{background:#021525;border-color:var(--db);color:var(--dbt);}
+.section-divider{border:none;border-top:1px solid var(--b);margin:10px 0;}
+.footer{margin-top:24px;padding-top:14px;border-top:1px solid var(--b);color:var(--muted);font-size:9px;display:flex;justify-content:space-between;}
+@media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr);}.g3{grid-template-columns:repeat(2,1fr);}body{padding:14px;}}
+@media(max-width:600px){.g4,.g3,.g2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CSN Opus — Arquitectura do Sistema</h1>
+  <div class="meta">S36 · 02/04/2026 · ISA-95/IEC 62264 · ADR-031 · RAG live · csn-producao.vercel.app</div>
+</div>
+
+<!-- EXTERIOR -->
+<div class="layer ext-layer">
+  <div class="lh">
+    <div class="ll">Camada 1 — Exterior</div>
+    <div class="ln">Humanos reais · canal = apenas transporte</div>
+  </div>
+  <div class="lb">
+    <div class="g4">
+      <div class="box bext"><div class="box-title">Cliente</div><ul class="box-items"><li>comprador · prospecto</li><li>parceiro · importador</li></ul></div>
+      <div class="box bext"><div class="box-title">Fornecedor</div><ul class="box-items"><li>Chagas · Dhollandia</li><li>Bielco · Pecol · outros</li></ul></div>
+      <div class="box bext"><div class="box-title">Colaborador</div><ul class="box-items"><li>Bohdan PIN 1001</li><li>Julio PIN 1002 · Joao PIN 1003</li></ul></div>
+      <div class="box bext"><div class="box-title">Canal de entrada</div><ul class="box-items"><li>email · WhatsApp · Telegram</li><li>voz · portal · chatbot</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="arrow"><span class="arr-down">↓</span><span class="arr-label" style="color:var(--front)">input entra</span><span style="margin-left:40px;color:var(--ok)">resposta sai</span><span class="arr-up">↑</span></div>
+
+<!-- FRONTEIRA -->
+<div class="layer front-layer">
+  <div class="lh">
+    <div class="ll">Camada 2 — Fronteira</div>
+    <div class="ln">ADR-031 · isolamento · nunca escreve no nucleo</div>
+  </div>
+  <div class="lb">
+    <div class="box bfront" style="margin-bottom:8px;">
+      <div class="box-title">Roteador Externo — unico ponto de entrada</div>
+      <div class="flow">
+        <div class="flow-box">recebe input</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">identifica entidade (NIF · email · nome)</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">classifica ISA-95</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">regista Supabase</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">guarda Storage</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">notifica Interface Dept.</div>
+      </div>
+    </div>
+    <div class="g4">
+      <div class="box bfront"><div class="box-title">Interface Comercial</div><ul class="box-items"><li>leads · DAVs · orcamentos</li><li>skills/comercial/</li><li>read: dashboard leads</li></ul></div>
+      <div class="box bfront"><div class="box-title">Interface Producao</div><ul class="box-items"><li>obras · fases · KPIs</li><li>skills/producao/ <span class="badge bok">S36</span></li><li>read: obras activas, timer</li></ul></div>
+      <div class="box bfront"><div class="box-title">Interface RH</div><ul class="box-items"><li>recibos · ferias · CITs</li><li>skills/rh/ <span class="badge bok">S36</span></li><li>read: dados pessoais</li></ul></div>
+      <div class="box bfront"><div class="box-title">Interface Fornecedores</div><ul class="box-items"><li>Chagas <span class="badge bok">S36</span> · Dhollandia <span class="badge bok">S36</span></li><li>encomendas · prazos</li><li>read: conta corrente</li></ul></div>
+    </div>
+    <hr class="section-divider">
+    <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">fluxo de resposta</div>
+    <div class="flow">
+      <div class="flow-box flow-green">1. pergunta chega</div>
+      <div class="flow-arr" style="color:var(--ok)">→</div>
+      <div class="flow-box flow-green">2. skill carregado</div>
+      <div class="flow-arr" style="color:var(--ok)">→</div>
+      <div class="flow-box" style="background:#1a0e02;border-color:var(--rag);color:var(--ragt);">3. RAG enriquece <span class="badge bnew">S36</span></div>
+      <div class="flow-arr" style="color:var(--ok)">→</div>
+      <div class="flow-box flow-blue">4. dashboard read-only</div>
+      <div class="flow-arr" style="color:var(--ok)">→</div>
+      <div class="flow-box flow-green">5. responde pelo mesmo canal</div>
+    </div>
+    <div class="rule">Regra de ouro — Interfaces raciocinam e comunicam. Nunca escrevem no nucleo. O Roteador e o unico ponto de entrada.</div>
+  </div>
+</div>
+
+<div class="arrow"><span class="arr-both">↕</span><span class="arr-label" style="color:var(--db)">read-only dashboards (descida) · respostas aprovadas (subida)</span></div>
+
+<!-- NUCLEO -->
+<div class="layer nucleo-layer">
+  <div class="lh">
+    <div class="ll">Camada 3 — Nucleo ISA-95 Opus</div>
+    <div class="ln">Protegido · nunca exposto directamente</div>
+  </div>
+  <div class="lb">
+    <div style="font-size:9px;color:var(--l4t);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">L4-BPL — Negocio · ISO 14001 · ISO 31000</div>
+    <div class="g4" style="margin-bottom:10px;">
+      <div class="box bl4"><div class="box-title">Comercial COM</div><ul class="box-items"><li>leads · DAVs · FAMs</li><li>InvoiceXpress · Pipedrive</li></ul></div>
+      <div class="box bl4"><div class="box-title">Financeiro FIN</div><ul class="box-items"><li>e-Fatura 4.409 reg.</li><li>conta corrente NIF</li></ul></div>
+      <div class="box bl4"><div class="box-title">Engenharia ENG</div><ul class="box-items"><li>COC · DoP · CE marking</li><li>Reg. 2018/858</li></ul></div>
+      <div class="box bl4"><div class="box-title">Qualidade QMS-L4</div><ul class="box-items"><li>NC · accoes correctivas</li><li>ISO 9001 auditorias</li></ul></div>
+    </div>
+
+    <div style="font-size:9px;color:var(--l3t);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">L3-MOM — Operacoes · ISO 22400 · ISO 45001 · MESA-11</div>
+    <div class="g3" style="margin-bottom:10px;">
+      <div class="box bl3"><div class="box-title">Producao PRD</div><ul class="box-items"><li>obras · fases · timer</li><li>KPIs ISO 22400 (34+4)</li><li>foto-fase · work instructions</li></ul></div>
+      <div class="box bl3"><div class="box-title">Manutencao MNT</div><ul class="box-items"><li>MNT-001..004 ciclos</li><li>Bodor · Fronius · KUKA</li><li>ISO 55001 activos</li></ul></div>
+      <div class="box bl3"><div class="box-title">RH · Qualidade · Inventario</div><ul class="box-items"><li>45 recibos · CITs · ferias</li><li>EN 1090 · EN ISO 3834</li><li>materiais · lotes (mig. 017)</li></ul></div>
+    </div>
+
+    <!-- Skill Registry + Tools -->
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="box bskill">
+        <div class="box-title">Skill Registry /skills/ <span class="badge bok">5 activos</span></div>
+        <ul class="box-items">
+          <li>_global/ <span class="badge bok">S35</span></li>
+          <li>producao/ <span class="badge bok">S36</span> — 20 KPIs ISO 22400</li>
+          <li>rh/ <span class="badge bok">S36</span> — 12 KPIs RH + Seguranca</li>
+          <li>fornecedores/chagas/ <span class="badge bok">S36</span></li>
+          <li>fornecedores/dhollandia/ <span class="badge bok">S36</span></li>
+          <li style="color:var(--frontt)">Anthropic Agent Skills Standard</li>
+        </ul>
+      </div>
+      <div class="box btool">
+        <div class="box-title">Tools · API Routes 33+</div>
+        <ul class="box-items">
+          <li>/api/timer · /api/kpis · /api/rh</li>
+          <li>/api/roteador · /api/faturacao</li>
+          <li>/api/fornecedores · /api/mnt</li>
+          <li>/api/embeddings/gerar <span class="badge bok">S36</span></li>
+          <li style="color:var(--frontt)">MCP como standard (plumbing)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- RAG -->
+    <div class="box brag" style="margin-bottom:10px;">
+      <div class="box-title">RAG — Retrieval Augmented Generation <span class="badge bnew">LIVE S36</span></div>
+      <div class="flow">
+        <div class="flow-box">PDF no Storage</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">/api/embeddings/gerar</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">pdf-parse (texto)</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">Voyage AI voyage-3</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">pgvector (1024 dims)</div>
+        <div class="flow-arr">→</div>
+        <div class="flow-box">HNSW cosine index</div>
+      </div>
+      <ul class="box-items">
+        <li>3.333 PDFs para processar · ingestao em batch (50/batch)</li>
+        <li>Tabela embeddings: documento_id, fornecedor_id, vector(1024), metadata JSONB</li>
+        <li>Migrations 025 + 025b aplicadas · Script ingest_embeddings.py</li>
+      </ul>
+    </div>
+
+    <!-- Supabase + Storage -->
+    <div class="g2" style="margin-bottom:10px;">
+      <div class="box bdb"><div class="box-title">Supabase — 38 tabelas · 26 migrations</div><ul class="box-items"><li>18.169 emails_indice</li><li>381 fornecedores · 4.409 e-fatura</li><li>45 recibos · obras · colaboradores</li><li>embeddings (pgvector) <span class="badge bok">S36</span></li></ul></div>
+      <div class="box bdb"><div class="box-title">Storage — 3.333 PDFs</div><ul class="box-items"><li>bucket: documentos</li><li>emails geral@ · manuais</li><li>recibos · COCs · DoPs</li></ul></div>
+    </div>
+
+    <div class="box bl210">
+      <div class="box-title">L2-SUP · L1-SEN · L0-PHY — SCADA · Sensores · Maquinas e Pessoal</div>
+      <ul class="box-items" style="display:flex;flex-wrap:wrap;gap:12px;">
+        <li>Bodor laser 60kW · 78K EUR <span class="badge bsen">smart meter S37</span></li>
+        <li>Fronius Transteel 4000 Pulse</li>
+        <li>KUKA robot · EN 14732</li>
+        <li>EN 1090 · EN 3834 · EN 12642 · IEC 62443 · ISO 50001</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- AUDITORIA -->
+<div style="margin-top:16px;">
+  <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--l4t);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Prontidao para Auditoria</div>
+  <div class="g4">
+    <div class="box bl4"><div class="box-title">ISO 9001:2015</div><ul class="box-items"><li>Controlo docs <span class="badge bok">ok</span></li><li>SGQ <span class="badge bpar">25%</span></li><li>Auditorias <span class="badge bfut">por criar</span></li></ul></div>
+    <div class="box bl3"><div class="box-title">ISO 22400 KPIs</div><ul class="box-items"><li>Calculaveis <span class="badge bok">5/38</span></li><li>Parciais <span class="badge bpar">7/38</span></li><li>Futuros <span class="badge bfut">26/38</span></li></ul></div>
+    <div class="box bl3"><div class="box-title">EN 1090 · Marcacao CE</div><ul class="box-items"><li>COC estrutura <span class="badge bpar">parcial</span></li><li>WPS/WPQR <span class="badge bfut">por criar</span></li><li>DoP template <span class="badge bpar">parcial</span></li></ul></div>
+    <div class="box bfront"><div class="box-title">COC Electronico IMT</div><ul class="box-items"><li>Deadline <span class="badge bpar">Jul 2026</span></li><li>Estado <span class="badge bfut">por implementar</span></li></ul></div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>CSN Opus S36 · Carlos dos Santos Nascimento, Lda · NIF 500 861 790 · Mafra, Portugal</span>
+  <span>02/04/2026 · HEAD: 1e9e723 · duartebustorff-star/csn-producao</span>
+</div>
+
+</body>
+</html>
