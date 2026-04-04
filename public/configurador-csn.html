@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurador CSN</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --csn-blue: #1a365d;
+    --csn-blue-light: #2b6cb0;
+    --csn-gold: #d69e2e;
+    --csn-green: #38a169;
+    --csn-orange: #dd6b20;
+    --csn-red: #e53e3e;
+    --csn-gray: #718096;
+    --csn-bg: #f7fafc;
+    --csn-card: #ffffff;
+    --csn-border: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--csn-bg); color: #2d3748; }
+
+  .header { background: var(--csn-blue); color: white; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+  .header .subtitle { font-size: 13px; opacity: 0.8; }
+
+  .wizard-container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Steps indicator */
+  .steps-bar { display: flex; gap: 4px; margin-bottom: 32px; }
+  .step-indicator { flex: 1; text-align: center; padding: 12px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; background: var(--csn-border); color: var(--csn-gray); transition: all 0.3s; cursor: default; }
+  .step-indicator.active { background: var(--csn-blue); color: white; }
+  .step-indicator.completed { background: var(--csn-green); color: white; cursor: pointer; }
+  .step-indicator .step-num { display: block; font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+
+  /* Cards */
+  .card { background: var(--csn-card); border: 1px solid var(--csn-border); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .card h2 { font-size: 18px; color: var(--csn-blue); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card h2 .icon { font-size: 22px; }
+
+  /* Form elements */
+  .field-group { margin-bottom: 16px; }
+  .field-group label { display: block; font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  select, input[type="number"], input[type="text"] {
+    width: 100%; padding: 10px 14px; border: 2px solid var(--csn-border); border-radius: 8px;
+    font-size: 15px; background: white; transition: border-color 0.2s; outline: none;
+  }
+  select:focus, input:focus { border-color: var(--csn-blue-light); }
+  select:disabled, input:disabled { background: #edf2f7; color: #a0aec0; }
+
+  /* Option tiles */
+  .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .tile { border: 2px solid var(--csn-border); border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .tile:hover { border-color: var(--csn-blue-light); background: #ebf8ff; }
+  .tile.selected { border-color: var(--csn-blue); background: #ebf8ff; box-shadow: 0 0 0 1px var(--csn-blue); }
+  .tile .tile-title { font-weight: 700; font-size: 14px; color: var(--csn-blue); }
+  .tile .tile-sub { font-size: 12px; color: var(--csn-gray); margin-top: 4px; }
+
+  /* Config cards (step 3) */
+  .config-card { border: 2px solid var(--csn-border); border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.2s; }
+  .config-card:hover { border-color: var(--csn-blue-light); }
+  .config-card.selected { border-color: var(--csn-blue); background: #ebf8ff; }
+  .config-card .cc-title { font-weight: 700; font-size: 15px; color: var(--csn-blue); margin-bottom: 8px; }
+  .config-card .cc-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 13px; }
+  .config-card .cc-specs .spec-label { color: var(--csn-gray); }
+  .config-card .cc-specs .spec-value { font-weight: 600; text-align: right; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--csn-blue); color: white; }
+  .btn-primary:hover { background: var(--csn-blue-light); }
+  .btn-primary:disabled { background: #a0aec0; cursor: not-allowed; }
+  .btn-secondary { background: white; color: var(--csn-blue); border: 2px solid var(--csn-blue); }
+  .btn-secondary:hover { background: #ebf8ff; }
+  .btn-success { background: var(--csn-green); color: white; }
+  .btn-success:hover { background: #2f855a; }
+
+  .btn-row { display: flex; gap: 12px; justify-content: space-between; margin-top: 24px; }
+
+  /* Registrability badge */
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 14px; }
+  .badge-green { background: #c6f6d5; color: #22543d; }
+  .badge-orange { background: #fefcbf; color: #744210; }
+  .badge-red { background: #fed7d7; color: #742a2a; }
+
+  /* Payload display */
+  .payload-display { text-align: center; padding: 24px; background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%); border-radius: 12px; margin: 16px 0; }
+  .payload-display .payload-number { font-size: 48px; font-weight: 800; color: var(--csn-blue); }
+  .payload-display .payload-label { font-size: 14px; color: var(--csn-gray); margin-top: 4px; }
+
+  /* Weight breakdown */
+  .weight-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--csn-border); font-size: 14px; }
+  .weight-row:last-child { border-bottom: none; font-weight: 700; font-size: 16px; color: var(--csn-blue); }
+  .weight-row .wr-label { color: #4a5568; }
+  .weight-row .wr-value { font-weight: 600; }
+
+  /* Summary */
+  .summary-section { margin-bottom: 20px; }
+  .summary-section h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--csn-gray); margin-bottom: 8px; }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .summary-item { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; }
+  .summary-item .si-label { color: var(--csn-gray); }
+  .summary-item .si-value { font-weight: 600; }
+
+  /* Checkbox list */
+  .checkbox-item { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--csn-border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+  .checkbox-item:hover { background: #f7fafc; }
+  .checkbox-item.checked { background: #ebf8ff; border-color: var(--csn-blue-light); }
+  .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--csn-blue); }
+  .checkbox-item .ci-name { font-weight: 600; font-size: 14px; }
+  .checkbox-item .ci-weight { font-size: 12px; color: var(--csn-gray); }
+
+  /* Animations */
+  .fade-in { animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Loading */
+  .loading { text-align: center; padding: 40px; color: var(--csn-gray); }
+  .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--csn-border); border-top-color: var(--csn-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* URL state indicator */
+  .url-state { font-size: 11px; color: var(--csn-gray); text-align: center; margin-top: 8px; word-break: break-all; background: #edf2f7; padding: 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useMemo } = React;
+
+// === Supabase config ===
+const SUPABASE_URL = 'https://oysfxhlzilazeznpaafc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95c2Z4aGx6aWxhemV6bnBhYWZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNzg5ODUsImV4cCI6MjA4Nzg1NDk4NX0.7y8qexOkNwYJsWN02OytKdkPmJaY-p7a_QsWrAlIcjk';
+
+async function supaFetch(table, params = '') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  return res.json();
+}
+
+// === URL State Management (base64 JSON like JPM) ===
+function encodeState(state) {
+  try { return btoa(unescape(encodeURIComponent(JSON.stringify(state)))); } catch { return ''; }
+}
+function decodeState(b64) {
+  try { return JSON.parse(decodeURIComponent(escape(atob(b64)))); } catch { return null; }
+}
+function updateURL(state) {
+  const encoded = encodeState(state);
+  const url = new URL(window.location);
+  url.searchParams.set('config', encoded);
+  window.history.replaceState({}, '', url);
+}
+function readURLState() {
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config');
+  return config ? decodeState(config) : null;
+}
+
+// === PDF Generation ===
+function generatePDF(state, chassis, carrocaria, acessorios) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Header
+  doc.setFillColor(26, 54, 93);
+  doc.rect(0, 0, 210, 35, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont('helvetica', 'bold');
+  doc.text('CSN - Configuracao de Veiculo', 15, 18);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Gerado em ${new Date().toLocaleDateString('pt-PT')}`, 15, 28);
+
+  let y = 50;
+  doc.setTextColor(26, 54, 93);
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Veiculo', 15, y);
+  y += 10;
+
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+
+  const addLine = (label, value) => {
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${label}:`, 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(String(value || '-'), 80, y);
+    y += 7;
+  };
+
+  if (chassis) {
+    addLine('Marca', chassis.marca);
+    addLine('Modelo', `${chassis.modelo}${chassis.variante ? ' ' + chassis.variante : ''}`);
+    addLine('PBT', `${chassis.pbt_kg} kg (${state.pbt_categoria})`);
+    addLine('Cabine', chassis.tipo_cabine === 'simples' ? 'Simples' : 'Dupla');
+    addLine('Entre-eixos', `${chassis.entre_eixos_mm} mm${chassis.sufixo_entre_eixos ? ' ' + chassis.sufixo_entre_eixos : ''}`);
+    addLine('Lugares', chassis.num_lugares);
+    addLine('Emissao', chassis.classe_emissao);
+    addLine('Peso chassis', state.peso_chassis_manual || chassis.peso_chassis_kg ? `${state.peso_chassis_manual || chassis.peso_chassis_kg} kg` : 'Manual');
+  }
+
+  y += 5;
+  doc.setTextColor(26, 54, 93);
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Carrocaria', 15, y);
+  y += 10;
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(11);
+
+  if (carrocaria) {
+    const tipoLabels = { basculante_traseira: 'Basculante traseira', basculante_trilateral: 'Basculante trilateral', estrado: 'Estrado', caixa_aberta: 'Caixa aberta' };
+    const matLabels = { aco: 'Aco', aluminio: 'Aluminio', misto: 'Misto aluminio', aluminio_madeira: 'Aluminio c/ madeira' };
+    addLine('Tipo', tipoLabels[carrocaria.tipo] || carrocaria.tipo);
+    addLine('Material', matLabels[carrocaria.material] || carrocaria.material);
+    addLine('Comp. interior', `${carrocaria.comprimento_int_mm} mm`);
+    addLine('Larg. interior', `${carrocaria.largura_int_mm} mm`);
+    if (carrocaria.altura_lateral_mm) addLine('Altura lateral', `${carrocaria.altura_lateral_mm} mm`);
+    addLine('Peso carrocaria', `${carrocaria.peso_carrocaria_kg} kg`);
+    addLine('Peso subframe', `${carrocaria.peso_subframe_kg} kg`);
+    addLine('Peso reboque', `${carrocaria.peso_reboque_kg} kg`);
+    addLine('Peso total equip.', `${carrocaria.peso_total_equipamento_kg} kg`);
+  }
+
+  if (acessorios && acessorios.length > 0) {
+    y += 5;
+    doc.setTextColor(26, 54, 93);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Acessorios', 15, y);
+    y += 10;
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(11);
+    acessorios.forEach(a => { addLine(a.nome, `${a.peso_kg} kg`); });
+  }
+
+  // Payload section
+  y += 10;
+  doc.setFillColor(235, 248, 255);
+  doc.roundedRect(15, y - 5, 180, 40, 3, 3, 'F');
+  doc.setTextColor(26, 54, 93);
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Payload', 20, y + 5);
+
+  const pesoChassis = state.peso_chassis_manual || (chassis && chassis.peso_chassis_kg) || 0;
+  const pesoEquip = carrocaria ? Number(carrocaria.peso_total_equipamento_kg) : 0;
+  const pesoAcess = acessorios ? acessorios.reduce((s, a) => s + Number(a.peso_kg), 0) : 0;
+  const pbt = chassis ? Number(chassis.pbt_kg) : 0;
+  const payload = pbt - Number(pesoChassis) - pesoEquip - pesoAcess;
+
+  doc.setFontSize(28);
+  doc.text(`${payload} kg`, 20, y + 25);
+
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`PBT ${pbt} - Chassis ${pesoChassis} - Equip. ${pesoEquip} - Acess. ${pesoAcess}`, 90, y + 25);
+
+  y += 50;
+  const registrable = payload > 0 && pesoChassis > 0;
+  if (registrable) {
+    doc.setFillColor(198, 246, 213);
+    doc.roundedRect(15, y, 180, 15, 3, 3, 'F');
+    doc.setTextColor(34, 84, 61);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('VEICULO IMMATRICULAVEL', 105, y + 10, { align: 'center' });
+  } else {
+    doc.setFillColor(254, 252, 191);
+    doc.roundedRect(15, y, 180, 15, 3, 3, 'F');
+    doc.setTextColor(116, 66, 16);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('AGUARDA INFORMACAO', 105, y + 10, { align: 'center' });
+  }
+
+  // Footer
+  doc.setTextColor(150, 150, 150);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text('CSN - Carrocarias e Servicos Nacionais | Configurador v1.0', 105, 285, { align: 'center' });
+
+  doc.save('configuracao-csn.pdf');
+}
+
+// === STEP LABELS ===
+const STEPS = [
+  { num: 1, label: 'Veiculo' },
+  { num: 2, label: 'Carrocaria' },
+  { num: 3, label: 'Dimensoes' },
+  { num: 4, label: 'Acessorios' },
+  { num: 5, label: 'Validacao' },
+  { num: 6, label: 'Resumo' },
+];
+
+const PBT_LABELS = { '2T': '2-3.5 Tonnes', '3T6': '3.6-5.5 Tonnes', '5T6': '5.6-7.5 Tonnes' };
+const TIPO_LABELS = { basculante_traseira: 'Basculante traseira', basculante_trilateral: 'Basculante trilateral (Tribenne)', estrado: 'Estrado (Dropside)', caixa_aberta: 'Caixa aberta' };
+const MAT_LABELS = { aco: 'Aco', aluminio: 'Aluminio', misto: 'Misto aluminio', aluminio_madeira: 'Aluminio c/ chao madeira' };
+const CAB_LABELS = { simples: 'Cabine simples', dupla: 'Cabine dupla' };
+
+// ============================================================
+// APP COMPONENT
+// ============================================================
+function App() {
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
+
+  // Data from DB
+  const [allChassis, setAllChassis] = useState([]);
+  const [allCarrocarias, setAllCarrocarias] = useState([]);
+  const [allRegras, setAllRegras] = useState([]);
+  const [allAcessorios, setAllAcessorios] = useState([]);
+
+  // User selections (state)
+  const [state, setState] = useState({
+    pbt_categoria: '',
+    marca: '',
+    modelo: '',
+    tipo_cabine: '',
+    entre_eixos: '',
+    chassis_id: '',
+    tipo_carrocaria: '',
+    material: '',
+    carrocaria_id: '',
+    cofre: false,
+    acessorios_ids: [],
+    peso_chassis_manual: '',
+    num_lugares_manual: '',
+    classe_emissao_manual: '',
+  });
+
+  // Load all data
+  useEffect(() => {
+    Promise.all([
+      supaFetch('catalogo_chassis', 'activo=eq.true&order=marca,modelo,entre_eixos_mm'),
+      supaFetch('catalogo_carrocarias', 'activo=eq.true&order=tipo,material,comprimento_int_mm'),
+      supaFetch('regras_filtragem', ''),
+      supaFetch('catalogo_acessorios', 'activo=eq.true&order=categoria,nome'),
+    ]).then(([ch, ca, re, ac]) => {
+      setAllChassis(ch);
+      setAllCarrocarias(ca);
+      setAllRegras(re);
+      setAllAcessorios(ac);
+      setLoading(false);
+
+      // Restore from URL
+      const saved = readURLState();
+      if (saved) {
+        setState(prev => ({ ...prev, ...saved }));
+        if (saved.carrocaria_id) setStep(saved._step || 6);
+        else if (saved.tipo_carrocaria) setStep(saved._step || 3);
+        else if (saved.chassis_id) setStep(saved._step || 2);
+      }
+    });
+  }, []);
+
+  // Sync state to URL
+  useEffect(() => {
+    if (!loading) updateURL({ ...state, _step: step });
+  }, [state, step, loading]);
+
+  const updateState = (updates) => setState(prev => ({ ...prev, ...updates }));
+
+  // === DERIVED DATA ===
+
+  // Step 1: Vehicle
+  const pbtOptions = ['2T', '3T6', '5T6'];
+
+  const marcas = useMemo(() => {
+    if (!state.pbt_categoria) return [];
+    const unique = [...new Set(allChassis.filter(c => c.pbt_categoria === state.pbt_categoria).map(c => c.marca))];
+    return unique.sort();
+  }, [allChassis, state.pbt_categoria]);
+
+  const modelos = useMemo(() => {
+    if (!state.marca) return [];
+    const unique = [...new Set(allChassis
+      .filter(c => c.pbt_categoria === state.pbt_categoria && c.marca === state.marca)
+      .map(c => c.modelo + (c.variante ? '|' + c.variante : '')))];
+    return unique.sort().map(m => {
+      const [modelo, variante] = m.split('|');
+      return { modelo, variante: variante || null, label: variante ? `${modelo} ${variante}` : modelo };
+    });
+  }, [allChassis, state.pbt_categoria, state.marca]);
+
+  const cabines = useMemo(() => {
+    if (!state.modelo) return [];
+    const filtered = allChassis.filter(c =>
+      c.pbt_categoria === state.pbt_categoria && c.marca === state.marca && c.modelo === state.modelo
+    );
+    return [...new Set(filtered.map(c => c.tipo_cabine))].sort();
+  }, [allChassis, state.pbt_categoria, state.marca, state.modelo]);
+
+  const entreEixos = useMemo(() => {
+    if (!state.tipo_cabine) return [];
+    return allChassis.filter(c =>
+      c.pbt_categoria === state.pbt_categoria && c.marca === state.marca &&
+      c.modelo === state.modelo && c.tipo_cabine === state.tipo_cabine
+    ).sort((a, b) => a.entre_eixos_mm - b.entre_eixos_mm);
+  }, [allChassis, state.pbt_categoria, state.marca, state.modelo, state.tipo_cabine]);
+
+  const selectedChassis = useMemo(() =>
+    allChassis.find(c => c.id === state.chassis_id), [allChassis, state.chassis_id]);
+
+  // Step 2: Bodywork types available
+  const tiposCarrocaria = useMemo(() => {
+    if (!state.pbt_categoria) return [];
+    const tipos = [...new Set(allCarrocarias
+      .filter(c => c.pbt_categoria === state.pbt_categoria)
+      .map(c => c.tipo))];
+    return tipos.sort();
+  }, [allCarrocarias, state.pbt_categoria]);
+
+  // Materials available for selected bodywork type
+  const materiaisDisponiveis = useMemo(() => {
+    if (!state.tipo_carrocaria || !state.pbt_categoria) return [];
+    // Check filtering rules
+    const blocked = allRegras
+      .filter(r => r.tipo_carrocaria === state.tipo_carrocaria && !r.permitido &&
+        (r.pbt_categoria === state.pbt_categoria || r.pbt_categoria === null))
+      .map(r => r.material);
+
+    const materiais = [...new Set(allCarrocarias
+      .filter(c => c.pbt_categoria === state.pbt_categoria && c.tipo === state.tipo_carrocaria)
+      .map(c => c.material))];
+
+    return materiais.filter(m => !blocked.includes(m)).sort();
+  }, [allCarrocarias, allRegras, state.tipo_carrocaria, state.pbt_categoria]);
+
+  // Step 3: Available configurations (cards)
+  const configsDisponiveis = useMemo(() => {
+    if (!state.tipo_carrocaria || !state.material || !state.chassis_id) return [];
+    const chassis = allChassis.find(c => c.id === state.chassis_id);
+    if (!chassis) return [];
+
+    return allCarrocarias.filter(c =>
+      c.pbt_categoria === state.pbt_categoria &&
+      c.tipo === state.tipo_carrocaria &&
+      c.material === state.material &&
+      (!c.entre_eixos_minimo_mm || chassis.entre_eixos_mm >= c.entre_eixos_minimo_mm) &&
+      (!c.entre_eixos_maximo_mm || chassis.entre_eixos_mm <= c.entre_eixos_maximo_mm)
+    ).sort((a, b) => a.comprimento_int_mm - b.comprimento_int_mm);
+  }, [allCarrocarias, allChassis, state]);
+
+  const selectedCarrocaria = useMemo(() =>
+    allCarrocarias.find(c => c.id === state.carrocaria_id), [allCarrocarias, state.carrocaria_id]);
+
+  // Step 4: Compatible accessories
+  const acessoriosCompativeis = useMemo(() => {
+    if (!state.tipo_carrocaria) return [];
+    return allAcessorios.filter(a =>
+      !a.tipos_carrocaria_compativeis ||
+      a.tipos_carrocaria_compativeis.includes(state.tipo_carrocaria)
+    );
+  }, [allAcessorios, state.tipo_carrocaria]);
+
+  const selectedAcessorios = useMemo(() =>
+    allAcessorios.filter(a => state.acessorios_ids.includes(a.id)), [allAcessorios, state.acessorios_ids]);
+
+  // Step 5: Calculations
+  const calculations = useMemo(() => {
+    const pesoChassis = Number(state.peso_chassis_manual) || (selectedChassis && Number(selectedChassis.peso_chassis_kg)) || 0;
+    const pesoEquip = selectedCarrocaria ? Number(selectedCarrocaria.peso_total_equipamento_kg) : 0;
+    const pesoAcess = selectedAcessorios.reduce((s, a) => s + Number(a.peso_kg), 0);
+    const pbt = selectedChassis ? Number(selectedChassis.pbt_kg) : 0;
+    const payload = pbt - pesoChassis - pesoEquip - pesoAcess;
+    const autoPreenchido = selectedChassis ? selectedChassis.peso_auto_preenchido : false;
+
+    return { pesoChassis, pesoEquip, pesoAcess, pbt, payload, autoPreenchido };
+  }, [selectedChassis, selectedCarrocaria, selectedAcessorios, state.peso_chassis_manual]);
+
+  const isRegistrable = calculations.payload > 0 && calculations.pesoChassis > 0;
+
+  // === HANDLERS ===
+  const goToStep = (s) => { if (s <= step) setStep(s); };
+
+  const handlePbt = (pbt) => {
+    updateState({ pbt_categoria: pbt, marca: '', modelo: '', tipo_cabine: '', entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '', acessorios_ids: [] });
+  };
+  const handleMarca = (marca) => {
+    updateState({ marca, modelo: '', tipo_cabine: '', entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '' });
+  };
+  const handleModelo = (modelo) => {
+    updateState({ modelo, tipo_cabine: '', entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '' });
+  };
+  const handleCabine = (tipo_cabine) => {
+    updateState({ tipo_cabine, entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '' });
+  };
+  const handleEntreEixos = (chassis) => {
+    updateState({
+      entre_eixos: String(chassis.entre_eixos_mm),
+      chassis_id: chassis.id,
+      peso_chassis_manual: chassis.peso_auto_preenchido ? '' : '',
+      num_lugares_manual: '',
+      classe_emissao_manual: '',
+    });
+  };
+  const handleTipoCarrocaria = (tipo) => {
+    updateState({ tipo_carrocaria: tipo, material: '', carrocaria_id: '' });
+  };
+  const handleMaterial = (mat) => {
+    updateState({ material: mat, carrocaria_id: '' });
+  };
+  const handleSelectConfig = (id) => {
+    updateState({ carrocaria_id: id });
+  };
+  const toggleAcessorio = (id) => {
+    setState(prev => ({
+      ...prev,
+      acessorios_ids: prev.acessorios_ids.includes(id)
+        ? prev.acessorios_ids.filter(x => x !== id)
+        : [...prev.acessorios_ids, id]
+    }));
+  };
+
+  // === RENDER ===
+  if (loading) return (
+    <div>
+      <div className="header"><h1>CSN Configurador</h1></div>
+      <div className="loading"><div className="spinner"></div><p style={{marginTop:12}}>A carregar dados...</p></div>
+    </div>
+  );
+
+  return (
+    <div>
+      <div className="header">
+        <div>
+          <h1>CSN Configurador</h1>
+          <div className="subtitle">Carrocarias e Servicos Nacionais</div>
+        </div>
+        <div style={{fontSize:12, opacity:0.7}}>
+          {allChassis.length} chassis &middot; {allCarrocarias.length} carrocarias
+        </div>
+      </div>
+
+      <div className="wizard-container">
+        {/* Steps bar */}
+        <div className="steps-bar">
+          {STEPS.map(s => (
+            <div key={s.num}
+              className={`step-indicator ${s.num === step ? 'active' : ''} ${s.num < step ? 'completed' : ''}`}
+              onClick={() => goToStep(s.num)}>
+              <span className="step-num">{s.num}</span>
+              {s.label}
+            </div>
+          ))}
+        </div>
+
+        {/* === STEP 1: VEICULO === */}
+        {step === 1 && (
+          <div className="fade-in">
+            <div className="card">
+              <h2><span className="icon">&#128666;</span> Seleccione o veiculo</h2>
+
+              {/* PBT */}
+              <div className="field-group">
+                <label>Peso Bruto Total (PBT)</label>
+                <div className="tile-grid">
+                  {pbtOptions.map(pbt => (
+                    <div key={pbt} className={`tile ${state.pbt_categoria === pbt ? 'selected' : ''}`} onClick={() => handlePbt(pbt)}>
+                      <div className="tile-title">{PBT_LABELS[pbt]}</div>
+                      <div className="tile-sub">{pbt}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Marca */}
+              {state.pbt_categoria && (
+                <div className="field-group fade-in">
+                  <label>Marca</label>
+                  <select value={state.marca} onChange={e => handleMarca(e.target.value)}>
+                    <option value="">-- Seleccione a marca --</option>
+                    {marcas.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+              )}
+
+              {/* Modelo */}
+              {state.marca && (
+                <div className="field-group fade-in">
+                  <label>Modelo</label>
+                  <select value={state.modelo} onChange={e => handleModelo(e.target.value)}>
+                    <option value="">-- Seleccione o modelo --</option>
+                    {modelos.map(m => <option key={m.label} value={m.modelo}>{m.label}</option>)}
+                  </select>
+                </div>
+              )}
+
+              {/* Cabine */}
+              {state.modelo && cabines.length > 0 && (
+                <div className="field-group fade-in">
+                  <label>Tipo de cabine</label>
+                  <div className="tile-grid">
+                    {cabines.map(c => (
+                      <div key={c} className={`tile ${state.tipo_cabine === c ? 'selected' : ''}`} onClick={() => handleCabine(c)}>
+                        <div className="tile-title">{CAB_LABELS[c]}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Entre-eixos */}
+              {state.tipo_cabine && entreEixos.length > 0 && (
+                <div className="field-group fade-in">
+                  <label>Entre-eixos</label>
+                  <div className="tile-grid">
+                    {entreEixos.map(ee => (
+                      <div key={ee.id} className={`tile ${state.chassis_id === ee.id ? 'selected' : ''}`} onClick={() => handleEntreEixos(ee)}>
+                        <div className="tile-title">{ee.entre_eixos_mm} mm</div>
+                        {ee.sufixo_entre_eixos && <div className="tile-sub">{ee.sufixo_entre_eixos}</div>}
+                        {ee.peso_chassis_kg && <div className="tile-sub">{ee.peso_chassis_kg} kg</div>}
+                        {!ee.peso_chassis_kg && <div className="tile-sub" style={{color:'var(--csn-orange)'}}>Peso manual</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="btn-row">
+                <div></div>
+                <button className="btn btn-primary" disabled={!state.chassis_id} onClick={() => setStep(2)}>
+                  Validar &#8594;
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === STEP 2: CARROCARIA === */}
+        {step === 2 && (
+          <div className="fade-in">
+            <div className="card">
+              <h2><span className="icon">&#128230;</span> Tipo de carrocaria</h2>
+
+              <div className="field-group">
+                <label>Tipo</label>
+                <div className="tile-grid">
+                  {tiposCarrocaria.map(t => (
+                    <div key={t} className={`tile ${state.tipo_carrocaria === t ? 'selected' : ''}`} onClick={() => handleTipoCarrocaria(t)}>
+                      <div className="tile-title">{TIPO_LABELS[t] || t}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {state.tipo_carrocaria && materiaisDisponiveis.length > 0 && (
+                <div className="field-group fade-in">
+                  <label>Material</label>
+                  <div className="tile-grid">
+                    {materiaisDisponiveis.map(m => (
+                      <div key={m} className={`tile ${state.material === m ? 'selected' : ''}`} onClick={() => handleMaterial(m)}>
+                        <div className="tile-title">{MAT_LABELS[m] || m}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Show filtering rule messages */}
+                  {allRegras.filter(r => r.tipo_carrocaria === state.tipo_carrocaria && !r.permitido && (r.pbt_categoria === state.pbt_categoria || !r.pbt_categoria)).map((r, i) => (
+                    <div key={i} style={{fontSize:12, color:'var(--csn-orange)', marginTop:8, fontStyle:'italic'}}>
+                      &#9888; {r.motivo}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="btn-row">
+                <button className="btn btn-secondary" onClick={() => setStep(1)}>&#8592; Voltar</button>
+                <button className="btn btn-primary" disabled={!state.material} onClick={() => setStep(3)}>
+                  Validar &#8594;
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === STEP 3: DIMENSOES (Configuration cards) === */}
+        {step === 3 && (
+          <div className="fade-in">
+            <div className="card">
+              <h2><span className="icon">&#128207;</span> Seleccione a configuracao</h2>
+              <p style={{fontSize:13, color:'var(--csn-gray)', marginBottom:16}}>
+                {configsDisponiveis.length} configuracao(oes) disponivel(is) para {TIPO_LABELS[state.tipo_carrocaria]} em {MAT_LABELS[state.material]}
+              </p>
+
+              <div style={{display:'grid', gap:12}}>
+                {configsDisponiveis.map(c => (
+                  <div key={c.id} className={`config-card ${state.carrocaria_id === c.id ? 'selected' : ''}`} onClick={() => handleSelectConfig(c.id)}>
+                    <div className="cc-title">{c.nome}</div>
+                    <div className="cc-specs">
+                      <span className="spec-label">Comprimento interior</span>
+                      <span className="spec-value">{c.comprimento_int_mm} mm</span>
+                      <span className="spec-label">Largura interior</span>
+                      <span className="spec-value">{c.largura_int_mm} mm</span>
+                      {c.altura_lateral_mm && <>
+                        <span className="spec-label">Altura lateral</span>
+                        <span className="spec-value">{c.altura_lateral_mm} mm</span>
+                      </>}
+                      <span className="spec-label">Peso carrocaria</span>
+                      <span className="spec-value">{c.peso_carrocaria_kg} kg</span>
+                      <span className="spec-label">Peso total equip.</span>
+                      <span className="spec-value">{c.peso_total_equipamento_kg} kg</span>
+                      {c.modelo_ref && <>
+                        <span className="spec-label">Modelo</span>
+                        <span className="spec-value">{c.modelo_ref}</span>
+                      </>}
+                    </div>
+                  </div>
+                ))}
+                {configsDisponiveis.length === 0 && (
+                  <div style={{textAlign:'center', padding:24, color:'var(--csn-gray)'}}>
+                    Nenhuma configuracao disponivel para este entre-eixos/tipo/material.
+                  </div>
+                )}
+              </div>
+
+              <div className="btn-row">
+                <button className="btn btn-secondary" onClick={() => setStep(2)}>&#8592; Voltar</button>
+                <button className="btn btn-primary" disabled={!state.carrocaria_id} onClick={() => setStep(4)}>
+                  Seleccionar &#8594;
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === STEP 4: ACESSORIOS === */}
+        {step === 4 && (
+          <div className="fade-in">
+            <div className="card">
+              <h2><span className="icon">&#128295;</span> Acessorios</h2>
+
+              {acessoriosCompativeis.length > 0 ? (
+                <div>
+                  {acessoriosCompativeis.map(a => (
+                    <div key={a.id} className={`checkbox-item ${state.acessorios_ids.includes(a.id) ? 'checked' : ''}`} onClick={() => toggleAcessorio(a.id)}>
+                      <input type="checkbox" checked={state.acessorios_ids.includes(a.id)} readOnly />
+                      <div>
+                        <div className="ci-name">{a.nome}</div>
+                        <div className="ci-weight">{a.peso_kg} kg &middot; {a.categoria}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{color:'var(--csn-gray)', fontSize:14}}>Nenhum acessorio disponivel para este tipo de carrocaria.</p>
+              )}
+
+              <div className="btn-row">
+                <button className="btn btn-secondary" onClick={() => setStep(3)}>&#8592; Voltar</button>
+                <button className="btn btn-primary" onClick={() => setStep(5)}>
+                  Validar &#8594;
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === STEP 5: VALIDACAO === */}
+        {step === 5 && (
+          <div className="fade-in">
+            <div className="card">
+              <h2><span className="icon">&#9989;</span> Validacao &amp; Payload</h2>
+
+              {/* Manual inputs if needed */}
+              {selectedChassis && !selectedChassis.peso_auto_preenchido && (
+                <div style={{background:'#fffaf0', border:'1px solid #fbd38d', borderRadius:8, padding:16, marginBottom:16}}>
+                  <p style={{fontSize:13, color:'#744210', fontWeight:600, marginBottom:12}}>
+                    &#9888; Dados do chassis nao disponiveis — preencha manualmente:
+                  </p>
+                  <div className="field-group">
+                    <label>Peso do chassis em ordem de marcha (kg)</label>
+                    <input type="number" placeholder={`Ex: 1978`} value={state.peso_chassis_manual}
+                      onChange={e => updateState({ peso_chassis_manual: e.target.value })} />
+                  </div>
+                  <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+                    <div className="field-group">
+                      <label>Numero de lugares</label>
+                      <input type="number" placeholder={String(selectedChassis.num_lugares)} value={state.num_lugares_manual}
+                        onChange={e => updateState({ num_lugares_manual: e.target.value })} />
+                    </div>
+                    <div className="field-group">
+                      <label>Classe de emissao</label>
+                      <select value={state.classe_emissao_manual} onChange={e => updateState({ classe_emissao_manual: e.target.value })}>
+                        <option value="">-- Seleccione --</option>
+                        <option value="Euro 6">Euro 6</option>
+                        <option value="Euro VI">Euro VI</option>
+                        <option value="Euro 6 Extended">Euro 6 Extended</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Weight breakdown */}
+              <div style={{marginBottom:20}}>
+                <h3 style={{fontSize:14, color:'var(--csn-gray)', marginBottom:8, textTransform:'uppercase', letterSpacing:0.5}}>Decomposicao de pesos</h3>
+                <div className="weight-row">
+                  <span className="wr-label">PBT (Peso Bruto Total)</span>
+                  <span className="wr-value">{calculations.pbt} kg</span>
+                </div>
+                <div className="weight-row">
+                  <span className="wr-label">Peso chassis em ordem de marcha</span>
+                  <span className="wr-value">{calculations.pesoChassis > 0 ? `${calculations.pesoChassis} kg` : <span style={{color:'var(--csn-orange)'}}>A preencher</span>}</span>
+                </div>
+                <div className="weight-row">
+                  <span className="wr-label">Peso equipamento JPM (carrocaria + subframe + reboque)</span>
+                  <span className="wr-value">{calculations.pesoEquip} kg</span>
+                </div>
+                {calculations.pesoAcess > 0 && (
+                  <div className="weight-row">
+                    <span className="wr-label">Peso acessorios ({selectedAcessorios.length})</span>
+                    <span className="wr-value">{calculations.pesoAcess} kg</span>
+                  </div>
+                )}
+                <div className="weight-row">
+                  <span className="wr-label">= Payload (carga util)</span>
+                  <span className="wr-value" style={{color: calculations.payload > 0 ? 'var(--csn-green)' : 'var(--csn-red)'}}>
+                    {calculations.pesoChassis > 0 ? `${calculations.payload} kg` : '—'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Payload display */}
+              {calculations.pesoChassis > 0 && (
+                <div className="payload-display fade-in">
+                  <div className="payload-number" style={{color: calculations.payload > 0 ? 'var(--csn-blue)' : 'var(--csn-red)'}}>
+                    {calculations.payload} kg
+                  </div>
+                  <div className="payload-label">Carga util disponivel</div>
+                </div>
+              )}
+
+              {/* Registrability badge */}
+              <div style={{textAlign:'center', margin:'16px 0'}}>
+                {calculations.pesoChassis > 0 ? (
+                  calculations.payload > 0 ? (
+                    <span className="badge badge-green">&#10003; VEICULO IMMATRICULAVEL</span>
+                  ) : (
+                    <span className="badge badge-red">&#10007; VEICULO NAO IMMATRICULAVEL</span>
+                  )
+                ) : (
+                  <span className="badge badge-orange">&#9888; AGUARDA INFORMACAO</span>
+                )}
+              </div>
+
+              <div className="btn-row">
+                <button className="btn btn-secondary" onClick={() => setStep(4)}>&#8592; Voltar</button>
+                <button className="btn btn-primary" disabled={!isRegistrable && calculations.pesoChassis === 0} onClick={() => setStep(6)}>
+                  Validar configuracao &#8594;
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === STEP 6: RESUMO === */}
+        {step === 6 && (
+          <div className="fade-in">
+            <div className="card">
+              <h2><span className="icon">&#128196;</span> Resumo da configuracao</h2>
+
+              {/* Vehicle summary */}
+              <div className="summary-section">
+                <h3>Veiculo</h3>
+                <div className="summary-grid">
+                  <div className="summary-item"><span className="si-label">PBT</span><span className="si-value">{calculations.pbt} kg ({PBT_LABELS[state.pbt_categoria]})</span></div>
+                  <div className="summary-item"><span className="si-label">Marca</span><span className="si-value">{state.marca}</span></div>
+                  <div className="summary-item"><span className="si-label">Modelo</span><span className="si-value">{selectedChassis?.modelo}{selectedChassis?.variante ? ' ' + selectedChassis.variante : ''}</span></div>
+                  <div className="summary-item"><span className="si-label">Cabine</span><span className="si-value">{CAB_LABELS[state.tipo_cabine]}</span></div>
+                  <div className="summary-item"><span className="si-label">Entre-eixos</span><span className="si-value">{selectedChassis?.entre_eixos_mm} mm{selectedChassis?.sufixo_entre_eixos ? ' ' + selectedChassis.sufixo_entre_eixos : ''}</span></div>
+                  <div className="summary-item"><span className="si-label">Peso chassis</span><span className="si-value">{calculations.pesoChassis} kg</span></div>
+                </div>
+              </div>
+
+              {/* Bodywork summary */}
+              <div className="summary-section">
+                <h3>Carrocaria</h3>
+                <div className="summary-grid">
+                  <div className="summary-item"><span className="si-label">Tipo</span><span className="si-value">{TIPO_LABELS[state.tipo_carrocaria]}</span></div>
+                  <div className="summary-item"><span className="si-label">Material</span><span className="si-value">{MAT_LABELS[state.material]}</span></div>
+                  <div className="summary-item"><span className="si-label">Comprimento</span><span className="si-value">{selectedCarrocaria?.comprimento_int_mm} mm</span></div>
+                  <div className="summary-item"><span className="si-label">Largura</span><span className="si-value">{selectedCarrocaria?.largura_int_mm} mm</span></div>
+                  <div className="summary-item"><span className="si-label">Peso carrocaria</span><span className="si-value">{selectedCarrocaria?.peso_carrocaria_kg} kg</span></div>
+                  <div className="summary-item"><span className="si-label">Peso equip. total</span><span className="si-value">{calculations.pesoEquip} kg</span></div>
+                </div>
+              </div>
+
+              {/* Accessories summary */}
+              {selectedAcessorios.length > 0 && (
+                <div className="summary-section">
+                  <h3>Acessorios</h3>
+                  {selectedAcessorios.map(a => (
+                    <div key={a.id} className="summary-item">
+                      <span className="si-label">{a.nome}</span>
+                      <span className="si-value">{a.peso_kg} kg</span>
+                    </div>
+                  ))}
+                  <div className="summary-item" style={{fontWeight:700, borderTop:'1px solid var(--csn-border)', paddingTop:8, marginTop:4}}>
+                    <span>Total acessorios</span>
+                    <span>{calculations.pesoAcess} kg</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Payload */}
+              <div className="payload-display">
+                <div className="payload-number" style={{color: calculations.payload > 0 ? 'var(--csn-blue)' : 'var(--csn-red)'}}>
+                  {calculations.payload} kg
+                </div>
+                <div className="payload-label">Carga util</div>
+                <div style={{marginTop:8}}>
+                  {isRegistrable
+                    ? <span className="badge badge-green">&#10003; VEICULO IMMATRICULAVEL</span>
+                    : <span className="badge badge-red">&#10007; NAO IMMATRICULAVEL</span>
+                  }
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div style={{display:'flex', flexDirection:'column', gap:12, marginTop:24}}>
+                <button className="btn btn-success" style={{justifyContent:'center', width:'100%'}}
+                  onClick={() => generatePDF(state, selectedChassis, selectedCarrocaria, selectedAcessorios)}>
+                  &#128196; Descarregar PDF da configuracao
+                </button>
+                <button className="btn btn-primary" style={{justifyContent:'center', width:'100%', opacity:0.6}} disabled>
+                  &#128190; Guardar na minha conta (em breve)
+                </button>
+                <button className="btn btn-secondary" style={{justifyContent:'center', width:'100%', opacity:0.6}} disabled>
+                  &#128233; Pedir orcamento (em breve)
+                </button>
+              </div>
+
+              {/* Share URL */}
+              <div className="url-state" style={{marginTop:16}}>
+                <strong>Partilhar esta configuracao:</strong><br/>
+                {window.location.href}
+              </div>
+
+              <div className="btn-row">
+                <button className="btn btn-secondary" onClick={() => setStep(5)}>&#8592; Voltar</button>
+                <button className="btn btn-secondary" onClick={() => { setState({ pbt_categoria:'',marca:'',modelo:'',tipo_cabine:'',entre_eixos:'',chassis_id:'',tipo_carrocaria:'',material:'',carrocaria_id:'',cofre:false,acessorios_ids:[],peso_chassis_manual:'',num_lugares_manual:'',classe_emissao_manual:'' }); setStep(1); }}>
+                  Nova configuracao
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
