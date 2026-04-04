@@ -297,8 +297,8 @@ function generatePDF(state, chassis, carrocaria, acessorios) {
 const STEPS = [
   { num: 1, label: 'Veiculo' },
   { num: 2, label: 'Carrocaria' },
-  { num: 3, label: 'Dimensoes' },
-  { num: 4, label: 'Acessorios' },
+  { num: 3, label: 'Cofre' },
+  { num: 4, label: 'Configuracao' },
   { num: 5, label: 'Validacao' },
   { num: 6, label: 'Resumo' },
 ];
@@ -358,7 +358,8 @@ function App() {
       if (saved) {
         setState(prev => ({ ...prev, ...saved }));
         if (saved.carrocaria_id) setStep(saved._step || 6);
-        else if (saved.tipo_carrocaria) setStep(saved._step || 3);
+        else if (saved.material) setStep(saved._step || 3);
+        else if (saved.tipo_carrocaria) setStep(saved._step || 2);
         else if (saved.chassis_id) setStep(saved._step || 2);
       }
     });
@@ -522,10 +523,13 @@ function App() {
     });
   };
   const handleTipoCarrocaria = (tipo) => {
-    updateState({ tipo_carrocaria: tipo, material: '', carrocaria_id: '' });
+    updateState({ tipo_carrocaria: tipo, material: '', cofre: false, carrocaria_id: '' });
   };
   const handleMaterial = (mat) => {
-    updateState({ material: mat, carrocaria_id: '' });
+    updateState({ material: mat, cofre: false, carrocaria_id: '' });
+  };
+  const handleCofre = (val) => {
+    updateState({ cofre: val, carrocaria_id: '' });
   };
   const handleSelectConfig = (id) => {
     updateState({ carrocaria_id: id });
@@ -700,13 +704,44 @@ function App() {
           </div>
         )}
 
-        {/* === STEP 3: DIMENSOES (Configuration cards) === */}
+        {/* === STEP 3: COFRE === */}
         {step === 3 && (
+          <div className="fade-in">
+            <div className="card">
+              <h2><span className="icon">&#128274;</span> Cofre</h2>
+              <p style={{fontSize:13, color:'var(--csn-gray)', marginBottom:16}}>
+                O cofre reduz o comprimento disponivel para a carrocaria. Seleccione se o veiculo tera cofre.
+              </p>
+
+              <div className="tile-grid">
+                <div className={`tile ${state.cofre === false ? 'selected' : ''}`} onClick={() => handleCofre(false)}>
+                  <div className="tile-title">Sem cofre</div>
+                  <div className="tile-sub">Comprimento total disponivel</div>
+                </div>
+                <div className={`tile ${state.cofre === true ? 'selected' : ''}`} onClick={() => handleCofre(true)}>
+                  <div className="tile-title">Com cofre</div>
+                  <div className="tile-sub">Reduz comprimento disponivel</div>
+                </div>
+              </div>
+
+              <div className="btn-row">
+                <button className="btn btn-secondary" onClick={() => setStep(2)}>&#8592; Voltar</button>
+                <button className="btn btn-primary" onClick={() => setStep(4)}>
+                  Validar &#8594;
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === STEP 4: CONFIGURACAO (Configuration cards + Acessorios) === */}
+        {step === 4 && (
           <div className="fade-in">
             <div className="card">
               <h2><span className="icon">&#128207;</span> Seleccione a configuracao</h2>
               <p style={{fontSize:13, color:'var(--csn-gray)', marginBottom:16}}>
                 {configsDisponiveis.length} configuracao(oes) disponivel(is) para {TIPO_LABELS[state.tipo_carrocaria]} em {MAT_LABELS[state.material]}
+                {state.cofre && <span style={{color:'var(--csn-orange)', fontWeight:600}}> &middot; Com cofre</span>}
               </p>
 
               <div style={{display:'grid', gap:12}}>
@@ -740,42 +775,32 @@ function App() {
                 )}
               </div>
 
-              <div className="btn-row">
-                <button className="btn btn-secondary" onClick={() => setStep(2)}>&#8592; Voltar</button>
-                <button className="btn btn-primary" disabled={!state.carrocaria_id} onClick={() => setStep(4)}>
-                  Seleccionar &#8594;
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* === STEP 4: ACESSORIOS === */}
-        {step === 4 && (
-          <div className="fade-in">
-            <div className="card">
-              <h2><span className="icon">&#128295;</span> Acessorios</h2>
-
-              {acessoriosCompativeis.length > 0 ? (
-                <div>
-                  {acessoriosCompativeis.map(a => (
-                    <div key={a.id} className={`checkbox-item ${state.acessorios_ids.includes(a.id) ? 'checked' : ''}`} onClick={() => toggleAcessorio(a.id)}>
-                      <input type="checkbox" checked={state.acessorios_ids.includes(a.id)} readOnly />
-                      <div>
-                        <div className="ci-name">{a.nome}</div>
-                        <div className="ci-weight">{a.peso_kg} kg &middot; {a.categoria}</div>
-                      </div>
+              {/* Acessorios */}
+              {state.carrocaria_id && (
+                <div className="fade-in" style={{marginTop:24}}>
+                  <h2><span className="icon">&#128295;</span> Acessorios</h2>
+                  {acessoriosCompativeis.length > 0 ? (
+                    <div>
+                      {acessoriosCompativeis.map(a => (
+                        <div key={a.id} className={`checkbox-item ${state.acessorios_ids.includes(a.id) ? 'checked' : ''}`} onClick={() => toggleAcessorio(a.id)}>
+                          <input type="checkbox" checked={state.acessorios_ids.includes(a.id)} readOnly />
+                          <div>
+                            <div className="ci-name">{a.nome}</div>
+                            <div className="ci-weight">{a.peso_kg} kg &middot; {a.categoria}</div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <p style={{color:'var(--csn-gray)', fontSize:14}}>Nenhum acessorio disponivel para este tipo de carrocaria.</p>
+                  )}
                 </div>
-              ) : (
-                <p style={{color:'var(--csn-gray)', fontSize:14}}>Nenhum acessorio disponivel para este tipo de carrocaria.</p>
               )}
 
               <div className="btn-row">
                 <button className="btn btn-secondary" onClick={() => setStep(3)}>&#8592; Voltar</button>
-                <button className="btn btn-primary" onClick={() => setStep(5)}>
-                  Validar &#8594;
+                <button className="btn btn-primary" disabled={!state.carrocaria_id} onClick={() => setStep(5)}>
+                  Seleccionar &#8594;
                 </button>
               </div>
             </div>
@@ -872,7 +897,7 @@ function App() {
 
               <div className="btn-row">
                 <button className="btn btn-secondary" onClick={() => setStep(4)}>&#8592; Voltar</button>
-                <button className="btn btn-primary" disabled={!isRegistrable && calculations.pesoChassis === 0} onClick={() => setStep(6)}>
+                <button className="btn btn-primary" onClick={() => setStep(6)}>
                   Validar configuracao &#8594;
                 </button>
               </div>
@@ -895,6 +920,7 @@ function App() {
                   <div className="summary-item"><span className="si-label">Modelo</span><span className="si-value">{selectedChassis?.modelo}{selectedChassis?.variante ? ' ' + selectedChassis.variante : ''}</span></div>
                   <div className="summary-item"><span className="si-label">Cabine</span><span className="si-value">{CAB_LABELS[state.tipo_cabine]}</span></div>
                   <div className="summary-item"><span className="si-label">Entre-eixos</span><span className="si-value">{selectedChassis?.entre_eixos_mm} mm{selectedChassis?.sufixo_entre_eixos ? ' ' + selectedChassis.sufixo_entre_eixos : ''}</span></div>
+                  <div className="summary-item"><span className="si-label">Cofre</span><span className="si-value">{state.cofre ? 'Sim' : 'Nao'}</span></div>
                   <div className="summary-item"><span className="si-label">Peso chassis</span><span className="si-value">{calculations.pesoChassis} kg</span></div>
                 </div>
               </div>
