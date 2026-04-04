@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — KPIs ISO 22400 — S38</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--text:#e6edf3;--text2:#7d8590;--border:#30363d;--blue:#58a6ff;--green:#3fb950;--amber:#d29922;--red:#f85149;--mono:'Courier New',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6;padding:20px;max-width:1000px;margin:0 auto}
+h1{font-size:18px;font-weight:600;margin-bottom:4px}
+.sub{color:var(--text2);font-size:12px;margin-bottom:20px}
+.section{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg2)}
+.st{font-size:14px;font-weight:600;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;padding:5px 6px;border-bottom:2px solid var(--border);color:var(--text2);font-weight:600}
+td{padding:4px 6px;border-bottom:1px solid var(--border)}
+code{font-family:var(--mono);font-size:10px;background:var(--bg3);padding:1px 3px;border-radius:3px;color:var(--blue)}
+.s-ok{color:var(--green)}.s-part{color:var(--amber)}.s-no{color:var(--red)}
+.summary{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.sum-card{padding:10px 14px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);text-align:center;min-width:100px}
+.sum-n{font-size:22px;font-weight:700}
+.sum-l{font-size:10px;color:var(--text2)}
+</style>
+</head>
+<body>
+<h1>CSN Opus — KPIs ISO 22400 (MOM)</h1>
+<div class="sub">S38 | 04 Abril 2026 | 34 KPIs standard + 4 energia = 38 total | Todos obrigatórios</div>
+
+<div class="summary">
+<div class="sum-card"><div class="sum-n" style="color:var(--green)">5</div><div class="sum-l">Calculáveis</div></div>
+<div class="sum-card"><div class="sum-n" style="color:var(--amber)">7</div><div class="sum-l">Parciais</div></div>
+<div class="sum-card"><div class="sum-n" style="color:var(--red)">22</div><div class="sum-l">Futuros</div></div>
+<div class="sum-card"><div class="sum-n" style="color:var(--blue)">4</div><div class="sum-l">Energia</div></div>
+</div>
+
+<div class="section">
+<div class="st">KPIs calculáveis agora (5)</div>
+<table>
+<tr><th>ID</th><th>KPI</th><th>Fórmula</th><th>Fonte dados</th><th>Estado</th></tr>
+<tr><td>1</td><td>Worker Efficiency</td><td>Tempo produtivo / Tempo total</td><td>registos_tempo</td><td class="s-ok">✓ Calculável</td></tr>
+<tr><td>2</td><td>Allocation Efficiency</td><td>Tempo alocado / Tempo disponível</td><td>registos_tempo + obras internas MNT</td><td class="s-ok">✓ Calculável</td></tr>
+<tr><td>3</td><td>Throughput Rate</td><td>Obras concluídas / Período</td><td>obras (estado=entregue)</td><td class="s-ok">✓ Calculável</td></tr>
+<tr><td>4</td><td>Actual Production Time</td><td>Soma tempo em fases produtivas</td><td>registos_tempo</td><td class="s-ok">✓ Calculável</td></tr>
+<tr><td>5</td><td>Production Process Ratio</td><td>Tempo processamento / Tempo total obra</td><td>registos_tempo + fases_obra</td><td class="s-ok">✓ Calculável</td></tr>
+</table>
+</div>
+
+<div class="section">
+<div class="st">KPIs parciais (7) — faltam dados ou tabelas</div>
+<table>
+<tr><th>ID</th><th>KPI</th><th>O que falta</th></tr>
+<tr><td>6</td><td>Schedule Attainment</td><td>Datas planeadas vs reais por fase (campo prazo na obra)</td></tr>
+<tr><td>7</td><td>Setup Time</td><td>Distinguir setup de produção nos registos_tempo</td></tr>
+<tr><td>8</td><td>Utilization Efficiency</td><td>Tempo máquina vs disponível (precisa registo equipamento)</td></tr>
+<tr><td>9</td><td>Overall Equipment Effectiveness</td><td>OEE = Disponibilidade × Performance × Qualidade</td></tr>
+<tr><td>10</td><td>Availability</td><td>Registo de paragens equipamento</td></tr>
+<tr><td>11</td><td>Technical Efficiency</td><td>Tempo efectivo máquina / Tempo planeado</td></tr>
+<tr><td>12</td><td>Inventory Turns</td><td>Tabela stock (M017 pendente)</td></tr>
+</table>
+</div>
+
+<div class="section">
+<div class="st">KPIs futuros (22) — requerem sensores L1, stock, qualidade</div>
+<table>
+<tr><th>Categoria</th><th>KPIs</th><th>Requisito</th></tr>
+<tr><td>Qualidade (6)</td><td>Quality Ratio, Scrap Ratio, Rework Ratio, First Pass Yield, Fall Off Ratio, Process Capability</td><td>Tabela de inspecções e não-conformidades</td></tr>
+<tr><td>Equipamento (5)</td><td>MTBF, MTTR, Mean Time to Failure, Corrective Maint Ratio, PM Compliance</td><td>Registo manutenção equipamento</td></tr>
+<tr><td>Materiais (4)</td><td>Material Usage Efficiency, Scrap Material Ratio, Finished Goods Ratio, WIP</td><td>M017 materiais + consumos</td></tr>
+<tr><td>Planeamento (4)</td><td>Production Lead Time, Order Lead Time, Changeover Time, Machine Capability</td><td>Integração com planeamento</td></tr>
+<tr><td>Ambiente (3)</td><td>Emission per Unit, Waste Ratio, Water Usage</td><td>Sensores ambientais</td></tr>
+</table>
+</div>
+
+<div class="section">
+<div class="st">KPIs energia (4) — requerem smart meter Bodor</div>
+<table>
+<tr><th>KPI</th><th>Requisito</th></tr>
+<tr><td>Energy per Unit</td><td>Contador inteligente Bodor 60kW</td></tr>
+<tr><td>Energy Efficiency</td><td>Produção / Energia consumida</td></tr>
+<tr><td>Peak Load Ratio</td><td>Monitorização pico vs base</td></tr>
+<tr><td>Energy Cost per Unit</td><td>Custo kWh × consumo / unidades</td></tr>
+</table>
+</div>
+
+<div style="text-align:center;color:var(--text2);font-size:11px;margin-top:20px;border-top:1px solid var(--border);padding:10px">
+CSN — S38 | ISO 22400:2014 | Todos os 38 KPIs são obrigatórios — compliance rastreado por sessão
+</div>
+</body>
+</html>

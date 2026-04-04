@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Skills & Tools Registry — S38</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--text:#e6edf3;--text2:#7d8590;--border:#30363d;--blue:#58a6ff;--green:#3fb950;--amber:#d29922;--mono:'Courier New',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6;padding:20px;max-width:1000px;margin:0 auto}
+h1{font-size:18px;font-weight:600;margin-bottom:4px}
+.sub{color:var(--text2);font-size:12px;margin-bottom:20px}
+.section{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg2)}
+.st{font-size:14px;font-weight:600;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;padding:5px 6px;border-bottom:2px solid var(--border);color:var(--text2);font-weight:600}
+td{padding:4px 6px;border-bottom:1px solid var(--border)}
+code{font-family:var(--mono);font-size:10px;background:var(--bg3);padding:1px 3px;border-radius:3px;color:var(--blue)}
+.badge{display:inline-block;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:600}
+.b-new{background:#1a4028;color:var(--green)}
+.b-s38{background:#0d2240;color:var(--blue)}
+</style>
+</head>
+<body>
+<h1>CSN Opus — Skills & Tools Registry</h1>
+<div class="sub">S38 | 04 Abril 2026 | 5 skills activos · 49+ tools/endpoints · RAG 2.927 embeddings</div>
+
+<div class="section">
+<div class="st">Skills activos (5)</div>
+<table>
+<tr><th>Skill</th><th>Path</th><th>Descrição</th><th>Sessão</th></tr>
+<tr><td><code>_global</code></td><td>skills/_global/SKILL.md</td><td>Regras globais do sistema, ISA-95, encoding, FK rules</td><td>S35</td></tr>
+<tr><td><code>producao</code></td><td>skills/producao/SKILL.md</td><td>Fases de obra, timer, registos tempo, estados F1-F9</td><td>S36</td></tr>
+<tr><td><code>rh</code></td><td>skills/rh/SKILL.md</td><td>Recibos, payroll, CITs, férias, cálculos salariais PT</td><td>S36</td></tr>
+<tr><td><code>chagas</code></td><td>skills/fornecedores/chagas/SKILL_CHAGAS.md</td><td>Catálogo Chagas (294 artigos: varão, barras, perfis, calhas)</td><td>S37</td></tr>
+<tr><td><code>dhollandia</code></td><td>skills/fornecedores/dhollandia/SKILL.md</td><td>Plataformas elevatórias Dhollandia</td><td>S36</td></tr>
+</table>
+</div>
+
+<div class="section">
+<div class="st">Skills pendentes</div>
+<table>
+<tr><th>Skill</th><th>Prioridade</th><th>Notas</th></tr>
+<tr><td><code>pecol</code></td><td>Média</td><td>Parafusos, fixações — dados a organizar</td></tr>
+<tr><td><code>coprial</code></td><td>Média</td><td>Ferro — dados a organizar</td></tr>
+<tr><td><code>comercial</code></td><td>Alta</td><td>Tipos carroçaria, preços base, configurações standard</td></tr>
+<tr><td><code>normas</code></td><td>Alta</td><td>EN 1090, EN 12642, ISO 9001, regulamentos CE</td></tr>
+</table>
+</div>
+
+<div class="section">
+<div class="st">Endpoints/Tools — novos S38 (17) <span class="badge b-s38">CRM Pipeline</span></div>
+<table>
+<tr><th>Endpoint</th><th>Método</th><th>Agente</th><th>ISA-95</th></tr>
+<tr><td><code>/api/veiculos/lookup-matricula</code></td><td>POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/veiculos/lookup-vin</code></td><td>POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/veiculos/lookup</code></td><td>POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/clientes</code></td><td>GET/POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/clientes/[id]</code></td><td>GET/PATCH</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/clientes/verificar</code></td><td>POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/clientes/confirmar</code></td><td>POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/clientes/lookup</code></td><td>GET</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/tickets</code></td><td>GET/POST</td><td>Router</td><td>L3-MOM</td></tr>
+<tr><td><code>/api/tickets/[id]</code></td><td>GET/PATCH</td><td>Router</td><td>L3-MOM</td></tr>
+<tr><td><code>/api/tickets/evoluir</code></td><td>POST</td><td>Router</td><td>L3-MOM</td></tr>
+<tr><td><code>/api/router/classificar</code></td><td>POST</td><td>Router</td><td>L3-MOM</td></tr>
+<tr><td><code>/api/leads/qualificar</code></td><td>POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/leads/[id]/estado</code></td><td>PATCH</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/leads/[id]/orcamento</code></td><td>POST</td><td>Comercial</td><td>L4-COM</td></tr>
+<tr><td><code>/api/marta/mensagem</code></td><td>POST</td><td>Marta (C2→C3)</td><td>L4-COM</td></tr>
+<tr><td><code>/api/marta/conversa/[ticket_id]</code></td><td>GET</td><td>Marta</td><td>L4-COM</td></tr>
+</table>
+</div>
+
+<div class="section">
+<div class="st">Endpoints anteriores (32+)</div>
+<table>
+<tr><th>Domínio</th><th>Endpoints</th><th>Sessão</th></tr>
+<tr><td>Chat (Fernando)</td><td><code>/api/chat</code></td><td>S07</td></tr>
+<tr><td>RH (Carolina/Agente RH)</td><td><code>/api/rh/recibo, /api/rh/declaracao-anual, /api/rh/colaboradores</code></td><td>S28</td></tr>
+<tr><td>Faturação</td><td><code>/api/faturacao/emitir, /api/faturacao/listar</code></td><td>S26</td></tr>
+<tr><td>Documentos</td><td><code>/api/documentos/upload, /api/documentos/extrair</code></td><td>S07</td></tr>
+<tr><td>Leads (base)</td><td><code>/api/leads</code></td><td>S07</td></tr>
+<tr><td>Embeddings/RAG</td><td><code>/api/embeddings/gerar</code></td><td>S36</td></tr>
+<tr><td>WhatsApp</td><td><code>/api/whatsapp/recepcao</code></td><td>S37</td></tr>
+<tr><td>Outros</td><td>+20 endpoints internos</td><td>S07-S35</td></tr>
+</table>
+</div>
+
+<div class="section">
+<div class="st">RAG Pipeline</div>
+<table>
+<tr><th>Componente</th><th>Estado</th><th>Detalhes</th></tr>
+<tr><td>Embeddings (Voyage AI voyage-3)</td><td style="color:var(--green)">✓ Activo</td><td>2.927 embeddings, vector 1024 dims</td></tr>
+<tr><td>pgvector (Supabase)</td><td style="color:var(--green)">✓ Activo</td><td>Migration 025, tabela embeddings</td></tr>
+<tr><td>Ingest pipeline</td><td style="color:var(--green)">✓ Completo</td><td>2.170/2.716 processados OK (546 erros = PDFs sem texto)</td></tr>
+<tr><td>/api/embeddings/pesquisar</td><td style="color:var(--amber)">Pendente</td><td>S39 — pesquisa semântica</td></tr>
+</table>
+</div>
+
+<div style="text-align:center;color:var(--text2);font-size:11px;margin-top:20px;border-top:1px solid var(--border);padding:10px">
+CSN — S38 | Anthropic Agent Skills Standard | Actualizado 04/04/2026
+</div>
+</body>
+</html>
