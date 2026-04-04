@@ -373,6 +373,13 @@ function App() {
 
   // === DERIVED DATA ===
 
+  // Helper: match marca with RENAULT/RENAULT TRUCKS grouping
+  const RENAULT_GROUP = ['RENAULT', 'RENAULT TRUCKS'];
+  const matchMarca = (chassisMarca, selectedMarca) => {
+    if (RENAULT_GROUP.includes(selectedMarca) && RENAULT_GROUP.includes(chassisMarca)) return true;
+    return chassisMarca === selectedMarca;
+  };
+
   // Step 1: Vehicle
   const pbtOptions = ['2T', '3T6', '5T6'];
 
@@ -385,7 +392,7 @@ function App() {
   const modelos = useMemo(() => {
     if (!state.marca) return [];
     const unique = [...new Set(allChassis
-      .filter(c => c.pbt_categoria === state.pbt_categoria && c.marca === state.marca)
+      .filter(c => c.pbt_categoria === state.pbt_categoria && matchMarca(c.marca, state.marca))
       .map(c => c.modelo + (c.variante ? '|' + c.variante : '')))];
     return unique.sort().map(m => {
       const [modelo, variante] = m.split('|');
@@ -396,17 +403,26 @@ function App() {
   const cabines = useMemo(() => {
     if (!state.modelo) return [];
     const filtered = allChassis.filter(c =>
-      c.pbt_categoria === state.pbt_categoria && c.marca === state.marca && c.modelo === state.modelo
+      c.pbt_categoria === state.pbt_categoria && matchMarca(c.marca, state.marca) && c.modelo === state.modelo
     );
     return [...new Set(filtered.map(c => c.tipo_cabine))].sort();
   }, [allChassis, state.pbt_categoria, state.marca, state.modelo]);
 
   const entreEixos = useMemo(() => {
     if (!state.tipo_cabine) return [];
-    return allChassis.filter(c =>
-      c.pbt_categoria === state.pbt_categoria && c.marca === state.marca &&
+    const filtered = allChassis.filter(c =>
+      c.pbt_categoria === state.pbt_categoria && matchMarca(c.marca, state.marca) &&
       c.modelo === state.modelo && c.tipo_cabine === state.tipo_cabine
     ).sort((a, b) => a.entre_eixos_mm - b.entre_eixos_mm);
+
+    // DISTINCT by (entre_eixos_mm, sufixo_entre_eixos) — keep first match per unique combo
+    const seen = new Set();
+    return filtered.filter(c => {
+      const key = `${c.entre_eixos_mm}|${c.sufixo_entre_eixos || ''}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }, [allChassis, state.pbt_categoria, state.marca, state.modelo, state.tipo_cabine]);
 
   const selectedChassis = useMemo(() =>
