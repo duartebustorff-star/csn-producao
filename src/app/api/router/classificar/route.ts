@@ -1,270 +1,319 @@
-import { NextRequest, NextResponse } from "next/server"
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
-import { createClient } from "@supabase/supabase-js"
-import fs from "fs"
-import path from "path"
+// /src/app/api/router/classificar/route.ts
+// CSN-L3-PRD-038-2026 — Router ISA-95 (Camada 3 Nucleus)
+// Classifica mensagens, identifica remetente, cria tickets ISA-95
+// ISA-95 Level: L3-MOM
+
+import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from 'next/server'
+import Anthropic from '@anthropic-ai/sdk'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export async function POST(req: NextRequest) {
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY!,
+})
+
+// Departamentos ISA-95 activos
+const DEPT_ACTIVOS = ['COM', 'PRD', 'DOC', 'PER', 'FIN'] as const
+// Futuros: QMS, MNT, INV, ENG
+
+type DeptActivo = (typeof DEPT_ACTIVOS)[number]
+
+interface RemetenteInfo {
+  tipo: string // fornecedor | cliente | interno | historico | desconhecido
+  id: string | null
+  nome: string | null
+  nif: string | null
+  departamento_isa95: string
+  emails_anteriores: number
+}
+
+interface ClassificacaoResult {
+  departamento: DeptActivo
+  classificacao: string // sub-type: orcamento, encomenda, fatura, reclamacao, etc.
+  assunto_resumo: string
+  urgencia: 'baixa' | 'media' | 'alta'
+  confianca: number // 0-100
+}
+
+// --- STEP 1: Identificar remetente via funcao PostgreSQL ---
+async function identificarRemetente(email: string): Promise<RemetenteInfo> {
+  const { data, error } = await supabase.rpc('identificar_remetente', {
+    p_email: email.toLowerCase().trim(),
+  })
+
+  if (error || !data || data.length === 0) {
+    return {
+      tipo: 'desconhecido',
+      id: null,
+      nome: null,
+      nif: null,
+      departamento_isa95: 'ATT',
+      emails_anteriores: 0,
+    }
+  }
+
+  return data[0] as RemetenteInfo
+}
+
+// --- STEP 2: Classificar mensagem via Claude ---
+async function classificarMensagem(
+  assunto: string,
+  corpo: string,
+  remetente: RemetenteInfo
+): Promise<ClassificacaoResult> {
+  const prompt = `Classifica esta mensagem recebida pela CSN (fabricante de carrocarias para veiculos comerciais).
+
+REMETENTE: ${remetente.nome || 'Desconhecido'} (${remetente.tipo}, ${remetente.emails_anteriores} emails anteriores)
+ASSUNTO: ${assunto}
+CORPO: ${corpo.slice(0, 2000)}
+
+Departamentos disponiveis (ISA-95):
+- COM: Comercial - orcamentos, encomendas, pedidos de informacao, reclamacoes comerciais
+- PRD: Producao - questoes tecnicas sobre obras em curso, entregas, prazos
+- DOC: Documentacao - COC, DoP, certificados, homologacoes, pedidos de documentos
+- PER: Pessoal - ferias, faltas, recibos, assuntos RH
+- FIN: Financeiro - faturas, pagamentos, cobrancas, extratos
+
+Responde APENAS com JSON (sem markdown):
+{"departamento":"COM|PRD|DOC|PER|FIN","classificacao":"tipo_especifico","assunto_resumo":"resumo em 10 palavras","urgencia":"baixa|media|alta","confianca":0-100}`
+
   try {
-    const body = await req.json()
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 200,
+      messages: [{ role: 'user', content: prompt }],
+    })
+
+    const text = response.content
+      .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+      .map((b) => b.text)
+      .join('')
+
+    const clean = text.replace(/```json|```/g, '').trim()
+    const parsed = JSON.parse(clean) as ClassificacaoResult
+
+    // Validar departamento
+    if (!DEPT_ACTIVOS.includes(parsed.departamento as DeptActivo)) {
+      parsed.departamento = 'COM' // fallback seguro
+      parsed.confianca = Math.min(parsed.confianca, 50)
+    }
+
+    return parsed
+  } catch (err) {
+    console.error('Erro classificacao Claude:', err)
+    return {
+      departamento: 'COM',
+      classificacao: 'nao_classificado',
+      assunto_resumo: assunto.slice(0, 60),
+      urgencia: 'media',
+      confianca: 0,
+    }
+  }
+}
+
+// --- STEP 3: Deduplicacao 3 niveis ---
+async function verificarDuplicado(
+  email: string,
+  assunto: string,
+  corpo: string
+): Promise<{ duplicado: boolean; ticket_existente?: string }> {
+  // Nivel 1: Email exacto nos ultimos 5 minutos
+  const { data: recente } = await supabase
+    .from('tickets')
+    .select('id')
+    .eq('remetente', email)
+    .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
+    .limit(1)
+
+  if (recente && recente.length > 0) {
+    return { duplicado: true, ticket_existente: recente[0].id }
+  }
+
+  // Nivel 2: Mesmo assunto do mesmo remetente nas ultimas 24h
+  const { data: mesmoAssunto } = await supabase
+    .from('tickets')
+    .select('id')
+    .eq('remetente', email)
+    .eq('assunto', assunto)
+    .gte(
+      'created_at',
+      new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+    )
+    .limit(1)
+
+  if (mesmoAssunto && mesmoAssunto.length > 0) {
+    return { duplicado: true, ticket_existente: mesmoAssunto[0].id }
+  }
+
+  // Nivel 3: Corpo identico nos ultimos 7 dias
+  const corpoHash = corpo.trim().toLowerCase().slice(0, 500)
+  const { data: mesmoCorpo } = await supabase
+    .from('tickets')
+    .select('id, corpo')
+    .eq('remetente', email)
+    .gte(
+      'created_at',
+      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    )
+
+  if (mesmoCorpo) {
+    const dup = mesmoCorpo.find(
+      (t) => t.corpo?.trim().toLowerCase().slice(0, 500) === corpoHash
+    )
+    if (dup) return { duplicado: true, ticket_existente: dup.id }
+  }
+
+  return { duplicado: false }
+}
+
+// --- STEP 4: Criar ticket ---
+async function criarTicket(
+  canal: string,
+  email: string,
+  assunto: string,
+  corpo: string,
+  remetente: RemetenteInfo,
+  classificacao: ClassificacaoResult,
+  anexos?: any[]
+): Promise<string> {
+  const ticketId = `TKT-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
+
+  const nivelIsa95Map: Record<string, string> = {
+    COM: 'L4-COM',
+    PRD: 'L3-MOM/PRD',
+    DOC: 'L3-MOM/DOC',
+    PER: 'L3-MOM/PER',
+    FIN: 'L4-BPL/FIN',
+  }
+
+  const { error } = await supabase.from('tickets').insert({
+    id: ticketId,
+    canal,
+    remetente: email,
+    remetente_tipo: remetente.tipo,
+    cliente_id: remetente.tipo === 'cliente' ? remetente.id : null,
+    fornecedor_id:
+      remetente.tipo === 'fornecedor' ? parseInt(remetente.id!) : null,
+    assunto: classificacao.assunto_resumo,
+    corpo: corpo.slice(0, 5000),
+    classificacao: classificacao.classificacao,
+    departamento: classificacao.departamento,
+    estado: 'aberto',
+    nivel_isa95: nivelIsa95Map[classificacao.departamento] || 'L3-MOM',
+    anexos: anexos ? JSON.stringify(anexos) : null,
+    metadata: {
+      remetente_nome: remetente.nome,
+      remetente_nif: remetente.nif,
+      emails_anteriores: remetente.emails_anteriores,
+      classificacao_confianca: classificacao.confianca,
+      urgencia: classificacao.urgencia,
+      assunto_original: assunto,
+    },
+  })
+
+  if (error) {
+    console.error('Erro ao criar ticket:', error)
+    throw new Error(`Falha ao criar ticket: ${error.message}`)
+  }
+
+  return ticketId
+}
+
+// --- MAIN HANDLER ---
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
     const {
-      obra_id,
-      tipo_carrocaria,
-      marca, modelo, matricula, vin, cod_homologacao,
-      comprimento, largura, altura,
-      dist_eixo_frente, dist_eixo_retaguarda,
-      peso_bruto, tara_total, tara_frontal, tara_traseira,
+      canal = 'email',
+      email_remetente,
+      assunto = '',
+      corpo = '',
+      anexos,
     } = body
 
-    const pdfDoc = await PDFDocument.create()
+    if (!email_remetente) {
+      return NextResponse.json(
+        { error: 'email_remetente e obrigatorio' },
+        { status: 400 }
+      )
+    }
 
-    // A4 portrait: 595 x 842 pt
-    const page = pdfDoc.addPage([595, 842])
-    const { width, height } = page.getSize()
+    // 1. Identificar remetente
+    const remetente = await identificarRemetente(email_remetente)
 
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-    const fontReg  = await pdfDoc.embedFont(StandardFonts.Helvetica)
+    // 2. Deduplicacao
+    const { duplicado, ticket_existente } = await verificarDuplicado(
+      email_remetente,
+      assunto,
+      corpo
+    )
 
-    const BLACK = rgb(0, 0, 0)
-    const GRAY  = rgb(0.4, 0.4, 0.4)
-
-    const L = 56   // left margin
-    const R = width - 56  // right margin
-    const W = R - L       // content width
-
-    // ── LOGO ──────────────────────────────────────────────
-    // Tenta carregar o logo do disco (Next.js server)
-    try {
-      const logoPath = path.join(process.cwd(), "public", "logo-horizontal.png")
-      if (fs.existsSync(logoPath)) {
-        const logoBytes = fs.readFileSync(logoPath)
-        const logoImg = await pdfDoc.embedPng(logoBytes)
-        const logoDims = logoImg.scale(0.18)
-        page.drawImage(logoImg, {
-          x: width / 2 - logoDims.width / 2,
-          y: height - 90,
-          width: logoDims.width,
-          height: logoDims.height,
-        })
-      }
-    } catch {
-      // Se logo não disponível, desenha placeholder texto
-      page.drawText("CSN", {
-        x: width / 2 - 20, y: height - 70,
-        size: 28, font: fontBold, color: BLACK,
-      })
-      page.drawText("TRANSFORMACAO DE VEICULOS", {
-        x: width / 2 - 80, y: height - 86,
-        size: 8, font: fontBold, color: BLACK,
+    if (duplicado) {
+      return NextResponse.json({
+        status: 'duplicado',
+        ticket_id: ticket_existente,
+        remetente,
+        mensagem: `Mensagem duplicada. Ticket existente: ${ticket_existente}`,
       })
     }
 
-    let y = height - 110
+    // 3. Classificar
+    const classificacao = await classificarMensagem(assunto, corpo, remetente)
 
-    // ── LINHA SEPARADORA ──────────────────────────────────
-    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
-    y -= 22
+    // 4. Criar ticket
+    const ticketId = await criarTicket(
+      canal,
+      email_remetente,
+      assunto,
+      corpo,
+      remetente,
+      classificacao,
+      anexos
+    )
 
-    // ── TÍTULO ────────────────────────────────────────────
-    const title = "TERMO DE RESPONSABILIDADE"
-    const titleW = fontBold.widthOfTextAtSize(title, 14)
-    page.drawText(title, {
-      x: width / 2 - titleW / 2, y,
-      size: 14, font: fontBold, color: BLACK,
-    })
-    y -= 6
-    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
-    y -= 20
+    // 5. Accoes automaticas por departamento
+    let accao_automatica: string | null = null
 
-    // ── TEXTO JURÍDICO ────────────────────────────────────
-    const tipoCarrocaria = (tipo_carrocaria || "").toUpperCase()
-
-    const textoIntro = [
-      "Eu, abaixo assinado com poderes para o efeito, na qualidade de gerente da empresa Carlos dos Santos",
-      "Nascimento, Lda, com o n.\u00BA de contribuinte 500 861790 e sede em Rua da Industria n.\u00BA 8, Casal do",
-      "Rodo, 2640-216 Encarnacao, declara que a carrocaria produzida e do Tipo:",
-    ]
-
-    for (const linha of textoIntro) {
-      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
-      y -= 13
-    }
-    y -= 4
-
-    // Tipo de carroçaria em bold centrado
-    const tipoW = fontBold.widthOfTextAtSize(tipoCarrocaria, 11)
-    page.drawText(tipoCarrocaria, {
-      x: width / 2 - tipoW / 2, y,
-      size: 11, font: fontBold, color: BLACK,
-    })
-    y -= 16
-
-    const textoConf = [
-      "esta em conformidade com as disposicoes legais aplicaveis, cumpre com as caracteristicas definidas na",
-      "folha de aprovacao de modelo e obedece as caracteristicas estabelecidas na Norma Portuguesa em",
-      "vigor.",
-    ]
-
-    for (const linha of textoConf) {
-      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
-      y -= 13
-    }
-    y -= 16
-
-    // ── TABELA VEÍCULO ────────────────────────────────────
-    const tableTop = y
-    const rowH = 18
-    const col1W = 120
-    const tableW = W
-
-    // Header "Veículo:"
-    page.drawRectangle({ x: L, y: tableTop - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-    page.drawText("Veiculo:", { x: L + 4, y: tableTop - rowH + 5, size: 9, font: fontBold, color: BLACK })
-    y = tableTop - rowH
-
-    // Linhas da tabela veículo
-    const veiculoRows = [
-      ["Marca:", marca || "-"],
-      ["Modelo:", modelo || "-"],
-      ["Matricula:", matricula || "-"],
-      ["VIN:", vin || "-"],
-      ["Cod. Homologacao", cod_homologacao || "-"],
-    ]
-
-    for (const [label, value] of veiculoRows) {
-      page.drawRectangle({ x: L, y: y - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-      page.drawText(label, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
-      page.drawText(value, { x: L + col1W, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
-      y -= rowH
+    if (
+      classificacao.departamento === 'COM' &&
+      ['orcamento', 'encomenda', 'pedido_informacao'].includes(
+        classificacao.classificacao
+      )
+    ) {
+      accao_automatica = 'lead_sugerido'
     }
 
-    y -= 16
-
-    // ── TABELA DIMENSÕES / PESOS (lado a lado) ───────────
-    const halfW = W / 2
-    const col2Start = L + halfW
-
-    // Header linha 1: "Carroçaria" e "Conjunto"
-    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-    const hdr1W = fontBold.widthOfTextAtSize("Carrocaria", 9)
-    page.drawText("Carrocaria", { x: L + halfW / 2 - hdr1W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
-
-    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-    const hdr2W = fontBold.widthOfTextAtSize("Conjunto", 9)
-    page.drawText("Conjunto", { x: col2Start + halfW / 2 - hdr2W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
-    y -= rowH
-
-    // Header linha 2: "Dimensões exteriores (mm)" e "Pesos (Kg)"
-    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-    const hdr3W = fontBold.widthOfTextAtSize("Dimensoes exteriores (mm)", 9)
-    page.drawText("Dimensoes exteriores (mm)", { x: L + halfW / 2 - hdr3W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
-
-    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-    const hdr4W = fontBold.widthOfTextAtSize("Pesos (Kg)", 9)
-    page.drawText("Pesos (Kg)", { x: col2Start + halfW / 2 - hdr4W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
-    y -= rowH
-
-    // Linhas dimensões + pesos lado a lado
-    const dimCol = 100  // largura coluna label esquerda
-    const pesoCol = 110 // largura coluna label direita
-
-    const dimRows = [
-      ["Comprimento", comprimento ? String(comprimento) : "-"],
-      ["Largura", largura ? String(largura) : "-"],
-      ["Altura", altura ? String(altura) : "-"],
-      ["Dist. eixo ret. a frente", dist_eixo_frente ? String(dist_eixo_frente) : "-"],
-      ["Dist. eixo ret. a retaguarda", dist_eixo_retaguarda ? String(dist_eixo_retaguarda) : "-"],
-    ]
-
-    const pesoRows = [
-      ["Peso bruto:", peso_bruto ? String(peso_bruto) : "-"],
-      ["Peso tara total:", tara_total ? String(tara_total) : "-"],
-      ["Peso tara frontal:", tara_frontal ? String(tara_frontal) : "-"],
-      ["Peso tara traseira:", tara_traseira ? String(tara_traseira) : "-"],
-      ["", ""],
-    ]
-
-    const maxRows = Math.max(dimRows.length, pesoRows.length)
-    for (let i = 0; i < maxRows; i++) {
-      const [dLabel, dVal] = dimRows[i] || ["", ""]
-      const [pLabel, pVal] = pesoRows[i] || ["", ""]
-
-      // Lado esquerdo — dimensões
-      page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-      if (dLabel) page.drawText(dLabel, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
-      if (dVal) page.drawText(dVal, { x: L + dimCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
-
-      // Lado direito — pesos
-      page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
-      if (pLabel) page.drawText(pLabel, { x: col2Start + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
-      if (pVal) page.drawText(pVal, { x: col2Start + pesoCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
-
-      y -= rowH
+    if (classificacao.departamento === 'FIN') {
+      accao_automatica = 'reconciliacao_pendente'
     }
-
-    y -= 30
-
-    // ── LOCAL E DATA ──────────────────────────────────────
-    const dataGeracao = new Date()
-    const meses = ["January","February","March","April","May","June","July","August","September","October","November","December"]
-    const dataStr = `Encarnacao, ${String(dataGeracao.getDate()).padStart(2,"0")} de ${meses[dataGeracao.getMonth()]} de ${dataGeracao.getFullYear()}`
-    page.drawText(dataStr, { x: L, y, size: 9, font: fontReg, color: BLACK })
-
-    y -= 60
-
-    // ── ASSINATURA ────────────────────────────────────────
-    const sigW = 200
-    const sigX = width / 2 - sigW / 2
-    page.drawLine({ start: { x: sigX, y: y + 10 }, end: { x: sigX + sigW, y: y + 10 }, thickness: 0.5, color: BLACK })
-
-    const nome = "Duarte da Cunha Martins Bustorff-Silva"
-    const nomeW = fontBold.widthOfTextAtSize(nome, 10)
-    page.drawText(nome, {
-      x: width / 2 - nomeW / 2, y,
-      size: 10, font: fontBold, color: BLACK,
-    })
-    y -= 14
-
-    const certidao = "Certidao Permanente Codigo de acesso: 3172-1374-8252"
-    const certW = fontReg.widthOfTextAtSize(certidao, 8)
-    page.drawText(certidao, {
-      x: width / 2 - certW / 2, y,
-      size: 8, font: fontReg, color: GRAY,
-    })
-
-    // ── GUARDAR NO SUPABASE ───────────────────────────────
-    const pdfBytes = await pdfDoc.save()
-    const dataStr2 = new Date().toISOString().slice(0, 10).replace(/-/g, "")
-    const fileName = `TERM_${obra_id}_${dataStr2}.pdf`
-    const storagePath = `termos/${fileName}`
-
-    const { error: uploadError } = await supabase.storage
-      .from("documentos")
-      .upload(storagePath, pdfBytes, { contentType: "application/pdf", upsert: true })
-
-    if (uploadError) {
-      console.error("Erro upload:", uploadError)
-      return NextResponse.json({ error: "Erro ao guardar PDF" }, { status: 500 })
-    }
-
-    const { data: signedUrl } = await supabase.storage
-      .from("documentos")
-      .createSignedUrl(storagePath, 60 * 60 * 24 * 7)
 
     return NextResponse.json({
-      sucesso: true,
-      storage_path: storagePath,
-      download_url: signedUrl?.signedUrl ?? null,
-      file_name: fileName,
+      status: 'criado',
+      ticket_id: ticketId,
+      remetente: {
+        tipo: remetente.tipo,
+        nome: remetente.nome,
+        nif: remetente.nif,
+        emails_anteriores: remetente.emails_anteriores,
+      },
+      classificacao: {
+        departamento: classificacao.departamento,
+        tipo: classificacao.classificacao,
+        urgencia: classificacao.urgencia,
+        confianca: classificacao.confianca,
+        nivel_isa95: `L3-MOM/${classificacao.departamento}`,
+      },
+      accao_automatica,
     })
-
-  } catch (err) {
-    console.error("Erro gerar-termo:", err)
-    return NextResponse.json({ error: "Erro interno" }, { status: 500 })
+  } catch (err: any) {
+    console.error('Router error:', err)
+    return NextResponse.json(
+      { error: 'Erro interno do Router', detalhes: err.message },
+      { status: 500 }
+    )
   }
 }
