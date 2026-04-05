@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Arquitectura S39</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--text:#e6edf3;--text2:#7d8590;--border:#30363d;--border2:#444c56;--blue:#58a6ff;--blue-b:#1f3a5f;--blue-d:#0d2240;--green:#3fb950;--green-b:#1a4028;--green-d:#0d2818;--amber:#d29922;--amber-b:#3d2e00;--amber-d:#2a1f00;--red:#f85149;--red-b:#5a1e1e;--red-d:#3b1111;--purple:#bc8cff;--mono:'Courier New',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6;padding:20px;max-width:1100px;margin:0 auto}
+h1{font-size:20px;font-weight:600;margin-bottom:4px}
+.subtitle{color:var(--text2);font-size:12px;margin-bottom:24px}
+.section{margin-bottom:28px;border:1px solid var(--border);border-radius:8px;padding:16px;background:var(--bg2)}
+.section-title{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title .n{background:var(--blue-d);color:var(--blue);padding:2px 8px;border-radius:4px;font-size:11px;font-family:var(--mono)}
+.nota{background:var(--amber-d);border:1px solid var(--amber-b);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--amber);margin-bottom:12px}
+.info{background:var(--blue-d);border:1px solid var(--blue-b);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--blue);margin-bottom:12px}
+.success{background:var(--green-d);border:1px solid var(--green-b);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--green);margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0}
+th{text-align:left;padding:6px 8px;border-bottom:2px solid var(--border2);color:var(--text2);font-weight:600}
+td{padding:5px 8px;border-bottom:1px solid var(--border)}
+code{font-family:var(--mono);font-size:11px;background:var(--bg3);padding:1px 4px;border-radius:3px;color:var(--blue)}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px}
+.status-dot{width:6px;height:6px;border-radius:50%}
+.exists .status-dot{background:var(--green)}.exists{color:var(--green);background:var(--green-d)}
+.planned .status-dot{background:var(--amber)}.planned{color:var(--amber);background:var(--amber-d)}
+.partial .status-dot{background:var(--blue)}.partial{color:var(--blue);background:var(--blue-d)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 12px}
+.card-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.card-sub{font-size:11px;color:var(--text2);line-height:1.5}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.flow-step{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:500;background:var(--bg3);border:1px solid var(--border)}
+.flow-step.green{background:var(--green-d);border-color:var(--green-b);color:var(--green)}
+.flow-step.amber{background:var(--amber-d);border-color:var(--amber-b);color:var(--amber)}
+.flow-step.blue{background:var(--blue-d);border-color:var(--blue-b);color:var(--blue)}
+.flow-step.red{background:var(--red-d);border-color:var(--red-b);color:var(--red)}
+.flow-arrow{color:var(--text2);font-size:12px}
+.channel{text-align:center;padding:10px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px}
+.channel-icon{font-size:20px;margin-bottom:4px}
+.channel-name{font-size:11px;font-weight:600}
+.channel-sub{font-size:10px;color:var(--text2);margin-top:2px}
+.pct-bar{height:6px;border-radius:3px;background:var(--bg);margin-top:4px;overflow:hidden}
+.pct-fill{height:100%;border-radius:3px}
+</style>
+</head>
+<body>
+
+<h1>CSN Opus — Arquitectura do Sistema</h1>
+<div class="subtitle">Sessao S39 | 05 Abril 2026 | ISA-95 / IEC 62264 | 58 tabelas · 38 migrations · 49+ routes · 33 ADRs · 11 agentes · 5 personas</div>
+
+<!-- 01 VISAO GERAL -->
+<div class="section" id="s01">
+<div class="section-title"><span class="n">01</span> VISAO GERAL — SISTEMA INTEGRADO ISA-95</div>
+<div class="info">O CSN Opus <strong>nao e um ERP</strong> — e um sistema integrado ISA-95/IEC 62264 que governa todas as operacoes da empresa em 5 niveis (L0–L4).</div>
+<table>
+<tr><th>Nivel</th><th>ISA-95</th><th>Modulos CSN</th><th>Normas</th></tr>
+<tr><td><code>L4</code></td><td>Business Planning & Logistics</td><td>FIN, COM, ENG, QMS-L4</td><td>ISA-95 Part 4/B2MML, ISO 14001, ISO 31000</td></tr>
+<tr><td><code>L3</code></td><td>Manufacturing Operations Mgmt</td><td>PRD, QMS, MNT, PER, DOC, INV</td><td>MESA-11, ISO 22400 (34+4 KPIs), ISO 45001, ISO 55001</td></tr>
+<tr><td><code>L2</code></td><td>Supervisory Control</td><td>SUP</td><td>IEC 62443, ISO 50001</td></tr>
+<tr><td><code>L1</code></td><td>Sensing & Manipulation</td><td>SEN</td><td>Normas inspeccao</td></tr>
+<tr><td><code>L0</code></td><td>Physical Process</td><td>PHY</td><td>EN 1090, EN ISO 3834, EN 12642</td></tr>
+</table>
+</div>
+
+<!-- 02 ARQUITECTURA 3 CAMADAS -->
+<div class="section" id="s02">
+<div class="section-title"><span class="n">02</span> ARQUITECTURA — 3 CAMADAS (ADR-031)</div>
+<div class="grid-3">
+<div class="card">
+<div class="card-title" style="color:var(--purple)">Camada 1 — Portais Satelite</div>
+<div class="card-sub">Portal Producao (workers), Portal Pessoal (workers), CSN Connect (B2B concessionarios), Portal Fornecedor (futuro). Sem acesso ao Supabase. Recebem dados curados. Escrevem em tabelas de intake.</div>
+</div>
+<div class="card">
+<div class="card-title" style="color:var(--blue)">Camada 2 — Personas</div>
+<div class="card-sub">Marta, Fernando, Carolina, Luisa, Leonor. Interface de comunicacao apenas. NAO produzem dados. Apresentam dashboards e falam com humanos.</div>
+</div>
+<div class="card">
+<div class="card-title" style="color:var(--green)">Camada 3 — Nucleus (Agentes)</div>
+<div class="card-sub">11 agentes autonomos. TODO o processamento, logica, geracao de documentos e calculos. Fonte de verdade: Supabase.</div>
+</div>
+</div>
+</div>
+
+<!-- 03 PERSONAS -->
+<div class="section" id="s03">
+<div class="section-title"><span class="n">03</span> PERSONAS — CAMADA 2 (so comunicam)</div>
+<table>
+<tr><th>Persona</th><th>Ambito</th><th>ISA-95</th><th>Fala com</th><th>Estado</th></tr>
+<tr><td><strong>Marta</strong></td><td>Face publica, todos os canais externos, CSN Connect</td><td><code>L4-COM</code></td><td>Clientes, leads</td><td><span class="status exists"><span class="status-dot"></span>S38+Voz S39</span></td></tr>
+<tr><td><strong>Fernando</strong></td><td>Chefe de producao (substituiu Sr. Manuel humano)</td><td><code>L0-PER</code></td><td>Workers (Bohdan, Jose Julio, Joao)</td><td><span class="status exists"><span class="status-dot"></span>Implementado</span></td></tr>
+<tr><td><strong>Carolina</strong></td><td>RH — recibos, ferias, faltas, dados pessoais</td><td><code>L3-RH</code></td><td>Workers (area pessoal)</td><td><span class="status exists"><span class="status-dot"></span>Implementado</span></td></tr>
+<tr><td><strong>Luisa</strong></td><td>Assistente CEO — acesso total ao sistema</td><td><code>L4-BPL</code></td><td>Duarte</td><td><span class="status planned"><span class="status-dot"></span>Planeada</span></td></tr>
+<tr><td><strong>Leonor</strong></td><td>Aftersales — garantias, reclamacoes pos-entrega</td><td><code>L4-COM</code></td><td>Clientes (pos-venda)</td><td><span class="status planned"><span class="status-dot"></span>Planeada</span></td></tr>
+</table>
+</div>
+
+<!-- 04 CANAIS DE ENTRADA -->
+<div class="section" id="s04">
+<div class="section-title"><span class="n">04</span> CANAIS DE ENTRADA (S39: voz + WhatsApp adicionados)</div>
+<div class="info">Os canais nao sao agentes — sao meios de transporte. Toda a comunicacao passa pelo <strong>Agente Router</strong> (Camada 3) antes de chegar a qualquer departamento.</div>
+<div class="grid-4">
+<div class="channel"><div class="channel-icon">📱</div><div class="channel-name">WhatsApp</div><div class="channel-sub">Twilio sandbox → /api/whatsapp/twilio. Marta responde via Router.</div></div>
+<div class="channel"><div class="channel-icon">📧</div><div class="channel-name">Email</div><div class="channel-sub">geral@. Router processa directamente. correspondencia_email: 18.169 registos.</div></div>
+<div class="channel"><div class="channel-icon">📞</div><div class="channel-name">Voz</div><div class="channel-sub">Vapi.ai + ElevenLabs + Deepgram. +351 923 233 644. BLOQUEADO (org switch pendente).</div></div>
+<div class="channel"><div class="channel-icon">🏢</div><div class="channel-name">CSN Connect</div><div class="channel-sub">Portal B2B. Configurador JPM (363 chassis, 26 carrocarias) + janela Marta.</div></div>
+</div>
+</div>
+
+<!-- 05 CRM PIPELINE (S39 NEW) -->
+<div class="section" id="s05">
+<div class="section-title"><span class="n">05</span> CRM PIPELINE — ADR-034 (S39)</div>
+<div class="success"><strong>Testado em producao S39</strong> — Router classificou mensagem, criou ticket COM, Marta respondeu.</div>
+<div class="flow">
+<span class="flow-step green">Canal (WA/Email/Voz/Chat)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step blue">Router (classifica + dedup 3 niveis)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step amber">Ticket ISA-95 (COM/PRD/DOC/PER/FIN)</span>
+<span class="flow-arrow">→</span>
+<span class="flow-step green">Handler departamental</span>
+</div>
+<div style="margin-top:10px">
+<table>
+<tr><th>Componente</th><th>Route</th><th>Estado</th></tr>
+<tr><td>Router classificacao</td><td><code>POST /api/router/classificar</code></td><td><span class="status exists"><span class="status-dot"></span>Producao</span></td></tr>
+<tr><td>Marta mensagem</td><td><code>POST /api/marta/mensagem</code></td><td><span class="status exists"><span class="status-dot"></span>Producao</span></td></tr>
+<tr><td>Tickets CRUD</td><td><code>GET|POST /api/tickets</code></td><td><span class="status exists"><span class="status-dot"></span>Producao</span></td></tr>
+<tr><td>WhatsApp Twilio</td><td><code>POST /api/whatsapp/twilio</code></td><td><span class="status exists"><span class="status-dot"></span>Sandbox</span></td></tr>
+<tr><td>Voz Vapi</td><td>Vapi webhook externo</td><td><span class="status planned"><span class="status-dot"></span>Bloqueado</span></td></tr>
+<tr><td>Deduplicacao</td><td>Integrado no Router</td><td><span class="status exists"><span class="status-dot"></span>3 niveis</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- 06 TABELAS -->
+<div class="section" id="s06">
+<div class="section-title"><span class="n">06</span> BASE DE DADOS — 58 TABELAS</div>
+<div class="grid-2">
+<div class="card">
+<div class="card-title">Core (producao/negocio)</div>
+<div class="card-sub">obras, fases_obra, templates_fases, dossie_obra, inspecoes, davs, fams, certificados_matricula, certificacoes_empresa, qualificacoes, documentos, notas_obra, lugares_parque, timetracking</div>
+</div>
+<div class="card">
+<div class="card-title">RH</div>
+<div class="card-sub">colaboradores, colaboradores_rh, documentos_rh, recibos_vencimento, processamentos_mensais, registos_ponto, ausencias, cits, contactos_urgentes</div>
+</div>
+<div class="card">
+<div class="card-title">Financeiro</div>
+<div class="card-sub">faturas, faturas_linhas, notas_credito, efatura, fornecedores, clientes_faturacao, movimentos_bancarios, linhas_fatura_fornecedor</div>
+</div>
+<div class="card">
+<div class="card-title">CRM (S38-S39)</div>
+<div class="card-sub">clientes, leads, tickets, conversas_marta, correspondencia_email (18.169 registos)</div>
+</div>
+<div class="card">
+<div class="card-title">Configurador JPM (S38)</div>
+<div class="card-sub">catalogo_chassis, catalogo_carrocarias, catalogo_acessorios, regras_filtragem, precos, catalogo_fornecedor, jpm_staging_products, jpm_staging_vehicles</div>
+</div>
+<div class="card">
+<div class="card-title">RAG / AI</div>
+<div class="card-sub">embeddings (3.019), inventor_rag, emails_indice, research_tasks, mensagens</div>
+</div>
+<div class="card">
+<div class="card-title">Stock (M017)</div>
+<div class="card-sub">materiais, lotes_material, materiais_equivalencias, contagens_stock, stock_movimentos</div>
+</div>
+<div class="card">
+<div class="card-title">Sistema</div>
+<div class="card-sub">audit_log, calendario, _json_staging, _rag_staging</div>
+</div>
+</div>
+</div>
+
+<!-- 07 AGENTES NUCLEUS -->
+<div class="section" id="s07">
+<div class="section-title"><span class="n">07</span> AGENTES NUCLEUS — CAMADA 3 (11 agentes)</div>
+<table>
+<tr><th>#</th><th>Agente</th><th>ISA-95</th><th>Responsabilidade</th><th>Route principal</th></tr>
+<tr><td>1</td><td>Producao</td><td>L3-PRD</td><td>Obras, fases, timetracking</td><td>/api/obras/*</td></tr>
+<tr><td>2</td><td>Qualidade</td><td>L3-QMS</td><td>Inspeccoes, NC, certificados</td><td>/api/qualidade/*</td></tr>
+<tr><td>3</td><td>Manutencao</td><td>L3-MNT</td><td>Equipamentos, preventiva</td><td>/api/manutencao/*</td></tr>
+<tr><td>4</td><td>Pessoal</td><td>L3-PER</td><td>Ponto, ausencias, CITs</td><td>/api/rh/*</td></tr>
+<tr><td>5</td><td>Documental</td><td>L3-DOC</td><td>Documentos, dossiers, uploads</td><td>/api/documentos/*</td></tr>
+<tr><td>6</td><td>Inventario</td><td>L3-INV</td><td>Stock, materiais, consumos</td><td>/api/stock/*</td></tr>
+<tr><td>7</td><td>Financeiro</td><td>L4-FIN</td><td>Facturacao, e-Fatura, banking</td><td>/api/faturacao/*</td></tr>
+<tr><td>8</td><td>Comercial</td><td>L4-COM</td><td>Leads, orcamentos, CRM</td><td>/api/leads/*</td></tr>
+<tr><td>9</td><td>Engenharia</td><td>L4-ENG</td><td>Configurador, specs tecnicas</td><td>/api/configurador/*</td></tr>
+<tr><td>10</td><td>Router</td><td>L3-MOM</td><td>Classificacao + dedup + tickets</td><td>/api/router/*</td></tr>
+<tr><td>11</td><td>RH</td><td>L3-PER</td><td>Recibos, calculos salariais</td><td>/api/rh/recibos/*</td></tr>
+</table>
+</div>
+
+<!-- 08 ROUTES -->
+<div class="section" id="s08">
+<div class="section-title"><span class="n">08</span> API ROUTES — 49+ ENDPOINTS</div>
+<div class="grid-2">
+<div class="card">
+<div class="card-title">CRM/Pipeline (S38-S39: 17 novos)</div>
+<div class="card-sub" style="font-family:var(--mono);font-size:10px;line-height:2">
+POST /api/clientes/registar<br>
+POST /api/clientes/confirmar<br>
+GET /api/clientes/lookup<br>
+GET|POST /api/tickets<br>
+GET|PATCH /api/tickets/[id]<br>
+POST /api/tickets/evoluir<br>
+POST /api/router/classificar<br>
+POST /api/leads/qualificar<br>
+PATCH /api/leads/[id]/estado<br>
+POST /api/leads/[id]/orcamento<br>
+POST /api/marta/mensagem<br>
+GET /api/marta/conversa/[ticket_id]<br>
+POST /api/whatsapp/twilio<br>
+POST /api/voz/twilio
+</div>
+</div>
+<div class="card">
+<div class="card-title">Anteriores (32+)</div>
+<div class="card-sub" style="font-family:var(--mono);font-size:10px;line-height:2">
+/api/chat (Fernando)<br>
+/api/rh/* (Carolina/Agente RH)<br>
+/api/faturacao/* (InvoiceXpress)<br>
+/api/leads/* (CRUD base)<br>
+/api/documentos/* (upload/extraccao)<br>
+/api/embeddings/* (RAG)<br>
+/api/configurador/* (JPM)<br>
++25 outros
+</div>
+</div>
+</div>
+</div>
+
+<!-- 09 PRONTIDAO PARA AUDITORIA -->
+<div class="section" id="s09">
+<div class="section-title"><span class="n">09</span> PRONTIDAO PARA AUDITORIA</div>
+<div class="nota"><strong>SECCAO PERMANENTE</strong> — nunca remover. Actualizar percentagens conforme progresso real.</div>
+
+<div class="card" style="margin-bottom:10px">
+<div class="card-title">ISO 9001:2015 — Sistema de Gestao da Qualidade</div>
+<div class="card-sub">
+<strong>Coberto pelo Opus:</strong> Controlo de documentos, rastreabilidade, registos de producao, gestao de nao-conformidades (parcial), objectivos de qualidade (KPIs ISO 22400).<br>
+<strong>Falta:</strong> Manual da qualidade formal, auditorias internas, revisao pela gestao, procedimentos documentados, accoes correctivas formais.<br>
+<strong>Fora do SAAS:</strong> Certificacao por organismo notificado (APCER, Bureau Veritas, SGS).
+</div>
+<div class="pct-bar"><div class="pct-fill" style="width:30%;background:var(--amber)"></div></div>
+<div style="font-size:10px;color:var(--text2);margin-top:2px">30% — base documental digital existe, falta formalizacao</div>
+</div>
+
+<div class="card" style="margin-bottom:10px">
+<div class="card-title">Marcacao CE — Reg. (UE) 2018/858</div>
+<div class="card-sub">
+<strong>Coberto:</strong> Registo de obras, fases de producao, dados do chassis (DAV/FAM), rastreabilidade por VIN.<br>
+<strong>Falta:</strong> Template COC multi-etapa, geracao automatica COC, COC electronico (deadline Jul/2026), verificacao GSR (Reg. 2019/2144).<br>
+<strong>Fora do SAAS:</strong> Homologacao no IMT, servico tecnico designado.
+</div>
+<div class="pct-bar"><div class="pct-fill" style="width:25%;background:var(--amber)"></div></div>
+<div style="font-size:10px;color:var(--text2);margin-top:2px">25% — dados estruturados, falta template COC e automacao</div>
+</div>
+
+<div class="card" style="margin-bottom:10px">
+<div class="card-title">EN 1090-1/-2 — Execucao de Estruturas em Aco</div>
+<div class="card-sub">
+<strong>Coberto:</strong> Rastreabilidade de materiais (M017), registos de producao por obra, dossier fotografico.<br>
+<strong>Falta:</strong> WPS/WPQR qualificados, certificacao soldadores EN 9606, coordenador IWS/IWT, manual FPC, ITP por tipo, DoP formal.<br>
+<strong>Fora do SAAS:</strong> Certificacao por organismo notificado, ensaios em laboratorio acreditado.
+</div>
+<div class="pct-bar"><div class="pct-fill" style="width:15%;background:var(--red)"></div></div>
+<div style="font-size:10px;color:var(--text2);margin-top:2px">15% — rastreabilidade digital preparada, falta documentacao tecnica</div>
+</div>
+
+<div class="card" style="margin-bottom:10px">
+<div class="card-title">EN 12642 (L/XL) — Resistencia Estrutural</div>
+<div class="card-sub">
+<strong>Coberto:</strong> Nenhum (necessita ensaio FEA ou calculo por laboratorio acreditado).<br>
+<strong>Falta:</strong> Ensaio/calculo FEA por modelo, certificado por laboratorio (TUV, DEKRA, Prova Impar).<br>
+<strong>Fora do SAAS:</strong> Ensaios fisicos, certificacao.
+</div>
+<div class="pct-bar"><div class="pct-fill" style="width:5%;background:var(--red)"></div></div>
+<div style="font-size:10px;color:var(--text2);margin-top:2px">5% — apenas awareness, sem implementacao</div>
+</div>
+
+<div class="card" style="margin-bottom:10px">
+<div class="card-title">EN ISO 3834-3 — Qualidade de Soldadura</div>
+<div class="card-sub">
+<strong>Coberto:</strong> Rastreabilidade de consumiveis (parcial), registos de producao.<br>
+<strong>Falta:</strong> Controlo formal de consumiveis, planeamento de soldadura por obra, tratamento NC soldadura.<br>
+<strong>Fora do SAAS:</strong> Vem com certificacao EN 1090.
+</div>
+<div class="pct-bar"><div class="pct-fill" style="width:10%;background:var(--red)"></div></div>
+<div style="font-size:10px;color:var(--text2);margin-top:2px">10% — parcial via EN 1090</div>
+</div>
+
+<div class="card">
+<div class="card-title">VDI 2700 — Fixacao de Carga (Alemanha)</div>
+<div class="card-sub">
+<strong>Coberto:</strong> Nenhum especifico (coberto parcialmente via EN 12642 quando implementada).<br>
+<strong>Falta:</strong> Calculos EN 12195-1, pontos de amarracao EN 12640, documentacao de conformidade.<br>
+<strong>Fora do SAAS:</strong> Considerada "estado da arte" pelos tribunais alemaes.
+</div>
+<div class="pct-bar"><div class="pct-fill" style="width:5%;background:var(--red)"></div></div>
+<div style="font-size:10px;color:var(--text2);margin-top:2px">5% — depende da EN 12642</div>
+</div>
+</div>
+
+<!-- 10 STACK -->
+<div class="section" id="s10">
+<div class="section-title"><span class="n">10</span> STACK TECNOLOGICO</div>
+<div class="grid-3">
+<div class="card"><div class="card-title">Frontend</div><div class="card-sub">Next.js 14, TypeScript, Tailwind CSS</div></div>
+<div class="card"><div class="card-title">Backend</div><div class="card-sub">Next.js API Routes, Claude API (Sonnet 4)</div></div>
+<div class="card"><div class="card-title">Base de Dados</div><div class="card-sub">Supabase (PostgreSQL + pgvector + Storage + RLS)</div></div>
+<div class="card"><div class="card-title">Deploy</div><div class="card-sub">Vercel (csn-producao.vercel.app)</div></div>
+<div class="card"><div class="card-title">Facturacao</div><div class="card-sub">InvoiceXpress (cert AT 192)</div></div>
+<div class="card"><div class="card-title">Voz (S39)</div><div class="card-sub">Vapi.ai + ElevenLabs + Deepgram + Twilio</div></div>
+</div>
+</div>
+
+<div style="text-align:center;color:var(--text2);font-size:11px;margin-top:30px;padding:12px;border-top:1px solid var(--border)">
+CSN — Engenharia de Veiculos Comerciais · Mafra, Portugal · NIF 500 861 790 · Documento interno — S39 · 05/04/2026
+</div>
+
+</body>
+</html>

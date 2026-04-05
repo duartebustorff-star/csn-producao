@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — KPIs ISO 22400 — S39</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--text:#e6edf3;--text2:#7d8590;--border:#30363d;--green:#3fb950;--green-d:#0d2818;--amber:#d29922;--amber-d:#2a1f00;--red:#f85149;--red-d:#3b1111;--blue:#58a6ff;--blue-d:#0d2240;--mono:'Courier New',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6;padding:20px;max-width:900px;margin:0 auto}
+h1{font-size:18px;margin-bottom:4px}.sub{color:var(--text2);font-size:11px;margin-bottom:20px}
+.section{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg2)}
+.section h2{font-size:14px;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:11px}th{text-align:left;padding:5px 6px;border-bottom:2px solid var(--border);color:var(--text2)}td{padding:4px 6px;border-bottom:1px solid var(--border)}
+.g{color:var(--green)}.a{color:var(--amber)}.r{color:var(--red)}.b{color:var(--blue)}
+code{font-family:var(--mono);font-size:10px;background:var(--bg3);padding:1px 4px;border-radius:3px;color:var(--blue)}
+.bar{height:5px;border-radius:3px;background:var(--bg);margin-top:8px;overflow:hidden}.fill{height:100%;border-radius:3px}
+</style>
+</head>
+<body>
+<h1>CSN Opus — KPIs ISO 22400</h1>
+<div class="sub">S39 | 05/04/2026 | 34+4 KPIs obrigatorios | 6 calculaveis · 7 parciais · 21 futuros · 4 energia</div>
+
+<div class="section">
+<h2>KPIs Actualmente Calculaveis (6)</h2>
+<table>
+<tr><th>KPI</th><th>ISO 22400 Ref</th><th>Fonte Dados</th><th>Granularidade</th></tr>
+<tr><td class="g">Worker Efficiency</td><td>6.2</td><td>timetracking + fases_obra</td><td>Semanal/Mensal</td></tr>
+<tr><td class="g">Allocation Efficiency</td><td>6.3</td><td>timetracking + calendario</td><td>Semanal/Mensal</td></tr>
+<tr><td class="g">Throughput Rate (semanal)</td><td>6.4</td><td>fases_obra completadas</td><td>Semanal</td></tr>
+<tr><td class="g">Throughput Rate (mensal)</td><td>6.4</td><td>fases_obra completadas</td><td>Mensal</td></tr>
+<tr><td class="g">Actual Production Time (semanal)</td><td>6.12</td><td>timetracking</td><td>Semanal</td></tr>
+<tr><td class="g">Actual Production Time (mensal)</td><td>6.12</td><td>timetracking</td><td>Mensal</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>KPIs Parciais (7) — faltam dados complementares</h2>
+<table>
+<tr><th>KPI</th><th>Ref</th><th>Falta</th></tr>
+<tr><td class="a">Availability</td><td>6.1</td><td>Downtime tracking por equipamento</td></tr>
+<tr><td class="a">Setup Ratio</td><td>6.7</td><td>Tempos de setup separados no timetracking</td></tr>
+<tr><td class="a">Quality Ratio</td><td>6.9</td><td>Registos de retrabalho/NC por obra</td></tr>
+<tr><td class="a">Scrap Ratio</td><td>6.10</td><td>Registos de desperdicio por material</td></tr>
+<tr><td class="a">Production Process Ratio</td><td>6.15</td><td>Tempo planeado vs real por fase</td></tr>
+<tr><td class="a">OEE</td><td>6.16</td><td>Disponibilidade + Qualidade completos</td></tr>
+<tr><td class="a">NEE</td><td>6.17</td><td>OEE + setup times</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>KPIs Futuros (21) — requerem sensores L1, stock, qualidade</h2>
+<table>
+<tr><th>Categoria</th><th>KPIs</th><th>Requisito</th></tr>
+<tr><td>Inventario</td><td>Inventory Turns, WIP, Storage Utilization</td><td>Tabela stock completa + movimentos</td></tr>
+<tr><td>Manutencao</td><td>MTBF, MTTR, Corrective Maint Ratio</td><td>Sistema manutencao activo</td></tr>
+<tr><td>Qualidade</td><td>First Pass Yield, Rework Ratio, NC Rate</td><td>Registos QMS por obra</td></tr>
+<tr><td>Logistica</td><td>On-Time Delivery, Lead Time</td><td>Datas prometidas vs entregues</td></tr>
+<tr><td>Capacidade</td><td>Utilization, Capacity, Changeover</td><td>Sensores L1 / smart meters</td></tr>
+<tr><td>Custo</td><td>Production Cost, Material Cost Ratio</td><td>Custos reais por obra</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>KPIs Energia (4) — requerem smart meter Bodor 60kW</h2>
+<table>
+<tr><th>KPI</th><th>Requisito</th></tr>
+<tr><td class="r">Energy Intensity</td><td>Smart meter no quadro electrico + Bodor</td></tr>
+<tr><td class="r">Energy per Unit</td><td>Consumo por obra (sensor L1)</td></tr>
+<tr><td class="r">Peak Load</td><td>Monitorizacao em tempo real</td></tr>
+<tr><td class="r">Renewable Energy Ratio</td><td>Dados fornecedor energia</td></tr>
+</table>
+</div>
+
+<div class="section">
+<h2>Progresso Global</h2>
+<div class="bar" style="height:8px"><div class="fill" style="width:16%;background:var(--green)"></div></div>
+<div style="font-size:10px;color:var(--text2);margin-top:4px">6/38 KPIs calculaveis (16%) — sem alteracao desde S35</div>
+</div>
+
+<div style="text-align:center;color:var(--text2);font-size:10px;margin-top:20px;border-top:1px solid var(--border);padding-top:10px">
+CSN — Engenharia de Veiculos Comerciais · S39 · 05/04/2026
+</div>
+</body>
+</html>
