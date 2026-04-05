@@ -1,298 +1,270 @@
-﻿import { NextRequest, NextResponse } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
-import { getServiceSupabase } from "@/lib/supabase"
-import { audit } from "@/lib/audit"
+import { NextRequest, NextResponse } from "next/server"
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
+import { createClient } from "@supabase/supabase-js"
+import fs from "fs"
+import path from "path"
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-const MODEL = process.env.ANTHROPIC_MODEL_ROUTER?.trim() || "claude-sonnet-4-20250514"
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-const ROUTER_PROMPT = `Es o Agente Router (L3-MOM) da Carlos dos Santos Nascimento Lda (metalomecanica / carrocarias).
-Analisa a mensagem recebida e classifica-a para encaminhamento interno via ticket.
-
-Responde APENAS com JSON valido (sem markdown):
-{
-  "remetente_tipo": "cliente" | "fornecedor" | "entidade" | "colaborador" | "desconhecido",
-  "classificacao": "lead_orcamento" | "estado_obra" | "factura" | "certificado" | "cit" | "reclamacao" | "garantia" | "informacao" | "outro",
-  "departamento": "COM" | "PRD" | "DOC" | "PER" | "FIN" | "ATT",
-  "assunto_resumo": "frase curta do assunto",
-  "urgencia": "normal" | "urgente",
-  "confianca": 0.0-1.0
-}
-
-Regras de departamento:
-- COM: pedidos de orcamento, leads, consultas comerciais, configuracoes de carrocaria
-- PRD: estado de obras, prazos de producao, fases, entregas
-- DOC: facturas, certificados, DAV, FAM, documentos legais
-- PER: CITs, baixas, ferias, assuntos pessoais de colaboradores
-- FIN: pagamentos, facturas a receber, contas correntes
-- ATT: quando nao se encaixa noutro, desconhecido, ou escalar ao Duarte`
-
-/**
- * POST /api/router/classificar
- * Recebe mensagem, classifica com Claude, cria ticket.
- * Body: { canal, remetente, conteudo, whatsapp?, email?, thread_id?, in_reply_to? }
- *
- * DEDUPLICAÃ‡ÃƒO (S39):
- * - Se thread_id ou in_reply_to â†’ procura ticket com essa referÃªncia
- * - Se mesmo remetente + canal com ticket aberto â†’ reutiliza ticket existente
- * - SÃ³ cria ticket novo se nÃ£o encontrar correspondÃªncia
- */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { canal, remetente, conteudo, whatsapp, email, thread_id, in_reply_to } = body
+    const {
+      obra_id,
+      tipo_carrocaria,
+      marca, modelo, matricula, vin, cod_homologacao,
+      comprimento, largura, altura,
+      dist_eixo_frente, dist_eixo_retaguarda,
+      peso_bruto, tara_total, tara_frontal, tara_traseira,
+    } = body
 
-    if (!canal || !conteudo) {
-      return NextResponse.json({ error: "Campos 'canal' e 'conteudo' obrigatÃ³rios" }, { status: 400 })
-    }
+    const pdfDoc = await PDFDocument.create()
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json({ error: "ANTHROPIC_API_KEY nÃ£o configurada" }, { status: 500 })
-    }
+    // A4 portrait: 595 x 842 pt
+    const page = pdfDoc.addPage([595, 842])
+    const { width, height } = page.getSize()
 
-    const supabase = getServiceSupabase()
+    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+    const fontReg  = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
-    // ============================================================
-    // 1. DEDUPLICAÃ‡ÃƒO â€” procurar ticket existente
-    // ============================================================
+    const BLACK = rgb(0, 0, 0)
+    const GRAY  = rgb(0.4, 0.4, 0.4)
 
-    // 1a. Por thread_id ou in_reply_to (email threading)
-    if (thread_id || in_reply_to) {
-      const refId = thread_id || in_reply_to
-      const { data: ticketByThread } = await supabase
-        .from("tickets")
-        .select("*")
-        .eq("canal", canal)
-        .in("estado", ["aberto", "em_progresso"])
-        .or(`metadata->>thread_id.eq.${refId},metadata->>in_reply_to.eq.${refId}`)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
+    const L = 56   // left margin
+    const R = width - 56  // right margin
+    const W = R - L       // content width
 
-      if (ticketByThread) {
-        await audit({
-          entidade_tipo: "ticket",
-          entidade_id: ticketByThread.id,
-          acao: "atualizar",
-          utilizador_id: "sistema",
-          metadata: { canal, remetente, motivo: "thread_match" },
-        })
-
-        return NextResponse.json({
-          ok: true,
-          ticket_id: ticketByThread.id,
-          ticket_existente: true,
-          departamento: ticketByThread.departamento,
-          classificacao: ticketByThread.classificacao,
-          motivo_reutilizacao: "thread_id",
-          ticket: ticketByThread,
-        })
-      }
-    }
-
-    // 1b. Por remetente + canal com ticket aberto (WhatsApp, telefone, chatbot)
-    if (remetente) {
-      const { data: ticketByRemetente } = await supabase
-        .from("tickets")
-        .select("*")
-        .eq("canal", canal)
-        .eq("remetente", remetente)
-        .in("estado", ["aberto", "em_progresso"])
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (ticketByRemetente) {
-        // Verificar se o ticket nÃ£o Ã© demasiado antigo (>48h = novo contexto)
-        const ticketAge = Date.now() - new Date(ticketByRemetente.created_at).getTime()
-        const MAX_AGE_MS = 48 * 60 * 60 * 1000 // 48 horas
-
-        if (ticketAge < MAX_AGE_MS) {
-          await audit({
-            entidade_tipo: "ticket",
-            entidade_id: ticketByRemetente.id,
-            acao: "atualizar",
-            utilizador_id: "sistema",
-            metadata: { canal, remetente, motivo: "remetente_match" },
-          })
-
-          return NextResponse.json({
-            ok: true,
-            ticket_id: ticketByRemetente.id,
-            ticket_existente: true,
-            departamento: ticketByRemetente.departamento,
-            classificacao: ticketByRemetente.classificacao,
-            motivo_reutilizacao: "remetente_canal",
-            ticket: ticketByRemetente,
-          })
-        }
-      }
-    }
-
-    // 1c. Por email do cliente (mesmo remetente, canal diferente)
-    if (email) {
-      const { data: ticketByEmail } = await supabase
-        .from("tickets")
-        .select("*, clientes!inner(email)")
-        .eq("clientes.email", email)
-        .in("estado", ["aberto", "em_progresso"])
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (ticketByEmail) {
-        const ticketAge = Date.now() - new Date(ticketByEmail.created_at).getTime()
-        const MAX_AGE_MS = 48 * 60 * 60 * 1000
-
-        if (ticketAge < MAX_AGE_MS) {
-          await audit({
-            entidade_tipo: "ticket",
-            entidade_id: ticketByEmail.id,
-            acao: "atualizar",
-            utilizador_id: "sistema",
-            metadata: { canal, remetente, motivo: "email_match" },
-          })
-
-          return NextResponse.json({
-            ok: true,
-            ticket_id: ticketByEmail.id,
-            ticket_existente: true,
-            departamento: ticketByEmail.departamento,
-            classificacao: ticketByEmail.classificacao,
-            motivo_reutilizacao: "email_cliente",
-            ticket: ticketByEmail,
-          })
-        }
-      }
-    }
-
-    // ============================================================
-    // 2. NOVO TICKET â€” classificar e criar
-    // ============================================================
-
-    // Check if sender is known client
-    let clienteId: string | null = null
-    let clienteNome: string | null = null
-    if (whatsapp || email) {
-      const lookupField = whatsapp ? "whatsapp" : "email"
-      const lookupValue = whatsapp || email
-      const { data: cliente } = await supabase
-        .from("clientes")
-        .select("id, nome")
-        .eq(lookupField, lookupValue)
-        .maybeSingle()
-      if (cliente) {
-        clienteId = cliente.id
-        clienteNome = cliente.nome
-      }
-    }
-
-    // Classify with Claude
-    const claudeRes = await anthropic.messages.create({
-      model: MODEL,
-      max_tokens: 512,
-      messages: [
-        {
-          role: "user",
-          content: `Canal: ${canal}\nRemetente: ${remetente || "desconhecido"}${clienteNome ? ` (cliente: ${clienteNome})` : ""}\n\nMensagem:\n${conteudo}`,
-        },
-      ],
-      system: ROUTER_PROMPT,
-    })
-
-    const rawText = claudeRes.content
-      .filter((b): b is Anthropic.TextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("")
-
-    let parsed: Record<string, unknown>
+    // ── LOGO ──────────────────────────────────────────────
+    // Tenta carregar o logo do disco (Next.js server)
     try {
-      let cleaned = rawText.trim()
-      cleaned = cleaned.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/g, "")
-      const start = cleaned.indexOf("{")
-      const end = cleaned.lastIndexOf("}")
-      if (start !== -1 && end > start) cleaned = cleaned.substring(start, end + 1)
-      parsed = JSON.parse(cleaned)
-    } catch {
-      parsed = {
-        remetente_tipo: "desconhecido",
-        classificacao: "outro",
-        departamento: "ATT",
-        assunto_resumo: "NÃ£o classificado",
-        urgencia: "normal",
-        confianca: 0,
+      const logoPath = path.join(process.cwd(), "public", "logo-horizontal.png")
+      if (fs.existsSync(logoPath)) {
+        const logoBytes = fs.readFileSync(logoPath)
+        const logoImg = await pdfDoc.embedPng(logoBytes)
+        const logoDims = logoImg.scale(0.18)
+        page.drawImage(logoImg, {
+          x: width / 2 - logoDims.width / 2,
+          y: height - 90,
+          width: logoDims.width,
+          height: logoDims.height,
+        })
       }
-    }
-
-    const departamento = ["COM", "PRD", "DOC", "PER", "FIN", "QMS", "MNT", "INV", "ENG", "ATT"].includes(String(parsed.departamento))
-      ? String(parsed.departamento)
-      : "ATT"
-
-    // Generate ticket ID
-    const { data: ticketIdResult } = await supabase.rpc("generate_ticket_id")
-    const ticketId = ticketIdResult || `TICK-${new Date().getFullYear()}-${Date.now()}`
-
-    // Create ticket (with thread reference if provided)
-    const ticketMetadata: Record<string, unknown> = {
-      router_model: MODEL,
-      router_confianca: parsed.confianca,
-      urgencia: parsed.urgencia,
-      cliente_nome: clienteNome,
-    }
-    if (thread_id) ticketMetadata.thread_id = thread_id
-    if (in_reply_to) ticketMetadata.in_reply_to = in_reply_to
-
-    const { data: ticket, error: ticketErr } = await supabase
-      .from("tickets")
-      .insert({
-        id: ticketId,
-        canal,
-        remetente: remetente || null,
-        remetente_tipo: String(parsed.remetente_tipo || "desconhecido"),
-        cliente_id: clienteId,
-        assunto: String(parsed.assunto_resumo || ""),
-        corpo: conteudo,
-        classificacao: String(parsed.classificacao || "outro"),
-        departamento,
-        assigned_to: departamento === "ATT" ? "duarte" : null,
-        metadata: ticketMetadata,
+    } catch {
+      // Se logo não disponível, desenha placeholder texto
+      page.drawText("CSN", {
+        x: width / 2 - 20, y: height - 70,
+        size: 28, font: fontBold, color: BLACK,
       })
-      .select()
-      .single()
-
-    if (ticketErr) {
-      console.error("router ticket insert:", ticketErr)
-      return NextResponse.json({ error: "Erro ao criar ticket" }, { status: 500 })
+      page.drawText("TRANSFORMACAO DE VEICULOS", {
+        x: width / 2 - 80, y: height - 86,
+        size: 8, font: fontBold, color: BLACK,
+      })
     }
 
-    await audit({
-      entidade_tipo: "ticket",
-      entidade_id: ticketId,
-      acao: "criar",
-      utilizador_id: "sistema",
-      metadata: {
-        router: "L3-MOM",
-        departamento,
-        classificacao: parsed.classificacao,
-        canal,
-      },
+    let y = height - 110
+
+    // ── LINHA SEPARADORA ──────────────────────────────────
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
+    y -= 22
+
+    // ── TÍTULO ────────────────────────────────────────────
+    const title = "TERMO DE RESPONSABILIDADE"
+    const titleW = fontBold.widthOfTextAtSize(title, 14)
+    page.drawText(title, {
+      x: width / 2 - titleW / 2, y,
+      size: 14, font: fontBold, color: BLACK,
     })
+    y -= 6
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
+    y -= 20
+
+    // ── TEXTO JURÍDICO ────────────────────────────────────
+    const tipoCarrocaria = (tipo_carrocaria || "").toUpperCase()
+
+    const textoIntro = [
+      "Eu, abaixo assinado com poderes para o efeito, na qualidade de gerente da empresa Carlos dos Santos",
+      "Nascimento, Lda, com o n.\u00BA de contribuinte 500 861790 e sede em Rua da Industria n.\u00BA 8, Casal do",
+      "Rodo, 2640-216 Encarnacao, declara que a carrocaria produzida e do Tipo:",
+    ]
+
+    for (const linha of textoIntro) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      y -= 13
+    }
+    y -= 4
+
+    // Tipo de carroçaria em bold centrado
+    const tipoW = fontBold.widthOfTextAtSize(tipoCarrocaria, 11)
+    page.drawText(tipoCarrocaria, {
+      x: width / 2 - tipoW / 2, y,
+      size: 11, font: fontBold, color: BLACK,
+    })
+    y -= 16
+
+    const textoConf = [
+      "esta em conformidade com as disposicoes legais aplicaveis, cumpre com as caracteristicas definidas na",
+      "folha de aprovacao de modelo e obedece as caracteristicas estabelecidas na Norma Portuguesa em",
+      "vigor.",
+    ]
+
+    for (const linha of textoConf) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      y -= 13
+    }
+    y -= 16
+
+    // ── TABELA VEÍCULO ────────────────────────────────────
+    const tableTop = y
+    const rowH = 18
+    const col1W = 120
+    const tableW = W
+
+    // Header "Veículo:"
+    page.drawRectangle({ x: L, y: tableTop - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    page.drawText("Veiculo:", { x: L + 4, y: tableTop - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y = tableTop - rowH
+
+    // Linhas da tabela veículo
+    const veiculoRows = [
+      ["Marca:", marca || "-"],
+      ["Modelo:", modelo || "-"],
+      ["Matricula:", matricula || "-"],
+      ["VIN:", vin || "-"],
+      ["Cod. Homologacao", cod_homologacao || "-"],
+    ]
+
+    for (const [label, value] of veiculoRows) {
+      page.drawRectangle({ x: L, y: y - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      page.drawText(label, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      page.drawText(value, { x: L + col1W, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+      y -= rowH
+    }
+
+    y -= 16
+
+    // ── TABELA DIMENSÕES / PESOS (lado a lado) ───────────
+    const halfW = W / 2
+    const col2Start = L + halfW
+
+    // Header linha 1: "Carroçaria" e "Conjunto"
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr1W = fontBold.widthOfTextAtSize("Carrocaria", 9)
+    page.drawText("Carrocaria", { x: L + halfW / 2 - hdr1W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr2W = fontBold.widthOfTextAtSize("Conjunto", 9)
+    page.drawText("Conjunto", { x: col2Start + halfW / 2 - hdr2W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    // Header linha 2: "Dimensões exteriores (mm)" e "Pesos (Kg)"
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr3W = fontBold.widthOfTextAtSize("Dimensoes exteriores (mm)", 9)
+    page.drawText("Dimensoes exteriores (mm)", { x: L + halfW / 2 - hdr3W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr4W = fontBold.widthOfTextAtSize("Pesos (Kg)", 9)
+    page.drawText("Pesos (Kg)", { x: col2Start + halfW / 2 - hdr4W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    // Linhas dimensões + pesos lado a lado
+    const dimCol = 100  // largura coluna label esquerda
+    const pesoCol = 110 // largura coluna label direita
+
+    const dimRows = [
+      ["Comprimento", comprimento ? String(comprimento) : "-"],
+      ["Largura", largura ? String(largura) : "-"],
+      ["Altura", altura ? String(altura) : "-"],
+      ["Dist. eixo ret. a frente", dist_eixo_frente ? String(dist_eixo_frente) : "-"],
+      ["Dist. eixo ret. a retaguarda", dist_eixo_retaguarda ? String(dist_eixo_retaguarda) : "-"],
+    ]
+
+    const pesoRows = [
+      ["Peso bruto:", peso_bruto ? String(peso_bruto) : "-"],
+      ["Peso tara total:", tara_total ? String(tara_total) : "-"],
+      ["Peso tara frontal:", tara_frontal ? String(tara_frontal) : "-"],
+      ["Peso tara traseira:", tara_traseira ? String(tara_traseira) : "-"],
+      ["", ""],
+    ]
+
+    const maxRows = Math.max(dimRows.length, pesoRows.length)
+    for (let i = 0; i < maxRows; i++) {
+      const [dLabel, dVal] = dimRows[i] || ["", ""]
+      const [pLabel, pVal] = pesoRows[i] || ["", ""]
+
+      // Lado esquerdo — dimensões
+      page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (dLabel) page.drawText(dLabel, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (dVal) page.drawText(dVal, { x: L + dimCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      // Lado direito — pesos
+      page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (pLabel) page.drawText(pLabel, { x: col2Start + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (pVal) page.drawText(pVal, { x: col2Start + pesoCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      y -= rowH
+    }
+
+    y -= 30
+
+    // ── LOCAL E DATA ──────────────────────────────────────
+    const dataGeracao = new Date()
+    const meses = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    const dataStr = `Encarnacao, ${String(dataGeracao.getDate()).padStart(2,"0")} de ${meses[dataGeracao.getMonth()]} de ${dataGeracao.getFullYear()}`
+    page.drawText(dataStr, { x: L, y, size: 9, font: fontReg, color: BLACK })
+
+    y -= 60
+
+    // ── ASSINATURA ────────────────────────────────────────
+    const sigW = 200
+    const sigX = width / 2 - sigW / 2
+    page.drawLine({ start: { x: sigX, y: y + 10 }, end: { x: sigX + sigW, y: y + 10 }, thickness: 0.5, color: BLACK })
+
+    const nome = "Duarte da Cunha Martins Bustorff-Silva"
+    const nomeW = fontBold.widthOfTextAtSize(nome, 10)
+    page.drawText(nome, {
+      x: width / 2 - nomeW / 2, y,
+      size: 10, font: fontBold, color: BLACK,
+    })
+    y -= 14
+
+    const certidao = "Certidao Permanente Codigo de acesso: 3172-1374-8252"
+    const certW = fontReg.widthOfTextAtSize(certidao, 8)
+    page.drawText(certidao, {
+      x: width / 2 - certW / 2, y,
+      size: 8, font: fontReg, color: GRAY,
+    })
+
+    // ── GUARDAR NO SUPABASE ───────────────────────────────
+    const pdfBytes = await pdfDoc.save()
+    const dataStr2 = new Date().toISOString().slice(0, 10).replace(/-/g, "")
+    const fileName = `TERM_${obra_id}_${dataStr2}.pdf`
+    const storagePath = `termos/${fileName}`
+
+    const { error: uploadError } = await supabase.storage
+      .from("documentos")
+      .upload(storagePath, pdfBytes, { contentType: "application/pdf", upsert: true })
+
+    if (uploadError) {
+      console.error("Erro upload:", uploadError)
+      return NextResponse.json({ error: "Erro ao guardar PDF" }, { status: 500 })
+    }
+
+    const { data: signedUrl } = await supabase.storage
+      .from("documentos")
+      .createSignedUrl(storagePath, 60 * 60 * 24 * 7)
 
     return NextResponse.json({
-      ok: true,
-      ticket_id: ticketId,
-      ticket_existente: false,
-      departamento,
-      classificacao: parsed.classificacao,
-      remetente_tipo: parsed.remetente_tipo,
-      assunto: parsed.assunto_resumo,
-      urgencia: parsed.urgencia,
-      confianca: parsed.confianca,
-      cliente: clienteId ? { id: clienteId, nome: clienteNome } : null,
-      ticket,
+      sucesso: true,
+      storage_path: storagePath,
+      download_url: signedUrl?.signedUrl ?? null,
+      file_name: fileName,
     })
-  } catch (e) {
-    console.error("router/classificar error:", e)
+
+  } catch (err) {
+    console.error("Erro gerar-termo:", err)
     return NextResponse.json({ error: "Erro interno" }, { status: 500 })
   }
 }
