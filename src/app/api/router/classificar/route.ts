@@ -7,6 +7,9 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 
+// Vercel: allow up to 30s for this function
+export const maxDuration = 30
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -18,12 +21,11 @@ const anthropic = new Anthropic({
 
 // Departamentos ISA-95 activos
 const DEPT_ACTIVOS = ['COM', 'PRD', 'DOC', 'PER', 'FIN'] as const
-// Futuros: QMS, MNT, INV, ENG
 
 type DeptActivo = (typeof DEPT_ACTIVOS)[number]
 
 interface RemetenteInfo {
-  tipo: string // fornecedor | cliente | interno | historico | desconhecido
+  tipo: string
   id: string | null
   nome: string | null
   nif: string | null
@@ -33,10 +35,10 @@ interface RemetenteInfo {
 
 interface ClassificacaoResult {
   departamento: DeptActivo
-  classificacao: string // sub-type: orcamento, encomenda, fatura, reclamacao, etc.
+  classificacao: string
   assunto_resumo: string
   urgencia: 'baixa' | 'media' | 'alta'
-  confianca: number // 0-100
+  confianca: number
 }
 
 // --- STEP 1: Identificar remetente via funcao PostgreSQL ---
@@ -59,7 +61,7 @@ async function identificarRemetente(email: string): Promise<RemetenteInfo> {
   return data[0] as RemetenteInfo
 }
 
-// --- STEP 2: Classificar mensagem via Claude ---
+// --- STEP 2: Classificar mensagem via Claude Haiku (rapido) ---
 async function classificarMensagem(
   assunto: string,
   corpo: string,
@@ -67,24 +69,24 @@ async function classificarMensagem(
 ): Promise<ClassificacaoResult> {
   const prompt = `Classifica esta mensagem recebida pela CSN (fabricante de carrocarias para veiculos comerciais).
 
-REMETENTE: ${remetente.nome || 'Desconhecido'} (${remetente.tipo}, ${remetente.emails_anteriores} emails anteriores)
+REMETENTE: ${remetente.nome || 'Desconhecido'} (${remetente.tipo})
 ASSUNTO: ${assunto}
-CORPO: ${corpo.slice(0, 2000)}
+CORPO: ${corpo.slice(0, 1000)}
 
-Departamentos disponiveis (ISA-95):
-- COM: Comercial - orcamentos, encomendas, pedidos de informacao, reclamacoes comerciais
-- PRD: Producao - questoes tecnicas sobre obras em curso, entregas, prazos
-- DOC: Documentacao - COC, DoP, certificados, homologacoes, pedidos de documentos
-- PER: Pessoal - ferias, faltas, recibos, assuntos RH
-- FIN: Financeiro - faturas, pagamentos, cobrancas, extratos
+Departamentos (ISA-95):
+- COM: Comercial (orcamentos, encomendas, pedidos info)
+- PRD: Producao (questoes tecnicas, obras, entregas, prazos)
+- DOC: Documentacao (COC, DoP, certificados, homologacoes)
+- PER: Pessoal (ferias, faltas, recibos, RH)
+- FIN: Financeiro (faturas, pagamentos, cobrancas)
 
-Responde APENAS com JSON (sem markdown):
-{"departamento":"COM|PRD|DOC|PER|FIN","classificacao":"tipo_especifico","assunto_resumo":"resumo em 10 palavras","urgencia":"baixa|media|alta","confianca":0-100}`
+Responde APENAS com JSON:
+{"departamento":"COM","classificacao":"orcamento","assunto_resumo":"resumo curto","urgencia":"baixa","confianca":85}`
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 200,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 150,
       messages: [{ role: 'user', content: prompt }],
     })
 
@@ -96,9 +98,8 @@ Responde APENAS com JSON (sem markdown):
     const clean = text.replace(/```json|```/g, '').trim()
     const parsed = JSON.parse(clean) as ClassificacaoResult
 
-    // Validar departamento
     if (!DEPT_ACTIVOS.includes(parsed.departamento as DeptActivo)) {
-      parsed.departamento = 'COM' // fallback seguro
+      parsed.departamento = 'COM'
       parsed.confianca = Math.min(parsed.confianca, 50)
     }
 
@@ -133,16 +134,13 @@ async function verificarDuplicado(
     return { duplicado: true, ticket_existente: recente[0].id }
   }
 
-  // Nivel 2: Mesmo assunto do mesmo remetente nas ultimas 24h
+  // Nivel 2: Mesmo assunto nas ultimas 24h
   const { data: mesmoAssunto } = await supabase
     .from('tickets')
     .select('id')
     .eq('remetente', email)
     .eq('assunto', assunto)
-    .gte(
-      'created_at',
-      new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-    )
+    .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
     .limit(1)
 
   if (mesmoAssunto && mesmoAssunto.length > 0) {
@@ -155,10 +153,7 @@ async function verificarDuplicado(
     .from('tickets')
     .select('id, corpo')
     .eq('remetente', email)
-    .gte(
-      'created_at',
-      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    )
+    .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
 
   if (mesmoCorpo) {
     const dup = mesmoCorpo.find(
@@ -196,8 +191,7 @@ async function criarTicket(
     remetente: email,
     remetente_tipo: remetente.tipo,
     cliente_id: remetente.tipo === 'cliente' ? remetente.id : null,
-    fornecedor_id:
-      remetente.tipo === 'fornecedor' ? parseInt(remetente.id!) : null,
+    fornecedor_id: remetente.tipo === 'fornecedor' ? parseInt(remetente.id!) : null,
     assunto: classificacao.assunto_resumo,
     corpo: corpo.slice(0, 5000),
     classificacao: classificacao.classificacao,
@@ -275,14 +269,12 @@ export async function POST(request: NextRequest) {
       anexos
     )
 
-    // 5. Accoes automaticas por departamento
+    // 5. Accoes automaticas
     let accao_automatica: string | null = null
 
     if (
       classificacao.departamento === 'COM' &&
-      ['orcamento', 'encomenda', 'pedido_informacao'].includes(
-        classificacao.classificacao
-      )
+      ['orcamento', 'encomenda', 'pedido_informacao'].includes(classificacao.classificacao)
     ) {
       accao_automatica = 'lead_sugerido'
     }
