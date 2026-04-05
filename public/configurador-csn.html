@@ -5,519 +5,715 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CSN Configurador</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0A0A0A;
-    --bg-elevated: #111111;
-    --bg-card: #161616;
-    --bg-hover: #1C1C1C;
-    --border: #222222;
-    --border-hover: #333333;
-    --border-active: #C9A962;
-    --accent: #C9A962;
-    --accent-dim: rgba(201,169,98,0.15);
-    --accent-glow: rgba(201,169,98,0.08);
-    --text: #E8E8E8;
+    --surface-1: #111111;
+    --surface-2: #1A1A1A;
+    --surface-3: #1A1A1A;
+    --border-subtle: #2A2A2A;
+    --border-medium: #2A2A2A;
+    --border-strong: #3A3A3A;
+    --accent: #2D8B4E;
+    --accent-hover: #359B5A;
+    --accent-dim: rgba(45,139,78,0.15);
+    --accent-glow: rgba(45,139,78,0.40);
+    --text-primary: #FFFFFF;
     --text-secondary: #888888;
-    --text-muted: #555555;
-    --success: #34D399;
-    --success-dim: rgba(52,211,153,0.12);
+    --text-tertiary: #555555;
+    --success: #4ADE80;
+    --success-bg: rgba(45,139,78,0.15);
     --warning: #FBBF24;
-    --warning-dim: rgba(251,191,36,0.12);
-    --danger: #EF4444;
-    --danger-dim: rgba(239,68,68,0.12);
-    --radius: 12px;
-    --radius-sm: 8px;
-    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --warning-bg: rgba(139,107,45,0.15);
+    --danger: #F87171;
+    --danger-bg: rgba(139,45,45,0.15);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html { scroll-behavior: smooth; }
+
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Fivo Sans Modern', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
-    color: var(--text);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* === HEADER === */
+  /* ==============================
+     HEADER - sticky, glass
+     ============================== */
   .header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 100;
-    background: rgba(10,10,10,0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header .logo {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: 6px;
-    color: #FFFFFF;
-  }
-  .header .meta {
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--text-muted);
-    letter-spacing: 1px;
-  }
-
-  /* === LAYOUT === */
-  .wizard-container {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 48px 24px 120px;
-  }
-
-  /* === PROGRESS DOTS === */
-  .steps-bar {
+    left: 0;
+    right: 0;
+    z-index: 200;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 56px;
+    background: rgba(10,10,10,0.80);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border-subtle);
   }
-  .step-dot {
+  .header .logo {
+    height: 28px;
+    width: auto;
+    display: block;
+    color: #FFFFFF;
+  }
+  .header .meta {
+    position: absolute;
+    right: 32px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    letter-spacing: 0.5px;
+  }
+
+  /* ==============================
+     PROGRESS DOTS — 6 pontos
+     ============================== */
+  .stepper-wrapper {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    z-index: 190;
+    background: rgba(10,10,10,0.80);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 18px 0 14px;
+  }
+  .stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 0 24px;
+  }
+  .stepper-step {
+    display: block;
+    cursor: default;
+    transition: all 0.4s ease;
+  }
+  .stepper-step.clickable { cursor: pointer; }
+  .stepper-step.clickable:hover .stepper-dot { transform: scale(1.25); }
+  .stepper-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    transition: all 0.4s ease;
+  }
+  .stepper-step.active .stepper-dot {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
-    background: var(--border);
-    transition: all var(--transition);
-    cursor: default;
-    position: relative;
-  }
-  .step-dot.active {
     background: var(--accent);
-    box-shadow: 0 0 12px rgba(201,169,98,0.4);
-    width: 12px;
-    height: 12px;
+    box-shadow: 0 0 12px var(--accent-glow);
   }
-  .step-dot.completed {
-    background: var(--text-muted);
-    cursor: pointer;
+  .stepper-step.completed .stepper-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    opacity: 0.5;
   }
-  .step-dot.completed:hover {
-    background: var(--text-secondary);
-  }
-  .step-label {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
+  .stepper-label-active {
+    text-align: center;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--text-muted);
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity var(--transition);
-  }
-  .step-dot.active .step-label {
-    opacity: 1;
-    color: var(--accent);
-  }
-
-  /* === CARDS === */
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 40px;
-    margin-bottom: 24px;
-  }
-  .card h2 {
-    font-size: 22px;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin-bottom: 8px;
-    letter-spacing: -0.3px;
-  }
-  .card .step-description {
-    font-size: 14px;
+    letter-spacing: 0.15em;
     color: var(--text-secondary);
-    margin-bottom: 32px;
-    line-height: 1.5;
+    margin-top: 10px;
+    animation: fadeIn 0.4s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ==============================
+     MAIN CONTENT
+     ============================== */
+  .main {
+    padding-top: 160px;
+    min-height: 100vh;
+  }
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 140px;
   }
 
-  /* === FORM ELEMENTS === */
-  .field-group { margin-bottom: 28px; }
+  /* Section hero */
+  .section-hero {
+    margin-bottom: 48px;
+  }
+  .section-hero h1 {
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--text-primary);
+    letter-spacing: 0.1em;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .section-hero p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    max-width: 560px;
+  }
+
+  @media (max-width: 640px) {
+    .section-hero h1 { font-size: 28px; letter-spacing: 0.08em; }
+    .section-hero p { font-size: 14px; }
+  }
+
+  /* ==============================
+     FIELD GROUPS
+     ============================== */
+  .field-group { margin-bottom: 36px; }
   .field-group label {
     display: block;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-secondary);
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.15em;
   }
 
+  /* Selects & inputs */
   select, input[type="number"], input[type="text"] {
     width: 100%;
-    padding: 14px 18px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 15px;
-    font-family: 'Inter', sans-serif;
-    background: var(--bg-elevated);
-    color: var(--text);
-    transition: all var(--transition);
+    padding: 12px 16px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: 500;
+    background: var(--surface-2);
+    color: var(--text-primary);
+    transition: all 0.25s ease;
     outline: none;
     appearance: none;
     -webkit-appearance: none;
   }
   select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%23999'%3E%3Cpath d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 16px center;
-    padding-right: 40px;
+    background-position: right 18px center;
+    padding-right: 44px;
+    cursor: pointer;
   }
+  select:hover, input:hover { border-color: var(--border-strong); }
   select:focus, input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-dim);
   }
-  select:disabled, input:disabled {
-    background: var(--bg);
-    color: var(--text-muted);
-    border-color: var(--border);
-  }
 
-  /* === TILES === */
+  /* ==============================
+     TILES
+     ============================== */
   .tile-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 12px;
   }
   .tile {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 16px;
+    position: relative;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 24px 16px;
     cursor: pointer;
-    transition: all var(--transition);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
     text-align: center;
-    background: var(--bg-elevated);
+    background: var(--surface-1);
+    overflow: hidden;
+  }
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%);
   }
   .tile:hover {
-    border-color: var(--border-hover);
-    background: var(--bg-hover);
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
   }
+  .tile:hover::before { opacity: 1; }
   .tile.selected {
     border-color: var(--accent);
     background: var(--accent-dim);
-    box-shadow: 0 0 20px var(--accent-glow);
+    box-shadow: 0 0 20px var(--accent-dim), inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .tile .tile-title {
     font-weight: 600;
-    font-size: 14px;
-    color: #FFFFFF;
+    font-size: 15px;
+    color: var(--text-primary);
     letter-spacing: -0.2px;
+    position: relative;
   }
-  .tile.selected .tile-title { color: var(--accent); }
+  .tile.selected .tile-title { color: #FFFFFF; }
   .tile .tile-sub {
     font-size: 12px;
-    color: var(--text-muted);
+    color: var(--text-tertiary);
     margin-top: 6px;
     font-weight: 400;
+    position: relative;
   }
+  .tile.selected .tile-sub { color: var(--text-secondary); }
 
-  /* === CONFIG CARDS === */
+  /* ==============================
+     CONFIG CARDS
+     ============================== */
   .config-card {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 28px;
     cursor: pointer;
-    transition: all var(--transition);
-    background: var(--bg-elevated);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    background: var(--surface-1);
   }
   .config-card:hover {
-    border-color: var(--border-hover);
-    background: var(--bg-hover);
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
   }
   .config-card.selected {
     border-color: var(--accent);
     background: var(--accent-dim);
-    box-shadow: 0 0 20px var(--accent-glow);
+    box-shadow: 0 0 20px var(--accent-dim);
   }
   .config-card .cc-title {
-    font-weight: 600;
-    font-size: 15px;
-    color: #FFFFFF;
-    margin-bottom: 12px;
-    letter-spacing: -0.2px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
   }
-  .config-card.selected .cc-title { color: var(--accent); }
+  .config-card.selected .cc-title { color: #FFFFFF; }
   .config-card .cc-specs {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 8px;
     font-size: 13px;
   }
-  .config-card .cc-specs .spec-label { color: var(--text-muted); }
-  .config-card .cc-specs .spec-value {
-    font-weight: 500;
-    text-align: right;
-    color: var(--text-secondary);
-  }
-  .config-card.selected .cc-specs .spec-value { color: var(--text); }
+  .config-card .cc-specs .spec-label { color: var(--text-tertiary); }
+  .config-card .cc-specs .spec-value { font-weight: 600; text-align: right; color: var(--text-secondary); }
+  .config-card.selected .spec-value { color: var(--text-primary); }
 
-  /* === BUTTONS === */
+  /* ==============================
+     BUTTONS
+     ============================== */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 14px 32px;
+    padding: 14px 40px;
     border: none;
     border-radius: 50px;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
     cursor: pointer;
-    transition: all var(--transition);
-    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
   .btn-primary {
     background: var(--accent);
-    color: #0A0A0A;
+    color: #FFFFFF;
   }
   .btn-primary:hover {
-    background: #D4B46E;
-    box-shadow: 0 4px 20px rgba(201,169,98,0.3);
+    background: var(--accent-hover);
+    box-shadow: 0 8px 24px var(--accent-glow);
+    transform: scale(1.02);
   }
   .btn-primary:disabled {
-    background: var(--border);
-    color: var(--text-muted);
+    background: var(--surface-3);
+    color: var(--text-tertiary);
     cursor: not-allowed;
     box-shadow: none;
+    transform: none;
+    opacity: 0.3;
   }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .btn-secondary {
     background: transparent;
     color: var(--text-secondary);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-medium);
   }
   .btn-secondary:hover {
-    border-color: var(--border-hover);
-    color: var(--text);
-    background: var(--bg-hover);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.03);
   }
-  .btn-success {
-    background: var(--success);
-    color: #0A0A0A;
-  }
-  .btn-success:hover {
-    box-shadow: 0 4px 20px rgba(52,211,153,0.3);
-  }
-  .btn-row {
-    display: flex;
-    gap: 12px;
-    justify-content: space-between;
-    margin-top: 40px;
-  }
+  .btn-success { background: var(--success); color: #000; }
+  .btn-success:hover { box-shadow: 0 8px 24px rgba(74,222,128,0.25); transform: scale(1.02); }
+  .btn-row { display: flex; gap: 12px; justify-content: space-between; margin-top: 48px; }
 
-  /* === BADGES === */
+  /* ==============================
+     BADGES
+     ============================== */
   .badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
-    border-radius: 50px;
+    padding: 12px 24px;
+    border-radius: 8px;
     font-weight: 600;
     font-size: 13px;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
-  .badge-green {
-    background: var(--success-dim);
-    color: var(--success);
-    border: 1px solid rgba(52,211,153,0.2);
-  }
-  .badge-orange {
-    background: var(--warning-dim);
-    color: var(--warning);
-    border: 1px solid rgba(251,191,36,0.2);
-  }
-  .badge-red {
-    background: var(--danger-dim);
-    color: var(--danger);
-    border: 1px solid rgba(239,68,68,0.2);
-  }
+  .badge-green { background: var(--success-bg); color: var(--success); border: 1px solid rgba(45,139,78,0.30); }
+  .badge-orange { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(139,107,45,0.30); }
+  .badge-red { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(139,45,45,0.30); }
 
-  /* === PAYLOAD === */
+  /* ==============================
+     PAYLOAD DISPLAY
+     ============================== */
   .payload-display {
     text-align: center;
-    padding: 40px 24px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    margin: 24px 0;
+    padding: 56px 24px;
+    background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    margin: 32px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .payload-display::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,139,78,0.08) 0%, transparent 60%);
+    pointer-events: none;
   }
   .payload-display .payload-number {
-    font-size: 56px;
-    font-weight: 800;
+    font-size: 72px;
+    font-weight: 700;
     letter-spacing: -2px;
-    color: #FFFFFF;
+    color: var(--text-primary);
+    position: relative;
+    line-height: 1;
   }
   .payload-display .payload-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 12px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.15em;
     font-weight: 500;
+    position: relative;
   }
 
-  /* === WEIGHT ROWS === */
+  /* ==============================
+     WEIGHT ROWS
+     ============================== */
   .weight-row {
     display: flex;
     justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-subtle);
     font-size: 14px;
   }
   .weight-row:last-child {
     border-bottom: none;
-    padding-top: 16px;
-    margin-top: 4px;
-    border-top: 1px solid var(--border-hover);
+    padding-top: 20px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border-medium);
   }
-  .weight-row .wr-label { color: var(--text-secondary); }
-  .weight-row .wr-value { font-weight: 600; color: var(--text); }
+  .weight-row .wr-label { color: var(--text-secondary); font-weight: 400; }
+  .weight-row .wr-value { font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
 
-  /* === SUMMARY === */
-  .summary-section { margin-bottom: 28px; }
+  /* ==============================
+     SUMMARY
+     ============================== */
+  .summary-section {
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .summary-section:last-of-type { border-bottom: none; }
   .summary-section h3 {
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    font-weight: 600;
-  }
-  .summary-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
+    letter-spacing: 3px;
+    color: var(--text-tertiary);
+    margin-bottom: 20px;
+    font-weight: 700;
   }
   .summary-item {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-subtle);
   }
   .summary-item:last-child { border-bottom: none; }
-  .summary-item .si-label { color: var(--text-secondary); }
-  .summary-item .si-value { font-weight: 500; color: var(--text); }
+  .summary-item .si-label { color: var(--text-tertiary); font-weight: 400; }
+  .summary-item .si-value { font-weight: 600; color: var(--text-primary); }
 
-  /* === CHECKBOX === */
+  /* ==============================
+     CHECKBOX ITEMS
+     ============================== */
   .checkbox-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 16px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
+    gap: 16px;
+    padding: 18px 20px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
     margin-bottom: 8px;
     cursor: pointer;
-    transition: all var(--transition);
-    background: var(--bg-elevated);
+    transition: all 0.25s ease;
+    background: var(--surface-1);
   }
-  .checkbox-item:hover { background: var(--bg-hover); border-color: var(--border-hover); }
-  .checkbox-item.checked {
-    background: var(--accent-dim);
-    border-color: var(--accent);
-  }
-  .checkbox-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--accent);
-  }
-  .checkbox-item .ci-name { font-weight: 500; font-size: 14px; color: var(--text); }
-  .checkbox-item .ci-weight { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .checkbox-item:hover { border-color: var(--border-strong); background: var(--surface-2); }
+  .checkbox-item.checked { background: var(--accent-dim); border-color: var(--accent); }
+  .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+  .checkbox-item .ci-name { font-weight: 600; font-size: 14px; }
+  .checkbox-item .ci-weight { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
 
-  /* === ALERT BOX === */
+  /* ==============================
+     ALERT BOX
+     ============================== */
   .alert-box {
-    background: var(--warning-dim);
-    border: 1px solid rgba(251,191,36,0.2);
-    border-radius: var(--radius-sm);
-    padding: 20px;
-    margin-bottom: 24px;
+    background: var(--warning-bg);
+    border: 1px solid rgba(234,179,8,0.15);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
   }
-  .alert-box p { font-size: 13px; color: var(--warning); font-weight: 500; margin-bottom: 16px; }
+  .alert-box p { font-size: 14px; color: var(--warning); font-weight: 500; margin-bottom: 20px; }
 
-  /* === ANIMATIONS === */
-  .fade-in {
-    animation: fadeSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* ==============================
+     DIVIDER
+     ============================== */
+  .section-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 40px 0;
   }
-  @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(16px); }
+
+  /* ==============================
+     URL SHARE
+     ============================== */
+  .url-state {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-align: center;
+    word-break: break-all;
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    padding: 20px;
+    border-radius: 10px;
+    line-height: 1.8;
+    margin-top: 20px;
+  }
+  .url-state strong { color: var(--text-secondary); font-weight: 600; display: block; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; font-size: 10px; }
+
+  /* ==============================
+     ANIMATIONS
+     ============================== */
+  .fade-in { animation: fadeSlideUp 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* === LOADING === */
-  .loading {
-    text-align: center;
-    padding: 120px 40px;
-    color: var(--text-muted);
-  }
-  .spinner {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* Staggered children */
+  .fade-in .field-group:nth-child(2) { animation: fadeSlideUp 0.5s 0.05s cubic-bezier(0.16,1,0.3,1) both; }
+  .fade-in .field-group:nth-child(3) { animation: fadeSlideUp 0.5s 0.10s cubic-bezier(0.16,1,0.3,1) both; }
+  .fade-in .field-group:nth-child(4) { animation: fadeSlideUp 0.5s 0.15s cubic-bezier(0.16,1,0.3,1) both; }
 
-  /* === URL SHARE === */
-  .url-state {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 16px;
-    word-break: break-all;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    padding: 16px;
-    border-radius: var(--radius-sm);
-    line-height: 1.6;
+  /* ==============================
+     LOADING
+     ============================== */
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    z-index: 999;
   }
-  .url-state strong { color: var(--text-secondary); }
+  .loading-screen .logo-large {
+    height: 80px;
+    width: auto;
+    color: #FFFFFF;
+    margin-bottom: 32px;
+    opacity: 0.95;
+  }
+  .loading-bar {
+    width: 120px;
+    height: 2px;
+    background: var(--surface-3);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .loading-bar-inner {
+    height: 100%;
+    width: 40%;
+    background: var(--accent);
+    border-radius: 1px;
+    animation: loadSlide 1.2s ease-in-out infinite;
+  }
+  @keyframes loadSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+  }
 
-  /* === SECTION DIVIDER === */
-  .section-divider {
+  /* ==============================
+     CSN FOOTER (step 6)
+     ============================== */
+  .csn-footer {
+    margin-top: 80px;
+    padding: 48px 0 24px;
+    text-align: center;
+  }
+  .csn-footer-divider {
     height: 1px;
-    background: var(--border);
-    margin: 32px 0;
+    background: var(--border-subtle);
+    margin: 0 auto 48px;
+    max-width: 200px;
+  }
+  .csn-footer-logo {
+    height: 32px;
+    width: auto;
+    color: var(--text-primary);
+    opacity: 0.85;
+    display: block;
+    margin: 0 auto 12px;
+  }
+  .csn-footer-tagline {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+  .csn-footer-location {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
   }
 
-  /* === RESPONSIVE === */
+  /* ==============================
+     RESPONSIVE
+     ============================== */
   @media (max-width: 640px) {
-    .wizard-container { padding: 32px 16px 100px; }
-    .card { padding: 28px 20px; }
+    .content { padding: 0 16px 100px; }
+    .main { padding-top: 140px; }
+    .section-hero h1 { font-size: 28px; letter-spacing: 0.08em; }
     .tile-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .tile { padding: 16px 12px; }
-    .header { padding: 16px 20px; }
-    .header .logo { font-size: 22px; letter-spacing: 4px; }
-    .payload-display .payload-number { font-size: 40px; }
-    .btn { padding: 12px 24px; font-size: 13px; }
-    .steps-bar { gap: 10px; margin-bottom: 40px; }
+    .tile { padding: 18px 12px; }
+    .payload-display { padding: 40px 16px; }
+    .payload-display .payload-number { font-size: 44px; }
+    .btn { padding: 14px 24px; font-size: 12px; }
+    .btn-row { flex-direction: column-reverse; }
+    .btn-row .btn { width: 100%; }
   }
   @media (max-width: 380px) {
     .tile-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ==============================
+     3D VIEWER
+     ============================== */
+  .viewer-3d {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    margin: 0 0 48px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    background: radial-gradient(ellipse at 50% 40%, #2A2A2A 0%, #141414 45%, #0A0A0A 85%);
+    overflow: hidden;
+    opacity: 0;
+    animation: viewerFadeIn 0.5s ease forwards;
+  }
+  .viewer-3d.small { height: 300px; }
+  .viewer-3d canvas { display: block; width: 100% !important; height: 100% !important; }
+  .viewer-3d .viewer-hint {
+    position: absolute;
+    bottom: 14px;
+    left: 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.7;
+  }
+  .viewer-3d .viewer-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 2;
+    background: rgba(10,10,10,0.6);
+    transition: opacity 0.4s ease;
+  }
+  .viewer-3d .viewer-loader.hidden { opacity: 0; pointer-events: none; }
+  .viewer-3d .viewer-spinner {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--border-strong);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: viewerSpin 0.8s linear infinite;
+  }
+  .viewer-3d .viewer-loader-text {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+  @keyframes viewerSpin { to { transform: rotate(360deg); } }
+  @keyframes viewerFadeIn { to { opacity: 1; } }
+  @media (max-width: 640px) {
+    .viewer-3d { height: 280px; margin-bottom: 32px; }
+    .viewer-3d.small { height: 240px; }
   }
 </style>
 </head>
@@ -537,7 +733,7 @@ async function supaFetch(table, params = '') {
   return res.json();
 }
 
-// === URL State Management (base64 JSON like JPM) ===
+// === URL State Management ===
 function encodeState(state) {
   try { return btoa(unescape(encodeURIComponent(JSON.stringify(state)))); } catch { return ''; }
 }
@@ -561,10 +757,9 @@ function generatePDF(state, chassis, carrocaria, acessorios) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // Header — dark background
-  doc.setFillColor(10, 10, 10);
+  doc.setFillColor(8, 8, 8);
   doc.rect(0, 0, 210, 35, 'F');
-  doc.setTextColor(201, 169, 98);
+  doc.setTextColor(212, 54, 75);
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
   doc.text('CSN', 15, 20);
@@ -574,26 +769,16 @@ function generatePDF(state, chassis, carrocaria, acessorios) {
   doc.text(`Configuracao  |  ${new Date().toLocaleDateString('pt-PT')}`, 50, 20);
 
   let y = 50;
-  doc.setTextColor(100, 100, 100);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('VEICULO', 15, y);
-  y += 8;
-
-  doc.setTextColor(40, 40, 40);
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-
+  const section = (title) => {
+    doc.setTextColor(100,100,100); doc.setFontSize(9); doc.setFont('helvetica','bold');
+    doc.text(title, 15, y); y += 8; doc.setTextColor(40,40,40); doc.setFontSize(11); doc.setFont('helvetica','normal');
+  };
   const addLine = (label, value) => {
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(120, 120, 120);
-    doc.text(`${label}`, 20, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(40, 40, 40);
-    doc.text(String(value || '-'), 80, y);
-    y += 7;
+    doc.setFont('helvetica','bold'); doc.setTextColor(120,120,120); doc.text(label, 20, y);
+    doc.setFont('helvetica','normal'); doc.setTextColor(40,40,40); doc.text(String(value||'-'), 80, y); y += 7;
   };
 
+  section('VEICULO');
   if (chassis) {
     addLine('Marca', chassis.marca);
     addLine('Modelo', `${chassis.modelo}${chassis.variante ? ' ' + chassis.variante : ''}`);
@@ -605,91 +790,36 @@ function generatePDF(state, chassis, carrocaria, acessorios) {
     addLine('Emissao', chassis.classe_emissao);
     addLine('Peso chassis', state.peso_chassis_manual || chassis.peso_chassis_kg ? `${state.peso_chassis_manual || chassis.peso_chassis_kg} kg` : 'Manual');
   }
-
-  y += 5;
-  doc.setTextColor(100, 100, 100);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('CARROCARIA', 15, y);
-  y += 8;
-  doc.setTextColor(40, 40, 40);
-  doc.setFontSize(11);
-
+  y += 5; section('CARROCARIA');
   if (carrocaria) {
-    const tipoLabels = { basculante_traseira: 'Basculante traseira', basculante_trilateral: 'Basculante trilateral', estrado: 'Estrado', caixa_aberta: 'Caixa aberta' };
-    const matLabels = { aco: 'Aco', aluminio: 'Aluminio', misto: 'Misto aluminio', aluminio_madeira: 'Aluminio c/ madeira' };
-    addLine('Tipo', tipoLabels[carrocaria.tipo] || carrocaria.tipo);
-    addLine('Material', matLabels[carrocaria.material] || carrocaria.material);
-    addLine('Comp. interior', `${carrocaria.comprimento_int_mm} mm`);
-    addLine('Larg. interior', `${carrocaria.largura_int_mm} mm`);
+    const tl = { basculante_traseira:'Basculante traseira', basculante_trilateral:'Basculante trilateral', estrado:'Estrado', caixa_aberta:'Caixa aberta' };
+    const ml = { aco:'Aco', aluminio:'Aluminio', misto:'Misto aluminio', aluminio_madeira:'Aluminio c/ madeira' };
+    addLine('Tipo', tl[carrocaria.tipo]||carrocaria.tipo); addLine('Material', ml[carrocaria.material]||carrocaria.material);
+    addLine('Comp. interior', `${carrocaria.comprimento_int_mm} mm`); addLine('Larg. interior', `${carrocaria.largura_int_mm} mm`);
     if (carrocaria.altura_lateral_mm) addLine('Altura lateral', `${carrocaria.altura_lateral_mm} mm`);
-    addLine('Peso carrocaria', `${carrocaria.peso_carrocaria_kg} kg`);
-    addLine('Peso subframe', `${carrocaria.peso_subframe_kg} kg`);
-    addLine('Peso reboque', `${carrocaria.peso_reboque_kg} kg`);
-    addLine('Peso total equip.', `${carrocaria.peso_total_equipamento_kg} kg`);
+    addLine('Peso carrocaria', `${carrocaria.peso_carrocaria_kg} kg`); addLine('Peso subframe', `${carrocaria.peso_subframe_kg} kg`);
+    addLine('Peso reboque', `${carrocaria.peso_reboque_kg} kg`); addLine('Peso total equip.', `${carrocaria.peso_total_equipamento_kg} kg`);
   }
-
-  if (acessorios && acessorios.length > 0) {
-    y += 5;
-    doc.setTextColor(100, 100, 100);
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'bold');
-    doc.text('ACESSORIOS', 15, y);
-    y += 8;
-    doc.setTextColor(40, 40, 40);
-    doc.setFontSize(11);
-    acessorios.forEach(a => { addLine(a.nome, `${a.peso_kg} kg`); });
-  }
+  if (acessorios && acessorios.length > 0) { y += 5; section('ACESSORIOS'); acessorios.forEach(a => addLine(a.nome, `${a.peso_kg} kg`)); }
 
   y += 10;
-  doc.setFillColor(22, 22, 22);
-  doc.roundedRect(15, y - 5, 180, 40, 3, 3, 'F');
-  doc.setTextColor(201, 169, 98);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('PAYLOAD', 20, y + 5);
-
-  const pesoChassis = state.peso_chassis_manual || (chassis && chassis.peso_chassis_kg) || 0;
-  const pesoEquip = carrocaria ? Number(carrocaria.peso_total_equipamento_kg) : 0;
-  const pesoAcess = acessorios ? acessorios.reduce((s, a) => s + Number(a.peso_kg), 0) : 0;
+  doc.setFillColor(20,20,20); doc.roundedRect(15,y-5,180,40,3,3,'F');
+  doc.setTextColor(45,139,78); doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.text('PAYLOAD', 20, y+5);
+  const pc = state.peso_chassis_manual||(chassis&&chassis.peso_chassis_kg)||0;
+  const pe = carrocaria ? Number(carrocaria.peso_total_equipamento_kg) : 0;
+  const pa = acessorios ? acessorios.reduce((s,a)=>s+Number(a.peso_kg),0) : 0;
   const pbt = chassis ? Number(chassis.pbt_kg) : 0;
-  const payload = pbt - Number(pesoChassis) - pesoEquip - pesoAcess;
-
-  doc.setTextColor(232, 232, 232);
-  doc.setFontSize(28);
-  doc.text(`${payload} kg`, 20, y + 25);
-
-  doc.setFontSize(9);
-  doc.setTextColor(136, 136, 136);
-  doc.text(`PBT ${pbt}  -  Chassis ${pesoChassis}  -  Equip. ${pesoEquip}  -  Acess. ${pesoAcess}`, 90, y + 25);
-
+  const pl = pbt - Number(pc) - pe - pa;
+  doc.setTextColor(250,250,250); doc.setFontSize(28); doc.text(`${pl} kg`, 20, y+25);
+  doc.setFontSize(9); doc.setTextColor(136,136,136); doc.text(`PBT ${pbt} - Chassis ${pc} - Equip. ${pe} - Acess. ${pa}`, 90, y+25);
   y += 50;
-  const registrable = payload > 0 && pesoChassis > 0;
-  if (registrable) {
-    doc.setFillColor(52, 211, 153);
-    doc.roundedRect(15, y, 180, 12, 3, 3, 'F');
-    doc.setTextColor(10, 10, 10);
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('VEICULO IMMATRICULAVEL', 105, y + 8, { align: 'center' });
-  } else {
-    doc.setFillColor(251, 191, 36);
-    doc.roundedRect(15, y, 180, 12, 3, 3, 'F');
-    doc.setTextColor(10, 10, 10);
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('AGUARDA INFORMACAO', 105, y + 8, { align: 'center' });
-  }
-
-  doc.setTextColor(85, 85, 85);
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'normal');
-  doc.text('CSN  -  Carrocarias e Servicos Nacionais  |  Configurador', 105, 285, { align: 'center' });
-
+  if (pl > 0 && pc > 0) { doc.setFillColor(34,197,94); doc.roundedRect(15,y,180,12,3,3,'F'); doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.text('VEICULO IMMATRICULAVEL',105,y+8,{align:'center'}); }
+  else { doc.setFillColor(234,179,8); doc.roundedRect(15,y,180,12,3,3,'F'); doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.text('AGUARDA INFORMACAO',105,y+8,{align:'center'}); }
+  doc.setTextColor(85,85,85); doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.text('CSN - Carrocarias e Servicos Nacionais | Configurador', 105, 285, {align:'center'});
   doc.save('configuracao-csn.pdf');
 }
 
-// === STEP LABELS ===
+// === CONSTANTS ===
 const STEPS = [
   { num: 1, label: 'Veiculo' },
   { num: 2, label: 'Carrocaria' },
@@ -698,39 +828,150 @@ const STEPS = [
   { num: 5, label: 'Validacao' },
   { num: 6, label: 'Resumo' },
 ];
-
 const PBT_LABELS = { '2T': '2 - 3.5 T', '3T6': '3.6 - 5.5 T', '5T6': '5.6 - 7.5 T' };
 const TIPO_LABELS = { basculante_traseira: 'Basculante traseira', basculante_trilateral: 'Basculante trilateral', estrado: 'Estrado', caixa_aberta: 'Caixa aberta' };
 const MAT_LABELS = { aco: 'Aco', aluminio: 'Aluminio', misto: 'Misto aluminio', aluminio_madeira: 'Aluminio c/ madeira' };
 const CAB_LABELS = { simples: 'Cabine simples', dupla: 'Cabine dupla' };
 
 // ============================================================
-// APP COMPONENT
+// === 3D VIEWER (Three.js + STL) — módulo singleton para evitar recarregar 16MB
+// ============================================================
+const STL_URL = 'modelo-carrocaria.stl';
+let __stlGeometryCache = null;
+let __stlGeometryPromise = null;
+function loadStlGeometry() {
+  if (__stlGeometryCache) return Promise.resolve(__stlGeometryCache);
+  if (__stlGeometryPromise) return __stlGeometryPromise;
+  __stlGeometryPromise = new Promise((resolve, reject) => {
+    const loader = new THREE.STLLoader();
+    loader.load(STL_URL, (geom) => {
+      geom.computeVertexNormals();
+      geom.center();
+      // orienta o modelo (STL costuma vir com Z-up; rodamos para Y-up)
+      geom.rotateX(-Math.PI / 2);
+      __stlGeometryCache = geom;
+      resolve(geom);
+    }, undefined, (err) => { __stlGeometryPromise = null; reject(err); });
+  });
+  return __stlGeometryPromise;
+}
+
+function Viewer3D({ small = false, autoRotateSpeed = 1.0 }) {
+  const containerRef = React.useRef(null);
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let disposed = false;
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
+    camera.position.set(4.5, 3.2, 5.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(width, height);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+
+    // luzes (aumentadas para o modelo ser visível sobre fundo escuro)
+    scene.add(new THREE.AmbientLight(0xFFFFFF, 0.9));
+    const key = new THREE.DirectionalLight(0xFFFFFF, 1.8); key.position.set(5, 10, 7); scene.add(key);
+    const fill = new THREE.DirectionalLight(0xFFFFFF, 1.0); fill.position.set(-6, 4, -4); scene.add(fill);
+    const rim = new THREE.DirectionalLight(0x2D8B4E, 0.6); rim.position.set(0, 6, -8); scene.add(rim);
+    scene.add(new THREE.HemisphereLight(0x888888, 0x222222, 0.8));
+
+    // controles
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.enablePan = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = autoRotateSpeed;
+    controls.minDistance = 2;
+    controls.maxDistance = 8;
+    const stopAutoRotate = () => { controls.autoRotate = false; };
+    controls.addEventListener('start', stopAutoRotate);
+
+    let mesh = null;
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x6A6A6A, metalness: 0.75, roughness: 0.35,
+    });
+
+    loadStlGeometry().then((geom) => {
+      if (disposed) return;
+      // escalar para caber ~3 unidades
+      const cloned = geom.clone();
+      cloned.computeBoundingBox();
+      const bb = cloned.boundingBox;
+      const size = new THREE.Vector3(); bb.getSize(size);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale = 3.0 / maxDim;
+      mesh = new THREE.Mesh(cloned, material);
+      mesh.scale.setScalar(scale);
+      scene.add(mesh);
+      setReady(true);
+    }).catch((err) => { console.error('STL load failed', err); });
+
+    let animId;
+    const animate = () => {
+      if (disposed) return;
+      animId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    const onResize = () => {
+      if (disposed || !container) return;
+      const w = container.clientWidth, h = container.clientHeight;
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', onResize);
+      controls.removeEventListener('start', stopAutoRotate);
+      controls.dispose();
+      if (mesh) { scene.remove(mesh); mesh.geometry.dispose(); }
+      material.dispose();
+      renderer.dispose();
+      if (renderer.domElement && renderer.domElement.parentNode === container) {
+        container.removeChild(renderer.domElement);
+      }
+    };
+  }, [autoRotateSpeed]);
+
+  return (
+    <div className={`viewer-3d${small ? ' small' : ''}`} ref={containerRef}>
+      <div className={`viewer-loader${ready ? ' hidden' : ''}`}>
+        <div className="viewer-spinner"></div>
+        <div className="viewer-loader-text">A carregar modelo</div>
+      </div>
+      <div className="viewer-hint">Arraste para rodar · scroll para zoom</div>
+    </div>
+  );
+}
+
 // ============================================================
 function App() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
-
   const [allChassis, setAllChassis] = useState([]);
   const [allCarrocarias, setAllCarrocarias] = useState([]);
   const [allRegras, setAllRegras] = useState([]);
   const [allAcessorios, setAllAcessorios] = useState([]);
-
   const [state, setState] = useState({
-    pbt_categoria: '',
-    marca: '',
-    modelo: '',
-    tipo_cabine: '',
-    entre_eixos: '',
-    chassis_id: '',
-    tipo_carrocaria: '',
-    material: '',
-    carrocaria_id: '',
-    cofre: false,
-    acessorios_ids: [],
-    peso_chassis_manual: '',
-    num_lugares_manual: '',
-    classe_emissao_manual: '',
+    pbt_categoria:'', marca:'', modelo:'', tipo_cabine:'', entre_eixos:'', chassis_id:'',
+    tipo_carrocaria:'', material:'', carrocaria_id:'', cofre: false, acessorios_ids:[],
+    peso_chassis_manual:'', num_lugares_manual:'', classe_emissao_manual:'',
   });
 
   useEffect(() => {
@@ -740,12 +981,8 @@ function App() {
       supaFetch('regras_filtragem', ''),
       supaFetch('catalogo_acessorios', 'activo=eq.true&order=categoria,nome'),
     ]).then(([ch, ca, re, ac]) => {
-      setAllChassis(ch);
-      setAllCarrocarias(ca);
-      setAllRegras(re);
-      setAllAcessorios(ac);
+      setAllChassis(ch); setAllCarrocarias(ca); setAllRegras(re); setAllAcessorios(ac);
       setLoading(false);
-
       const saved = readURLState();
       if (saved) {
         setState(prev => ({ ...prev, ...saved }));
@@ -757,26 +994,17 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    if (!loading) updateURL({ ...state, _step: step });
-  }, [state, step, loading]);
-
+  useEffect(() => { if (!loading) updateURL({ ...state, _step: step }); }, [state, step, loading]);
   const updateState = (updates) => setState(prev => ({ ...prev, ...updates }));
 
   // === DERIVED DATA ===
-
   const RENAULT_GROUP = ['RENAULT', 'RENAULT TRUCKS'];
-  const matchMarca = (chassisMarca, selectedMarca) => {
-    if (RENAULT_GROUP.includes(selectedMarca) && RENAULT_GROUP.includes(chassisMarca)) return true;
-    return chassisMarca === selectedMarca;
-  };
-
+  const matchMarca = (cm, sm) => { if (RENAULT_GROUP.includes(sm) && RENAULT_GROUP.includes(cm)) return true; return cm === sm; };
   const pbtOptions = ['2T', '3T6', '5T6'];
 
   const marcas = useMemo(() => {
     if (!state.pbt_categoria) return [];
-    const unique = [...new Set(allChassis.filter(c => c.pbt_categoria === state.pbt_categoria).map(c => c.marca))];
-    return unique.sort();
+    return [...new Set(allChassis.filter(c => c.pbt_categoria === state.pbt_categoria).map(c => c.marca))].sort();
   }, [allChassis, state.pbt_categoria]);
 
   const modelos = useMemo(() => {
@@ -784,18 +1012,12 @@ function App() {
     const unique = [...new Set(allChassis
       .filter(c => c.pbt_categoria === state.pbt_categoria && matchMarca(c.marca, state.marca))
       .map(c => c.modelo + (c.variante ? '|' + c.variante : '')))];
-    return unique.sort().map(m => {
-      const [modelo, variante] = m.split('|');
-      return { modelo, variante: variante || null, label: variante ? `${modelo} ${variante}` : modelo };
-    });
+    return unique.sort().map(m => { const [modelo, variante] = m.split('|'); return { modelo, variante: variante||null, label: variante ? `${modelo} ${variante}` : modelo }; }).filter(m => !m.label.includes('Pick Up'));
   }, [allChassis, state.pbt_categoria, state.marca]);
 
   const cabines = useMemo(() => {
     if (!state.modelo) return [];
-    const filtered = allChassis.filter(c =>
-      c.pbt_categoria === state.pbt_categoria && matchMarca(c.marca, state.marca) && c.modelo === state.modelo
-    );
-    return [...new Set(filtered.map(c => c.tipo_cabine))].sort();
+    return [...new Set(allChassis.filter(c => c.pbt_categoria === state.pbt_categoria && matchMarca(c.marca, state.marca) && c.modelo === state.modelo).map(c => c.tipo_cabine))].sort();
   }, [allChassis, state.pbt_categoria, state.marca, state.modelo]);
 
   const entreEixos = useMemo(() => {
@@ -804,36 +1026,21 @@ function App() {
       c.pbt_categoria === state.pbt_categoria && matchMarca(c.marca, state.marca) &&
       c.modelo === state.modelo && c.tipo_cabine === state.tipo_cabine
     ).sort((a, b) => a.entre_eixos_mm - b.entre_eixos_mm);
-
     const seen = new Set();
-    return filtered.filter(c => {
-      const key = `${c.entre_eixos_mm}|${c.sufixo_entre_eixos || ''}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    return filtered.filter(c => { const k = `${c.entre_eixos_mm}|${c.sufixo_entre_eixos||''}`; if (seen.has(k)) return false; seen.add(k); return true; });
   }, [allChassis, state.pbt_categoria, state.marca, state.modelo, state.tipo_cabine]);
 
-  const selectedChassis = useMemo(() =>
-    allChassis.find(c => c.id === state.chassis_id), [allChassis, state.chassis_id]);
+  const selectedChassis = useMemo(() => allChassis.find(c => c.id === state.chassis_id), [allChassis, state.chassis_id]);
 
   const tiposCarrocaria = useMemo(() => {
     if (!state.pbt_categoria) return [];
-    const tipos = [...new Set(allCarrocarias
-      .filter(c => c.pbt_categoria === state.pbt_categoria)
-      .map(c => c.tipo))];
-    return tipos.sort();
+    return [...new Set(allCarrocarias.filter(c => c.pbt_categoria === state.pbt_categoria).map(c => c.tipo))].sort();
   }, [allCarrocarias, state.pbt_categoria]);
 
   const materiaisDisponiveis = useMemo(() => {
     if (!state.tipo_carrocaria || !state.pbt_categoria) return [];
-    const blocked = allRegras
-      .filter(r => r.tipo_carrocaria === state.tipo_carrocaria && !r.permitido &&
-        (r.pbt_categoria === state.pbt_categoria || r.pbt_categoria === null))
-      .map(r => r.material);
-    const materiais = [...new Set(allCarrocarias
-      .filter(c => c.pbt_categoria === state.pbt_categoria && c.tipo === state.tipo_carrocaria)
-      .map(c => c.material))];
+    const blocked = allRegras.filter(r => r.tipo_carrocaria === state.tipo_carrocaria && !r.permitido && (r.pbt_categoria === state.pbt_categoria || r.pbt_categoria === null)).map(r => r.material);
+    const materiais = [...new Set(allCarrocarias.filter(c => c.pbt_categoria === state.pbt_categoria && c.tipo === state.tipo_carrocaria).map(c => c.material))];
     return materiais.filter(m => !blocked.includes(m)).sort();
   }, [allCarrocarias, allRegras, state.tipo_carrocaria, state.pbt_categoria]);
 
@@ -841,124 +1048,92 @@ function App() {
     if (!state.tipo_carrocaria || !state.material || !state.chassis_id) return [];
     const chassis = allChassis.find(c => c.id === state.chassis_id);
     if (!chassis) return [];
-    return allCarrocarias.filter(c =>
-      c.pbt_categoria === state.pbt_categoria &&
-      c.tipo === state.tipo_carrocaria &&
-      c.material === state.material &&
-      (!c.entre_eixos_minimo_mm || chassis.entre_eixos_mm >= c.entre_eixos_minimo_mm) &&
-      (!c.entre_eixos_maximo_mm || chassis.entre_eixos_mm <= c.entre_eixos_maximo_mm)
-    ).sort((a, b) => a.comprimento_int_mm - b.comprimento_int_mm);
+    return allCarrocarias.filter(c => c.pbt_categoria === state.pbt_categoria && c.tipo === state.tipo_carrocaria && c.material === state.material && (!c.entre_eixos_minimo_mm || chassis.entre_eixos_mm >= c.entre_eixos_minimo_mm) && (!c.entre_eixos_maximo_mm || chassis.entre_eixos_mm <= c.entre_eixos_maximo_mm)).sort((a, b) => a.comprimento_int_mm - b.comprimento_int_mm);
   }, [allCarrocarias, allChassis, state]);
 
-  const selectedCarrocaria = useMemo(() =>
-    allCarrocarias.find(c => c.id === state.carrocaria_id), [allCarrocarias, state.carrocaria_id]);
-
-  const acessoriosCompativeis = useMemo(() => {
-    if (!state.tipo_carrocaria) return [];
-    return allAcessorios.filter(a =>
-      !a.tipos_carrocaria_compativeis ||
-      a.tipos_carrocaria_compativeis.includes(state.tipo_carrocaria)
-    );
-  }, [allAcessorios, state.tipo_carrocaria]);
-
-  const selectedAcessorios = useMemo(() =>
-    allAcessorios.filter(a => state.acessorios_ids.includes(a.id)), [allAcessorios, state.acessorios_ids]);
+  const selectedCarrocaria = useMemo(() => allCarrocarias.find(c => c.id === state.carrocaria_id), [allCarrocarias, state.carrocaria_id]);
+  const acessoriosCompativeis = useMemo(() => { if (!state.tipo_carrocaria) return []; return allAcessorios.filter(a => a.categoria !== 'cofre_cabine').filter(a => !a.tipos_carrocaria_compativeis || a.tipos_carrocaria_compativeis.includes(state.tipo_carrocaria)); }, [allAcessorios, state.tipo_carrocaria]);
+  const selectedAcessorios = useMemo(() => allAcessorios.filter(a => state.acessorios_ids.includes(a.id)), [allAcessorios, state.acessorios_ids]);
 
   const calculations = useMemo(() => {
     const pesoChassis = Number(state.peso_chassis_manual) || (selectedChassis && Number(selectedChassis.peso_chassis_kg)) || 0;
     const pesoEquip = selectedCarrocaria ? Number(selectedCarrocaria.peso_total_equipamento_kg) : 0;
     const pesoAcess = selectedAcessorios.reduce((s, a) => s + Number(a.peso_kg), 0);
     const pbt = selectedChassis ? Number(selectedChassis.pbt_kg) : 0;
-    const payload = pbt - pesoChassis - pesoEquip - pesoAcess;
-    const autoPreenchido = selectedChassis ? selectedChassis.peso_auto_preenchido : false;
-    return { pesoChassis, pesoEquip, pesoAcess, pbt, payload, autoPreenchido };
+    return { pesoChassis, pesoEquip, pesoAcess, pbt, payload: pbt - pesoChassis - pesoEquip - pesoAcess };
   }, [selectedChassis, selectedCarrocaria, selectedAcessorios, state.peso_chassis_manual]);
 
   const isRegistrable = calculations.payload > 0 && calculations.pesoChassis > 0;
 
   // === HANDLERS ===
   const goToStep = (s) => { if (s <= step) setStep(s); };
+  const handlePbt = (pbt) => updateState({ pbt_categoria: pbt, marca:'', modelo:'', tipo_cabine:'', entre_eixos:'', chassis_id:'', tipo_carrocaria:'', material:'', carrocaria_id:'', acessorios_ids:[] });
+  const handleMarca = (marca) => updateState({ marca, modelo:'', tipo_cabine:'', entre_eixos:'', chassis_id:'', tipo_carrocaria:'', material:'', carrocaria_id:'' });
+  const handleModelo = (modelo) => updateState({ modelo, tipo_cabine:'', entre_eixos:'', chassis_id:'', tipo_carrocaria:'', material:'', carrocaria_id:'' });
+  const handleCabine = (tipo_cabine) => updateState({ tipo_cabine, entre_eixos:'', chassis_id:'', tipo_carrocaria:'', material:'', carrocaria_id:'' });
+  const handleEntreEixos = (chassis) => updateState({ entre_eixos: String(chassis.entre_eixos_mm), chassis_id: chassis.id, peso_chassis_manual:'', num_lugares_manual:'', classe_emissao_manual:'' });
+  const handleTipoCarrocaria = (tipo) => updateState({ tipo_carrocaria: tipo, material:'', cofre: false, carrocaria_id:'' });
+  const handleMaterial = (mat) => updateState({ material: mat, cofre: false, carrocaria_id:'' });
+  const handleCofre = (val) => updateState({ cofre: val, carrocaria_id:'' });
+  const handleSelectConfig = (id) => updateState({ carrocaria_id: id });
+  const toggleAcessorio = (id) => setState(prev => ({ ...prev, acessorios_ids: prev.acessorios_ids.includes(id) ? prev.acessorios_ids.filter(x => x !== id) : [...prev.acessorios_ids, id] }));
 
-  const handlePbt = (pbt) => {
-    updateState({ pbt_categoria: pbt, marca: '', modelo: '', tipo_cabine: '', entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '', acessorios_ids: [] });
-  };
-  const handleMarca = (marca) => {
-    updateState({ marca, modelo: '', tipo_cabine: '', entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '' });
-  };
-  const handleModelo = (modelo) => {
-    updateState({ modelo, tipo_cabine: '', entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '' });
-  };
-  const handleCabine = (tipo_cabine) => {
-    updateState({ tipo_cabine, entre_eixos: '', chassis_id: '', tipo_carrocaria: '', material: '', carrocaria_id: '' });
-  };
-  const handleEntreEixos = (chassis) => {
-    updateState({
-      entre_eixos: String(chassis.entre_eixos_mm),
-      chassis_id: chassis.id,
-      peso_chassis_manual: '',
-      num_lugares_manual: '',
-      classe_emissao_manual: '',
-    });
-  };
-  const handleTipoCarrocaria = (tipo) => {
-    updateState({ tipo_carrocaria: tipo, material: '', cofre: false, carrocaria_id: '' });
-  };
-  const handleMaterial = (mat) => {
-    updateState({ material: mat, cofre: false, carrocaria_id: '' });
-  };
-  const handleCofre = (val) => {
-    updateState({ cofre: val, carrocaria_id: '' });
-  };
-  const handleSelectConfig = (id) => {
-    updateState({ carrocaria_id: id });
-  };
-  const toggleAcessorio = (id) => {
-    setState(prev => ({
-      ...prev,
-      acessorios_ids: prev.acessorios_ids.includes(id)
-        ? prev.acessorios_ids.filter(x => x !== id)
-        : [...prev.acessorios_ids, id]
-    }));
+  // === STEPPER COMPONENT ===
+
+  const CsnLogo = ({className}) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510.234 161.511" fill="currentColor" aria-label="CSN">
+      <path d="M 249.761719 75.242188 L 249.761719 42.292969 L 42.777344 42.292969 L 42.777344 118.632812 L 249.761719 118.632812 L 249.761719 85.792969 L 143.601562 85.792969 L 143.601562 106.246094 C 143.601562 109.121094 141.210938 111.460938 138.273438 111.460938 C 135.394531 111.460938 133.050781 109.121094 133.050781 106.246094 L 133.050781 54.796875 C 133.050781 51.855469 135.394531 49.460938 138.273438 49.460938 C 141.160156 49.460938 143.601562 51.90625 143.601562 54.796875 L 143.601562 75.242188 Z"/>
+      <path d="M 349.984375 57.675781 L 349.984375 42.292969 L 259.710938 42.292969 L 259.710938 74.828125 L 304.558594 74.828125 C 307.453125 74.828125 309.894531 77.269531 309.894531 80.160156 C 309.894531 83.039062 307.5 85.378906 304.558594 85.378906 L 259.710938 85.378906 L 259.710938 118.632812 L 349.984375 118.632812 L 349.984375 68.226562 L 305.019531 68.226562 C 302.140625 68.226562 299.796875 65.835938 299.796875 62.898438 C 299.796875 60.019531 302.140625 57.675781 305.019531 57.675781 Z"/>
+      <path d="M 404.925781 63.390625 C 407.800781 63.390625 410.140625 65.78125 410.140625 68.722656 L 410.140625 118.632812 L 466.691406 118.632812 L 466.691406 42.292969 L 426.601562 42.292969 L 426.601562 92.316406 C 426.601562 95.195312 424.207031 97.535156 421.265625 97.535156 C 418.390625 97.535156 416.046875 95.195312 416.046875 92.316406 L 416.046875 42.292969 L 359.957031 42.292969 L 359.957031 118.632812 L 399.589844 118.632812 L 399.589844 68.722656 C 399.589844 65.730469 401.933594 63.390625 404.925781 63.390625 Z"/>
+    </svg>
+  );
+
+  const Stepper = () => {
+    const activeStep = STEPS.find(s => s.num === step);
+    return (
+      <div className="stepper-wrapper">
+        <div className="stepper">
+          {STEPS.map((s) => (
+            <div key={s.num}
+              className={`stepper-step ${s.num === step ? 'active' : ''} ${s.num < step ? 'completed clickable' : ''}`}
+              onClick={() => goToStep(s.num)}>
+              <div className="stepper-dot" />
+            </div>
+          ))}
+        </div>
+        {activeStep && <div className="stepper-label-active">{activeStep.label}</div>}
+      </div>
+    );
   };
 
   // === RENDER ===
   if (loading) return (
-    <div>
-      <div className="header">
-        <div className="logo">CSN</div>
-      </div>
-      <div className="loading">
-        <div className="spinner"></div>
-        <p style={{marginTop:16, fontSize:13, letterSpacing:1}}>A carregar</p>
-      </div>
+    <div className="loading-screen">
+      <CsnLogo className="logo-large" />
+      <div className="loading-bar"><div className="loading-bar-inner"></div></div>
     </div>
   );
 
   return (
     <div>
       <div className="header">
-        <div className="logo">CSN</div>
+        <CsnLogo className="logo" />
         <div className="meta">{allChassis.length} chassis &middot; {allCarrocarias.length} carrocarias</div>
       </div>
 
-      <div className="wizard-container">
-        {/* Progress dots */}
-        <div className="steps-bar">
-          {STEPS.map(s => (
-            <div key={s.num}
-              className={`step-dot ${s.num === step ? 'active' : ''} ${s.num < step ? 'completed' : ''}`}
-              onClick={() => goToStep(s.num)}>
-              <span className="step-label">{s.label}</span>
-            </div>
-          ))}
-        </div>
+      <Stepper />
 
-        {/* === STEP 1: VEICULO === */}
-        {step === 1 && (
-          <div className="fade-in">
-            <div className="card">
-              <h2>Seleccione o veiculo</h2>
-              <p className="step-description">Escolha a categoria de peso, marca, modelo, cabine e entre-eixos.</p>
+      <div className="main">
+        <div className="content">
+
+          {/* STEP 1 */}
+          {step === 1 && (
+            <div className="fade-in">
+              <Viewer3D />
+              <div className="section-hero">
+                <h1>Seleccione o veiculo</h1>
+                <p>Categoria de peso, marca, modelo, cabine e entre-eixos.</p>
+              </div>
 
               <div className="field-group">
                 <label>Peso Bruto Total</label>
@@ -1022,20 +1197,19 @@ function App() {
 
               <div className="btn-row">
                 <div></div>
-                <button className="btn btn-primary" disabled={!state.chassis_id} onClick={() => setStep(2)}>
-                  Continuar
-                </button>
+                <button className="btn btn-primary" disabled={!state.chassis_id} onClick={() => setStep(2)}>Continuar</button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* === STEP 2: CARROCARIA === */}
-        {step === 2 && (
-          <div className="fade-in">
-            <div className="card">
-              <h2>Tipo de carrocaria</h2>
-              <p className="step-description">Seleccione o tipo de carrocaria e o material pretendido.</p>
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div className="fade-in">
+              <Viewer3D />
+              <div className="section-hero">
+                <h1>Tipo de carrocaria</h1>
+                <p>Seleccione o tipo e o material pretendido.</p>
+              </div>
 
               <div className="field-group">
                 <label>Tipo</label>
@@ -1058,150 +1232,131 @@ function App() {
                       </div>
                     ))}
                   </div>
-                  {allRegras.filter(r => r.tipo_carrocaria === state.tipo_carrocaria && !r.permitido && (r.pbt_categoria === state.pbt_categoria || !r.pbt_categoria)).map((r, i) => (
-                    <div key={i} style={{fontSize:12, color:'var(--warning)', marginTop:12, fontStyle:'italic', opacity:0.8}}>
-                      {r.motivo}
-                    </div>
+                  {[...new Set(allRegras.filter(r => r.tipo_carrocaria === state.tipo_carrocaria && !r.permitido && (r.pbt_categoria === state.pbt_categoria || !r.pbt_categoria)).map(r => r.motivo))].map((motivo, i) => (
+                    <div key={i} style={{fontSize:12, color:'var(--warning)', marginTop:12, opacity:0.9}}>{motivo}</div>
                   ))}
                 </div>
               )}
 
               <div className="btn-row">
                 <button className="btn btn-secondary" onClick={() => setStep(1)}>Voltar</button>
-                <button className="btn btn-primary" disabled={!state.material} onClick={() => setStep(3)}>
-                  Continuar
-                </button>
+                <button className="btn btn-primary" disabled={!state.material} onClick={() => setStep(3)}>Continuar</button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* === STEP 3: COFRE === */}
-        {step === 3 && (
-          <div className="fade-in">
-            <div className="card">
-              <h2>Cofre</h2>
-              <p className="step-description">O cofre reduz o comprimento disponivel para a carrocaria.</p>
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div className="fade-in">
+              <Viewer3D />
+              <div className="section-hero">
+                <h1>Cofre</h1>
+                <p>O cofre atras da cabine reduz o comprimento disponivel para a carrocaria.</p>
+              </div>
 
-              <div className="tile-grid">
+              <div className="tile-grid" style={{maxWidth:400}}>
                 <div className={`tile ${state.cofre === false ? 'selected' : ''}`} onClick={() => handleCofre(false)}>
                   <div className="tile-title">Sem cofre</div>
-                  <div className="tile-sub">Comprimento total disponivel</div>
+                  <div className="tile-sub">Comprimento total</div>
                 </div>
                 <div className={`tile ${state.cofre === true ? 'selected' : ''}`} onClick={() => handleCofre(true)}>
                   <div className="tile-title">Com cofre</div>
-                  <div className="tile-sub">Reduz comprimento disponivel</div>
+                  <div className="tile-sub">Reduz comprimento</div>
                 </div>
               </div>
 
               <div className="btn-row">
                 <button className="btn btn-secondary" onClick={() => setStep(2)}>Voltar</button>
-                <button className="btn btn-primary" onClick={() => setStep(4)}>
-                  Continuar
-                </button>
+                <button className="btn btn-primary" onClick={() => setStep(4)}>Continuar</button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* === STEP 4: CONFIGURACAO === */}
-        {step === 4 && (
-          <div className="fade-in">
-            <div className="card">
-              <h2>Configuracao</h2>
-              <p className="step-description">
-                {configsDisponiveis.length} configuracao(oes) disponivel(is) para {TIPO_LABELS[state.tipo_carrocaria]} em {MAT_LABELS[state.material]}
-                {state.cofre && <span style={{color:'var(--accent)', fontWeight:600}}> &middot; Com cofre</span>}
-              </p>
+          {/* STEP 4 */}
+          {step === 4 && (
+            <div className="fade-in">
+              <Viewer3D />
+              <div className="section-hero">
+                <h1>Configuracao</h1>
+                <p>
+                  {configsDisponiveis.length} opcao(oes) para {TIPO_LABELS[state.tipo_carrocaria]} em {MAT_LABELS[state.material]}
+                  {state.cofre && <span style={{color:'var(--accent)'}}> com cofre</span>}
+                </p>
+              </div>
 
               <div style={{display:'grid', gap:12}}>
                 {configsDisponiveis.map(c => (
                   <div key={c.id} className={`config-card ${state.carrocaria_id === c.id ? 'selected' : ''}`} onClick={() => handleSelectConfig(c.id)}>
                     <div className="cc-title">{c.nome}</div>
                     <div className="cc-specs">
-                      <span className="spec-label">Comprimento interior</span>
+                      <span className="spec-label">Comprimento</span>
                       <span className="spec-value">{c.comprimento_int_mm} mm</span>
-                      <span className="spec-label">Largura interior</span>
+                      <span className="spec-label">Largura</span>
                       <span className="spec-value">{c.largura_int_mm} mm</span>
-                      {c.altura_lateral_mm && <>
-                        <span className="spec-label">Altura lateral</span>
-                        <span className="spec-value">{c.altura_lateral_mm} mm</span>
-                      </>}
+                      {c.altura_lateral_mm && <><span className="spec-label">Altura lateral</span><span className="spec-value">{c.altura_lateral_mm} mm</span></>}
                       <span className="spec-label">Peso carrocaria</span>
                       <span className="spec-value">{c.peso_carrocaria_kg} kg</span>
                       <span className="spec-label">Peso total equip.</span>
                       <span className="spec-value">{c.peso_total_equipamento_kg} kg</span>
-                      {c.modelo_ref && <>
-                        <span className="spec-label">Modelo</span>
-                        <span className="spec-value">{c.modelo_ref}</span>
-                      </>}
+                      {c.modelo_ref && <><span className="spec-label">Modelo</span><span className="spec-value">{c.modelo_ref}</span></>}
                     </div>
                   </div>
                 ))}
                 {configsDisponiveis.length === 0 && (
-                  <div style={{textAlign:'center', padding:40, color:'var(--text-muted)', fontSize:14}}>
+                  <div style={{textAlign:'center', padding:48, color:'var(--text-tertiary)', fontSize:14}}>
                     Nenhuma configuracao disponivel para este entre-eixos.
                   </div>
                 )}
               </div>
 
-              {/* Acessorios */}
-              {state.carrocaria_id && (
+              {state.carrocaria_id && acessoriosCompativeis.length > 0 && (
                 <div className="fade-in">
                   <div className="section-divider"></div>
-                  <h2 style={{marginBottom:16}}>Acessorios</h2>
-                  {acessoriosCompativeis.length > 0 ? (
-                    <div>
-                      {acessoriosCompativeis.map(a => (
-                        <div key={a.id} className={`checkbox-item ${state.acessorios_ids.includes(a.id) ? 'checked' : ''}`} onClick={() => toggleAcessorio(a.id)}>
-                          <input type="checkbox" checked={state.acessorios_ids.includes(a.id)} readOnly />
-                          <div>
-                            <div className="ci-name">{a.nome}</div>
-                            <div className="ci-weight">{a.peso_kg} kg &middot; {a.categoria}</div>
-                          </div>
+                  <div className="field-group">
+                    <label>Acessorios</label>
+                    {acessoriosCompativeis.map(a => (
+                      <div key={a.id} className={`checkbox-item ${state.acessorios_ids.includes(a.id) ? 'checked' : ''}`} onClick={() => toggleAcessorio(a.id)}>
+                        <input type="checkbox" checked={state.acessorios_ids.includes(a.id)} readOnly />
+                        <div>
+                          <div className="ci-name">{a.nome}</div>
+                          <div className="ci-weight">{a.peso_kg} kg &middot; {a.categoria}</div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p style={{color:'var(--text-muted)', fontSize:14}}>Nenhum acessorio disponivel.</p>
-                  )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
               <div className="btn-row">
                 <button className="btn btn-secondary" onClick={() => setStep(3)}>Voltar</button>
-                <button className="btn btn-primary" disabled={!state.carrocaria_id} onClick={() => setStep(5)}>
-                  Continuar
-                </button>
+                <button className="btn btn-primary" disabled={!state.carrocaria_id} onClick={() => setStep(5)}>Continuar</button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* === STEP 5: VALIDACAO === */}
-        {step === 5 && (
-          <div className="fade-in">
-            <div className="card">
-              <h2>Validacao</h2>
-              <p className="step-description">Verifique os pesos e o payload do veiculo.</p>
+          {/* STEP 5 */}
+          {step === 5 && (
+            <div className="fade-in">
+              <Viewer3D small={true} />
+              <div className="section-hero">
+                <h1>Validacao</h1>
+                <p>Verifique os pesos e o payload do veiculo.</p>
+              </div>
 
-              {/* Manual inputs if needed */}
               {selectedChassis && !selectedChassis.peso_auto_preenchido && (
                 <div className="alert-box">
                   <p>Dados do chassis nao disponiveis — preencha manualmente:</p>
                   <div className="field-group">
-                    <label>Peso do chassis em ordem de marcha (kg)</label>
-                    <input type="number" placeholder="Ex: 1978" value={state.peso_chassis_manual}
-                      onChange={e => updateState({ peso_chassis_manual: e.target.value })} />
+                    <label>Peso chassis em ordem de marcha (kg)</label>
+                    <input type="number" placeholder="Ex: 1978" value={state.peso_chassis_manual} onChange={e => updateState({ peso_chassis_manual: e.target.value })} />
                   </div>
                   <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
-                    <div className="field-group">
-                      <label>Numero de lugares</label>
-                      <input type="number" placeholder={String(selectedChassis.num_lugares)} value={state.num_lugares_manual}
-                        onChange={e => updateState({ num_lugares_manual: e.target.value })} />
+                    <div className="field-group" style={{marginBottom:0}}>
+                      <label>N. lugares</label>
+                      <input type="number" placeholder={String(selectedChassis.num_lugares)} value={state.num_lugares_manual} onChange={e => updateState({ num_lugares_manual: e.target.value })} />
                     </div>
                     <div className="field-group" style={{marginBottom:0}}>
-                      <label>Classe de emissao</label>
+                      <label>Emissao</label>
                       <select value={state.classe_emissao_manual} onChange={e => updateState({ classe_emissao_manual: e.target.value })}>
                         <option value="">Seleccione</option>
                         <option value="Euro 6">Euro 6</option>
@@ -1213,29 +1368,14 @@ function App() {
                 </div>
               )}
 
-              {/* Weight breakdown */}
               <div style={{marginBottom:24}}>
-                <div className="weight-row">
-                  <span className="wr-label">PBT (Peso Bruto Total)</span>
-                  <span className="wr-value">{calculations.pbt} kg</span>
-                </div>
-                <div className="weight-row">
-                  <span className="wr-label">Peso chassis em ordem de marcha</span>
-                  <span className="wr-value">{calculations.pesoChassis > 0 ? `${calculations.pesoChassis} kg` : <span style={{color:'var(--warning)'}}>A preencher</span>}</span>
-                </div>
-                <div className="weight-row">
-                  <span className="wr-label">Peso equipamento</span>
-                  <span className="wr-value">{calculations.pesoEquip} kg</span>
-                </div>
-                {calculations.pesoAcess > 0 && (
-                  <div className="weight-row">
-                    <span className="wr-label">Peso acessorios ({selectedAcessorios.length})</span>
-                    <span className="wr-value">{calculations.pesoAcess} kg</span>
-                  </div>
-                )}
+                <div className="weight-row"><span className="wr-label">PBT</span><span className="wr-value">{calculations.pbt} kg</span></div>
+                <div className="weight-row"><span className="wr-label">Peso chassis</span><span className="wr-value">{calculations.pesoChassis > 0 ? `${calculations.pesoChassis} kg` : <span style={{color:'var(--warning)'}}>A preencher</span>}</span></div>
+                <div className="weight-row"><span className="wr-label">Peso equipamento</span><span className="wr-value">{calculations.pesoEquip} kg</span></div>
+                {calculations.pesoAcess > 0 && <div className="weight-row"><span className="wr-label">Acessorios ({selectedAcessorios.length})</span><span className="wr-value">{calculations.pesoAcess} kg</span></div>}
                 <div className="weight-row">
                   <span className="wr-label">Payload</span>
-                  <span className="wr-value" style={{color: calculations.payload > 0 ? 'var(--success)' : 'var(--danger)', fontSize:16}}>
+                  <span className="wr-value" style={{color: calculations.payload > 0 ? 'var(--success)' : 'var(--danger)', fontSize:18}}>
                     {calculations.pesoChassis > 0 ? `${calculations.payload} kg` : '\u2014'}
                   </span>
                 </div>
@@ -1243,123 +1383,100 @@ function App() {
 
               {calculations.pesoChassis > 0 && (
                 <div className="payload-display fade-in">
-                  <div className="payload-number" style={{color: calculations.payload > 0 ? '#FFFFFF' : 'var(--danger)'}}>
-                    {calculations.payload} kg
-                  </div>
+                  <div className="payload-number" style={{color: calculations.payload > 0 ? '#FFFFFF' : 'var(--danger)'}}>{calculations.payload} kg</div>
                   <div className="payload-label">Carga util disponivel</div>
                 </div>
               )}
 
-              <div style={{textAlign:'center', margin:'20px 0'}}>
+              <div style={{textAlign:'center', margin:'24px 0'}}>
                 {calculations.pesoChassis > 0 ? (
-                  calculations.payload > 0 ? (
-                    <span className="badge badge-green">Veiculo immatriculavel</span>
-                  ) : (
-                    <span className="badge badge-red">Veiculo nao immatriculavel</span>
-                  )
-                ) : (
-                  <span className="badge badge-orange">Aguarda informacao</span>
-                )}
+                  calculations.payload > 0
+                    ? <span className="badge badge-green">Veiculo immatriculavel</span>
+                    : <span className="badge badge-red">Nao immatriculavel</span>
+                ) : <span className="badge badge-orange">Aguarda informacao</span>}
               </div>
 
               <div className="btn-row">
                 <button className="btn btn-secondary" onClick={() => setStep(4)}>Voltar</button>
-                <button className="btn btn-primary" onClick={() => setStep(6)}>
-                  Validar configuracao
-                </button>
+                <button className="btn btn-primary" onClick={() => setStep(6)}>Validar</button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* === STEP 6: RESUMO === */}
-        {step === 6 && (
-          <div className="fade-in">
-            <div className="card">
-              <h2>Resumo</h2>
-              <p className="step-description">Reveja a configuracao completa do veiculo.</p>
+          {/* STEP 6 */}
+          {step === 6 && (
+            <div className="fade-in">
+              <Viewer3D autoRotateSpeed={1.5} />
+              <div className="section-hero">
+                <h1>Resumo</h1>
+                <p>Configuracao completa do veiculo.</p>
+              </div>
 
               <div className="summary-section">
                 <h3>Veiculo</h3>
-                <div className="summary-grid">
-                  <div className="summary-item"><span className="si-label">PBT</span><span className="si-value">{calculations.pbt} kg ({PBT_LABELS[state.pbt_categoria]})</span></div>
-                  <div className="summary-item"><span className="si-label">Marca</span><span className="si-value">{state.marca}</span></div>
-                  <div className="summary-item"><span className="si-label">Modelo</span><span className="si-value">{selectedChassis?.modelo}{selectedChassis?.variante ? ' ' + selectedChassis.variante : ''}</span></div>
-                  <div className="summary-item"><span className="si-label">Cabine</span><span className="si-value">{CAB_LABELS[state.tipo_cabine]}</span></div>
-                  <div className="summary-item"><span className="si-label">Entre-eixos</span><span className="si-value">{selectedChassis?.entre_eixos_mm} mm{selectedChassis?.sufixo_entre_eixos ? ' ' + selectedChassis.sufixo_entre_eixos : ''}</span></div>
-                  <div className="summary-item"><span className="si-label">Cofre</span><span className="si-value">{state.cofre ? 'Sim' : 'Nao'}</span></div>
-                  <div className="summary-item"><span className="si-label">Peso chassis</span><span className="si-value">{calculations.pesoChassis} kg</span></div>
-                </div>
+                <div className="summary-item"><span className="si-label">PBT</span><span className="si-value">{calculations.pbt} kg ({PBT_LABELS[state.pbt_categoria]})</span></div>
+                <div className="summary-item"><span className="si-label">Marca</span><span className="si-value">{state.marca}</span></div>
+                <div className="summary-item"><span className="si-label">Modelo</span><span className="si-value">{selectedChassis?.modelo}{selectedChassis?.variante ? ' '+selectedChassis.variante : ''}</span></div>
+                <div className="summary-item"><span className="si-label">Cabine</span><span className="si-value">{CAB_LABELS[state.tipo_cabine]}</span></div>
+                <div className="summary-item"><span className="si-label">Entre-eixos</span><span className="si-value">{selectedChassis?.entre_eixos_mm} mm{selectedChassis?.sufixo_entre_eixos ? ' '+selectedChassis.sufixo_entre_eixos : ''}</span></div>
+                <div className="summary-item"><span className="si-label">Cofre</span><span className="si-value">{state.cofre ? 'Sim' : 'Nao'}</span></div>
+                <div className="summary-item"><span className="si-label">Peso chassis</span><span className="si-value">{calculations.pesoChassis} kg</span></div>
               </div>
 
               <div className="summary-section">
                 <h3>Carrocaria</h3>
-                <div className="summary-grid">
-                  <div className="summary-item"><span className="si-label">Tipo</span><span className="si-value">{TIPO_LABELS[state.tipo_carrocaria]}</span></div>
-                  <div className="summary-item"><span className="si-label">Material</span><span className="si-value">{MAT_LABELS[state.material]}</span></div>
-                  <div className="summary-item"><span className="si-label">Comprimento</span><span className="si-value">{selectedCarrocaria?.comprimento_int_mm} mm</span></div>
-                  <div className="summary-item"><span className="si-label">Largura</span><span className="si-value">{selectedCarrocaria?.largura_int_mm} mm</span></div>
-                  <div className="summary-item"><span className="si-label">Peso carrocaria</span><span className="si-value">{selectedCarrocaria?.peso_carrocaria_kg} kg</span></div>
-                  <div className="summary-item"><span className="si-label">Peso equip. total</span><span className="si-value">{calculations.pesoEquip} kg</span></div>
-                </div>
+                <div className="summary-item"><span className="si-label">Tipo</span><span className="si-value">{TIPO_LABELS[state.tipo_carrocaria]}</span></div>
+                <div className="summary-item"><span className="si-label">Material</span><span className="si-value">{MAT_LABELS[state.material]}</span></div>
+                <div className="summary-item"><span className="si-label">Comprimento</span><span className="si-value">{selectedCarrocaria?.comprimento_int_mm} mm</span></div>
+                <div className="summary-item"><span className="si-label">Largura</span><span className="si-value">{selectedCarrocaria?.largura_int_mm} mm</span></div>
+                <div className="summary-item"><span className="si-label">Peso carrocaria</span><span className="si-value">{selectedCarrocaria?.peso_carrocaria_kg} kg</span></div>
+                <div className="summary-item"><span className="si-label">Peso equip. total</span><span className="si-value">{calculations.pesoEquip} kg</span></div>
               </div>
 
               {selectedAcessorios.length > 0 && (
                 <div className="summary-section">
                   <h3>Acessorios</h3>
-                  {selectedAcessorios.map(a => (
-                    <div key={a.id} className="summary-item">
-                      <span className="si-label">{a.nome}</span>
-                      <span className="si-value">{a.peso_kg} kg</span>
-                    </div>
-                  ))}
-                  <div className="summary-item" style={{fontWeight:600, borderTop:'1px solid var(--border-hover)', paddingTop:12, marginTop:4}}>
-                    <span style={{color:'var(--text-secondary)'}}>Total acessorios</span>
-                    <span>{calculations.pesoAcess} kg</span>
+                  {selectedAcessorios.map(a => <div key={a.id} className="summary-item"><span className="si-label">{a.nome}</span><span className="si-value">{a.peso_kg} kg</span></div>)}
+                  <div className="summary-item" style={{fontWeight:700, borderTop:'1px solid var(--border-medium)', paddingTop:16, marginTop:4}}>
+                    <span style={{color:'var(--text-secondary)'}}>Total</span><span>{calculations.pesoAcess} kg</span>
                   </div>
                 </div>
               )}
 
               <div className="payload-display">
-                <div className="payload-number" style={{color: calculations.payload > 0 ? '#FFFFFF' : 'var(--danger)'}}>
-                  {calculations.payload} kg
-                </div>
+                <div className="payload-number" style={{color: calculations.payload > 0 ? '#FFF' : 'var(--danger)'}}>{calculations.payload} kg</div>
                 <div className="payload-label">Carga util</div>
-                <div style={{marginTop:12}}>
-                  {isRegistrable
-                    ? <span className="badge badge-green">Veiculo immatriculavel</span>
-                    : <span className="badge badge-red">Nao immatriculavel</span>
-                  }
+                <div style={{marginTop:16, position:'relative'}}>
+                  {isRegistrable ? <span className="badge badge-green">Immatriculavel</span> : <span className="badge badge-red">Nao immatriculavel</span>}
                 </div>
               </div>
 
-              <div style={{display:'flex', flexDirection:'column', gap:12, marginTop:32}}>
-                <button className="btn btn-primary" style={{width:'100%'}}
-                  onClick={() => generatePDF(state, selectedChassis, selectedCarrocaria, selectedAcessorios)}>
-                  Descarregar PDF
-                </button>
-                <button className="btn btn-secondary" style={{width:'100%', opacity:0.5}} disabled>
-                  Guardar na minha conta (em breve)
-                </button>
-                <button className="btn btn-secondary" style={{width:'100%', opacity:0.5}} disabled>
-                  Pedir orcamento (em breve)
-                </button>
+              <div style={{display:'flex', flexDirection:'column', gap:12, marginTop:40}}>
+                <button className="btn btn-primary" style={{width:'100%'}} onClick={() => generatePDF(state, selectedChassis, selectedCarrocaria, selectedAcessorios)}>Descarregar PDF</button>
+                <button className="btn btn-secondary" style={{width:'100%', opacity:0.4}} disabled>Guardar na conta (em breve)</button>
+                <button className="btn btn-secondary" style={{width:'100%', opacity:0.4}} disabled>Pedir orcamento (em breve)</button>
               </div>
 
-              <div className="url-state" style={{marginTop:24}}>
-                <strong>Partilhar esta configuracao</strong><br/>
-                <span style={{fontSize:10}}>{window.location.href}</span>
+              <div className="url-state">
+                <strong>Partilhar configuracao</strong>
+                <span style={{fontSize:11}}>{window.location.href}</span>
               </div>
 
               <div className="btn-row">
                 <button className="btn btn-secondary" onClick={() => setStep(5)}>Voltar</button>
-                <button className="btn btn-secondary" onClick={() => { setState({ pbt_categoria:'',marca:'',modelo:'',tipo_cabine:'',entre_eixos:'',chassis_id:'',tipo_carrocaria:'',material:'',carrocaria_id:'',cofre:false,acessorios_ids:[],peso_chassis_manual:'',num_lugares_manual:'',classe_emissao_manual:'' }); setStep(1); }}>
-                  Nova configuracao
-                </button>
+                <button className="btn btn-secondary" onClick={() => { setState({ pbt_categoria:'',marca:'',modelo:'',tipo_cabine:'',entre_eixos:'',chassis_id:'',tipo_carrocaria:'',material:'',carrocaria_id:'',cofre:false,acessorios_ids:[],peso_chassis_manual:'',num_lugares_manual:'',classe_emissao_manual:'' }); setStep(1); }}>Nova configuracao</button>
+              </div>
+
+              <div className="csn-footer">
+                <div className="csn-footer-divider" />
+                <CsnLogo className="csn-footer-logo" />
+                <div className="csn-footer-tagline">Transformacao de Veiculos</div>
+                <div className="csn-footer-location">Mafra, Portugal</div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+
+        </div>
       </div>
     </div>
   );
