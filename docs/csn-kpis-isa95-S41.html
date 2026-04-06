@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — KPIs ISO 22400 S41</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--accent:#3b82f6;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--text:#e2e8f0;--muted:#94a3b8}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);padding:2rem}
+h1{color:var(--accent);margin-bottom:.5rem}h2{color:var(--accent);margin:1.5rem 0 .5rem;font-size:1.1rem}
+.meta{color:var(--muted);margin-bottom:2rem}table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.5rem 0}
+th{background:#334155;padding:6px 8px;text-align:left}td{padding:6px 8px;border-bottom:1px solid #334155}
+.ok{color:#22c55e}.partial{color:#eab308}.future{color:#ef4444}.pct{font-size:2rem;color:var(--accent);font-weight:bold}
+.bar{background:#334155;border-radius:4px;height:20px;margin:.5rem 0}.bar-fill{background:var(--accent);height:100%;border-radius:4px}
+</style>
+</head>
+<body>
+<h1>CSN Opus — KPIs ISO 22400</h1>
+<p class="meta">S41 | 06 Abril 2026 | Sem alterações face a S40 — processamento documental não afecta KPIs de produção</p>
+
+<h2>Resumo: 6/38 KPIs calculáveis (16%)</h2>
+<div class="bar"><div class="bar-fill" style="width:16%"></div></div>
+
+<h2>KPIs Calculáveis (6)</h2>
+<table>
+<tr><th>KPI</th><th>Fórmula</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>Worker Efficiency</td><td>Tempo produtivo / Tempo alocado</td><td>registos_tempo</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>Allocation Efficiency</td><td>Tempo alocado / Tempo disponível</td><td>registos_tempo + colaboradores</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>Throughput Rate (semanal)</td><td>Obras concluídas / semana</td><td>obras (fase F9)</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>Throughput Rate (mensal)</td><td>Obras concluídas / mês</td><td>obras (fase F9)</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>Actual Production Time (semanal)</td><td>Σ horas registadas / semana</td><td>registos_tempo</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>Actual Production Time (mensal)</td><td>Σ horas registadas / mês</td><td>registos_tempo</td><td class="ok">✓ Calculável</td></tr>
+</table>
+
+<h2>KPIs Parciais (7) — requerem dados adicionais</h2>
+<table>
+<tr><th>KPI</th><th>Falta</th><th>Estado</th></tr>
+<tr><td>OEE</td><td>Dados equipamento (L1 sensores)</td><td class="partial">⚠ Parcial</td></tr>
+<tr><td>Availability</td><td>Uptime/downtime equipamento</td><td class="partial">⚠ Parcial</td></tr>
+<tr><td>Quality Ratio</td><td>Registos rework/rejeição</td><td class="partial">⚠ Parcial</td></tr>
+<tr><td>Setup Ratio</td><td>Tempos setup por obra</td><td class="partial">⚠ Parcial</td></tr>
+<tr><td>Production Loss Ratio</td><td>Categorização de perdas</td><td class="partial">⚠ Parcial</td></tr>
+<tr><td>Inventory Turns</td><td>Tabela stock (mig 017 pendente)</td><td class="partial">⚠ Parcial</td></tr>
+<tr><td>Scrap Ratio</td><td>Registos desperdício</td><td class="partial">⚠ Parcial</td></tr>
+</table>
+
+<h2>KPIs Futuros (21) + 4 Energia</h2>
+<p>Requerem: sensores L1 (Bodor laser 60kW), tabela stock, registos qualidade/rework. 4 KPIs energia requerem smart meter.</p>
+<p style="margin-top:.5rem"><strong>Todos os 34+4 KPIs são obrigatórios</strong> — compliance status monitorizado por sessão.</p>
+
+<p style="margin-top:2rem;color:var(--muted);font-size:.8rem">CSN — Engenharia de Veículos Comerciais · Mafra · NIF 500 861 790 · S41</p>
+</body></html>
