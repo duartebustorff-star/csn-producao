@@ -1,0 +1,16 @@
+CSN Opus — Relatório v2
+Data: 2026-04-06 09:48:36.902005
+
+{
+  "total": 1323,
+  "processados": 1322,
+  "erros": 1,
+  "facturas": 129,
+  "cert31": 3,
+  "outros": 1190,
+  "skipped": 0,
+  "ficheiro_nao_encontrado": 0
+}
+
+Erros:
+  - ID 309: Claude erro: Extra data: line 9 column 1 (char 159)
