@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Arquitectura S41</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--accent:#3b82f6;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--text:#e2e8f0;--muted:#94a3b8}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);padding:2rem}
+h1{color:var(--accent);margin-bottom:.5rem}h2{color:var(--accent);margin:1.5rem 0 .5rem;font-size:1.1rem}
+.meta{color:var(--muted);margin-bottom:2rem}.card{background:var(--card);border-radius:8px;padding:1rem;margin:.5rem 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:.5rem 0}th{background:#334155;padding:6px 8px;text-align:left}
+td{padding:6px 8px;border-bottom:1px solid #334155}.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.75rem;margin:2px}
+.l4{background:#7c3aed;color:white}.l3{background:#2563eb;color:white}.l2{background:#0891b2;color:white}
+.c2{background:#f59e0b;color:black}.c3{background:#10b981;color:white}.new{background:#22c55e;color:white;font-weight:bold}
+.badge{background:var(--accent);color:white;padding:2px 10px;border-radius:12px;font-size:.8rem}
+</style>
+</head>
+<body>
+<h1>CSN Opus — Arquitectura do Sistema</h1>
+<p class="meta">S41 | 06 Abril 2026 | HEAD: e17ca30 | 59 tabelas · 52 migrations · 53+ routes · 34 ADRs</p>
+
+<h2>Camada 2 — Personas (UI/Comunicação)</h2>
+<div class="grid">
+<div class="card"><strong>Marta</strong> <span class="tag c2">C2</span> <span class="tag l4">L4-COM</span><br>Face pública clientes + CSN Connect. Bloqueada 6 passos WhatsApp/Telegram/chatbot.</div>
+<div class="card"><strong>Fernando</strong> <span class="tag c2">C2</span> <span class="tag l3">L3-PRD</span><br>Chefe de produção. Dashboard workers. Substituiu Sr. Manuel.</div>
+<div class="card"><strong>Carolina</strong> <span class="tag c2">C2</span> <span class="tag l3">L3-PER</span><br>RH: apresenta recibos e férias. Não calcula — Agente RH faz.</div>
+<div class="card"><strong>Luísa</strong> <span class="tag c2">C2</span> <span class="tag l4">L4-CEO</span><br>Assistente CEO Duarte. Acesso total cross-level.</div>
+<div class="card"><strong>Leonor</strong> <span class="tag c2">C2</span> <span class="tag l4">L4-COM</span><br>Aftersales, garantias, acompanhamento pós-entrega.</div>
+</div>
+
+<h2>Camada 3 — Agentes Nucleus (11)</h2>
+<div class="grid">
+<div class="card"><strong>Agente Produção</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-PRD</span><br>Obras, fases, tempos, KPIs ISO 22400.</div>
+<div class="card"><strong>Agente Qualidade</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-QMS</span><br>Não-conformidades, inspecções, ITP.</div>
+<div class="card"><strong>Agente Manutenção</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-MNT</span><br>Equipamentos, manutenção preventiva/correctiva.</div>
+<div class="card"><strong>Agente RH</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-PER</span><br>Gera recibos, calcula férias/horas. 45 recibos Jan25-Mar26.</div>
+<div class="card"><strong>Agente Documental</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-DOC</span><br>Termos, COCs, DoPs, dossiês de obra.</div>
+<div class="card"><strong>Agente Inventário</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-INV</span><br>Stock, consumos, lotes (pendente mig 017).</div>
+<div class="card"><strong>Agente Comercial</strong> <span class="tag c3">C3</span> <span class="tag l4">L4-COM</span><br>Leads, propostas, pipeline CRM. 8 clientes inseridos.</div>
+<div class="card"><strong>Agente Financeiro</strong> <span class="tag c3">C3</span> <span class="tag l4">L4-FIN</span><br>Faturação InvoiceXpress. e-Fatura 3928 records. Pendente: reconciliação bancária.</div>
+<div class="card"><strong>Agente Engenharia</strong> <span class="tag c3">C3</span> <span class="tag l4">L4-ENG</span><br>Configurações técnicas, especificações chassis.</div>
+<div class="card"><strong>Router</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-MOM</span><br>Classifica mensagens (Haiku), cria tickets ISA-95. Dedup operacional.</div>
+<div class="card"><strong>Agente Fornecedores</strong> <span class="tag c3">C3</span> <span class="tag l3">L3-DOC</span> <span class="tag new">S41</span><br>processar_fornecedores_v2: 1322/1323 emails classificados. 129 facturas, 3 cert 3.1 extraídos.</div>
+</div>
+
+<h2>Tabelas Supabase (59) — Destaques S41</h2>
+<table>
+<tr><th>Tabela</th><th>Alteração S41</th><th>Nível ISA-95</th></tr>
+<tr><td>correspondencia_email</td><td><span class="tag new">+5 colunas</span> tipo_doc_classificado, resumo_claude, dados_extraidos, atcud, efatura_id</td><td>L3-DOC</td></tr>
+<tr><td>certificados_material</td><td>+3 registos via script v2</td><td>L3-QMS</td></tr>
+<tr><td>tickets</td><td>Sem alteração (criada S40)</td><td>L3-MOM</td></tr>
+<tr><td>leads</td><td>Sem alteração (consolidada S40)</td><td>L4-COM</td></tr>
+</table>
+
+<h2>Migrations S41</h2>
+<table>
+<tr><th>#</th><th>Nome</th><th>Descrição</th></tr>
+<tr><td>052</td><td>correspondencia_email_classificacao</td><td>ADD tipo_doc_classificado, resumo_claude, dados_extraidos (JSONB), atcud, efatura_id</td></tr>
+</table>
+
+<h2>Prontidão para Auditoria</h2>
+<table>
+<tr><th>Norma</th><th>Cobertura CSN Opus</th><th>%</th></tr>
+<tr><td>ISO 9001:2015</td><td>Processos, rastreabilidade, controlo docs, registos obras</td><td>35%</td></tr>
+<tr><td>Reg. 2018/858 (Marcação CE)</td><td>COC multi-etapa, dados chassis, termo responsabilidade</td><td>40%</td></tr>
+<tr><td>EN 1090-1/-2</td><td>Rastreabilidade materiais, certificados 3.1 (3 classificados)</td><td>15%</td></tr>
+<tr><td>EN ISO 3834-3</td><td>Futuro — WPS, WPQR pendentes</td><td>5%</td></tr>
+<tr><td>EN 12642</td><td>Futuro — cálculo/ensaio pendente</td><td>0%</td></tr>
+<tr><td>ISO 14001</td><td>PRR trio — estrutura base</td><td>10%</td></tr>
+<tr><td>ISO 45001</td><td>PRR trio — estrutura base</td><td>10%</td></tr>
+</table>
+
+<p style="margin-top:2rem;color:var(--muted);font-size:.8rem">CSN — Engenharia de Veículos Comerciais · Mafra · NIF 500 861 790 · Documento interno S41</p>
+</body></html>
