@@ -1,25 +1,60 @@
 ---
 name: rastrear-material
 description: >
-  Rastreia material desde recepção até peça final. Activa para rastreabilidade, lote, certificado 3.1, que material nesta peça. Norma: EN 1090-2 + EN ISO 3834-3.
+  Rastreia materiais desde a recepção (certificado 3.1) até à peça final na obra. Usa esta skill quando receber material, associar lotes a peças, verificar rastreabilidade de uma obra, ou quando o utilizador mencionar "rastreabilidade", "lote", "certificado 3.1", "material tracing", "que material está na obra X". Cobre EN 1090-2 §6.2, EN ISO 3834-3.
 ---
 
-# rastrear-material — CSN Technic
+# Rastrear Material
 
-## Contexto
-CSN Technic fabrica carroçarias para veículos comerciais 3.5T–12T em Mafra, Portugal.
-Tipos: basculantes, caixas abertas, estrados, plataformas. Certificações: EN 1090, EN ISO 3834, ISO 9001.
+**Código interno:** CSN-L3-PRD-MAT-2026
+**Nível ISA-95:** L3-MOM (PRD/INV)
+**Camada:** C3 (Agente Produção + Agente Inventário)
+**Normas:** EN 1090-2 §6.2, EN ISO 3834-3, EN 10204 (certificados 3.1)
 
-## Quando usar
-- Recepção de material com cert 3.1
-- Corte laser (lote → peça)
-- Auditoria EN 1090
+## Objectivo
+
+Manter rastreabilidade completa: fornecedor → lote → certificado 3.1 → peça → junta soldada → obra. Requisito EN 1090-2 para EXC2. Sem rastreabilidade, a DoP e marcação CE ficam bloqueadas.
 
 ## Fluxo
-1. Recepção: cert 3.1 → registo lote (material, qualidade, espessura, fornecedor)
-2. Armazenamento: identificação por lote
-3. Corte: lote → peças (nesting AlmaCam)
-4. Soldadura: peças → conjunto → obra
-5. Consulta: por obra, saber exactamente que material (lote, cert 3.1) foi usado
 
-## Tabela: certificados_material (já existe, 3 registos)
+```
+Fornecedor entrega material
+    ↓
+Recepção: verificar cert. 3.1 vs encomenda
+    ↓
+Registar na tabela certificados_material (mig039)
+    ↓
+Atribuir lote interno (CSN-MAT-[ano]-[seq])
+    ↓
+Corte: marcar peças com nº lote (marcador/etiqueta)
+    ↓
+Soldadura: registar que soldador soldou que junta com que lote
+    ↓
+Ficha de rastreabilidade por obra (completa)
+```
+
+## Dados por registo
+
+| Campo | Tipo | Fonte |
+|-------|------|-------|
+| lote_interno | TEXT | CSN-MAT-[ano]-[seq] |
+| fornecedor | TEXT | tabela fornecedores |
+| certificado_3_1_id | UUID | tabela certificados_material |
+| qualidade_aco | TEXT | cert. 3.1 (ex: S355J2) |
+| espessura_mm | NUMERIC | cert. 3.1 |
+| dimensoes | TEXT | cert. 3.1 |
+| obra_id | TEXT | quando cortado para obra |
+| pecas | JSONB | [{peca, quantidade, desenho}] |
+| soldador_id | TEXT | quem soldou |
+| wps_ref | TEXT | WPS utilizado |
+
+## Consultas típicas
+
+- "Que material está na obra OBR-2026-015?" → lista lotes + certs
+- "Onde foi usado o lote CSN-MAT-2026-0042?" → lista obras + peças
+- "Que soldador fez as juntas da obra X?" → rastreabilidade soldadura
+- "O cert. 3.1 do fornecedor Y está conforme?" → verificação documental
+
+## Regra Bandeira
+
+Material sem certificado 3.1 válido não pode entrar em produção. Peça sem lote atribuído não pode ser soldada. Qualquer quebra na cadeia de rastreabilidade bloqueia a DoP.

@@ -1,28 +1,51 @@
 ---
 name: gerar-dop
 description: >
-  Gera Declaration of Performance (DoP) por obra. Activa para DoP, declaração desempenho, declaration of performance.
+  Gera Declaração de Desempenho (DoP) conforme EN 1090-1 para marcação CE de estruturas metálicas. Usa esta skill quando uma obra estiver concluída e precisar de DoP, marcação CE, ou quando o utilizador mencionar "declaração de desempenho", "DoP", "declaration of performance", "marcação CE", "CE marking". Cobre EN 1090-1, Reg. (UE) 305/2011 (CPR).
 ---
 
-# gerar-dop — CSN Technic
+# Gerar DoP — Declaração de Desempenho
 
-## Contexto
-CSN Technic fabrica carroçarias para veículos comerciais 3.5T–12T em Mafra, Portugal.
-Tipos: basculantes, caixas abertas, estrados, plataformas. Certificações: EN 1090, EN ISO 3834, ISO 9001.
+**Código interno:** CSN-L3-QMS-DOP-2026
+**Nível ISA-95:** L3-MOM (QMS)
+**Camada:** C3 (Agente QMS)
+**Normas:** EN 1090-1:2009+A1:2011, Regulamento (UE) 305/2011 (CPR)
 
-## Quando usar
-- Entrega de cada obra (obrigatório EN 1090)
-- Antes da marcação CE
+## Objectivo
 
-## Norma: Reg. (UE) 305/2011 + EN 1090-1
-## Campos obrigatórios
-1. Nº DoP: DoP-CSN-[obra]-[ano]
-2. Código identificação produto (tipo carroçaria)
-3. Uso previsto (transporte carga)
-4. Fabricante: CSN Technic, NIF, morada
-5. Sistema avaliação: 2+ (EN 1090)
-6. Norma harmonizada: EN 1090-1:2009+A1:2011
-7. Organismo notificado: [nº do Bureau Veritas/TÜV]
-8. Desempenho declarado: classe execução EXC2
-9. WPS utilizados
-10. Assinatura Duarte
+Gerar Declaração de Desempenho (DoP) obrigatória para marcação CE conforme EN 1090-1. Cada obra ou lote de carroçarias com estrutura metálica soldada requer DoP individual.
+
+## Campos obrigatórios DoP (Anexo III do CPR)
+
+1. **Código identificação produto:** CSN-DoP-[obra_id]-[ano]
+2. **Utilização prevista:** Estrutura de carroçaria para veículo comercial
+3. **Fabricante:** Carlos dos Santos Nascimento, Lda — Mafra, Portugal
+4. **Sistema AVCP:** Sistema 2+ (EN 1090-1, EXC2)
+5. **Norma harmonizada:** EN 1090-1:2009+A1:2011
+6. **Organismo notificado:** [nº e nome do organismo certificador]
+7. **Desempenho declarado:**
+   - Classe de execução: EXC2 (EN 1090-2)
+   - Qualidade soldadura: EN ISO 3834-3
+   - Tolerâncias: EN 1090-2 classe 1
+   - Reacção ao fogo: Classe A1 (aço)
+   - Durabilidade: Protecção conforme EN ISO 12944
+8. **Assinatura:** Responsável legal CSN
+
+## Inputs necessários
+
+- obra_id
+- lista de WPS utilizados
+- referência WPQR
+- referência certificados soldadores
+- classe de tolerância aplicada
+- sistema de protecção anticorrosiva
+
+## Output
+
+- DoP em PDF (formato Anexo III do CPR)
+- Etiqueta CE para fixar na carroçaria (CSN, EN 1090-1, EXC2, nº DoP, ano)
+- Código interno: CSN-L3-QMS-DOP-[obra_id]-[ano]
+
+## Regra Bandeira
+
+Nunca emitir DoP sem WPQR qualificada e certificados de soldador válidos. Se algum documento de suporte estiver em falta, a DoP fica bloqueada com estado "pendente_documentacao".

@@ -1,30 +1,52 @@
 ---
 name: gerar-itp
 description: >
-  Gera Inspection Test Plan (ITP) por tipo de obra. Activa para ITP, plano inspecção, inspection test plan, plano de controlo.
+  Gera Plano de Inspecção e Ensaio (ITP) por obra ou por tipo de carroçaria. Usa esta skill quando iniciar uma nova obra, preparar documentação para auditoria, ou quando o utilizador mencionar "ITP", "plano de inspecção", "inspection and test plan", "plano de ensaio", "controlo de qualidade por obra". Cobre EN 1090-2 §12, EN ISO 3834-3, EN ISO 5817, EN ISO 17637.
 ---
 
-# gerar-itp — CSN Technic
+# Gerar ITP — Plano de Inspecção e Ensaio
 
-## Contexto
-CSN Technic fabrica carroçarias para veículos comerciais 3.5T–12T em Mafra, Portugal.
-Tipos: basculantes, caixas abertas, estrados, plataformas. Certificações: EN 1090, EN ISO 3834, ISO 9001.
+**Código interno:** CSN-L3-QMS-ITP-2026
+**Nível ISA-95:** L3-MOM (QMS)
+**Camada:** C3 (Agente QMS)
+**Normas:** EN 1090-2 §12, EN ISO 3834-3, EN ISO 5817, EN ISO 17637, ISO 9001:2015 §8.5
 
-## Quando usar
-- Novo tipo de carroçaria
-- Preparação certificação EN 1090
-- Pedido de cliente para plano qualidade
+## Objectivo
 
-## Norma: EN 1090-2, cláusula 12
-## Estrutura por fase de obra
-| Fase | Inspecção | Critério | Freq. | Registo | Resp. |
-|------|-----------|----------|-------|---------|-------|
-| F1 Recepção material | Cert 3.1, visual | EN 10204 | 100% | Ficha recepção | QMS |
-| F2 Corte laser | Dimensional | ±1mm | 100% | Relatório | PRD |
-| F3 Quinagem | Ângulo, dimensional | ±0.5° | 100% | Relatório | PRD |
-| F4 Soldadura | Visual 100%, NDT 5% | EN ISO 5817 C | 100%/5% | Relatório | QMS |
-| F5 Montagem | Dimensional geral | Desenho | 100% | Checklist | PRD |
-| F6 Pintura | Espessura, aderência | 60-80μm | Amostra | Relatório | QMS |
-| F7 Acessórios | Funcional | Spec | 100% | Checklist | PRD |
-| F8 Montagem chassis | Binários, alinhamento | Fabricante | 100% | Checklist | PRD |
-| F9 Entrega | GSR, luzes, pesagem | Reg/UNECE | 100% | Termo | QMS |
+Gerar documento ITP para cada obra ou tipo de carroçaria. O ITP define pontos de inspecção, critérios de aceitação, frequência e responsável em cada fase de produção.
+
+## Estrutura do ITP
+
+| Fase | Ponto de Inspecção | Norma/Critério | Método | Frequência | Responsável | Registo |
+|------|-------------------|----------------|--------|------------|-------------|---------|
+| Recepção material | Cert. 3.1 vs encomenda | EN 10204 | Documental | 100% lotes | Qualidade | Ficha recepção |
+| Corte | Dimensões peças | Desenho técnico | Medição | Amostragem 20% | Operador | Check dimensional |
+| Soldadura | Aspecto visual cordões | EN ISO 5817 nível C | Visual (EN 17637) | 100% juntas | Coord. Soldadura | Relatório IV |
+| Soldadura | NDT juntas críticas | EN ISO 5817 | LP/MT/UT | 5-10% | Lab. externo | Relatório NDT |
+| Montagem | Cotas gerais carroçaria | Desenho técnico | Medição | 100% | Qualidade | Controlo dimensional |
+| Montagem | Pontos amarração | EN 12640 | Tracção/visual | 100% | Qualidade | Certificado |
+| Pintura | Espessura + aderência | Especificação | Medição | Amostragem | Qualidade | Relatório pintura |
+| Final | Sensores/AEB/câmaras | Reg. 2019/2144 GSR | Funcional | 100% | Qualidade | Checklist GSR |
+| Final | Iluminação | UNECE R48 | Funcional | 100% | Qualidade | Checklist R48 |
+| Final | Protecções laterais | UNECE R73 | Visual + medição | 100% | Qualidade | Checklist R73 |
+| Final | Para-choques traseiro | UNECE R58 | Visual + medição | 100% | Qualidade | Checklist R58 |
+
+## Inputs necessários
+
+- obra_id (da tabela obras)
+- tipo_carrocaria (basculante/estrado/caixa_aberta/caixa_fechada)
+- classe_execucao (EXC2 padrão CSN)
+- wps_aplicaveis (lista de WPS da obra)
+
+## Output
+
+Documento PDF com:
+- Cabeçalho: nº obra, cliente, chassis, tipo carroçaria
+- Tabela ITP completa com todas as fases
+- Campos de assinatura por ponto de inspecção
+- Referências normativas por ponto
+- Código interno: CSN-L3-QMS-ITP-[obra_id]-[ano]
+
+## Regra Bandeira
+
+Todos os critérios de aceitação devem referenciar norma específica. Nunca usar critérios genéricos como "conforme" ou "OK" sem referência normativa.
