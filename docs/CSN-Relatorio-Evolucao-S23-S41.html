@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Relatório de Evolução S23→S41</title>
+<style>
+:root { --csn-dark: #1a1a2e; --csn-blue: #16213e; --csn-accent: #0f3460; --csn-gold: #e94560; --csn-green: #27ae60; --csn-yellow: #f39c12; --csn-red: #e74c3c; --csn-gray: #95a5a6; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f8f9fa; color: #2c3e50; line-height: 1.6; }
+.header { background: linear-gradient(135deg, var(--csn-dark), var(--csn-accent)); color: white; padding: 40px 60px; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.header .subtitle { font-size: 16px; opacity: 0.85; }
+.header .meta { margin-top: 16px; display: flex; gap: 30px; font-size: 13px; opacity: 0.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 60px; }
+h2 { font-size: 22px; color: var(--csn-dark); border-bottom: 3px solid var(--csn-accent); padding-bottom: 8px; margin: 40px 0 20px 0; }
+h3 { font-size: 17px; color: var(--csn-accent); margin: 24px 0 12px 0; }
+p { margin-bottom: 12px; font-size: 14px; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0 24px 0; font-size: 13px; }
+th { background: var(--csn-dark); color: white; padding: 10px 12px; text-align: left; font-weight: 600; }
+td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+tr:nth-child(even) { background: #f5f7fa; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge-ok { background: #d4edda; color: #155724; }
+.badge-warn { background: #fff3cd; color: #856404; }
+.badge-fail { background: #f8d7da; color: #721c24; }
+.badge-new { background: #cce5ff; color: #004085; }
+.badge-stale { background: #e2e3e5; color: #383d41; }
+.timeline { border-left: 3px solid var(--csn-accent); padding-left: 24px; margin: 20px 0; }
+.timeline-item { position: relative; margin-bottom: 20px; }
+.timeline-item::before { content: ''; position: absolute; left: -30px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--csn-accent); }
+.timeline-item.fail::before { background: var(--csn-red); }
+.timeline-item.success::before { background: var(--csn-green); }
+.timeline-item .session { font-weight: 700; color: var(--csn-accent); font-size: 15px; }
+.timeline-item .date { font-size: 12px; color: var(--csn-gray); }
+.timeline-item .content { font-size: 13px; margin-top: 4px; }
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+.metric-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; text-align: center; }
+.metric-card .value { font-size: 28px; font-weight: 700; color: var(--csn-dark); }
+.metric-card .label { font-size: 12px; color: var(--csn-gray); margin-top: 4px; }
+.metric-card .delta { font-size: 12px; margin-top: 4px; }
+.delta-up { color: var(--csn-green); }
+.delta-down { color: var(--csn-red); }
+.alert-box { border-left: 4px solid; padding: 12px 16px; margin: 16px 0; border-radius: 0 6px 6px 0; font-size: 13px; }
+.alert-critical { border-color: var(--csn-red); background: #fdf0f0; }
+.alert-warning { border-color: var(--csn-yellow); background: #fef9e7; }
+.alert-info { border-color: #3498db; background: #eaf2f8; }
+.section-number { display: inline-block; width: 28px; height: 28px; background: var(--csn-accent); color: white; border-radius: 50%; text-align: center; line-height: 28px; font-size: 13px; font-weight: 700; margin-right: 8px; }
+.footer { background: var(--csn-dark); color: rgba(255,255,255,0.6); padding: 20px 60px; font-size: 11px; text-align: center; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>CSN Opus — Relatório de Evolução Arquitectural</h1>
+<div class="subtitle">Análise ponto a ponto: Sessão 23 → Sessão 41 · Falhas, mudanças e estado actual</div>
+<div class="meta">
+<span>Código: CSN-L4-ENG-RPT-042-2026</span>
+<span>Data: 07/04/2026</span>
+<span>Nível ISA-95: L4-ENG</span>
+<span>Classificação: Interno</span>
+</div>
+</div>
+
+<div class="container">
+
+<!-- SUMÁRIO EXECUTIVO -->
+<h2><span class="section-number">1</span> Sumário Executivo</h2>
+
+<p>Entre a Sessão 23 (27/03/2026) e a Sessão 41 (06/04/2026) — 10 dias, 18 sessões — o sistema CSN Opus sofreu uma transformação estrutural profunda. A arquitectura passou de 5 camadas planas para um modelo ISA-95/IEC 62264 rigoroso de 3 camadas com separação inviolável entre personas (C2) e agentes (C3). Este relatório documenta todas as mudanças, os ganhos reais, e as falhas que ocorreram.</p>
+
+<div class="metrics-grid">
+<div class="metric-card">
+<div class="value">28 → 59</div>
+<div class="label">Tabelas Supabase</div>
+<div class="delta delta-up">+31 tabelas (+111%)</div>
+</div>
+<div class="metric-card">
+<div class="value">17 → 53+</div>
+<div class="label">API Routes</div>
+<div class="delta delta-up">+36 endpoints (+212%)</div>
+</div>
+<div class="metric-card">
+<div class="value">25 → 35</div>
+<div class="label">ADRs</div>
+<div class="delta delta-up">+10 decisões</div>
+</div>
+<div class="metric-card">
+<div class="value">15 → 52</div>
+<div class="label">Migrations</div>
+<div class="delta delta-up">+37 migrations</div>
+</div>
+</div>
+
+<div class="metrics-grid">
+<div class="metric-card">
+<div class="value">10 → 11</div>
+<div class="label">Agentes Nucleus (C3)</div>
+<div class="delta delta-up">+1 (Router)</div>
+</div>
+<div class="metric-card">
+<div class="value">0 → 1322</div>
+<div class="label">Emails Classificados</div>
+<div class="delta delta-up">por IA (Haiku)</div>
+</div>
+<div class="metric-card">
+<div class="value">0 → 6</div>
+<div class="label">KPIs ISO 22400 Live</div>
+<div class="delta delta-up">de 0 calculáveis</div>
+</div>
+<div class="metric-card">
+<div class="value">36% → 36%</div>
+<div class="label">Conformidade ISA-95</div>
+<div class="delta delta-down">Estagnada (28 req.)</div>
+</div>
+</div>
+
+<!-- MUDANÇAS ESTRUTURAIS -->
+<h2><span class="section-number">2</span> Mudanças Estruturais Maiores</h2>
+
+<h3>2.1 — Reestruturação da Arquitectura (S24–S26)</h3>
+<p>A maior mudança foi a adopção do framework ISA-95/IEC 62264 como espinha dorsal do sistema. O modelo passou de 5 camadas planas (Humanos, Personas, Agentes, Sistema, Knowledge Base) para uma hierarquia industrial de 5 níveis ISA-95 (L0-L4) organizados em 3 camadas operacionais:</p>
+
+<table>
+<tr><th>Aspecto</th><th>S23 (Antes)</th><th>S41 (Depois)</th><th>Impacto</th></tr>
+<tr><td>Framework</td><td>5 camadas ad-hoc</td><td>ISA-95 / IEC 62264 (5 níveis, 3 camadas)</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+<tr><td>Personas</td><td>Produzem e comunicam</td><td>Camada 2 — SÓ comunicam (regra inviolável)</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+<tr><td>Agentes</td><td>10 agentes planeados</td><td>11 agentes C3 — fazem todo o trabalho</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+<tr><td>Codificação</td><td>Sem sistema</td><td>CSN-L[nível]-[secção]-[seq]-[ano]</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+<tr><td>Checklist MES</td><td>Inexistente</td><td>MESA-11 (11 funções monitorizadas)</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+<tr><td>KPIs</td><td>Inexistentes</td><td>ISO 22400 adoptada (34+4 KPIs)</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+<tr><td>Portais</td><td>Não definidos</td><td>Portal Duas Portas (Produção + Pessoal)</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+<tr><td>Princípios</td><td>P1–P7</td><td>P1–P9 (+ ISA-95 backbone, 4 docs/sessão)</td><td><span class="badge badge-ok">Positivo</span></td></tr>
+</table>
+
+<h3>2.2 — Evolução da Base de Dados</h3>
+<table>
+<tr><th>Sessão</th><th>Tabelas</th><th>Migrations</th><th>Adições Principais</th></tr>
+<tr><td>S23</td><td>28</td><td>15</td><td>clientes_faturacao, faturas, notas_credito (M015)</td></tr>
+<tr><td>S25</td><td>30</td><td>16</td><td>+ pedidos_ferias_faltas, declaracoes_anuais</td></tr>
+<tr><td>S33</td><td>33</td><td>19</td><td>+ movimentos_bancarios (2153 registos)</td></tr>
+<tr><td>S34</td><td>37</td><td>24</td><td>+ emails_indice, contactos_urgentes, + fornecedores NIF</td></tr>
+<tr><td>S38</td><td>41</td><td>28</td><td>+ clientes, tickets, conversas_marta (CRM)</td></tr>
+<tr><td>S39</td><td>58</td><td>38</td><td>+ catalogo_chassis (363), catalogo_carrocarias (26), stock, correspondencia_email</td></tr>
+<tr><td>S40</td><td>59</td><td>51</td><td>+ certificados_material, leads consolidada</td></tr>
+<tr><td>S41</td><td>59</td><td>52</td><td>+ 5 colunas classificação em correspondencia_email</td></tr>
+</table>
+
+<h3>2.3 — Evolução dos Agentes Nucleus (C3)</h3>
+<table>
+<tr><th>Agente</th><th>Estado S23</th><th>Estado S41</th><th>Mudança</th></tr>
+<tr><td>Agente Produção (L3-PRD)</td><td>Sr. Manuel (17 tools)</td><td>Implementado — KPIs, timer, fases</td><td><span class="badge badge-ok">Operacional</span></td></tr>
+<tr><td>Agente Qualidade (L3-QMS)</td><td>POR FAZER</td><td>Parcial — inspecções básicas</td><td><span class="badge badge-warn">Parcial</span></td></tr>
+<tr><td>Agente Manutenção (L3-MNT)</td><td>POR FAZER</td><td>MNT-001→004 ciclo sequencial</td><td><span class="badge badge-warn">Parcial</span></td></tr>
+<tr><td>Agente Documental (L3-DOC)</td><td>URGENTE</td><td>Operacional — 8 skills, 2 camadas</td><td><span class="badge badge-ok">Operacional</span></td></tr>
+<tr><td>Agente Inventário (L3-INV)</td><td>POR FAZER</td><td>Planeado — tabelas criadas, lógica pendente</td><td><span class="badge badge-fail">Planeado</span></td></tr>
+<tr><td>Agente Financeiro (L4-FIN)</td><td>Não existia</td><td>Parcial — InvoiceXpress, e-Fatura 3928</td><td><span class="badge badge-warn">Parcial</span></td></tr>
+<tr><td>Agente Comercial (L4-COM)</td><td>Não existia</td><td>CRM pipeline, Marta, APIs veículos</td><td><span class="badge badge-ok">Operacional</span></td></tr>
+<tr><td>Agente RH (L3-PER)</td><td>Não existia</td><td>Operacional — 45 recibos, CITs, conta corrente</td><td><span class="badge badge-ok">Operacional</span></td></tr>
+<tr><td>Agente Research (L4-ENG)</td><td>Funcional</td><td>Funcional</td><td><span class="badge badge-stale">Sem mudança</span></td></tr>
+<tr><td>Agente Router (L3-MOM)</td><td>Não existia</td><td>Operacional — Haiku classifica, dedup 3 níveis</td><td><span class="badge badge-new">NOVO S34–S38</span></td></tr>
+<tr><td>Agente Fornecedores (L3-DOC)</td><td>Não existia</td><td>1322/1323 emails classificados</td><td><span class="badge badge-new">NOVO S41</span></td></tr>
+</table>
+
+<h3>2.4 — Evolução das Personas (C2)</h3>
+<table>
+<tr><th>Persona</th><th>S23</th><th>S41</th><th>Problema</th></tr>
+<tr><td>Luísa</td><td>Assistente CEO</td><td>Planeada (não implementada)</td><td><span class="badge badge-fail">Mudou de papel 3x: CEO→Qualidade→Financeiro→CEO</span></td></tr>
+<tr><td>Fernando</td><td>Chefe de Produção</td><td>Implementado</td><td><span class="badge badge-ok">Estável</span></td></tr>
+<tr><td>Marta</td><td>Agente Comercial</td><td>S38 — CRM pipeline</td><td><span class="badge badge-ok">Evoluiu</span></td></tr>
+<tr><td>Carolina</td><td>RH (Production)</td><td>Implementada</td><td><span class="badge badge-ok">Estável</span></td></tr>
+<tr><td>Leonor</td><td>Aftersales</td><td>Planeada</td><td><span class="badge badge-stale">Sem progresso</span></td></tr>
+<tr><td>Irina</td><td>Fornecedores</td><td>Removida da lista</td><td><span class="badge badge-fail">Eliminada silenciosamente</span></td></tr>
+</table>
+
+<!-- FALHAS E PROBLEMAS -->
+<h2><span class="section-number">3</span> Falhas e Problemas Detectados</h2>
+
+<div class="alert-box alert-critical">
+<strong>FALHA CRÍTICA #1 — Chave API Exposta (S40)</strong><br>
+A ANTHROPIC_API_KEY foi exposta num chat da sessão S40. A chave teve de ser rotada. Risco de segurança grave — qualquer pessoa com acesso ao histórico do chat poderia ter usado a chave.
+</div>
+
+<div class="alert-box alert-critical">
+<strong>FALHA CRÍTICA #2 — Script v1 com Ficheiros Fabricados (S40–S41)</strong><br>
+O script processar_fornecedores.py v1 falhou em 940/1000 tentativas porque os nomes de ficheiro (FAT/ANEXO/CERT31) tinham sido <strong>fabricados pelo Cowork</strong> — não existiam no disco. O v2 corrigiu usando tipo_doc=EMAIL (ficheiros reais), mas esta falha revela que outputs de sessões anteriores não foram verificados.
+</div>
+
+<div class="alert-box alert-critical">
+<strong>FALHA CRÍTICA #3 — Faturação Cegid Vendus → InvoiceXpress (S24–S25)</strong><br>
+Cegid Vendus foi subscrito, integrado e depois totalmente revertido para InvoiceXpress. Trabalho desperdiçado. Variáveis Vercel tiveram de ser limpas (6 vars removidas S27). Vendus nunca foi cancelado formalmente.
+</div>
+
+<div class="alert-box alert-warning">
+<strong>FALHA #4 — Voz (Vapi.ai) Bloqueada (S39→S41)</strong><br>
+A integração de voz via Vapi.ai + ElevenLabs + Deepgram + Twilio ficou BLOQUEADA por "org switch pendente". O número +351 923 233 644 não funciona. Sem resolução em 3 sessões.
+</div>
+
+<div class="alert-box alert-warning">
+<strong>FALHA #5 — KUKA Robot: Fantasma no Sistema</strong><br>
+O KUKA robot aparece e desaparece da documentação. Em S13/S15 mencionado como "a adquirir". Em S32 removido ("não adquirido — remover de qualquer lista"). Em S35–S39 reaparece na secção L0-PHY. Não existe fisicamente.
+</div>
+
+<div class="alert-box alert-warning">
+<strong>FALHA #6 — Personas com Papéis Instáveis</strong><br>
+Luísa foi definida como "Assistente CEO" (S23), depois movida para "Qualidade/Inspecções" (S32), depois para "Faturação/Conta Corrente" (S34), depois volta a "Assistente CEO" (S38). Irina (Fornecedores) foi silenciosamente removida sem ADR.
+</div>
+
+<div class="alert-box alert-warning">
+<strong>FALHA #7 — Gaps em Sessões de Arquitectura</strong><br>
+Não existem ficheiros de arquitectura para as sessões S30, S31, S37. O princípio P9 ("4 docs por sessão") não foi respeitado nestas sessões.
+</div>
+
+<div class="alert-box alert-warning">
+<strong>FALHA #8 — Índice ADR Desactualizado</strong><br>
+O INDEX.md em docs/adr/ lista apenas 25 ADRs (até S26). Na realidade existem 35 ADRs (até ADR-035). 10 ADRs não estão indexados. ADRs 031, 033, 034 não existem como ficheiros no directório (só mencionados em documentação).
+</div>
+
+<div class="alert-box alert-info">
+<strong>ESTAGNAÇÃO #9 — Conformidade ISA-95 Congelada</strong><br>
+A conformidade ISA-95 mantém-se nos mesmos 36% (10/28 requisitos) desde S26. A métrica não se moveu em 15 sessões. Ou o método de contagem está errado, ou houve zero progresso real nos requisitos em falta.
+</div>
+
+<div class="alert-box alert-info">
+<strong>ESTAGNAÇÃO #10 — EN 12642, EN ISO 3834, ISO 14001, ISO 45001</strong><br>
+EN 12642 (Resistência Estrutural): 0→5% em 18 sessões. EN ISO 3834 (Qualidade Soldadura): 5→10%. ISO 14001 e ISO 45001: 0→10%. Estas normas são críticas para os mercados DE/FR e para o PRR/P2030 e não avançaram.
+</div>
+
+<!-- EVOLUÇÃO POR SESSÃO -->
+<h2><span class="section-number">4</span> Evolução Sessão a Sessão</h2>
+
+<div class="timeline">
+
+<div class="timeline-item success">
+<div class="session">S24 (27/03/2026)</div>
+<div class="date">Rename masterway→InvoiceXpress. M015. Logo. gerar-termo OK. 45 recibos. ADR-025.</div>
+<div class="content">Reestruturação da arquitectura em 3 camadas + personas abaixo do núcleo. InvoiceXpress testado com Vesauto.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S25–S26 (28/03/2026)</div>
+<div class="date">ISA-95 full. MESA-11. Codificação interna. M016. 5 Carolina tools. IX testado. 30 tabelas, 20 tools.</div>
+<div class="content">Adopção completa ISA-95/IEC 62264 (4 partes). MESA-11 checklist introduzido. Sistema de codificação CSN-L[n]-[sec]-[seq]-[ano]. Princípios P1-P8 definidos.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S27–S28 (29/03/2026)</div>
+<div class="date">Skills documental (7 ficheiros, 2 camadas). 8 fornecedores. Email archiving 29.161. Vercel limpo.</div>
+<div class="content">Princípio P9 adicionado. Agente Documental com arquitectura 2 camadas (Geral + Fornecedor). Repositório email completo. ADR-026.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S29 (30/03/2026)</div>
+<div class="date">v28 arquitectura. Skills expandidas a 8. 3 camadas.</div>
+<div class="content">Skills agente documental expandidas. Conformidade mantida 36%.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S32 (30/03/2026)</div>
+<div class="date">ISO 22400 adoptada. Portal Duas Portas. 11 agentes. 13 skills. Benchmark Factorial HR.</div>
+<div class="content">Grande salto: ISO 22400 KPIs, Portal Trabalhador com dois modos (Produção + Pessoal), 11 agentes redefinidos, e-Fatura 3928 registos, MESA-11 score 2/7/2.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S33 (31/03/2026)</div>
+<div class="date">MNT-001→004. KPIs endpoint live. Conta corrente IBAN. Portal deployed.</div>
+<div class="content">Obras internas de manutenção. 6 KPIs calculáveis. 2.153 movimentos bancários importados. MESA-11 melhorado: 2/9/0 (zero em falta pela primeira vez).</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S34 (01/04/2026)</div>
+<div class="date">37 tabelas. Router operacional. 381 fornecedores NIF. Câmara mobile. ADR-028/029/030.</div>
+<div class="content">Agente Router classificador. 18.169 emails CSV. Foto de fase por câmara nativa. Execução sequencial MNT. Manual Fronius.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S35 (02/04/2026)</div>
+<div class="date">ADR-031 3 camadas. RAG foundation. Skill Registry. 3.333 PDFs no Storage.</div>
+<div class="content">ADR-031 define arquitectura Exterior/Fronteira/Núcleo. Skills _global, produção, RH. RAG planeado com pgvector.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S36 (02/04/2026)</div>
+<div class="date">RAG LIVE. pgvector. Voyage AI. 5 skills activos. 38 tabelas. 26 migrations.</div>
+<div class="content">RAG operacional: pdf-parse→Voyage AI voyage-3→pgvector (1024 dims)→HNSW index. Embeddings migration 025/025b. 3.333 PDFs para ingerir.</div>
+</div>
+
+<div class="timeline-item fail">
+<div class="session">S37 (03/04/2026) — SEM ARQUITECTURA</div>
+<div class="date">ADR-032 Agente WhatsApp Urgências. Sem ficheiro de arquitectura gerado.</div>
+<div class="content">Violação P9 — não foram gerados os 4 documentos de sessão. ADR-032 criado mas sem reflecção na arquitectura.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S38 (04/04/2026)</div>
+<div class="date">CRM Pipeline. Marta 3 portões. APIs veículos. Tickets ISA-95. 41 tabelas. 49+ routes.</div>
+<div class="content">Grande salto comercial: matricula.co.pt + Vincario APIs. Sistema de tickets TICK-YYYY-NNN. ADR-033. 17 novos endpoints CRM.</div>
+</div>
+
+<div class="timeline-item">
+<div class="session">S39 (05/04/2026)</div>
+<div class="date">Voz + WhatsApp. 58 tabelas. Configurador JPM (363 chassis, 26 carroçarias). Vapi BLOQUEADO.</div>
+<div class="content">Tentativa de integrar voz. WhatsApp Twilio sandbox operacional. Voz ficou bloqueada. Catalogo JPM com 363 chassis importados.</div>
+</div>
+
+<div class="timeline-item success">
+<div class="session">S40 (05/04/2026)</div>
+<div class="date">59 tabelas. Haiku Router. 8 clientes. Leads consolidada. certificados_material. gerar-termo corrigido.</div>
+<div class="content">Router com Haiku. Leads consolidadas (mig040). Tabela certificados_material. 1.320 emails ligados a fornecedores. CHAVE API EXPOSTA.</div>
+</div>
+
+<div class="timeline-item">
+<div class="session">S41 (06/04/2026)</div>
+<div class="date">1322 emails classificados. 129 facturas. 3 cert 3.1. Migration 052. Script v2 corrigido.</div>
+<div class="content">Diagnóstico do script v1 (ficheiros fabricados). Script v2 processa correctamente. 5 colunas de classificação Claude. API key rotada.</div>
+</div>
+
+</div>
+
+<!-- PRONTIDÃO PARA AUDITORIA -->
+<h2><span class="section-number">5</span> Prontidão para Auditoria — Evolução S23→S41</h2>
+
+<table>
+<tr><th>Norma</th><th>% S23</th><th>% S41</th><th>Delta</th><th>Situação</th></tr>
+<tr><td>ISO 9001:2015</td><td>15%</td><td>35%</td><td>+20pp</td><td><span class="badge badge-ok">Progresso real</span> — Controlo docs, rastreabilidade, registos. Falta: auditorias internas, revisão gestão.</td></tr>
+<tr><td>Reg. 2018/858 + COC</td><td>40%</td><td>40%</td><td>0pp</td><td><span class="badge badge-warn">Estagnado</span> — COC electrónico IMT Jul/2026 sem progresso. Deadline a 3 meses.</td></tr>
+<tr><td>EN 1090-1/-2</td><td>5%</td><td>15%</td><td>+10pp</td><td><span class="badge badge-warn">Lento</span> — certificados_material adicionados. WPS/WPQR/soldadores/FPC pendentes.</td></tr>
+<tr><td>EN ISO 3834-3</td><td>5%</td><td>10%</td><td>+5pp</td><td><span class="badge badge-fail">Insuficiente</span> — Depende EN 1090. Sem coordenador IWS/IWT.</td></tr>
+<tr><td>EN 12642 L/XL</td><td>0%</td><td>5%</td><td>+5pp</td><td><span class="badge badge-fail">Crítico</span> — Mercado DE bloqueado. Sem FEA nem ensaio.</td></tr>
+<tr><td>ISO 22400</td><td>0%</td><td>16%</td><td>+16pp</td><td><span class="badge badge-new">Nova</span> — 6/38 KPIs calculáveis.</td></tr>
+<tr><td>ISO 14001</td><td>0%</td><td>10%</td><td>+10pp</td><td><span class="badge badge-warn">Estrutura base</span> — PRR trio. Sem SGA real.</td></tr>
+<tr><td>ISO 45001</td><td>0%</td><td>10%</td><td>+10pp</td><td><span class="badge badge-warn">Estrutura base</span> — PRR trio. CITs registadas.</td></tr>
+<tr><td>VDI 2700</td><td>—</td><td>5%</td><td>+5pp</td><td><span class="badge badge-fail">Depende EN 12642</span></td></tr>
+<tr><td>ISO 50001</td><td>—</td><td>5%</td><td>+5pp</td><td><span class="badge badge-warn">Bodor 60kW identificado</span> — smart meter pendente.</td></tr>
+</table>
+
+<!-- MESA-11 -->
+<h2><span class="section-number">6</span> MESA-11 — Evolução do Score</h2>
+
+<table>
+<tr><th>Função MESA-11</th><th>S23</th><th>S26</th><th>S32</th><th>S33</th><th>S41</th></tr>
+<tr><td>1. Resource Allocation</td><td>—</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>2. Operations Scheduling</td><td>—</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>3. Dispatching Production</td><td>—</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>4. Document Control</td><td>—</td><td>SIM</td><td>SIM</td><td>COMPLETO</td><td>COMPLETO</td></tr>
+<tr><td>5. Data Collection</td><td>—</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>6. Labor Management</td><td>—</td><td>PARCIAL</td><td>PARCIAL</td><td>COMPLETO</td><td>COMPLETO</td></tr>
+<tr><td>7. Quality Management</td><td>—</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>8. Process Management</td><td>—</td><td>NAO</td><td>NAO</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>9. Maintenance Mgmt</td><td>—</td><td>NAO</td><td>NAO</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>10. Product Tracking</td><td>—</td><td>—</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><td>11. Performance Analysis</td><td>—</td><td>NAO</td><td>PARCIAL</td><td>PARCIAL</td><td>PARCIAL</td></tr>
+<tr><th>Score</th><th>—</th><th>2/6/3</th><th>2/7/2</th><th>2/9/0</th><th>2/9/0</th></tr>
+</table>
+
+<p>O score MESA-11 melhorou significativamente até S33 (zero funções em falta) mas estabilizou. Nenhuma função PARCIAL passou a COMPLETO desde S33.</p>
+
+<!-- PENDENTES HERDADOS -->
+<h2><span class="section-number">7</span> Pendentes Herdados Não Resolvidos desde S23</h2>
+
+<table>
+<tr><th>Pendente S23</th><th>Estado S41</th><th>Sessões Abertas</th></tr>
+<tr><td>Certificação soldadores EN ISO 9606-1 (João e Bohdan)</td><td><span class="badge badge-fail">PENDENTE</span></td><td>18 sessões</td></tr>
+<tr><td>Contratar coordenador IWS/IWT</td><td><span class="badge badge-fail">PENDENTE</span></td><td>18 sessões</td></tr>
+<tr><td>COC Electrónico IMT (deadline Jul 2026)</td><td><span class="badge badge-fail">PENDENTE</span></td><td>18 sessões — 3 meses até deadline</td></tr>
+<tr><td>Migration 016 — módulo financeiro completo</td><td><span class="badge badge-warn">PARCIAL</span> — movimentos bancários sim, fornecedores sim, reconciliação não</td><td>18 sessões</td></tr>
+<tr><td>Luísa — Assistente CEO implementada</td><td><span class="badge badge-fail">PLANEADA</span></td><td>18 sessões</td></tr>
+<tr><td>Knowledge Base completa por domínio</td><td><span class="badge badge-warn">RAG operacional mas não por domínio</span></td><td>18 sessões</td></tr>
+<tr><td>WPS/WPQR qualificados</td><td><span class="badge badge-fail">PENDENTE</span></td><td>18 sessões</td></tr>
+<tr><td>Manual FPC</td><td><span class="badge badge-fail">PENDENTE</span></td><td>18 sessões</td></tr>
+<tr><td>Cancelar Cegid Vendus</td><td><span class="badge badge-warn">Por confirmar</span></td><td>14 sessões (desde S27)</td></tr>
+</table>
+
+<!-- CONCLUSÕES -->
+<h2><span class="section-number">8</span> Conclusões e Recomendações</h2>
+
+<p><strong>O que correu bem:</strong> A adopção ISA-95 trouxe rigor organizacional. O CRM pipeline com Marta é funcional. Os KPIs ISO 22400 estão live. O RAG com embeddings é uma base sólida. A classificação automática de 1322 emails por IA é um ganho real de produtividade.</p>
+
+<p><strong>O que correu mal:</strong> O ciclo Vendus→InvoiceXpress foi trabalho desperdiçado. A exposição da API key é grave. Os ficheiros fabricados pelo Cowork revelam falta de verificação de outputs. A voz está bloqueada sem resolução. Documentação inconsistente (KUKA, personas instáveis, ADR index desactualizado).</p>
+
+<p><strong>O que estagnou:</strong> EN 1090, EN 12642, EN ISO 3834 quase não avançaram. O COC electrónico não foi trabalhado. Os soldadores não foram certificados. O coordenador IWS/IWT não foi contratado. Estas são as obrigações reais da empresa — o software só vale se suportar a conformidade regulamentar.</p>
+
+<p><strong>Recomendação principal:</strong> As próximas sessões devem focar-se em conformidade regulamentar real (P1 — "Regulamento antes de features"), não em features de software adicionais. O COC electrónico tem deadline em Julho 2026. A EN 1090 é requisito para marcação CE. Os soldadores precisam de certificação.</p>
+
+</div>
+
+<div class="footer">
+CSN — Engenharia de Veículos Comerciais · Mafra, Portugal · NIF 500 861 790 · Documento interno — não distribuir<br>
+Código interno: CSN-L4-ENG-RPT-042-2026 · Gerado: 07/04/2026 · Relatório Evolução S23→S41
+</div>
+
+</body>
+</html>

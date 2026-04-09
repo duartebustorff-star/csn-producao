@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Opus — Arquitectura S42</title>
+<style>
+:root { --dark: #1a1a2e; --blue: #16213e; --accent: #0f3460; --gold: #e94560; --green: #27ae60; --yellow: #f39c12; --red: #e74c3c; --gray: #95a5a6; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: #2c3e50; font-size: 13px; line-height: 1.5; }
+.header { background: linear-gradient(135deg, var(--dark), var(--accent)); color: white; padding: 30px 50px; }
+.header h1 { font-size: 22px; font-weight: 700; }
+.header .sub { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+.meta-bar { background: var(--blue); color: rgba(255,255,255,0.85); padding: 10px 50px; display: flex; flex-wrap: wrap; gap: 24px; font-size: 12px; }
+.meta-bar .item { display: flex; gap: 6px; }
+.meta-bar .label { opacity: 0.6; }
+.meta-bar .value { font-weight: 600; }
+.container { max-width: 1100px; margin: 0 auto; padding: 30px 50px; }
+h2 { font-size: 16px; color: white; background: var(--dark); padding: 8px 14px; margin: 30px 0 16px 0; border-radius: 4px; }
+h3 { font-size: 14px; color: var(--accent); margin: 20px 0 10px 0; border-bottom: 1px solid #e0e0e0; padding-bottom: 4px; }
+p { margin-bottom: 10px; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0 20px 0; font-size: 12px; }
+th { background: #2c3e50; color: white; padding: 7px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+td { padding: 6px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+tr:nth-child(even) { background: #f8f9fa; }
+.badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+.prod { background: #d4edda; color: #155724; }
+.parcial { background: #fff3cd; color: #856404; }
+.plan { background: #e2e3e5; color: #383d41; }
+.bloq { background: #f8d7da; color: #721c24; }
+.novo { background: #cce5ff; color: #004085; }
+.inviolavel { background: var(--gold); color: white; padding: 8px 14px; border-radius: 4px; font-size: 12px; font-weight: 600; margin: 10px 0; display: block; }
+.box { border: 1px solid #dee2e6; border-radius: 6px; padding: 14px; margin: 12px 0; background: #f8f9fa; }
+.box-title { font-weight: 700; font-size: 13px; color: var(--accent); margin-bottom: 6px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.metric { text-align: center; padding: 12px; background: white; border: 1px solid #dee2e6; border-radius: 6px; }
+.metric .num { font-size: 24px; font-weight: 700; color: var(--dark); }
+.metric .lbl { font-size: 11px; color: var(--gray); }
+.footer { background: var(--dark); color: rgba(255,255,255,0.5); padding: 16px 50px; font-size: 10px; text-align: center; margin-top: 30px; }
+.flag { border-left: 4px solid; padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 0 4px 4px 0; }
+.flag-red { border-color: var(--red); background: #fdf0f0; }
+.flag-yellow { border-color: var(--yellow); background: #fef9e7; }
+.flag-blue { border-color: #3498db; background: #eaf2f8; }
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>CSN Opus — Arquitectura do Sistema</h1>
+<div class="sub">Carlos dos Santos Nascimento, Lda — Engenharia de Veiculos Comerciais</div>
+</div>
+
+<div class="meta-bar">
+<div class="item"><span class="label">Sessao</span><span class="value">S42</span></div>
+<div class="item"><span class="label">Data</span><span class="value">07/04/2026</span></div>
+<div class="item"><span class="label">Codigo</span><span class="value">CSN-L4-ENG-SYS-042-2026</span></div>
+<div class="item"><span class="label">Norma</span><span class="value">ISA-95 / IEC 62264</span></div>
+<div class="item"><span class="label">Tabelas</span><span class="value">59</span></div>
+<div class="item"><span class="label">Migrations</span><span class="value">52</span></div>
+<div class="item"><span class="label">Routes</span><span class="value">53+</span></div>
+<div class="item"><span class="label">ADRs</span><span class="value">35</span></div>
+<div class="item"><span class="label">Agentes C3</span><span class="value">11</span></div>
+<div class="item"><span class="label">Personas C2</span><span class="value">5</span></div>
+</div>
+
+<div class="container">
+
+<!-- 01 VISAO GERAL -->
+<h2>01 VISAO GERAL — SISTEMA INTEGRADO ISA-95</h2>
+
+<p>O CSN Opus nao e um ERP — e um sistema integrado ISA-95/IEC 62264 que governa todas as operacoes da empresa em 5 niveis (L0-L4). Cada componente, tabela, agente e documento tem nivel atribuido.</p>
+
+<table>
+<tr><th>Nivel</th><th>ISA-95</th><th>Modulos CSN</th><th>Normas Governantes</th></tr>
+<tr><td>L4</td><td>Business Planning & Logistics</td><td>FIN, COM, ENG, QMS-L4</td><td>ISA-95 Part 4/B2MML, ISO 14001, ISO 31000</td></tr>
+<tr><td>L3</td><td>Manufacturing Operations Mgmt</td><td>PRD, QMS, MNT, PER, DOC, INV</td><td>MESA-11, ISO 22400 (34+4 KPIs), ISO 45001, ISO 55001</td></tr>
+<tr><td>L2</td><td>Supervisory Control</td><td>SUP</td><td>IEC 62443, ISO 50001</td></tr>
+<tr><td>L1</td><td>Sensing & Manipulation</td><td>SEN</td><td>IEC 61131, EN 17637</td></tr>
+<tr><td>L0</td><td>Physical Process</td><td>PHY</td><td>EN 1090, EN ISO 3834, EN 12642</td></tr>
+</table>
+
+<!-- 02 ARQUITECTURA 3 CAMADAS -->
+<h2>02 ARQUITECTURA — 3 CAMADAS (ADR-031)</h2>
+
+<div class="grid-3">
+<div class="box">
+<div class="box-title">Camada 1 — Portais Satelite</div>
+Portal Producao (workers), Portal Pessoal (workers), CSN Connect (B2B concessionarios), Portal Fornecedor (futuro). Sem acesso ao Supabase. Recebem dados curados. Escrevem em tabelas de intake.
+</div>
+<div class="box">
+<div class="box-title">Camada 2 — Personas</div>
+Marta, Fernando, Carolina, Luisa, Leonor. Interface de comunicacao apenas. NAO produzem dados. Apresentam dashboards e falam com humanos.
+</div>
+<div class="box">
+<div class="box-title">Camada 3 — Nucleus (Agentes)</div>
+11 agentes autonomos. TODO o processamento, logica, geracao de documentos e calculos. Fonte de verdade: Supabase.
+</div>
+</div>
+
+<span class="inviolavel">REGRA INVIOLAVEL: Personas (C2) so comunicam. Agentes (C3) fazem o trabalho. Portais (C1) nunca acedem ao Supabase.</span>
+
+<!-- 03 PERSONAS -->
+<h2>03 PERSONAS — CAMADA 2 (so comunicam)</h2>
+
+<table>
+<tr><th>Persona</th><th>Ambito</th><th>ISA-95</th><th>Fala com</th><th>Estado</th><th>Falhas Detectadas</th></tr>
+<tr><td><strong>Marta</strong></td><td>Face publica, todos os canais externos, CSN Connect</td><td>L4-COM</td><td>Clientes, leads</td><td><span class="badge prod">S38+Voz S39</span></td><td>—</td></tr>
+<tr><td><strong>Fernando</strong></td><td>Chefe de producao (substituiu Sr. Manuel humano)</td><td>L0-PER</td><td>Workers (Bohdan, Jose Julio, Joao)</td><td><span class="badge prod">Implementado</span></td><td>—</td></tr>
+<tr><td><strong>Carolina</strong></td><td>RH — recibos, ferias, faltas, dados pessoais</td><td>L3-RH</td><td>Workers (area pessoal)</td><td><span class="badge prod">Implementada</span></td><td>—</td></tr>
+<tr><td><strong>Luisa</strong></td><td>Assistente CEO — acesso total ao sistema</td><td>L4-BPL</td><td>Duarte</td><td><span class="badge plan">Planeada</span></td><td><span class="badge bloq">Papel mudou 3x (S23→S41). Nunca implementada. Pendente desde S15.</span></td></tr>
+<tr><td><strong>Leonor</strong></td><td>Aftersales — garantias, reclamacoes pos-entrega</td><td>L4-COM</td><td>Clientes (pos-venda)</td><td><span class="badge plan">Planeada</span></td><td><span class="badge parcial">Sem progresso em 18 sessoes</span></td></tr>
+</table>
+
+<div class="flag flag-yellow">
+<strong>Persona removida sem ADR:</strong> Irina (Gestao Fornecedores, L4) existia em S23 e foi removida silenciosamente. Decisao nao documentada.
+</div>
+
+<!-- 04 CANAIS DE ENTRADA -->
+<h2>04 CANAIS DE ENTRADA</h2>
+
+<p>Os canais nao sao agentes — sao meios de transporte. Toda a comunicacao passa pelo Agente Router (Camada 3) antes de chegar a qualquer departamento.</p>
+
+<table>
+<tr><th>Canal</th><th>Tecnologia</th><th>Persona</th><th>Route</th><th>Estado</th><th>Falhas</th></tr>
+<tr><td>WhatsApp</td><td>Twilio sandbox</td><td>Marta</td><td>POST /api/whatsapp/twilio</td><td><span class="badge parcial">Sandbox</span></td><td>Ainda nao em producao</td></tr>
+<tr><td>Email</td><td>geral@carrocariascsn.pt</td><td>Router</td><td>Processamento directo</td><td><span class="badge prod">18.169 emails</span></td><td>Webhook automatico pendente</td></tr>
+<tr><td>Voz</td><td>Vapi.ai + ElevenLabs + Deepgram</td><td>Marta</td><td>Vapi webhook externo</td><td><span class="badge bloq">BLOQUEADO</span></td><td><strong>Org switch pendente desde S39. Sem resolucao em 3 sessoes.</strong></td></tr>
+<tr><td>CSN Connect</td><td>Portal B2B</td><td>Marta</td><td>Configurador JPM</td><td><span class="badge parcial">363 chassis, 26 carrocarias</span></td><td>—</td></tr>
+<tr><td>Chatbot/Telegram</td><td>Site + Telegram Bot</td><td>Marta</td><td>—</td><td><span class="badge plan">Planeado</span></td><td>—</td></tr>
+</table>
+
+<!-- 05 CRM PIPELINE -->
+<h2>05 CRM PIPELINE — ADR-033/034</h2>
+
+<p>Implementado S38-S40. Router operacional com Haiku. 8 clientes inseridos. Leads consolidadas (mig040).</p>
+
+<h3>Fluxo</h3>
+<p>Canal (WA/Email/Voz/Chat) → Router (Haiku classifica + dedup 3 niveis) → Ticket ISA-95 (COM/PRD/DOC/PER/FIN) → Handler departamental</p>
+
+<h3>Marta — 3 Portoes Bloqueantes</h3>
+<table>
+<tr><th>Portao</th><th>Funcao</th><th>API</th><th>Estado</th></tr>
+<tr><td>P1 — Veiculo</td><td>Matricula → VIN → specs (PBT, entre-eixos)</td><td>matricula.co.pt (0.20EUR) + Vincario (~0.20EUR)</td><td><span class="badge prod">Operacional</span></td></tr>
+<tr><td>P2 — Configuracao</td><td>Tipo carrocaria + medidas + validacao legal</td><td>Regras Dir. 96/53/CE</td><td><span class="badge prod">Operacional</span></td></tr>
+<tr><td>P3 — Contacto</td><td>Nome + telefone + email + verificacao 6 digitos</td><td>/api/clientes/verificar + /confirmar</td><td><span class="badge prod">Operacional</span></td></tr>
+</table>
+
+<h3>Sistema de Tickets ISA-95</h3>
+<table>
+<tr><th>Tipo Ticket</th><th>Calendario Google (S42)</th><th>Estado</th></tr>
+<tr><td>COM (Comercial)</td><td>CSN-L4-COM</td><td><span class="badge prod">Activo</span></td></tr>
+<tr><td>PRD (Producao)</td><td>CSN-L3-PRD</td><td><span class="badge prod">Activo (via COM→PRD)</span></td></tr>
+<tr><td>DOC (Documental)</td><td>CSN-L3-DOC</td><td><span class="badge prod">Activo</span></td></tr>
+<tr><td>PER (Pessoal)</td><td>CSN-L3-PER</td><td><span class="badge prod">Activo</span></td></tr>
+<tr><td>FIN (Financeiro)</td><td>CSN-L4-FIN</td><td><span class="badge prod">Activo</span></td></tr>
+<tr><td>QMS (Qualidade)</td><td>CSN-L3-QMS</td><td><span class="badge plan">Futuro</span></td></tr>
+<tr><td>MNT (Manutencao)</td><td>CSN-L3-MNT</td><td><span class="badge plan">Futuro</span></td></tr>
+<tr><td>INV (Inventario)</td><td>CSN-L3-INV</td><td><span class="badge plan">Futuro</span></td></tr>
+<tr><td>ENG (Engenharia)</td><td>CSN-L4-ENG</td><td><span class="badge plan">Futuro</span></td></tr>
+</table>
+
+<!-- 06 AGENTES NUCLEUS -->
+<h2>06 AGENTES NUCLEUS — CAMADA 3 (fazem o trabalho)</h2>
+
+<table>
+<tr><th>#</th><th>Agente</th><th>ISA-95</th><th>Responsabilidade</th><th>Route principal</th><th>Estado</th><th>Falhas / Pendentes</th></tr>
+<tr><td>1</td><td>Producao</td><td>L3-PRD</td><td>Obras, fases, timetracking, KPIs ISO 22400</td><td>/api/obras/*</td><td><span class="badge prod">Implementado</span></td><td>Dashboard KPIs pendente</td></tr>
+<tr><td>2</td><td>Qualidade</td><td>L3-QMS</td><td>Inspeccoes, NC, certificados EN 1090</td><td>/api/qualidade/*</td><td><span class="badge parcial">Parcial</span></td><td>WPS/WPQR por criar. NC formal inexistente. ITP pendente.</td></tr>
+<tr><td>3</td><td>Manutencao</td><td>L3-MNT</td><td>MNT-001..004, ciclo sequencial, reset</td><td>/api/manutencao/*</td><td><span class="badge parcial">Parcial</span></td><td>Apenas 4 obras internas. Sem MTBF. Sem preventiva real.</td></tr>
+<tr><td>4</td><td>Pessoal</td><td>L3-PER</td><td>Ponto, ausencias, CITs</td><td>/api/rh/*</td><td><span class="badge prod">Implementado</span></td><td>—</td></tr>
+<tr><td>5</td><td>Documental</td><td>L3-DOC</td><td>Documentos, dossiers, uploads, skills fornecedor</td><td>/api/documentos/*</td><td><span class="badge prod">Operacional</span></td><td>Skills Bielco/Silfesan/Dhollandia pendentes</td></tr>
+<tr><td>6</td><td>Inventario</td><td>L3-INV</td><td>Stock, materiais, consumos, lotes</td><td>/api/stock/*</td><td><span class="badge plan">Planeado</span></td><td><strong>Tabelas criadas mas logica inexistente. Critico EN 1090 (lot tracking).</strong></td></tr>
+<tr><td>7</td><td>Financeiro</td><td>L4-FIN</td><td>Facturacao InvoiceXpress, e-Fatura, banking</td><td>/api/faturacao/*</td><td><span class="badge parcial">Parcial</span></td><td>Reconciliacao bancaria pendente. e-Fatura 4.409 importados.</td></tr>
+<tr><td>8</td><td>Comercial</td><td>L4-COM</td><td>Leads, orcamentos, CRM, APIs veiculos</td><td>/api/leads/*</td><td><span class="badge prod">S38</span></td><td>—</td></tr>
+<tr><td>9</td><td>Engenharia</td><td>L4-ENG</td><td>Configurador, specs tecnicas, COC</td><td>/api/configurador/*</td><td><span class="badge parcial">Parcial</span></td><td><strong>COC electronico IMT deadline Jul/2026 — sem progresso.</strong></td></tr>
+<tr><td>10</td><td>Router</td><td>L3-MOM</td><td>Classificacao Haiku + dedup 3 niveis + tickets</td><td>/api/router/*</td><td><span class="badge prod">Operacional</span></td><td>Webhook email automatico pendente</td></tr>
+<tr><td>11</td><td>RH</td><td>L3-PER</td><td>Recibos, calculos salariais, declaracoes</td><td>/api/rh/recibos/*</td><td><span class="badge prod">Operacional</span></td><td>45 recibos Jan25-Mar26. Recibos 2023-2024 pendentes.</td></tr>
+</table>
+
+<div class="flag flag-yellow">
+<strong>Agente Fornecedores (S41):</strong> processar_fornecedores_v2 classificou 1322/1323 emails (99.9%). 129 facturas, 3 cert 3.1. Opera como extensao do Agente Documental, nao como agente separado.
+</div>
+
+<!-- 07 CAMADA TEMPORAL -->
+<h2>07 CAMADA TEMPORAL — GOOGLE CALENDAR (ADR-035, S42)</h2>
+
+<p>Conta: carrocariascsn@gmail.com. 9 calendarios separados por nivel ISA-95. Supabase = dados. Google Calendar = tempo, deadlines, alertas.</p>
+
+<h3>L4-BPL — 3 Calendarios</h3>
+<table>
+<tr><th>Calendario</th><th>Seccao</th><th>Conteudo</th><th>Agente C3</th><th>Persona C2</th></tr>
+<tr><td>CSN-L4-COM</td><td>Comercial</td><td>Orcamentos, visitas, follow-ups, CSN Connect</td><td>Agente Comercial</td><td>Marta</td></tr>
+<tr><td>CSN-L4-FIN</td><td>Financeiro</td><td>IVA, IRC, SS, pagamentos, recebimentos, InvoiceXpress</td><td>Agente Financeiro</td><td>Luisa</td></tr>
+<tr><td>CSN-L4-ENG</td><td>Engenharia</td><td>Projectos, homologacoes, COC electronico Jul/2026</td><td>Agente Engenharia</td><td>Luisa</td></tr>
+</table>
+
+<h3>L3-MOM — 6 Calendarios</h3>
+<table>
+<tr><th>Calendario</th><th>Seccao</th><th>Conteudo</th><th>Agente C3</th><th>Persona C2</th></tr>
+<tr><td>CSN-L3-PRD</td><td>Producao</td><td>Obras F1→F9, milestones, entregas</td><td>Agente Producao</td><td>Fernando</td></tr>
+<tr><td>CSN-L3-QMS</td><td>Qualidade</td><td>Auditorias, certificados soldadores EN 9606 (2 anos), calibracoes</td><td>Agente Qualidade</td><td>Fernando</td></tr>
+<tr><td>CSN-L3-MNT</td><td>Manutencao</td><td>Preventivas MNT-001→004, Bodor 60kW</td><td>Agente Manutencao</td><td>Fernando</td></tr>
+<tr><td>CSN-L3-INV</td><td>Inventario</td><td>Entregas material, alertas stock minimo</td><td>Agente Inventario</td><td>Fernando</td></tr>
+<tr><td>CSN-L3-PER</td><td>Pessoal</td><td>Ferias, faltas, formacoes, renovacoes contrato</td><td>Agente RH</td><td>Carolina</td></tr>
+<tr><td>CSN-L3-DOC</td><td>Documental</td><td>Deadlines legais, licencas, seguros, certificacoes ISO/EN</td><td>Agente Documental</td><td>Luisa</td></tr>
+</table>
+
+<span class="inviolavel">REGRA BANDEIRA: Nenhum agente pode inventar, estimar ou aproximar datas/horas. Valor temporal sem fonte verificavel (Calendar API ou registo Supabase) = NULL + flag "a preencher".</span>
+
+<!-- 08 BASE DE DADOS -->
+<h2>08 BASE DE DADOS — 59 TABELAS SUPABASE · 52 MIGRATIONS</h2>
+
+<h3>Core / Producao (14 tabelas)</h3>
+<p>obras, fases_obra, templates_fases, dossie_obra, inspecoes, davs, fams, certificados_matricula, certificacoes_empresa, qualificacoes, documentos, notas_obra, lugares_parque, timetracking</p>
+
+<h3>RH (9 tabelas)</h3>
+<p>colaboradores, colaboradores_rh, documentos_rh, recibos_vencimento, processamentos_mensais, registos_ponto, ausencias, cits, contactos_urgentes</p>
+
+<h3>Financeiro (8 tabelas)</h3>
+<p>faturas, faturas_linhas, notas_credito, efatura (4.409 reg.), fornecedores (381 com NIF), clientes_faturacao, movimentos_bancarios (2.153 reg.), linhas_fatura_fornecedor</p>
+
+<h3>CRM — S38-S41 (5 tabelas)</h3>
+<p>clientes (8 reg.), leads (consolidada mig040), tickets, conversas_marta, correspondencia_email (18.169 reg., 1.320 ligados, 1.322 classificados)</p>
+
+<h3>Configurador JPM — S38 (8 tabelas)</h3>
+<p>catalogo_chassis (363), catalogo_carrocarias (26), catalogo_acessorios, regras_filtragem, precos, catalogo_fornecedor, jpm_staging_products, jpm_staging_vehicles</p>
+
+<h3>RAG / AI (5 tabelas)</h3>
+<p>embeddings (3.019 vectores, pgvector 1024 dims), inventor_rag, emails_indice, research_tasks, mensagens</p>
+
+<h3>Stock / Materiais — M017+ (6 tabelas)</h3>
+<p>materiais, lotes_material, materiais_equivalencias, contagens_stock, stock_movimentos, certificados_material (3 cert 3.1 classificados S41)</p>
+
+<h3>Sistema (4 tabelas)</h3>
+<p>audit_log, calendario, _json_staging, _rag_staging</p>
+
+<div class="flag flag-red">
+<strong>FALHA: Agente Inventario sem logica.</strong> As 6 tabelas de stock existem mas o agente nao tem logica implementada. Sem lot tracking operacional — critico para EN 1090 (rastreabilidade de materiais por lote).
+</div>
+
+<!-- 09 API ROUTES -->
+<h2>09 API ROUTES — 53+ ENDPOINTS</h2>
+
+<h3>CRM/Pipeline — S38-S40 (17 endpoints)</h3>
+<table>
+<tr><th>Route</th><th>Metodo</th><th>Funcao</th></tr>
+<tr><td>/api/veiculos/lookup-matricula</td><td>POST</td><td>Matricula → VIN + dados basicos (matricula.co.pt)</td></tr>
+<tr><td>/api/veiculos/lookup-vin</td><td>POST</td><td>VIN → ~50 campos specs (Vincario)</td></tr>
+<tr><td>/api/clientes</td><td>GET|POST</td><td>CRUD clientes</td></tr>
+<tr><td>/api/clientes/verificar</td><td>POST</td><td>Envia codigo 6 digitos</td></tr>
+<tr><td>/api/clientes/confirmar</td><td>POST</td><td>Confirma codigo</td></tr>
+<tr><td>/api/tickets</td><td>GET|POST</td><td>CRUD tickets ISA-95</td></tr>
+<tr><td>/api/tickets/[id]</td><td>GET|PATCH</td><td>Detalhe/actualizar ticket</td></tr>
+<tr><td>/api/tickets/evoluir</td><td>POST</td><td>Evolucao automatica (COM→PRD)</td></tr>
+<tr><td>/api/router/classificar</td><td>POST</td><td>Router Haiku — classifica + dedup</td></tr>
+<tr><td>/api/marta/mensagem</td><td>POST</td><td>Marta responde ao cliente</td></tr>
+<tr><td>/api/marta/conversa/[ticket_id]</td><td>GET</td><td>Historico conversa</td></tr>
+<tr><td>/api/whatsapp/twilio</td><td>POST</td><td>Webhook WhatsApp</td></tr>
+<tr><td>/api/leads/qualificar</td><td>POST</td><td>Qualificacao de lead</td></tr>
+<tr><td>/api/leads/[id]/estado</td><td>PATCH</td><td>Actualizar estado lead</td></tr>
+<tr><td>/api/leads/[id]/orcamento</td><td>POST</td><td>Gerar orcamento</td></tr>
+</table>
+
+<h3>Anteriores (36+ endpoints)</h3>
+<p>/api/chat (Fernando) · /api/rh/* (Carolina/Agente RH) · /api/faturacao/* (InvoiceXpress) · /api/leads/* (CRUD) · /api/documentos/* (upload/extraccao) · /api/embeddings/* (RAG) · /api/configurador/* (JPM) · /api/obras/* (gerar-termo) · /api/kpis/worker · /api/fornecedores/* · /api/correspondencia/* · +20 outros</p>
+
+<!-- 10 MESA-11 -->
+<h2>10 MESA-11 — CHECKLIST OBRIGATORIO L3-MES</h2>
+
+<table>
+<tr><th>#</th><th>Funcao MESA-11</th><th>Modulo</th><th>Componente CSN</th><th>Estado</th></tr>
+<tr><td>1</td><td>Resource Allocation</td><td>PRD</td><td>colaboradores + obras + obras internas MNT</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>2</td><td>Operations Scheduling</td><td>PRD</td><td>fases_obra com estimativas hora</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>3</td><td>Dispatching Production</td><td>PRD</td><td>timer + atribuicao manual responsavel</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>4</td><td>Document Control</td><td>DOC</td><td>Agente Documental + 8 skills + 1322 emails classif.</td><td><span class="badge prod">COMPLETO</span></td></tr>
+<tr><td>5</td><td>Data Collection</td><td>PER/INV</td><td>timetracking + e-fatura + mov. bancarios + fotos fase</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>6</td><td>Labor Management</td><td>RH</td><td>recibos + CITs + ausencias + conta corrente + declaracoes</td><td><span class="badge prod">COMPLETO</span></td></tr>
+<tr><td>7</td><td>Quality Management</td><td>QMS</td><td>Inspeccoes visuais basicas. NC formal inexistente.</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>8</td><td>Process Management</td><td>PRD</td><td>9 fases template + obras internas MNT + work instructions (ADR-030 planeado)</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>9</td><td>Maintenance Mgmt</td><td>MNT</td><td>MNT-001 a MNT-004. Sem MTBF. Sem preventiva real.</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>10</td><td>Product Tracking</td><td>PRD</td><td>VIN + estados obra + matricula lookup</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>11</td><td>Performance Analysis</td><td>PRD</td><td>6 KPIs ISO 22400 calculaveis. Dashboard pendente.</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+</table>
+
+<p><strong>Score S42: 2 completas · 9 parciais · 0 em falta</strong> (sem alteracao face a S33)</p>
+
+<!-- 11 ISO 22400 KPIs -->
+<h2>11 ISO 22400 — KPIs MANUFACTURING OPERATIONS</h2>
+
+<table>
+<tr><th>KPI ISO 22400</th><th>Formula CSN</th><th>Estado</th></tr>
+<tr><td>Worker Efficiency Ratio</td><td>horas_estimadas / horas_reais por fase</td><td><span class="badge prod">CALCULAVEL</span></td></tr>
+<tr><td>Actual Production Time (semana + mes)</td><td>SUM(duracao_minutos) por colaborador</td><td><span class="badge prod">CALCULAVEL</span></td></tr>
+<tr><td>Throughput Rate (semana + mes)</td><td>fases concluidas / periodo</td><td><span class="badge prod">CALCULAVEL</span></td></tr>
+<tr><td>Allocation Efficiency</td><td>% tempo producao vs total</td><td><span class="badge prod">CALCULAVEL</span></td></tr>
+<tr><td>Setup Ratio</td><td>tempo F1+F2 / tempo total obra</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>Production Process Ratio</td><td>tempo real / tempo estimado obra</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>Schedule Attainment</td><td>obras entregues / obras planeadas</td><td><span class="badge parcial">PARCIAL</span></td></tr>
+<tr><td>OEE Bodor laser</td><td>Disponibilidade x Performance x Qualidade</td><td><span class="badge plan">FUTURO — L1 sensor</span></td></tr>
+<tr><td>First Pass Yield</td><td>% fases sem retrabalho</td><td><span class="badge plan">FUTURO — campo retrabalho</span></td></tr>
+<tr><td>Quality Ratio / Scrap Rate</td><td>pecas OK vs desperdicadas</td><td><span class="badge plan">FUTURO — consumos material</span></td></tr>
+<tr><td>KPIs energia (35-38)</td><td>Consumo Bodor 60kW</td><td><span class="badge plan">FUTURO — smart meter</span></td></tr>
+</table>
+
+<p><strong>Score: 6/38 calculaveis (16%) · 7 parciais · 25 futuros</strong></p>
+
+<!-- 12 PRINCIPIOS ARQUITECTURAIS -->
+<h2>12 PRINCIPIOS ARQUITECTURAIS</h2>
+
+<table>
+<tr><th>#</th><th>Principio</th><th>Descricao</th><th>Cumprido?</th></tr>
+<tr><td>P1</td><td>Regulamento antes de features</td><td>Conformidade regulamentar primeiro. Features derivam dos requisitos legais.</td><td><span class="badge bloq">VIOLADO — features de CRM e voz antes de EN 1090 e COC</span></td></tr>
+<tr><td>P2</td><td>Satellite Portal Pattern</td><td>Interfaces externas sao satelites autonomos. Sem acesso ao Supabase.</td><td><span class="badge prod">SIM</span></td></tr>
+<tr><td>P3</td><td>Hierarquia normativa</td><td>EU → Nacional → Directivas fabricante.</td><td><span class="badge prod">SIM</span></td></tr>
+<tr><td>P4</td><td>Equipamento ≠ Acessorio</td><td>Equipamento tem impacto estrutural. Acessorios nao.</td><td><span class="badge prod">SIM</span></td></tr>
+<tr><td>P5</td><td>Documentos nunca sobrescritos</td><td>Sempre versao nova incrementada.</td><td><span class="badge prod">SIM</span></td></tr>
+<tr><td>P6</td><td>Separacao de preocupacoes</td><td>RH separado de producao. Comercial separado de operacoes.</td><td><span class="badge prod">SIM</span></td></tr>
+<tr><td>P7</td><td>ISA-95 como espinha dorsal</td><td>Toda a arquitectura organizada pelos 5 niveis.</td><td><span class="badge prod">SIM</span></td></tr>
+<tr><td>P8</td><td>Personas abaixo do nucleo</td><td>Personas sao interlocutoras. Nao produzem. Agentes fazem o trabalho.</td><td><span class="badge prod">SIM</span></td></tr>
+<tr><td>P9</td><td>4 docs por sessao</td><td>ESTADO + ESTADO.md (raiz) + PDF controlo + HTML arquitectura.</td><td><span class="badge bloq">VIOLADO — S30, S31, S37 sem arquitectura</span></td></tr>
+</table>
+
+<!-- 13 CODIFICACAO -->
+<h2>13 CODIFICACAO INTERNA — CSN-L[nivel]-[seccao]-[seq]-[ano]</h2>
+
+<table>
+<tr><th>Codigo</th><th>Seccao ISA-95</th><th>Nivel</th><th>Ambito</th></tr>
+<tr><td>PRD</td><td>Production Operations</td><td>L0-L2</td><td>Termos, checklists, fichas fase</td></tr>
+<tr><td>QMS</td><td>Quality Operations</td><td>L1-L2</td><td>ITP, relatorios, NC</td></tr>
+<tr><td>MNT</td><td>Maintenance Operations</td><td>L2</td><td>Planos manutencao, registos</td></tr>
+<tr><td>INV</td><td>Inventory Operations</td><td>L3</td><td>Cert. material 3.1, encomendas</td></tr>
+<tr><td>PER</td><td>Personnel</td><td>L0-L3</td><td>Qualificacoes, certificados</td></tr>
+<tr><td>EQP</td><td>Equipment</td><td>L0-L2</td><td>Fichas equipamento, calibracao</td></tr>
+<tr><td>MAT</td><td>Material</td><td>L0-L3</td><td>Rastreabilidade lotes, consumos</td></tr>
+<tr><td>FIN</td><td>Financial</td><td>L4</td><td>Faturas, movimentos, reconciliacao</td></tr>
+<tr><td>DOC</td><td>Document Management</td><td>L3</td><td>DAVs, COCs, DoPs, CE</td></tr>
+<tr><td>RH</td><td>Human Resources</td><td>L3</td><td>Recibos, ferias, processamentos</td></tr>
+<tr><td>COM</td><td>Commercial</td><td>L4</td><td>Propostas, leads, contratos</td></tr>
+<tr><td>ENG</td><td>Engineering / System</td><td>L4</td><td>ADRs, arquitectura, controlo</td></tr>
+</table>
+
+<!-- 14 HIERARQUIA DE EQUIPAMENTO -->
+<h2>14 HIERARQUIA DE EQUIPAMENTO ISA-95</h2>
+
+<table>
+<tr><th>Nivel ISA-95</th><th>Entidade CSN</th><th>Codigo</th></tr>
+<tr><td>Enterprise</td><td>Carlos dos Santos Nascimento, Lda</td><td>CSN</td></tr>
+<tr><td>Site</td><td>Fabrica Mafra</td><td>CSN-MAFRA</td></tr>
+<tr><td>Area: Corte</td><td>Bodor Laser 60kW + Weinig Unimat 22E</td><td>CSN-MAFRA-CRT</td></tr>
+<tr><td>Area: Estrutura</td><td>Assemblagem + Soldadura MAG/MIG</td><td>CSN-MAFRA-EST</td></tr>
+<tr><td>Area: Acabamento</td><td>Pintura + Montagem</td><td>CSN-MAFRA-ACB</td></tr>
+<tr><td>Area: Expedicao</td><td>Parque + Pesagem + Docs</td><td>CSN-MAFRA-EXP</td></tr>
+</table>
+
+<h3>Equipamento Fisico (L0-EQP)</h3>
+<table>
+<tr><th>Equipamento</th><th>Codigo</th><th>Area</th><th>Estado</th><th>Nota</th></tr>
+<tr><td>Bodor Laser (chapa)</td><td>CSN-L0-EQP-001</td><td>CRT</td><td><span class="badge prod">Operacional</span></td><td>60kW · 78K EUR · ISO 50001 target</td></tr>
+<tr><td>Weinig Unimat 22E</td><td>CSN-L0-EQP-002</td><td>CRT</td><td><span class="badge prod">Operacional</span></td><td>Plaina 7 cabecas</td></tr>
+<tr><td>Fronius Transteel 4000 Pulse</td><td>CSN-L0-EQP-003</td><td>EST</td><td><span class="badge prod">Operacional</span></td><td>MAG/MIG · Manual no sistema</td></tr>
+<tr><td>Cabine pintura</td><td>CSN-L0-EQP-004</td><td>ACB</td><td><span class="badge prod">Operacional</span></td><td>—</td></tr>
+<tr><td>Guilhotina</td><td>CSN-L0-EQP-005</td><td>CRT</td><td><span class="badge prod">Operacional</span></td><td>—</td></tr>
+<tr><td>Quinadora CNC</td><td>CSN-L0-EQP-006</td><td>CRT</td><td><span class="badge prod">Operacional</span></td><td>—</td></tr>
+<tr><td>Empilhador 2,5t (Mitsubishi)</td><td>CSN-L0-EQP-007</td><td>EXP</td><td><span class="badge prod">Operacional</span></td><td>—</td></tr>
+<tr><td>Empilhador 4,5t (Toyota)</td><td>CSN-L0-EQP-008</td><td>EXP</td><td><span class="badge prod">Operacional</span></td><td>—</td></tr>
+</table>
+
+<div class="flag flag-red">
+<strong>KUKA Robot: NAO EXISTE.</strong> Removido definitivamente do inventario. Aparecia e desaparecia entre sessoes. Nao foi adquirido. Qualquer referencia em documentos anteriores e errada.
+</div>
+
+<!-- 15 PESSOAL -->
+<h2>15 PESSOAL (L0-PER)</h2>
+
+<table>
+<tr><th>ID</th><th>Nome</th><th>Funcao</th><th>Area</th><th>Codigo</th><th>SS</th><th>Salario 2026</th><th>Certificacoes</th></tr>
+<tr><td>1</td><td>Bohdan</td><td>Operator</td><td>CRT/EST/ACB</td><td>CSN-L0-PER-001</td><td>7.5%</td><td>920 EUR</td><td><span class="badge bloq">EN 9606-1 PENDENTE</span></td></tr>
+<tr><td>2</td><td>Jose Julio</td><td>Operator</td><td>ACB</td><td>CSN-L0-PER-002</td><td>11%</td><td>920 EUR</td><td>—</td></tr>
+<tr><td>3</td><td>Joao Antonio</td><td>Operator</td><td>EST/ACB</td><td>CSN-L0-PER-003</td><td>11%</td><td>920 EUR</td><td><span class="badge bloq">EN 9606-1 PENDENTE</span></td></tr>
+<tr><td>—</td><td>Duarte Bustorff-Silva</td><td>CEO / Manager</td><td>Todas</td><td>CSN-L4-PER-001</td><td>—</td><td>—</td><td>—</td></tr>
+</table>
+
+<p>Recibos na DB: 45 (Jan 2025 → Mar 2026) · PIN: Bohdan 1001, Julio 1002, Joao 1003</p>
+
+<div class="flag flag-red">
+<strong>BLOQUEIO CRITICO:</strong> Certificacao soldadores EN ISO 9606-1 pendente desde S13. Sem esta certificacao, EN 1090 e EN ISO 3834 nao avancam. Coordenador IWS/IWT por contratar.
+</div>
+
+<!-- 16 FORNECEDORES -->
+<h2>16 FORNECEDORES PRODUCAO (L0-MAT)</h2>
+
+<table>
+<tr><th>#</th><th>Fornecedor</th><th>Material</th><th>Skill</th><th>NIF no sistema</th></tr>
+<tr><td>1</td><td>Chagas</td><td>Aco, tubos, perfis, aluminio</td><td><span class="badge prod">Activo</span></td><td>Sim</td></tr>
+<tr><td>2</td><td>Coprial</td><td>Gases soldadura (O2, H2, Arco 15)</td><td><span class="badge prod">Activo</span></td><td>Sim</td></tr>
+<tr><td>3</td><td>Polifer</td><td>Tinta</td><td><span class="badge prod">Activo</span></td><td>Sim</td></tr>
+<tr><td>4</td><td>Pecol</td><td>Parafusos, colas, fio solda</td><td><span class="badge prod">Activo</span></td><td>Sim</td></tr>
+<tr><td>5</td><td>Madeicentro</td><td>Madeira / taipais</td><td><span class="badge prod">Activo</span></td><td>Sim</td></tr>
+<tr><td>6</td><td>Bielco</td><td>Aluminio, reguas, taipais alu</td><td><span class="badge plan">Pendente</span></td><td>Sim</td></tr>
+<tr><td>7</td><td>Silfesan</td><td>Corte laser, subcontratacao</td><td><span class="badge plan">Pendente</span></td><td>Sim</td></tr>
+<tr><td>8</td><td>Dhollandia</td><td>Plataformas elevatorias</td><td><span class="badge parcial">S36</span></td><td>Sim</td></tr>
+</table>
+
+<p>Total fornecedores com NIF no sistema: 381. Total catalogados (INDICE_v3): 1.155. Emails classificados: 1.322/1.323 (99.9%).</p>
+
+<!-- 17 RAG -->
+<h2>17 RAG — RETRIEVAL AUGMENTED GENERATION (S36+)</h2>
+
+<table>
+<tr><th>Componente</th><th>Tecnologia</th><th>Estado</th></tr>
+<tr><td>PDF Parsing</td><td>pdf-parse</td><td><span class="badge prod">Operacional</span></td></tr>
+<tr><td>Embeddings</td><td>Voyage AI voyage-3 (1024 dims)</td><td><span class="badge prod">Operacional</span></td></tr>
+<tr><td>Vector Store</td><td>pgvector + HNSW cosine index</td><td><span class="badge prod">Operacional</span></td></tr>
+<tr><td>API</td><td>/api/embeddings/gerar</td><td><span class="badge prod">Operacional</span></td></tr>
+<tr><td>Vectores na DB</td><td>3.019 embeddings</td><td><span class="badge prod">Activo</span></td></tr>
+<tr><td>PDFs no Storage</td><td>3.333 PDFs (bucket: documentos)</td><td><span class="badge parcial">Parcialmente ingeridos</span></td></tr>
+</table>
+
+<!-- 18 STACK -->
+<h2>18 STACK TECNOLOGICO</h2>
+
+<table>
+<tr><th>Componente</th><th>Tecnologia</th><th>Nota</th></tr>
+<tr><td>Frontend/Backend</td><td>Next.js 14 · TypeScript · Tailwind CSS</td><td>—</td></tr>
+<tr><td>Base de Dados</td><td>Supabase (PostgreSQL + pgvector + Storage + RLS)</td><td>59 tabelas</td></tr>
+<tr><td>AI</td><td>Claude API — Sonnet 4 (chat) + Haiku (classificacao Router)</td><td>Key rotada S41</td></tr>
+<tr><td>Deploy</td><td>Vercel (csn-producao.vercel.app)</td><td>Manual: npx vercel --prod</td></tr>
+<tr><td>Facturacao</td><td>InvoiceXpress (cert AT 192)</td><td>Conta: carlosdossantosna</td></tr>
+<tr><td>APIs Veiculos</td><td>matricula.co.pt + Vincario</td><td>0.20 EUR/consulta cada</td></tr>
+<tr><td>Voz</td><td>Vapi.ai + ElevenLabs + Deepgram + Twilio</td><td><span class="badge bloq">BLOQUEADO</span></td></tr>
+<tr><td>Calendar</td><td>Google Calendar (carrocariascsn@gmail.com)</td><td><span class="badge novo">NOVO S42 — ADR-035</span></td></tr>
+<tr><td>Repo</td><td>duartebustorff-star/csn-producao</td><td>GitHub</td></tr>
+</table>
+
+<!-- 19 COMERCIAL -->
+<h2>19 CONTEXTO COMERCIAL</h2>
+
+<h3>Concessionarios (CSN-L4-COM)</h3>
+<p>Astara Retail · Grupo MCoutinho · Santogal · Salvador Caetano · C. Santos VP · Oneshop · Hydraplan</p>
+
+<h3>Marcas</h3>
+<p>Fuso · Isuzu · Maxus · Renault · Mercedes · VW · Ford · MAN</p>
+
+<h3>Mercados Exportacao</h3>
+<p>PT · FR · DE · ES</p>
+
+<h3>InvoiceXpress (CSN-L4-FIN)</h3>
+<p>Cert AT: 192 · Conta: carlosdossantosna · Testado: Vesauto NIF 501316272, 2100 EUR+IVA</p>
+
+<!-- 20 PRONTIDAO AUDITORIA -->
+<h2>20 PRONTIDAO PARA AUDITORIA (SECCAO PERMANENTE — NUNCA REMOVER)</h2>
+
+<span class="inviolavel">Esta seccao NUNCA e removida. Percentagens reflectem progresso real — nao objectivos.</span>
+
+<table>
+<tr><th>Norma</th><th>%</th><th>Coberto pelo Opus</th><th>Em Falta</th><th>Fora do SAAS</th></tr>
+<tr>
+<td><strong>ISO 9001:2015</strong></td><td><strong>35%</strong></td>
+<td>Controlo docs, rastreabilidade, registos producao, KPIs ISO 22400, gestao NC (parcial)</td>
+<td>Manual qualidade formal, auditorias internas, revisao pela gestao, procedimentos documentados, accoes correctivas formais</td>
+<td>Certificacao APCER/BV/SGS</td>
+</tr>
+<tr>
+<td><strong>Reg. 2018/858 + COC</strong></td><td><strong>40%</strong></td>
+<td>Registo obras, fases producao, dados chassis (DAV/FAM), rastreabilidade VIN, gerar-termo</td>
+<td><span class="badge bloq">Template COC multi-etapa, geracao automatica COC, COC electronico (DEADLINE JUL/2026), verificacao GSR (Reg. 2019/2144)</span></td>
+<td>Homologacao IMT, servico tecnico</td>
+</tr>
+<tr>
+<td><strong>EN 1090-1/-2</strong></td><td><strong>15%</strong></td>
+<td>Rastreabilidade materiais (M017), certificados_material (3 cert 3.1), registos producao, dossier foto</td>
+<td><span class="badge bloq">WPS/WPQR qualificados, certificacao soldadores EN 9606, coordenador IWS/IWT, manual FPC, ITP, DoP formal</span></td>
+<td>Certificacao organismo notificado, ensaios laboratorio</td>
+</tr>
+<tr>
+<td><strong>EN ISO 3834-3</strong></td><td><strong>10%</strong></td>
+<td>Rastreabilidade consumiveis (parcial), registos producao, certificados_material</td>
+<td>Controlo formal consumiveis, planeamento soldadura por obra, NC soldadura</td>
+<td>Vem com certificacao EN 1090</td>
+</tr>
+<tr>
+<td><strong>EN 12642 L/XL</strong></td><td><strong>5%</strong></td>
+<td>Nenhum (apenas awareness)</td>
+<td><span class="badge bloq">Ensaio/calculo FEA por modelo, certificado laboratorio (TUV, DEKRA, Prova Impar)</span></td>
+<td>Ensaios fisicos, certificacao</td>
+</tr>
+<tr>
+<td><strong>ISO 22400</strong></td><td><strong>16%</strong></td>
+<td>6 KPIs calculaveis, endpoint /api/kpis/worker live</td>
+<td>Dashboard visual, 32 KPIs adicionais (L1 sensors + stock + quality)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>VDI 2700</strong></td><td><strong>5%</strong></td>
+<td>Nenhum especifico</td>
+<td>Calculos EN 12195-1, pontos amarracao EN 12640</td>
+<td>"Estado da arte" tribunais DE</td>
+</tr>
+<tr>
+<td><strong>ISO 14001</strong></td><td><strong>10%</strong></td>
+<td>Consciencia residuos, estrutura PRR trio</td>
+<td>SGA completo, objectivos ambientais, auditorias</td>
+<td>Certificacao</td>
+</tr>
+<tr>
+<td><strong>ISO 45001</strong></td><td><strong>10%</strong></td>
+<td>EPIs basicos, CITs registadas, contactos urgentes</td>
+<td>Avaliacoes risco, registo acidentes, plano formacao</td>
+<td>Certificacao</td>
+</tr>
+<tr>
+<td><strong>ISO 50001</strong></td><td><strong>5%</strong></td>
+<td>Bodor 60kW identificado</td>
+<td>Smart meter, baseline energetica, plano reducao</td>
+<td>—</td>
+</tr>
+</table>
+
+<div class="flag flag-red">
+<strong>ALERTA DEADLINE:</strong> COC Electronico IMT — Julho 2026 (3 meses). Zero progresso de implementacao. Template COC nao existe. Integracao portal IMT nao iniciada.
+</div>
+
+<div class="flag flag-red">
+<strong>ALERTA BLOQUEIO:</strong> EN 1090 depende de: (1) Soldadores certificados EN 9606-1 — pendente desde S13; (2) Coordenador IWS/IWT — por contratar; (3) WPS/WPQR — por criar. Sem estes 3 itens, marcacao CE de estruturas metalicas e impossivel.
+</div>
+
+<!-- 21 ADRs -->
+<h2>21 ADRs — 35 DECISOES REGISTADAS</h2>
+
+<table>
+<tr><th>#</th><th>Titulo</th><th>Sessao</th><th>Dominio</th></tr>
+<tr><td>001</td><td>Nome do Sistema: CSN Opus</td><td>S15</td><td>Sistema</td></tr>
+<tr><td>002</td><td>AI Personas vs Autonomous Agents</td><td>S15</td><td>Arquitectura</td></tr>
+<tr><td>003</td><td>Base Normativa: 3 Dimensoes</td><td>S15</td><td>Regulamentar</td></tr>
+<tr><td>004</td><td>Knowledge Base Externa por Dominio (RAG)</td><td>S15</td><td>AI/Knowledge</td></tr>
+<tr><td>005</td><td>Arquitectura de 5 Camadas</td><td>S15</td><td>Arquitectura</td></tr>
+<tr><td>006</td><td>Agente Compliance: Auditoria Mensal</td><td>S15</td><td>Qualidade</td></tr>
+<tr><td>007</td><td>Rastreabilidade Materiais por Lote e FIFO</td><td>S15</td><td>Producao</td></tr>
+<tr><td>008</td><td>Base de Dados de Veiculos por Marca</td><td>S15</td><td>Dados</td></tr>
+<tr><td>009</td><td>Inteligencia Tecnica por Marca</td><td>S15</td><td>Dados</td></tr>
+<tr><td>010</td><td>CSN Technic: CSN Brain Produto Comercial</td><td>S15</td><td>Produto</td></tr>
+<tr><td>011</td><td>Formula de Peso Util + Base Legal</td><td>S15</td><td>Regulamentar</td></tr>
+<tr><td>012</td><td>Normas Fixacao Carga EN 12195 + RAG</td><td>S15</td><td>Regulamentar</td></tr>
+<tr><td>013</td><td>Hierarquia de Conformidade + Limites</td><td>S15</td><td>Regulamentar</td></tr>
+<tr><td>014</td><td>Equipamentos: Grua, Plataforma, Engate</td><td>S15</td><td>Tecnico</td></tr>
+<tr><td>015</td><td>Familias Carrocaria: Basculante + Estrado</td><td>S15</td><td>Produto</td></tr>
+<tr><td>016</td><td>Agente Inteligencia de Marcas</td><td>S15</td><td>AI/Agentes</td></tr>
+<tr><td>017</td><td>Box Rules: Dimensoes e Pesos Carrocaria</td><td>S15</td><td>Tecnico</td></tr>
+<tr><td>018</td><td>Gestao de OTs e Scraping com Cowork</td><td>S15</td><td>Producao</td></tr>
+<tr><td>019</td><td>Conformidade ISA-95 + ISO 9001 + EN 1090</td><td>S15</td><td>Qualidade</td></tr>
+<tr><td>020</td><td>Carolina: Agente RH</td><td>S15</td><td>RH</td></tr>
+<tr><td>021</td><td>Fernando: Lideranca + RAG</td><td>S15</td><td>Producao</td></tr>
+<tr><td>022</td><td>Agente Research Autonomo</td><td>S15</td><td>AI/Agentes</td></tr>
+<tr><td>023</td><td>Departamento Processos: SOPs Multilingue</td><td>S15</td><td>Qualidade</td></tr>
+<tr><td>024</td><td>Agente FEA: iLogic + Nastran + EN 12642</td><td>S15</td><td>Tecnico</td></tr>
+<tr><td>025</td><td>Facturacao InvoiceXpress</td><td>S24-25</td><td>Financeiro</td></tr>
+<tr><td>026</td><td>Skills Agente Documental 2 Camadas</td><td>S27</td><td>DOC</td></tr>
+<tr><td>027</td><td>Email Archiving</td><td>S28</td><td>DOC</td></tr>
+<tr><td>028</td><td>Portal Trabalhador Duas Portas</td><td>S33</td><td>SUP</td></tr>
+<tr><td>029</td><td>ISO 22400 KPIs Worker</td><td>S33</td><td>PRD</td></tr>
+<tr><td>030</td><td>Work Instructions por Fase</td><td>S34</td><td>PRD</td></tr>
+<tr><td>031</td><td>Arquitectura Departamental 3 Camadas</td><td>S35</td><td>Arquitectura</td></tr>
+<tr><td>032</td><td>Agente WhatsApp Urgencias</td><td>S37</td><td>COM</td></tr>
+<tr><td>033</td><td>CRM Pipeline Marta 3 Portoes</td><td>S38</td><td>COM</td></tr>
+<tr><td>034</td><td>Router Classificacao + Dedup</td><td>S39</td><td>MOM</td></tr>
+<tr><td>035</td><td>Google Calendar como Camada Temporal ISA-95</td><td>S42</td><td>ENG</td></tr>
+</table>
+
+<div class="flag flag-yellow">
+<strong>FALHA:</strong> INDEX.md em docs/adr/ so lista 25 ADRs. ADRs 026-035 nao estao indexados. ADRs 031, 033, 034 mencionados em documentacao mas ficheiros .md nao existem no directorio adr/.
+</div>
+
+<!-- 22 EMAILS -->
+<h2>22 REPOSITORIO DOCUMENTAL EMAIL</h2>
+
+<table>
+<tr><th>Conta</th><th>Registos</th><th>PDFs</th><th>Classificados IA</th><th>Ligados NIF</th></tr>
+<tr><td>geral@carrocariascsn.pt</td><td>18.169</td><td>11.547</td><td>1.322 (S41)</td><td>1.320 (S40)</td></tr>
+<tr><td>carlos.snascimento@sapo.pt (inbox)</td><td>9.211</td><td>9.211</td><td>—</td><td>—</td></tr>
+<tr><td>carlos.snascimento@sapo.pt (enviados)</td><td>1.777</td><td>1.777</td><td>—</td><td>—</td></tr>
+<tr><td>carlos.snascimento@sapo.pt (recibos)</td><td>4</td><td>4</td><td>—</td><td>—</td></tr>
+<tr><td>duarte.bustorff@gmail.com</td><td>—</td><td>—</td><td>—</td><td>Pendente</td></tr>
+<tr><th>TOTAL</th><th>29.161</th><th>22.539</th><th>1.322</th><th>1.320</th></tr>
+</table>
+
+<!-- 23 FALHAS CONHECIDAS -->
+<h2>23 FALHAS CONHECIDAS E DEBITO TECNICO</h2>
+
+<table>
+<tr><th>#</th><th>Falha</th><th>Sessao Origem</th><th>Severidade</th><th>Estado</th></tr>
+<tr><td>F01</td><td>ANTHROPIC_API_KEY exposta em chat</td><td>S40</td><td><span class="badge bloq">CRITICA</span></td><td>Rotada S41. Verificar se logs foram limpos.</td></tr>
+<tr><td>F02</td><td>Script v1 processou ficheiros fabricados pelo Cowork (940/1000 erros)</td><td>S40-S41</td><td><span class="badge bloq">CRITICA</span></td><td>Corrigido com v2. Outputs anteriores nao verificados.</td></tr>
+<tr><td>F03</td><td>Cegid Vendus subscrito, integrado e revertido (trabalho desperdicado)</td><td>S24-S25</td><td><span class="badge parcial">MEDIA</span></td><td>Vendus por cancelar formalmente</td></tr>
+<tr><td>F04</td><td>Voz Vapi.ai bloqueada (org switch pendente)</td><td>S39</td><td><span class="badge parcial">MEDIA</span></td><td>Sem resolucao em 3 sessoes</td></tr>
+<tr><td>F05</td><td>KUKA robot fantasma na documentacao (nao existe)</td><td>S13→S39</td><td><span class="badge parcial">MEDIA</span></td><td>Removido S42</td></tr>
+<tr><td>F06</td><td>Persona Luisa mudou de papel 3 vezes sem ADR</td><td>S23→S41</td><td><span class="badge parcial">MEDIA</span></td><td>Estabilizada como Assistente CEO</td></tr>
+<tr><td>F07</td><td>Persona Irina removida sem ADR</td><td>S24</td><td><span class="badge parcial">BAIXA</span></td><td>Documentada neste doc</td></tr>
+<tr><td>F08</td><td>Sessoes S30, S31, S37 sem ficheiro de arquitectura (viola P9)</td><td>S30/31/37</td><td><span class="badge parcial">MEDIA</span></td><td>Gaps permanentes</td></tr>
+<tr><td>F09</td><td>INDEX.md ADRs desactualizado (25 vs 35)</td><td>S26→S42</td><td><span class="badge parcial">BAIXA</span></td><td>Por actualizar</td></tr>
+<tr><td>F10</td><td>Conformidade ISA-95 estagnada em 36% durante 15 sessoes</td><td>S26→S41</td><td><span class="badge parcial">MEDIA</span></td><td>Rever metodo de contagem</td></tr>
+<tr><td>F11</td><td>Principio P1 violado — features CRM/voz antes de conformidade regulamentar</td><td>S38-S39</td><td><span class="badge parcial">MEDIA</span></td><td>Recentrar prioridades</td></tr>
+<tr><td>F12</td><td>Soldadores EN 9606-1 pendentes desde S13 (18 sessoes)</td><td>S13</td><td><span class="badge bloq">CRITICA</span></td><td>Bloqueia EN 1090</td></tr>
+<tr><td>F13</td><td>COC electronico IMT — deadline Jul/2026, zero progresso</td><td>S23</td><td><span class="badge bloq">CRITICA</span></td><td>3 meses para deadline</td></tr>
+</table>
+
+<!-- 24 HISTORICO -->
+<h2>24 HISTORICO DE VERSOES</h2>
+
+<table>
+<tr><th>Versao</th><th>Sessao</th><th>Data</th><th>Destaque</th></tr>
+<tr><td>v42</td><td>S42</td><td>07/04/2026</td><td>Google Calendar ISA-95 (ADR-035). Relatorio evolucao S23→S41. Falhas documentadas. Inventario completo.</td></tr>
+<tr><td>v41</td><td>S41</td><td>06/04/2026</td><td>1322 emails classificados. 129 facturas. 3 cert 3.1. Mig 052. API key rotada.</td></tr>
+<tr><td>v40</td><td>S40</td><td>05/04/2026</td><td>Haiku Router. 8 clientes. Leads consolidada. certificados_material. gerar-termo corrigido.</td></tr>
+<tr><td>v39</td><td>S39</td><td>05/04/2026</td><td>Voz + WhatsApp. 58 tabelas. Configurador JPM. Vapi BLOQUEADO.</td></tr>
+<tr><td>v38</td><td>S38</td><td>04/04/2026</td><td>CRM Pipeline. Marta 3 portoes. APIs veiculos. Tickets ISA-95. ADR-033.</td></tr>
+<tr><td>—</td><td>S37</td><td>03/04/2026</td><td><span class="badge bloq">SEM ARQUITECTURA</span> — ADR-032 WhatsApp Urgencias.</td></tr>
+<tr><td>v36</td><td>S36</td><td>02/04/2026</td><td>RAG LIVE. pgvector. Voyage AI. 38 tabelas.</td></tr>
+<tr><td>v35</td><td>S35</td><td>02/04/2026</td><td>ADR-031 3 camadas. Skill Registry. RAG foundation.</td></tr>
+<tr><td>v34</td><td>S34</td><td>01/04/2026</td><td>Router. 381 fornecedores. Camera mobile. ADR-028/029/030.</td></tr>
+<tr><td>v33</td><td>S33</td><td>31/03/2026</td><td>MNT-001→004. KPIs live. Conta corrente IBAN. MESA-11 2/9/0.</td></tr>
+<tr><td>v32</td><td>S32</td><td>30/03/2026</td><td>ISO 22400. Portal Duas Portas. 11 agentes. Benchmark Factorial.</td></tr>
+<tr><td>—</td><td>S31</td><td>30/03/2026</td><td><span class="badge bloq">SEM ARQUITECTURA</span></td></tr>
+<tr><td>—</td><td>S30</td><td>—</td><td><span class="badge bloq">SEM ARQUITECTURA</span></td></tr>
+<tr><td>v29</td><td>S29</td><td>30/03/2026</td><td>Skills expandidas. 3 camadas documental.</td></tr>
+<tr><td>v28</td><td>S28</td><td>29/03/2026</td><td>Skills documental 7 ficheiros. 8 fornecedores. Email 29.161. P9.</td></tr>
+<tr><td>v27</td><td>S27</td><td>29/03/2026</td><td>v27 iteration of S28 content.</td></tr>
+<tr><td>v26</td><td>S26</td><td>28/03/2026</td><td>ISA-95 completo (4 partes IEC 62264 + MESA-11).</td></tr>
+<tr><td>v25</td><td>S26</td><td>28/03/2026</td><td>ISA-95 reestruturacao inicial.</td></tr>
+<tr><td>v24</td><td>S25</td><td>27/03/2026</td><td>masterway→InvoiceXpress. M015. ADR-025.</td></tr>
+<tr><td>v23</td><td>S23</td><td>27/03/2026</td><td>M015 facturacao. Routes RH. 5 camadas originais.</td></tr>
+<tr><td>v1-22</td><td>S1-22</td><td>—</td><td>Evolucao progressiva.</td></tr>
+</table>
+
+</div>
+
+<div class="footer">
+CSN — Engenharia de Veiculos Comerciais · Mafra, Portugal · NIF 500 861 790 · Documento interno — nao distribuir<br>
+Codigo: CSN-L4-ENG-SYS-042-2026 · Sessao: S42 · Data: 07/04/2026 · duartebustorff-star/csn-producao · csn-producao.vercel.app
+</div>
+
+</body>
+</html>
