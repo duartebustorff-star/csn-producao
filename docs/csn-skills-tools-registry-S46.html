@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8"><title>CSN Skills & Tools Registry — S46</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#0F1629;color:#fff;padding:20px}
+h1{font-size:24px;margin-bottom:5px}h2{color:#4ECDC4;font-size:16px;margin:20px 0 10px;border-bottom:1px solid #334155;padding-bottom:5px}
+.sub{color:#94A3B8;font-size:12px;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:10px;margin:10px 0}th{background:#1E2761;padding:6px;text-align:left}
+td{padding:4px 6px;border-bottom:1px solid #334155}tr:nth-child(even){background:#1A2332}
+.new{color:#F96167;font-weight:bold}.exist{color:#94A3B8}
+</style></head><body>
+<h1>CSN Skills & Tools Registry</h1>
+<p class="sub">S46 | 09/04/2026 | ~260 skills total (121 custom CSN + 127 comunidade + 12 research)</p>
+
+<h2>Skills Novos S46 (12)</h2>
+<table><tr><th>Skill</th><th>Nível ISA-95</th><th>Normas</th><th>Estado</th></tr>
+<tr><td class="new">registar-nc</td><td>L3-QMS</td><td>ISO 9001, EN 1090, EN 3834, EN 5817, EN 17637</td><td>✓ Route + Migration</td></tr>
+<tr><td class="new">gerar-itp</td><td>L3-QMS</td><td>EN 1090-2 §12, EN 3834, EN 5817, EN 17637</td><td>✓ Skill</td></tr>
+<tr><td class="new">gerar-dop</td><td>L3-QMS</td><td>EN 1090-1, Reg. 305/2011 CPR</td><td>✓ Skill</td></tr>
+<tr><td class="new">auditoria-interna</td><td>L3-QMS</td><td>ISO 9001 §9.2, EN 1090 FPC</td><td>✓ Skill</td></tr>
+<tr><td class="new">ordem-fabrico</td><td>L3-PRD</td><td>ISA-95 Part 3, ISO 9001 §8.5</td><td>✓ Skill</td></tr>
+<tr><td class="new">checklist-fase</td><td>L3-PRD</td><td>EN 1090-2, EN 3834, ISO 9001</td><td>✓ Skill</td></tr>
+<tr><td class="new">rastrear-material</td><td>L3-PRD</td><td>EN 1090-2 §6.2, EN 3834, EN 10204</td><td>✓ Skill</td></tr>
+<tr><td class="new">gerar-coc</td><td>L4-ENG</td><td>Reg. 2018/858, Reg. 1230/2012</td><td>✓ Skill</td></tr>
+<tr><td class="new">gerar-termo</td><td>L4-ENG</td><td>Reg. Transformação IMT, DL 99/2005</td><td>✓ Skill (route existente)</td></tr>
+<tr><td class="new">calculos-normativos</td><td>L4-ENG</td><td>Dir. 96/53/CE, Reg. 1230/2012</td><td>✓ Skill</td></tr>
+<tr><td class="new">gerar-proposta</td><td>L4-COM</td><td>—</td><td>✓ Skill</td></tr>
+<tr><td class="new">ficha-produto</td><td>L4-COM</td><td>—</td><td>✓ Skill</td></tr>
+<tr><td class="new">email-followup</td><td>L4-COM</td><td>—</td><td>✓ Skill</td></tr>
+</table>
+
+<h2>Skills por Secção ISA-95 (custom CSN)</h2>
+<table><tr><th>Secção</th><th>Nível</th><th>Total Skills</th><th>Novos S46</th></tr>
+<tr><td>L3-QMS</td><td>L3</td><td>25</td><td>+4</td></tr>
+<tr><td>L3-PRD</td><td>L3</td><td>13</td><td>+3</td></tr>
+<tr><td>L3-MNT</td><td>L3</td><td>3</td><td>—</td></tr>
+<tr><td>L3-PER</td><td>L3</td><td>3</td><td>—</td></tr>
+<tr><td>L3-DOC</td><td>L3</td><td>3</td><td>—</td></tr>
+<tr><td>L3-INV</td><td>L3</td><td>4</td><td>—</td></tr>
+<tr><td>L4-COM</td><td>L4</td><td>15</td><td>+3</td></tr>
+<tr><td>L4-FIN</td><td>L4</td><td>9</td><td>—</td></tr>
+<tr><td>L4-ENG</td><td>L4</td><td>11</td><td>+3</td></tr>
+<tr><td>L4-CST</td><td>L4</td><td>17</td><td>—</td></tr>
+<tr><td>RH</td><td>Transversal</td><td>13</td><td>—</td></tr>
+<tr><td>AMB</td><td>Transversal</td><td>5</td><td>—</td></tr>
+</table>
+
+<h2>Routes API (34)</h2>
+<table><tr><th>Route</th><th>Métodos</th><th>Agente</th></tr>
+<tr><td class="new">/api/qms/registar-nc</td><td>POST, GET, PATCH</td><td>Ag. QMS</td></tr>
+<tr><td>/api/documentos/gerar-termo</td><td>POST</td><td>Ag. Engenharia</td></tr>
+<tr><td>/api/documentos/gerar-checklist</td><td>POST</td><td>Ag. QMS</td></tr>
+<tr><td>/api/router/classificar</td><td>POST</td><td>Router (Haiku)</td></tr>
+<tr><td>/api/faturacao/emitir</td><td>POST</td><td>Ag. Financeiro</td></tr>
+<tr><td>/api/faturacao/listar</td><td>GET</td><td>Ag. Financeiro</td></tr>
+<tr><td>/api/leads/*</td><td>CRUD</td><td>Ag. Comercial</td></tr>
+<tr><td>/api/obras</td><td>GET</td><td>Ag. Produção</td></tr>
+<tr><td>/api/timer/*</td><td>POST, GET</td><td>Ag. Produção</td></tr>
+<tr><td>/api/rh/*</td><td>CRUD</td><td>Ag. RH</td></tr>
+<tr><td>/api/tickets/*</td><td>CRUD</td><td>Router</td></tr>
+<tr><td>... (23 mais)</td><td>—</td><td>—</td></tr>
+</table>
+
+<p style="font-size:10px;color:#334155;margin-top:30px">CSN Lda — Mafra — NIF 500 861 790 — Documento interno</p>
+</body></html>

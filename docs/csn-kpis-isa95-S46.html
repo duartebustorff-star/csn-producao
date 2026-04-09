@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8"><title>CSN KPIs ISO 22400 — S46</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#0F1629;color:#fff;padding:20px}
+h1{font-size:24px;margin-bottom:5px}h2{color:#F96167;font-size:16px;margin:20px 0 10px;border-bottom:1px solid #334155;padding-bottom:5px}
+.sub{color:#94A3B8;font-size:12px;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0}th{background:#1E2761;padding:6px;text-align:left}
+td{padding:5px 6px;border-bottom:1px solid #334155}tr:nth-child(even){background:#1A2332}
+.ok{color:#22C55E}.pend{color:#F59E0B}.no{color:#F96167}.new{color:#4ECDC4;font-weight:bold}
+</style></head><body>
+<h1>ISO 22400 — KPIs MOM</h1>
+<p class="sub">S46 | 09/04/2026 | 8/34 calculáveis (+2 S46 via registar-nc)</p>
+
+<h2>Onda 1 — Calculáveis agora (8)</h2>
+<table><tr><th>#</th><th>KPI</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>1</td><td>Worker Efficiency</td><td>timer + obras</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>2</td><td>Allocation Efficiency</td><td>timer + colaboradores</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>3</td><td>Throughput</td><td>obras concluídas / período</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>4</td><td>Production Time</td><td>timer fases</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>5</td><td>Setup Time</td><td>timer fase corte</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>6</td><td>Utilization</td><td>timer / tempo disponível</td><td class="ok">✓ Calculável</td></tr>
+<tr><td>7</td><td>Quality Ratio</td><td>nao_conformidades (rejeitadas)</td><td class="new">✓ NOVO S46</td></tr>
+<tr><td>8</td><td>Scrap Ratio</td><td>nao_conformidades (rejeitadas)</td><td class="new">✓ NOVO S46</td></tr>
+</table>
+
+<h2>Onda 2 — Desbloqueáveis com dados existentes (6)</h2>
+<table><tr><th>#</th><th>KPI</th><th>Depende de</th><th>Estado</th></tr>
+<tr><td>9</td><td>Rework Ratio</td><td>nao_conformidades (retrabalhadas)</td><td class="pend">Dados pendentes</td></tr>
+<tr><td>10</td><td>First Pass Yield</td><td>nao_conformidades (afectadas+rejeitadas)</td><td class="pend">Dados pendentes</td></tr>
+<tr><td>11</td><td>Schedule Attainment</td><td>obras.prazo vs real</td><td class="pend">Campo prazo pendente</td></tr>
+<tr><td>12</td><td>OEE (Overall)</td><td>Availability × Performance × Quality</td><td class="pend">Manutenção pendente</td></tr>
+<tr><td>13</td><td>Availability</td><td>Tabela manutenção (downtime)</td><td class="pend">MNT pendente</td></tr>
+<tr><td>14</td><td>Performance Efficiency</td><td>Tempo ciclo padrão vs real</td><td class="pend">Tempos padrão pendentes</td></tr>
+</table>
+
+<h2>Onda 3 — Futuro (20)</h2>
+<table><tr><th>#</th><th>KPI</th><th>Depende de</th><th>Estado</th></tr>
+<tr><td>15-18</td><td>Inventory KPIs (4)</td><td>Tabela stock + movimentos</td><td class="no">Tabela stock pendente</td></tr>
+<tr><td>19-26</td><td>Equipment/Process KPIs (8)</td><td>Sensores L1 + PLC</td><td class="no">Sem sensores</td></tr>
+<tr><td>27-30</td><td>Maintenance KPIs (4)</td><td>Ag. Manutenção operacional</td><td class="no">MNT futuro</td></tr>
+<tr><td>31-34</td><td>Energy KPIs (4)</td><td>Smart meter Bodor 60kW</td><td class="no">Sem contador</td></tr>
+</table>
+
+<p style="font-size:10px;color:#334155;margin-top:30px">CSN Lda — Mafra — NIF 500 861 790 — Documento interno</p>
+</body></html>

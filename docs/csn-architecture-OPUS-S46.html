@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8"><title>CSN OPUS Architecture — S46</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui;background:#0F1629;color:#fff}
+.header{padding:30px;border-bottom:3px solid #F96167}.header h1{font-size:28px}.header p{color:#94A3B8;font-size:13px;margin-top:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px}
+.card{background:#1A2332;border-radius:8px;padding:16px;border-left:3px solid #4ECDC4}
+.card h3{color:#4ECDC4;font-size:14px;margin-bottom:8px}.card p{font-size:12px;color:#94A3B8;line-height:1.5}
+.card .tag{display:inline-block;background:#0F1629;padding:2px 8px;border-radius:4px;font-size:10px;margin:2px;color:#4ECDC4}
+.section{padding:10px 20px}.section h2{color:#F96167;font-size:18px;margin:15px 0 10px;border-bottom:1px solid #334155;padding-bottom:5px}
+.full{grid-column:1/-1}table{width:100%;border-collapse:collapse;font-size:11px;margin:10px 0}
+th{background:#1E2761;padding:8px;text-align:left}td{padding:6px 8px;border-bottom:1px solid #334155}
+tr:nth-child(even){background:#1A2332}.status-ok{color:#22C55E}.status-pend{color:#F59E0B}.status-no{color:#F96167}
+.audit{background:#1A2332;border-radius:8px;padding:16px;margin:10px 0}.audit h3{color:#FFE66D;margin-bottom:10px}
+.bar{height:14px;background:#334155;border-radius:7px;margin:4px 0}.bar-fill{height:14px;border-radius:7px;font-size:10px;text-align:center;line-height:14px}
+</style></head><body>
+<div class="header"><h1>CSN OPUS — Arquitectura ISA-95</h1><p>Sessão S46 | 09/04/2026 | HEAD c9c6f58 | 66 tabelas | 52 migrations | 11 agentes | 5 personas</p></div>
+
+<div class="section"><h2>Camada 2 — Personas (comunicação apenas)</h2></div>
+<div class="grid">
+<div class="card"><h3>Marta — L4-COM</h3><p>Face pública CSN. Clientes, concessionários, CSN Connect. Recebe do Router, não produz.</p><span class="tag">WhatsApp</span><span class="tag">Email</span><span class="tag">Chatbot</span></div>
+<div class="card"><h3>Fernando — L3-PRD</h3><p>Chefe produção. Fala com Bohdan, José Júlio, João António. Dashboard fábrica.</p><span class="tag">Portal Worker</span></div>
+<div class="card"><h3>Carolina — L4-RH</h3><p>RH. Recibos, férias, documentação pessoal. Portal pessoal workers.</p><span class="tag">Portal Pessoal</span></div>
+<div class="card"><h3>Luísa — L4-CEO</h3><p>Assistente Duarte. Acesso total. Dashboards executivos.</p><span class="tag">Acesso Total</span></div>
+<div class="card"><h3>Leonor — L4-COM</h3><p>Aftersales, garantias, reclamações pós-venda.</p><span class="tag">Garantias</span></div>
+</div>
+
+<div class="section"><h2>Camada 3 — Agentes Nucleus (11 agentes, toda a lógica)</h2></div>
+<div class="grid">
+<div class="card"><h3>Ag. Produção — L3-PRD</h3><p>OF, fases F1-F9, timers, checklist-fase, ordem-fabrico.</p><span class="tag status-ok">Funcional</span></div>
+<div class="card"><h3>Ag. QMS — L3-QMS</h3><p>NCs, ITP, DoP, auditorias, marcação CE.</p><span class="tag status-ok">registar-nc S46</span></div>
+<div class="card"><h3>Ag. Documental — L3-DOC</h3><p>Hub documentos. Classificar, registar, associar obra. Gerar termo/checklist.</p><span class="tag status-pend">Intake pendente</span></div>
+<div class="card"><h3>Ag. Comercial — L4-COM</h3><p>Leads, propostas, pipeline, fichas produto, follow-up.</p><span class="tag status-ok">Funcional</span></div>
+<div class="card"><h3>Ag. Financeiro — L4-FIN</h3><p>Faturação InvoiceXpress, movimentos bancários, e-Fatura.</p><span class="tag status-ok">Funcional</span></div>
+<div class="card"><h3>Ag. Engenharia — L4-ENG</h3><p>COC, Termo, cálculos normativos, homologação.</p><span class="tag status-ok">Skills S46</span></div>
+<div class="card"><h3>Ag. Inventário — L3-INV</h3><p>Stock, recepção material, cert 3.1, rastreabilidade.</p><span class="tag status-pend">Parcial</span></div>
+<div class="card"><h3>Ag. Manutenção — L3-MNT</h3><p>Equipamentos, manutenção preventiva/correctiva.</p><span class="tag status-pend">Futuro</span></div>
+<div class="card"><h3>Ag. Pessoal — L3-PER</h3><p>KPIs ISO 22400, eficiência, dashboards worker.</p><span class="tag status-ok">8 KPIs</span></div>
+<div class="card"><h3>Ag. RH — L4-RH</h3><p>Recibos, férias, formações, SST, contratos.</p><span class="tag status-ok">Funcional</span></div>
+<div class="card"><h3>Ag. Research — L4-CST</h3><p>Inteligência competitiva, SEO, scraping, social listening.</p><span class="tag status-ok">R_AGENT</span></div>
+</div>
+
+<div class="section"><h2>Prontidão para Auditoria</h2></div>
+<div class="grid">
+<div class="audit full">
+<h3>ISO 9001:2015 — Sistema de Gestão da Qualidade</h3>
+<p style="font-size:11px;color:#94A3B8;margin-bottom:8px">Coberto: registar-nc, auditoria-interna, controlo docs, rastreabilidade | Falta: manual SGQ, revisão gestão, política qualidade formal, auditorias executadas</p>
+<div class="bar"><div class="bar-fill" style="width:35%;background:#F59E0B">35%</div></div>
+</div>
+<div class="audit full">
+<h3>Marcação CE / Reg. 2018/858 — Homologação</h3>
+<p style="font-size:11px;color:#94A3B8;margin-bottom:8px">Coberto: gerar-coc, gerar-termo, calculos-normativos, checklists GSR/R48/R73/R58 | Falta: COC eletrónico (Jul/2026), homologação KBA</p>
+<div class="bar"><div class="bar-fill" style="width:55%;background:#4ECDC4">55%</div></div>
+</div>
+<div class="audit full">
+<h3>EN 1090 — Execução Estruturas Metálicas</h3>
+<p style="font-size:11px;color:#94A3B8;margin-bottom:8px">Coberto: gerar-itp, gerar-dop, rastrear-material, registar-nc, cert 3.1 | Falta: WPS/WPQR qualificados, soldadores certificados, FPC, organismo notificado</p>
+<div class="bar"><div class="bar-fill" style="width:30%;background:#F59E0B">30%</div></div>
+</div>
+<div class="audit full">
+<h3>EN ISO 3834-3 — Qualidade Soldadura</h3>
+<p style="font-size:11px;color:#94A3B8;margin-bottom:8px">Coberto: registar-nc, rastrear-material, checklist-fase soldadura | Falta: coord. soldadura designado, consumíveis controlados, WPS no posto</p>
+<div class="bar"><div class="bar-fill" style="width:25%;background:#F96167">25%</div></div>
+</div>
+<div class="audit full">
+<h3>ISO 22400 — KPIs MOM</h3>
+<p style="font-size:11px;color:#94A3B8;margin-bottom:8px">8/34 KPIs calculáveis. +2 quality/scrap ratio S46. Falta: OEE (manutenção), 4 energia (smart meter), restantes dependem de sensores L1.</p>
+<div class="bar"><div class="bar-fill" style="width:24%;background:#F96167">8/34</div></div>
+</div>
+</div>
+
+<div class="section" style="padding-bottom:30px"><p style="font-size:10px;color:#334155">CSN Lda — Mafra, Portugal — NIF 500 861 790 — Documento interno</p></div>
+</body></html>
