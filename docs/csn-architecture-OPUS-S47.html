@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN OPUS — Arquitectura S47</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0e0;padding:20px}
+.container{max-width:1400px;margin:0 auto}
+h1{text-align:center;font-size:2em;color:#e94560;margin-bottom:5px}
+.subtitle{text-align:center;color:#7f8c8d;margin-bottom:30px;font-size:.9em}
+.level{margin-bottom:20px;border:1px solid #1a1a3e;border-radius:8px;overflow:hidden}
+.level-header{padding:10px 15px;font-weight:700;font-size:1.1em;display:flex;justify-content:space-between;align-items:center}
+.l4{background:#0f3460}.l3{background:#1a472a}.l2{background:#4a1942}.l1{background:#2c2c54}.l0{background:#1e1e1e}
+.level-body{padding:15px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.agent,.persona,.component{padding:10px;border-radius:6px;font-size:.85em}
+.agent{background:#162447;border-left:3px solid #e94560}
+.persona{background:#1b2838;border-left:3px solid #f39c12}
+.component{background:#1a1a2e;border-left:3px solid #2ecc71}
+.tag{display:inline-block;padding:2px 6px;border-radius:3px;font-size:.7em;margin-top:4px}
+.c2{background:#f39c1233;color:#f39c12}.c3{background:#e9456033;color:#e94560}
+.new{background:#2ecc7133;color:#2ecc71}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.stat{background:#162447;padding:12px;border-radius:6px;text-align:center}
+.stat-val{font-size:1.8em;font-weight:700;color:#e94560}
+.stat-label{font-size:.75em;color:#7f8c8d;margin-top:4px}
+.audit-section{margin-top:20px;border:1px solid #1a1a3e;border-radius:8px;padding:15px}
+.audit-title{font-size:1.1em;color:#e94560;margin-bottom:10px}
+.audit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.audit-block{background:#162447;padding:10px;border-radius:6px}
+.audit-block h4{color:#f39c12;margin-bottom:5px;font-size:.9em}
+.bar{height:6px;background:#1a1a2e;border-radius:3px;margin-top:5px}
+.bar-fill{height:100%;border-radius:3px}
+.green-bar{background:#2ecc71}.orange-bar{background:#f39c12}.red-bar{background:#e94560}
+ul{list-style:none;padding:0}
+li{font-size:.8em;padding:2px 0;color:#bbb}
+li::before{content:"• ";color:#e94560}
+footer{text-align:center;color:#555;font-size:.75em;margin-top:30px;padding:10px;border-top:1px solid #1a1a3e}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>CSN OPUS — Arquitectura do Sistema</h1>
+<p class="subtitle">Sessao S47 | HEAD: de321ea | 09/04/2026 | ISA-95 / IEC 62264 | ~79 tabelas</p>
+
+<div class="stats">
+<div class="stat"><div class="stat-val">~79</div><div class="stat-label">Tabelas</div></div>
+<div class="stat"><div class="stat-val">11</div><div class="stat-label">Agentes (C3)</div></div>
+<div class="stat"><div class="stat-val">5</div><div class="stat-label">Personas (C2)</div></div>
+<div class="stat"><div class="stat-val">236</div><div class="stat-label">Skills</div></div>
+<div class="stat"><div class="stat-val">11/38</div><div class="stat-label">KPIs Calculaveis</div></div>
+<div class="stat"><div class="stat-val">27</div><div class="stat-label">ADRs</div></div>
+<div class="stat"><div class="stat-val">4</div><div class="stat-label">RPCs</div></div>
+<div class="stat"><div class="stat-val">3</div><div class="stat-label">ENUMs</div></div>
+</div>
+
+<!-- L4 -->
+<div class="level">
+<div class="level-header l4"><span>L4 — BPL (ERP/CRM)</span><span>ISA-95 Part 4 / B2MML</span></div>
+<div class="level-body">
+<div class="persona">
+<strong>Marta</strong> — L4-COM<br>Face publica, clientes, CSN Connect
+<div><span class="tag c2">C2 Persona</span></div>
+</div>
+<div class="persona">
+<strong>Luisa</strong> — L4-ALL<br>Assistente CEO, acesso total
+<div><span class="tag c2">C2 Persona</span></div>
+</div>
+<div class="persona">
+<strong>Leonor</strong> — L4-COM<br>Pos-venda, garantias
+<div><span class="tag c2">C2 Persona</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Comercial</strong> — L4-COM<br>Pipeline, leads, CRM
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Financeiro</strong> — L4-FIN<br>Facturacao, IES, DR, custos
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Engenharia</strong> — L4-ENG<br>3D, FEA, COC, homologacao
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="component">
+<strong>Router</strong> — /api/router/classificar<br>Claude Haiku, 3-level dedup
+<div><span class="tag new">OPERACIONAL</span></div>
+</div>
+<div class="component">
+<strong>InvoiceXpress</strong> — cert AT 192<br>/api/faturacao/emitir + listar
+<div><span class="tag new">OPERACIONAL</span></div>
+</div>
+</div>
+</div>
+
+<!-- L3 -->
+<div class="level">
+<div class="level-header l3"><span>L3 — MOM (MES)</span><span>MESA-11 / ISO 22400</span></div>
+<div class="level-body">
+<div class="persona">
+<strong>Fernando</strong> — L3-PRD<br>Producao, chao de fabrica
+<div><span class="tag c2">C2 Persona</span></div>
+</div>
+<div class="persona">
+<strong>Carolina</strong> — L3-PER<br>RH, recibos, ferias
+<div><span class="tag c2">C2 Persona</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Producao</strong> — L3-PRD<br>Obras, fases, registos trabalho
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Qualidade</strong> — L3-QMS<br>NC, ITP, FPC, auditorias
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Manutencao</strong> — L3-MNT<br>Equipamentos, preventiva
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Inventario</strong> — L3-INV<br>Stock, lotes, consumos
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Pessoal</strong> — L3-PER<br>Recibos, ferias, KPIs
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+<div class="agent">
+<strong>Ag. Documental</strong> — L3-DOC<br>4 routes, processar-ies, session log
+<div><span class="tag c3">C3 Nucleo</span> <span class="tag new">S47</span></div>
+</div>
+<div class="agent">
+<strong>Ag. RH</strong> — L3-PER<br>11o agente, formal
+<div><span class="tag c3">C3 Nucleo</span></div>
+</div>
+</div>
+</div>
+
+<!-- L2 -->
+<div class="level">
+<div class="level-header l2"><span>L2 — SUP (SCADA)</span><span>IEC 62443 / ISO 50001</span></div>
+<div class="level-body">
+<div class="component">
+<strong>Bodor 60kW Laser</strong><br>Corte chapa. Smart meter pendente (KPIs 35-38)
+</div>
+<div class="component">
+<strong>KUKA Robot</strong><br>Soldadura automatizada. EN 14732 pendente.
+</div>
+</div>
+</div>
+
+<!-- L1 -->
+<div class="level">
+<div class="level-header l1"><span>L1 — SEN (PLC/Sensores)</span><span>Normas de inspecao</span></div>
+<div class="level-body">
+<div class="component">
+<strong>Sensores</strong><br>Pendente: sensores L1 para KPIs automaticos
+</div>
+</div>
+</div>
+
+<!-- L0 -->
+<div class="level">
+<div class="level-header l0"><span>L0 — PHY (Maquinas/Pessoas)</span><span>EN 1090 / EN 3834 / EN 12642</span></div>
+<div class="level-body">
+<div class="component">
+<strong>Bohdan</strong> PIN 1001<br>11.16 EUR/h
+</div>
+<div class="component">
+<strong>Jose Julio</strong> PIN 1002<br>10.68 EUR/h
+</div>
+<div class="component">
+<strong>Joao Antonio</strong> PIN 1003<br>12.89 EUR/h
+</div>
+<div class="component">
+<strong>10 Equipamentos</strong><br>5.208h potencial/ano
+</div>
+</div>
+</div>
+
+<!-- Audit Readiness -->
+<div class="audit-section">
+<div class="audit-title">Prontidao para Auditoria</div>
+<div class="audit-grid">
+
+<div class="audit-block">
+<h4>ISO 9001:2015 — SGQ</h4>
+<div class="bar"><div class="bar-fill orange-bar" style="width:45%"></div></div>
+<p style="font-size:.75em;color:#f39c12;margin-top:3px">45% — Coberto: controlo docs, registos, NC, auditorias (skills). Falta: manual qualidade formal, revisao gestao, objectivos medidos.</p>
+<ul>
+<li>Coberto: Controlo documentos (Ag. Documental), Registos producao, NC (registar-nc), Auditorias internas (skill)</li>
+<li>Falta: Manual SGQ formal, Revisao pela gestao, Politica qualidade aprovada, Objectivos mensuráveis</li>
+<li>Fora SAAS: Auditoria externa (APCER/Bureau Veritas)</li>
+</ul>
+</div>
+
+<div class="audit-block">
+<h4>Marcacao CE — EN 1090</h4>
+<div class="bar"><div class="bar-fill orange-bar" style="width:35%"></div></div>
+<p style="font-size:.75em;color:#f39c12;margin-top:3px">35% — Estrutura tabelas pronta. Falta: WPS/WPQR reais, FPC, ITP, DoP, coordenador soldadura.</p>
+<ul>
+<li>Coberto: Tabelas rastreabilidade material, Registo soldadores, NC soldadura, Skills ITP/FPC/DoP</li>
+<li>Falta: WPS qualificados (WPQR lab), Manual FPC, ITP por tipo carrocaria, Coordenador soldadura designado</li>
+<li>Fora SAAS: Certificacao organismo notificado, Ensaios laboratorio</li>
+</ul>
+</div>
+
+<div class="audit-block">
+<h4>EN 12642 L/XL — Resistencia Estrutural</h4>
+<div class="bar"><div class="bar-fill red-bar" style="width:20%"></div></div>
+<p style="font-size:.75em;color:#e94560;margin-top:3px">20% — Modelo 3D Inventor existe. FEA Nastran iniciado (Cowork). Falta ensaio/calculo certificado.</p>
+<ul>
+<li>Coberto: Modelo 3D parametrico, Skills calculo/cert/etiqueta</li>
+<li>Falta: FEA completo validado, Certificacao laboratorio acreditado</li>
+<li>Fora SAAS: Ensaio fisico ou certificacao TUV/DEKRA</li>
+</ul>
+</div>
+
+<div class="audit-block">
+<h4>ISO 14001:2015 — Ambiental</h4>
+<div class="bar"><div class="bar-fill orange-bar" style="width:30%"></div></div>
+<p style="font-size:.75em;color:#f39c12;margin-top:3px">30% — 5 skills AMB activas S44. Falta: levantamento aspectos reais, programa ambiental.</p>
+<ul>
+<li>Coberto: Skills aspectos-ambientais, residuos, energia, objectivos, programa</li>
+<li>Falta: Levantamento real, Registos residuos, Programa com metas</li>
+</ul>
+</div>
+
+<div class="audit-block">
+<h4>ISO 45001:2018 — SST</h4>
+<div class="bar"><div class="bar-fill orange-bar" style="width:30%"></div></div>
+<p style="font-size:.75em;color:#f39c12;margin-top:3px">30% — Skills RH cobertas (EPIs, acidentes, riscos). Falta: implementacao real.</p>
+<ul>
+<li>Coberto: Skills registo-epis, matriz-riscos-sst, registo-acidentes, inspeccao-seguranca</li>
+<li>Falta: Avaliacao riscos real, Plano emergencia, Consulta trabalhadores real</li>
+</ul>
+</div>
+
+<div class="audit-block">
+<h4>Reg. 2018/858 — Homologacao</h4>
+<div class="bar"><div class="bar-fill orange-bar" style="width:40%"></div></div>
+<p style="font-size:.75em;color:#f39c12;margin-top:3px">40% — gerar-termo OK, COC skill existe. COC electronico IMT deadline jul/2026.</p>
+<ul>
+<li>Coberto: Termo responsabilidade (gerar-termo), Skills COC/homologacao</li>
+<li>Falta: COC electronico IMT, Integracao sistema completa</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+<footer>
+CSN — Engenharia de Veiculos Comerciais | Mafra, Portugal | NIF 500 861 790<br>
+Documento interno CSN-L4-DOC-047-2026 | Sessao S47 | 09/04/2026
+</footer>
+</div>
+</body>
+</html>

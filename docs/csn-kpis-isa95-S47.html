@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN OPUS — KPIs ISO 22400 S47</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0e0;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+h1{text-align:center;font-size:1.8em;color:#e94560;margin-bottom:5px}
+.subtitle{text-align:center;color:#7f8c8d;margin-bottom:20px;font-size:.85em}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:25px}
+.sum-box{background:#162447;padding:15px;border-radius:8px;text-align:center}
+.sum-val{font-size:2em;font-weight:700}.green{color:#2ecc71}.orange{color:#f39c12}.red{color:#e94560}.blue{color:#3498db}
+.sum-label{font-size:.75em;color:#7f8c8d;margin-top:4px}
+table{width:100%;border-collapse:collapse;margin-bottom:20px}
+th{background:#0f3460;color:#fff;padding:8px 10px;text-align:left;font-size:.8em}
+td{padding:6px 10px;font-size:.8em;border-bottom:1px solid #1a1a3e}
+tr:nth-child(even){background:#0d1b2a}
+.status{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.75em;font-weight:700}
+.s-calc{background:#2ecc7133;color:#2ecc71}
+.s-struct{background:#3498db33;color:#3498db}
+.s-future{background:#f39c1233;color:#f39c12}
+.s-energy{background:#e9456033;color:#e94560}
+.group-header td{background:#1a1a3e;color:#e94560;font-weight:700;font-size:.85em;border:none}
+footer{text-align:center;color:#555;font-size:.75em;margin-top:20px;padding:10px;border-top:1px solid #1a1a3e}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>KPIs ISO 22400 — Estado Completo</h1>
+<p class="subtitle">Sessao S47 | 09/04/2026 | 34+4 KPIs obrigatorios | HEAD: de321ea</p>
+
+<div class="summary">
+<div class="sum-box"><div class="sum-val green">11</div><div class="sum-label">Calculaveis</div></div>
+<div class="sum-box"><div class="sum-val blue">4</div><div class="sum-label">Estrut. Prontos</div></div>
+<div class="sum-box"><div class="sum-val orange">19</div><div class="sum-label">Futuro (sensores/stock)</div></div>
+<div class="sum-box"><div class="sum-val red">4</div><div class="sum-label">Energia (smart meter)</div></div>
+</div>
+
+<table>
+<thead><tr><th>#</th><th>KPI</th><th>Formula Resumida</th><th>Fonte Dados</th><th>Estado</th></tr></thead>
+<tbody>
+
+<tr class="group-header"><td colspan="5">PRODUCAO — Tempo e Eficiencia</td></tr>
+<tr><td>1</td><td>Worker Efficiency</td><td>Tempo produtivo / Tempo total</td><td>registos_trabalho</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>2</td><td>Allocation Ratio</td><td>Tempo alocado / Tempo disponivel</td><td>registos_trabalho</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>3</td><td>Utilization Efficiency</td><td>Tempo util / Tempo alocado</td><td>registos_trabalho</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>4</td><td>Production Time</td><td>Soma tempo producao por obra</td><td>registos_trabalho</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>5</td><td>Setup Ratio</td><td>Tempo setup / Tempo producao</td><td>registos_trabalho</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>6</td><td>Process Ratio</td><td>Tempo processo / Tempo total</td><td>registos_trabalho</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>7</td><td>Throughput Rate</td><td>Obras concluidas / Periodo</td><td>obras</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>8</td><td>Schedule Attainment</td><td>Obras no prazo / Total obras</td><td>obras</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>9</td><td>On-Time Delivery</td><td>Entregas no prazo / Total entregas</td><td>obras</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>10</td><td>Production Cost per Unit</td><td>(custos fixos + horas*custo_hora) / obras</td><td>custos_fixos + registos_trabalho</td><td><span class="status s-calc">CALC</span></td></tr>
+
+<tr class="group-header"><td colspan="5">QUALIDADE</td></tr>
+<tr><td>11</td><td>Quality Ratio</td><td>Boas / Total produzidas</td><td>nao_conformidades</td><td><span class="status s-calc">CALC</span></td></tr>
+<tr><td>12</td><td>Scrap Ratio</td><td>Sucata / Total produzido</td><td>nao_conformidades (tipo=sucata)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>13</td><td>Rework Ratio</td><td>Retrabalho / Total</td><td>nao_conformidades (tipo=retrabalho)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>14</td><td>First Pass Yield</td><td>Aprovadas 1a vez / Total</td><td>nao_conformidades + inspecoes</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>15</td><td>Fall-off Ratio</td><td>Rejeicoes finais / Total</td><td>nao_conformidades</td><td><span class="status s-future">FUTURO</span></td></tr>
+
+<tr class="group-header"><td colspan="5">MANUTENCAO</td></tr>
+<tr><td>16</td><td>Mean Time Between Failures (MTBF)</td><td>Tempo operacao / Nr avarias</td><td>equipamentos + manutencao</td><td><span class="status s-struct">ESTRUT</span></td></tr>
+<tr><td>17</td><td>Mean Time To Repair (MTTR)</td><td>Tempo total reparacao / Nr reparacoes</td><td>manutencao</td><td><span class="status s-struct">ESTRUT</span></td></tr>
+<tr><td>18</td><td>Availability</td><td>MTBF / (MTBF + MTTR)</td><td>equipamentos + manutencao</td><td><span class="status s-struct">ESTRUT</span></td></tr>
+<tr><td>19</td><td>Corrective Maintenance Ratio</td><td>Manut correctiva / Total manut</td><td>manutencao</td><td><span class="status s-struct">ESTRUT</span></td></tr>
+
+<tr class="group-header"><td colspan="5">OEE (Overall Equipment Effectiveness)</td></tr>
+<tr><td>20</td><td>OEE — Availability</td><td>Tempo operacao real / Tempo planeado</td><td>equipamentos + manutencao</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>21</td><td>OEE — Performance</td><td>Producao real / Producao teorica</td><td>registos_trabalho + potencial</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>22</td><td>OEE — Quality</td><td>Boas / Total (= Quality Ratio)</td><td>nao_conformidades</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>23</td><td>OEE Total</td><td>Availability x Performance x Quality</td><td>Composto</td><td><span class="status s-future">FUTURO</span></td></tr>
+
+<tr class="group-header"><td colspan="5">INVENTARIO</td></tr>
+<tr><td>24</td><td>Inventory Turns</td><td>Custo vendas / Stock medio</td><td>stock (tabela pendente)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>25</td><td>WIP Inventory</td><td>Obras em curso valoradas</td><td>obras + custos</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>26</td><td>Finished Goods Ratio</td><td>Stock acabado / Total stock</td><td>stock</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>27</td><td>Raw Material Usage</td><td>Material consumido / Material disponivel</td><td>consumos_pre_producao</td><td><span class="status s-future">FUTURO</span></td></tr>
+
+<tr class="group-header"><td colspan="5">PESSOAL</td></tr>
+<tr><td>28</td><td>Absenteeism Rate</td><td>Dias ausencia / Dias trabalho</td><td>faltas (pendente)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>29</td><td>Training Hours per Worker</td><td>Horas formacao / Nr colaboradores</td><td>formacoes (pendente)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>30</td><td>Labour Productivity</td><td>Volume producao / Horas trabalho</td><td>obras + registos_trabalho</td><td><span class="status s-future">FUTURO</span></td></tr>
+
+<tr class="group-header"><td colspan="5">AMBIENTAL / SEGURANCA</td></tr>
+<tr><td>31</td><td>Accident Rate</td><td>Acidentes / 1000h trabalho</td><td>acidentes (skill existe)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>32</td><td>Near Miss Rate</td><td>Quase-acidentes / Periodo</td><td>seguranca (pendente)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>33</td><td>Waste Ratio</td><td>Residuos / Material total</td><td>residuos (skill existe)</td><td><span class="status s-future">FUTURO</span></td></tr>
+<tr><td>34</td><td>Environmental Compliance</td><td>NC ambientais / Total NC</td><td>nao_conformidades</td><td><span class="status s-future">FUTURO</span></td></tr>
+
+<tr class="group-header"><td colspan="5">ENERGIA (KPIs 35-38) — Requerem Smart Meter Bodor</td></tr>
+<tr><td>35</td><td>Energy per Unit</td><td>kWh consumidos / Obras</td><td>smart meter Bodor</td><td><span class="status s-energy">ENERGIA</span></td></tr>
+<tr><td>36</td><td>Energy Efficiency</td><td>Producao / Energia consumida</td><td>smart meter Bodor</td><td><span class="status s-energy">ENERGIA</span></td></tr>
+<tr><td>37</td><td>Peak Power Demand</td><td>Pico kW / Periodo</td><td>smart meter Bodor</td><td><span class="status s-energy">ENERGIA</span></td></tr>
+<tr><td>38</td><td>Renewable Energy Ratio</td><td>Energia renovavel / Total</td><td>smart meter + contrato energia</td><td><span class="status s-energy">ENERGIA</span></td></tr>
+
+</tbody>
+</table>
+
+<footer>
+CSN — Engenharia de Veiculos Comerciais | Mafra, Portugal | NIF 500 861 790<br>
+ISO 22400:2014 — Todos os 34+4 KPIs obrigatorios | CSN-L3-PER-047-2026 | 09/04/2026
+</footer>
+</div>
+</body>
+</html>

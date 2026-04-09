@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN OPUS — Skills & Tools Registry S47</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0e0;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+h1{text-align:center;font-size:1.8em;color:#e94560;margin-bottom:5px}
+.subtitle{text-align:center;color:#7f8c8d;margin-bottom:20px;font-size:.85em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:15px;margin-bottom:20px}
+.card{background:#162447;border-radius:8px;padding:15px;border-left:3px solid #e94560}
+.card h3{color:#e94560;font-size:.95em;margin-bottom:8px}
+.card-meta{font-size:.75em;color:#7f8c8d;margin-bottom:8px}
+.skill-list{list-style:none;padding:0}
+.skill-list li{font-size:.8em;padding:3px 0;border-bottom:1px solid #0a0a1a}
+.skill-list li::before{content:"› ";color:#e94560}
+.section{margin-bottom:25px}
+.section h2{color:#0f3460;font-size:1.2em;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #1a1a3e}
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:25px}
+.stat{background:#162447;padding:12px;border-radius:6px;text-align:center}
+.stat-val{font-size:1.6em;font-weight:700;color:#e94560}
+.stat-label{font-size:.7em;color:#7f8c8d;margin-top:3px}
+table{width:100%;border-collapse:collapse;margin-bottom:15px}
+th{background:#0f3460;color:#fff;padding:6px 8px;text-align:left;font-size:.8em}
+td{padding:5px 8px;font-size:.8em;border-bottom:1px solid #1a1a3e}
+tr:nth-child(even){background:#0d1b2a}
+footer{text-align:center;color:#555;font-size:.75em;margin-top:20px;padding:10px;border-top:1px solid #1a1a3e}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Skills & Tools Registry</h1>
+<p class="subtitle">Sessao S47 | 236 Skills | 11 Agentes | 5 Personas | HEAD: de321ea</p>
+
+<div class="stats-row">
+<div class="stat"><div class="stat-val">236</div><div class="stat-label">Skills Total</div></div>
+<div class="stat"><div class="stat-val">127</div><div class="stat-label">Comunidade</div></div>
+<div class="stat"><div class="stat-val">109</div><div class="stat-label">Custom CSN</div></div>
+<div class="stat"><div class="stat-val">16</div><div class="stat-label">Seccoes ISA-95</div></div>
+<div class="stat"><div class="stat-val">18</div><div class="stat-label">Normas Base</div></div>
+</div>
+
+<div class="section">
+<h2>Skills Custom CSN por Nivel ISA-95</h2>
+<div class="grid">
+
+<div class="card">
+<h3>L4-COM — Comercial (12 skills)</h3>
+<div class="card-meta">Ag. Comercial | Persona: Marta, Leonor</div>
+<ul class="skill-list">
+<li>Pipeline vendas + CRM</li>
+<li>Proposta comercial automatica</li>
+<li>Calculo margem</li>
+<li>Marketing digital (7 comunidade)</li>
+<li>CSN Connect (B2B portal)</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L4-FIN — Financeiro (9 skills)</h3>
+<div class="card-meta">Ag. Financeiro</div>
+<ul class="skill-list">
+<li>Facturacao InvoiceXpress</li>
+<li>Processar IES (Claude API)</li>
+<li>Demonstracao resultados</li>
+<li>Custos fixos + custo/hora</li>
+<li>Controlo gestao</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L4-ENG — Engenharia (8 skills)</h3>
+<div class="card-meta">Ag. Engenharia</div>
+<ul class="skill-list">
+<li>Modelo 3D parametrico Inventor</li>
+<li>FEA Nastran automatico</li>
+<li>COC multi-etapa</li>
+<li>Calculos normativos (EN 12642, Dir 96/53)</li>
+<li>Homologacao IMT</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L4-CST — Custos/Controlo (5 skills)</h3>
+<div class="card-meta">Ag. Financeiro + Research</div>
+<ul class="skill-list">
+<li>Custos por obra</li>
+<li>ISO 31000 riscos</li>
+<li>Business plan / SWOT / OKRs</li>
+<li>Candidatura incentivos</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L3-QMS — Qualidade (22 skills)</h3>
+<div class="card-meta">Ag. Qualidade</div>
+<ul class="skill-list">
+<li>registar-nc (5 normas: ISO 9001, EN 1090, EN 3834, EN 5817, EN 17637)</li>
+<li>gerar-itp, gerar-fpc, gerar-dop</li>
+<li>etiqueta-ce, etiqueta-lxl</li>
+<li>Checklists GSR/R48/R73/R58/spray</li>
+<li>fea-report, cert-12642</li>
+<li>auditoria-interna, manual-sgq, revisao-gestao</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L3-PRD — Producao (10 skills)</h3>
+<div class="card-meta">Ag. Producao | Persona: Fernando</div>
+<ul class="skill-list">
+<li>plano-producao, checklist-fase</li>
+<li>rastrear-material, rastrear-soldadura</li>
+<li>ordem-fabrico</li>
+<li>Registos trabalho por fase</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L3-MNT — Manutencao (3 skills)</h3>
+<div class="card-meta">Ag. Manutencao</div>
+<ul class="skill-list">
+<li>MNT-001 a MNT-004 (botoes chao fabrica)</li>
+<li>Preventiva + correctiva</li>
+<li>Tabelas equipamentos + manutencao (S47)</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L3-PER — Pessoal/KPIs (3 skills)</h3>
+<div class="card-meta">Ag. Pessoal + Ag. RH | Persona: Carolina</div>
+<ul class="skill-list">
+<li>kpi-qualidade, kpi-oee</li>
+<li>dashboard-22400</li>
+<li>Recibos, ferias, formacoes</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L3-DOC — Documental (3 skills)</h3>
+<div class="card-meta">Ag. Documental</div>
+<ul class="skill-list">
+<li>4 routes operacionais</li>
+<li>processar-ies (Claude API)</li>
+<li>Agent session log (wake/emit/sleep)</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>L3-INV — Inventario (4 skills)</h3>
+<div class="card-meta">Ag. Inventario</div>
+<ul class="skill-list">
+<li>Lotes pre-producao</li>
+<li>Consumos pre-producao</li>
+<li>Certificados material EN 10204 3.1</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Transversal — RH (13 skills)</h3>
+<div class="card-meta">Ag. RH (11o agente)</div>
+<ul class="skill-list">
+<li>plano-formacoes, registo-epis, matriz-riscos-sst</li>
+<li>registo-acidentes, inspeccao-seguranca</li>
+<li>cert-soldadores, registar-wpqr</li>
+<li>onboarding, avaliacao-desempenho</li>
+<li>contrato-trabalho, comunicacao-interna</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Transversal — AMB + JUR + EST (17 skills)</h3>
+<div class="card-meta">Varios agentes</div>
+<ul class="skill-list">
+<li>AMB (5): aspectos-ambientais, residuos, energia, objectivos, programa</li>
+<li>JUR (7): contratos, T&C, RGPD, reclamacoes, regulamentar, seguros</li>
+<li>EST (5): business-plan, SWOT, OKRs, candidatura-incentivos, actas</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<h2>Tools / Routes API Operacionais</h2>
+<table>
+<thead><tr><th>Route</th><th>Agente</th><th>Funcao</th><th>Estado</th></tr></thead>
+<tbody>
+<tr><td>/api/router/classificar</td><td>Router (Haiku)</td><td>Classificar + dedup tickets</td><td>PROD</td></tr>
+<tr><td>/api/faturacao/emitir</td><td>Ag. Financeiro</td><td>Emitir factura InvoiceXpress</td><td>PROD</td></tr>
+<tr><td>/api/faturacao/listar</td><td>Ag. Financeiro</td><td>Listar facturas</td><td>PROD</td></tr>
+<tr><td>/api/documentos/processar-ies</td><td>Ag. Documental</td><td>Extrair dados IES via Claude</td><td>PROD</td></tr>
+<tr><td>/api/documentos/* (3 mais)</td><td>Ag. Documental</td><td>Routes DOC</td><td>PROD</td></tr>
+<tr><td>/api/rh/*</td><td>Ag. RH</td><td>Recibos, ferias, pessoal</td><td>PROD</td></tr>
+<tr><td>/api/producao/*</td><td>Ag. Producao</td><td>Obras, fases, registos</td><td>PROD</td></tr>
+<tr><td>/api/nc/registar</td><td>Ag. Qualidade</td><td>Registar nao-conformidade</td><td>PROD</td></tr>
+<tr><td>/api/leads/*</td><td>Ag. Comercial</td><td>Pipeline CRM</td><td>PROD</td></tr>
+<tr><td>/api/termos/gerar</td><td>Ag. Engenharia</td><td>Gerar termo responsabilidade</td><td>PROD</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2>Base Normativa — 18 Normas em 3 Dimensoes</h2>
+<table>
+<thead><tr><th>Dimensao</th><th>Norma</th><th>Estado</th></tr></thead>
+<tbody>
+<tr><td rowspan="7">D1 — Produto</td><td>Reg. 2018/858 (Homologacao)</td><td>Parcial</td></tr>
+<tr><td>Reg. 2019/2144 GSR</td><td>Checklists</td></tr>
+<tr><td>EN 12642 L/XL</td><td>FEA pendente</td></tr>
+<tr><td>UNECE R48/R73/R58</td><td>Checklists</td></tr>
+<tr><td>Dir. 96/53 (Pesos)</td><td>Calculos</td></tr>
+<tr><td>EN 12640 + EN 12195-1</td><td>Skills</td></tr>
+<tr><td>Reg. 109/2011 (Spray)</td><td>Checklist</td></tr>
+<tr><td rowspan="8">D2 — Processo</td><td>ISO 9001:2015</td><td>Em implementacao</td></tr>
+<tr><td>EN 1090-1/-2</td><td>Parcial</td></tr>
+<tr><td>EN ISO 3834-3</td><td>Parcial</td></tr>
+<tr><td>EN ISO 15614-1</td><td>Pendente</td></tr>
+<tr><td>EN ISO 9606-1</td><td>Pendente</td></tr>
+<tr><td>EN ISO 5817 + 17637</td><td>Skills + registar-nc</td></tr>
+<tr><td>ISO 14001:2015</td><td>ACTIVA (5 skills)</td></tr>
+<tr><td>ISO 45001:2018</td><td>ACTIVA (4 skills)</td></tr>
+<tr><td rowspan="3">D3 — Sistema</td><td>ISA-95 / IEC 62264</td><td>Base arquitectura</td></tr>
+<tr><td>ISO 22400:2014</td><td>11/38 KPIs</td></tr>
+<tr><td>ISO 55000</td><td>Tabelas S47</td></tr>
+</tbody>
+</table>
+</div>
+
+<footer>
+CSN — Engenharia de Veiculos Comerciais | Mafra, Portugal | NIF 500 861 790<br>
+CSN-L4-DOC-047-2026 | Skills & Tools Registry S47 | 09/04/2026
+</footer>
+</div>
+</body>
+</html>
