@@ -45,3 +45,4 @@ next-env.d.ts
 .claude/
 .env*.local
 Marcas - Veiculos/
+public/modelo-carrocaria.stl
