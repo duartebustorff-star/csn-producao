@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="UTF-8"><title>CSN OPUS Architecture S48</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#0a0a1a;color:#e0e0e0;padding:15px;font-size:12px}.c{max-width:1400px;margin:0 auto}h1{text-align:center;color:#e94560;font-size:1.6em;margin-bottom:2px}.sub{text-align:center;color:#7f8c8d;font-size:.8em;margin-bottom:15px}.grid{display:grid;gap:10px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:1fr 1fr 1fr 1fr}.box{background:#162447;padding:10px;border-radius:8px;border:1px solid #1a1a3e}.box h3{color:#f39c12;font-size:.9em;margin-bottom:5px}.box h4{color:#2ecc71;font-size:.8em;margin:5px 0 3px}.box li{font-size:.75em;color:#bbb;line-height:1.4}ul{list-style:none;padding:0}li:before{content:"→ ";color:#f39c12}.l4{border-left:3px solid #3498db}.l3{border-left:3px solid #2ecc71}.l2{border-left:3px solid #9b59b6}.l0{border-left:3px solid #e74c3c}.new{border-left:3px solid #e94560}.tag{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.65em;font-weight:700}.tn{background:#e9456033;color:#e94560}.audit{background:#0d1b2a;padding:10px;border-radius:8px;margin-top:12px}.audit h3{color:#e94560;margin-bottom:8px}.bar{height:8px;background:#333;border-radius:4px;margin:3px 0}.bf{height:100%;border-radius:4px}.pct{font-size:.7em;color:#7f8c8d}footer{text-align:center;color:#555;font-size:.7em;margin-top:15px;padding:8px;border-top:1px solid #1a1a3e}</style></head>
+<body><div class="c">
+<h1>CSN OPUS — Arquitectura S48</h1>
+<p class="sub">ISA-95/IEC 62264 | 84 tabelas | 79 migrations | HEAD 0d720f9 | 09/04/2026</p>
+<h2 style="color:#3498db;font-size:1em;margin:8px 0 5px">L4 — BPL</h2>
+<div class="grid g4">
+<div class="box l4"><h3>L4-FIN</h3><h4>Ag.Financeiro</h4><ul><li>IES 2024 (435k vendas)</li><li>InvoiceXpress cert AT 192</li><li>e-Fatura 4.409 reg</li><li>Custos fixos 112.631/ano</li><li>kpi_rentabilidade()</li><li>kpi_custos_estruturais()</li></ul></div>
+<div class="box l4"><h3>L4-COM</h3><h4>Marta(C2)+Ag.COM(C3)</h4><ul><li>8 clientes, Router Haiku</li><li>Pipeline nova→facturada</li><li>Email automatico <span class="tag tn">S48</span></li><li>Ticket→Lead auto <span class="tag tn">S48</span></li><li>kpi_pipeline_comercial()</li></ul></div>
+<div class="box l4"><h3>L4-ENG</h3><h4>Ag.Engenharia</h4><ul><li>Catalogo carrocarias</li><li>Modelo 3D Inventor</li><li>COC multi-etapa</li><li>gerar-termo operacional</li></ul></div>
+<div class="box l4"><h3>L4-CST</h3><h4>Custos/Riscos</h4><ul><li>Tab riscos ISO 31000 <span class="tag tn">S48</span></li><li>kpi_revenue_per_employee()</li><li>kpi_capacity_utilization()</li><li>R_AGENT (intel competitiva)</li></ul></div>
+</div>
+<h2 style="color:#2ecc71;font-size:1em;margin:8px 0 5px">L3 — MOM</h2>
+<div class="grid g3">
+<div class="box l3"><h3>L3-PRD</h3><h4>Ag.Producao</h4><ul><li>6 obras entregues (JAP)</li><li>10 fases F1-F10</li><li>Timetracking workers</li><li>kpi_throughput()</li><li>kpi_delivery_performance()</li></ul></div>
+<div class="box l3"><h3>L3-QMS</h3><h4>Ag.Qualidade</h4><ul><li>NC (registar-nc skill)</li><li>Tab auditorias <span class="tag tn">S48</span></li><li>EN 5817/EN 1090</li><li>22 skills QMS</li></ul></div>
+<div class="box l3"><h3>L3-MNT</h3><h4>Ag.Manutencao</h4><ul><li>Equipamentos+manutencao</li><li>MNT-001 a MNT-004</li><li>EN 15341 KPIs</li></ul></div>
+<div class="box l3"><h3>L3-PER</h3><h4>Carolina(C2)+Ag.RH(C3)</h4><ul><li>45 recibos Jan25-Mar26</li><li>Tab formacoes <span class="tag tn">S48</span></li><li>Tab acidentes <span class="tag tn">S48</span></li><li>kpi_workforce_cost()</li></ul></div>
+<div class="box l3"><h3>L3-DOC</h3><h4>Ag.Documental</h4><ul><li>18.169 emails geral@</li><li>10.992 emails sapo@</li><li>identificar_remetente() <span class="tag tn">S48</span></li></ul></div>
+<div class="box l3"><h3>L3-INV</h3><h4>Ag.Inventario</h4><ul><li>Cert material EN 10204</li><li>Tab residuos <span class="tag tn">S48</span></li><li>Lotes+consumos pre-prod</li></ul></div>
+</div>
+<h2 style="color:#9b59b6;font-size:1em;margin:8px 0 5px">L2 — SUP</h2>
+<div class="grid g2">
+<div class="box l2"><h3>L2-SUP Energia</h3><ul><li>ISO 50001 — 4 KPIs dependem smart meter Bodor</li><li>IEC 62443 ciberseguranca</li></ul></div>
+<div class="box new"><h3>Pipeline Email <span class="tag tn">S48</span></h3><ul><li>Outlook→Gmail(forward)→Apps Script(5min)</li><li>Router Haiku+identificar_remetente→Ticket</li><li>Trigger: COM→Lead auto | Spam→Arquivado</li></ul></div>
+</div>
+<h2 style="color:#e74c3c;font-size:1em;margin:8px 0 5px">L0 — PHY</h2>
+<div class="grid g3">
+<div class="box l0"><h3>L0-SST</h3><ul><li>ISO 45001</li><li>Tab acidentes <span class="tag tn">S48</span></li><li>4 KPIs SST</li></ul></div>
+<div class="box l0"><h3>L0-AMB</h3><ul><li>ISO 14001</li><li>Tab residuos <span class="tag tn">S48</span></li><li>4 KPIs ambientais</li></ul></div>
+<div class="box l0"><h3>L0-EQP</h3><ul><li>Bodor 60kW, KUKA robot</li><li>3 workers (PINs corrigidos S48)</li></ul></div>
+</div>
+<div class="audit">
+<h3>Prontidao para Auditoria</h3>
+<div class="grid g3" style="margin-top:8px">
+<div><p><b>ISO 9001:2015</b></p><div class="bar"><div class="bf" style="width:35%;background:#f39c12"></div></div><p class="pct">35% — SGQ parcial, auditorias tab nova S48</p></div>
+<div><p><b>Marcacao CE / Reg.2018/858</b></p><div class="bar"><div class="bf" style="width:40%;background:#f39c12"></div></div><p class="pct">40% — COC, termo, inspeccoes. COC electronico jul/2026</p></div>
+<div><p><b>EN 1090-1/-2</b></p><div class="bar"><div class="bf" style="width:25%;background:#e94560"></div></div><p class="pct">25% — WPS/WPQR/FPC pendentes</p></div>
+<div><p><b>EN 12642 L/XL</b></p><div class="bar"><div class="bf" style="width:15%;background:#e94560"></div></div><p class="pct">15% — FEA pendente</p></div>
+<div><p><b>ISO 14001:2015</b></p><div class="bar"><div class="bf" style="width:20%;background:#e94560"></div></div><p class="pct">20% — Tab residuos S48, KPIs mapeados</p></div>
+<div><p><b>ISO 45001:2018</b></p><div class="bar"><div class="bf" style="width:20%;background:#e94560"></div></div><p class="pct">20% — Tab acidentes+formacoes S48</p></div>
+</div></div>
+<footer>CSN — Engenharia de Veiculos Comerciais | Mafra | NIF 500 861 790 | CSN-L4-DOC-048-2026 | S48</footer>
+</div></body></html>
