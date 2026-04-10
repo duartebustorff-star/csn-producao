@@ -56,7 +56,8 @@ CLASSIFICA o documento numa destas categorias:
 - dav: declaração aduaneira de veículo
 - fam: ficha de aptidão do material
 - guia_transporte: guia de transporte/remessa
-- orcamento: orçamento/proposta
+- orcamento: orçamento/proposta (documento SEM compromisso de compra)
+- nota_encomenda: nota de encomenda / requisição de cliente (documento de compra firme)
 - contrato: contrato/acordo
 - coc: certificado de conformidade de veículo
 - inspecao: relatório de inspeção
@@ -68,6 +69,7 @@ EXTRAI dados relevantes conforme o tipo:
 - certificado_material: qualidade_aco, composicao, propriedades_mecanicas, lote, vazamento
 - cit: nome_colaborador, data_inicio, data_fim, motivo
 - orcamento: descricao, valor, validade
+- nota_encomenda: numero_encomenda, data, cliente_nome, nif_cliente, valor_total, data_entrega, vins, observacoes
 - Para outros tipos: extrai o que for relevante
 
 Responde APENAS com JSON:
@@ -181,6 +183,19 @@ async function executarAccoes(
     }).then(({ error }) => {
       if (error) console.error('Insert certificado_material erro:', error)
     })
+  }
+
+  // Nota de encomenda
+  if (classificacao === 'nota_encomenda' && dados.numero_encomenda) {
+    if (dados.nif_cliente) {
+      const { data: cliente } = await supabase.from('clientes').select('id, nome').eq('nif', dados.nif_cliente).limit(1)
+      if (cliente && cliente.length > 0) {
+        dados.cliente_id = cliente[0].id
+        dados.cliente_nome = cliente[0].nome
+        await supabase.from('tickets').update({ cliente_id: cliente[0].id }).eq('id', ticketId)
+      }
+    }
+    dados.tipo_documento = 'nota_encomenda'
   }
 
   // CIT → ligar ao colaborador
