@@ -247,6 +247,13 @@ export async function POST(request: NextRequest) {
     )
 
     if (duplicado) {
+      // Se tem anexos novos, actualizar o ticket existente
+      if (anexos && anexos.length > 0 && ticket_existente) {
+        await supabase
+          .from('tickets')
+          .update({ anexos: JSON.stringify(anexos) })
+          .eq('id', ticket_existente)
+      }
       return NextResponse.json({
         status: 'duplicado',
         ticket_id: ticket_existente,
