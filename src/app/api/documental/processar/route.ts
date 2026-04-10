@@ -1,366 +1,270 @@
-// /src/app/api/documental/processar/route.ts
-// CSN-L3-DOC-049-2026 — Agente Documental (Camada 3 Nucleus)
-// Processa anexos de tickets: classifica PDFs, extrai dados, liga a entidades
-// ISA-95 Level: L3-MOM/DOC
-// ADR-034: Pipeline de Entrada Unificado — Fase 2
-
-import { createClient } from '@supabase/supabase-js'
-import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
-
-export const maxDuration = 60
+import { NextRequest, NextResponse } from "next/server"
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
+import { createClient } from "@supabase/supabase-js"
+import fs from "fs"
+import path from "path"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-})
-
-const BATCH_SIZE = 3 // PDFs por execução (limite 60s Vercel)
-
-interface AnexoInfo {
-  nome: string
-  tipo: string
-  tamanho: number
-  path: string
-  url: string
-  classificacao?: string
-  dados_extraidos?: Record<string, any>
-  processado?: boolean
-  erro?: string
-}
-
-// --- Classificar documento com Claude ---
-async function classificarDocumento(
-  pdfBase64: string,
-  nomeArquivo: string,
-  contextoTicket: { remetente: string; assunto: string; departamento: string }
-): Promise<{ classificacao: string; dados_extraidos: Record<string, any> }> {
-  const prompt = `Analisa este documento recebido pela CSN (fabricante de carroçarias para veículos comerciais).
-
-CONTEXTO:
-- Remetente: ${contextoTicket.remetente}
-- Assunto do email: ${contextoTicket.assunto}
-- Departamento: ${contextoTicket.departamento}
-- Nome do ficheiro: ${nomeArquivo}
-
-CLASSIFICA o documento numa destas categorias:
-- factura_fornecedor: factura/recibo de fornecedor
-- factura_cliente: factura emitida a cliente
-- certificado_material_31: certificado de material EN 10204 3.1
-- certificado_soldador: certificado de qualificação de soldador
-- cit: certificado de incapacidade temporária
-- dav: declaração aduaneira de veículo
-- fam: ficha de aptidão do material
-- guia_transporte: guia de transporte/remessa
-- orcamento: orçamento/proposta
-- contrato: contrato/acordo
-- coc: certificado de conformidade de veículo
-- inspecao: relatório de inspeção
-- recibo_vencimento: recibo de vencimento/salário
-- outro: documento não classificável
-
-EXTRAI dados relevantes conforme o tipo:
-- factura: numero, data, valor_total, valor_iva, nif_emitente, atcud, linhas resumo
-- certificado_material: qualidade_aco, composicao, propriedades_mecanicas, lote, vazamento
-- cit: nome_colaborador, data_inicio, data_fim, motivo
-- orcamento: descricao, valor, validade
-- Para outros tipos: extrai o que for relevante
-
-Responde APENAS com JSON:
-{"classificacao":"factura_fornecedor","dados_extraidos":{"numero":"FT 2026/123","data":"2026-03-15","valor_total":1500.00,"nif_emitente":"500123456","atcud":"ABC123"}}`
-
+export async function POST(req: NextRequest) {
   try {
-    const response = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 500,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'document',
-              source: {
-                type: 'base64',
-                media_type: 'application/pdf',
-                data: pdfBase64,
-              },
-            },
-            {
-              type: 'text',
-              text: prompt,
-            },
-          ],
-        },
-      ],
-    })
+    const body = await req.json()
+    const {
+      obra_id,
+      tipo_carrocaria,
+      marca, modelo, matricula, vin, cod_homologacao,
+      comprimento, largura, altura,
+      dist_eixo_frente, dist_eixo_retaguarda,
+      peso_bruto, tara_total, tara_frontal, tara_traseira,
+    } = body
 
-    const text = response.content
-      .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-      .map((b) => b.text)
-      .join('')
+    const pdfDoc = await PDFDocument.create()
 
-    const clean = text.replace(/```json|```/g, '').trim()
-    const start = clean.indexOf('{')
-    const end = clean.lastIndexOf('}')
-    if (start !== -1 && end > start) {
-      return JSON.parse(clean.substring(start, end + 1))
-    }
+    // A4 portrait: 595 x 842 pt
+    const page = pdfDoc.addPage([595, 842])
+    const { width, height } = page.getSize()
 
-    return { classificacao: 'outro', dados_extraidos: {} }
-  } catch (err) {
-    console.error('Erro classificacao documento:', err)
-    return { classificacao: 'erro_classificacao', dados_extraidos: {} }
-  }
-}
+    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+    const fontReg  = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
-// --- Download PDF do Storage ---
-async function downloadFromStorage(path: string): Promise<string | null> {
-  try {
-    const { data, error } = await supabase.storage
-      .from('documentos')
-      .download(path)
+    const BLACK = rgb(0, 0, 0)
+    const GRAY  = rgb(0.4, 0.4, 0.4)
 
-    if (error || !data) {
-      console.error('Storage download error:', error)
-      return null
-    }
+    const L = 56   // left margin
+    const R = width - 56  // right margin
+    const W = R - L       // content width
 
-    const buffer = await data.arrayBuffer()
-    return Buffer.from(buffer).toString('base64')
-  } catch (err) {
-    console.error('Download error:', err)
-    return null
-  }
-}
-
-// --- Acções pós-classificação ---
-async function executarAccoes(
-  ticketId: string,
-  anexo: AnexoInfo,
-  classificacao: string,
-  dados: Record<string, any>,
-  remetente: string
-) {
-  // Factura fornecedor → tentar match e-Fatura por ATCUD
-  if (classificacao === 'factura_fornecedor' && dados.atcud) {
-    const { data: efatura } = await supabase
-      .from('efatura')
-      .select('id')
-      .eq('atcud', dados.atcud)
-      .limit(1)
-
-    if (efatura && efatura.length > 0) {
-      dados.efatura_match = true
-      dados.efatura_id = efatura[0].id
-    } else {
-      dados.efatura_match = false
-    }
-  }
-
-  // Certificado material 3.1 → inserir na tabela
-  if (classificacao === 'certificado_material_31' && dados.qualidade_aco) {
-    const { data: forn } = await supabase
-      .from('fornecedores')
-      .select('id')
-      .or(`email.ilike.%${remetente.split('@')[1]}%`)
-      .limit(1)
-
-    await supabase.from('certificados_material').insert({
-      qualidade_aco: dados.qualidade_aco,
-      composicao_quimica: dados.composicao || null,
-      propriedades_mecanicas: dados.propriedades_mecanicas || null,
-      lote: dados.lote || null,
-      vazamento: dados.vazamento || null,
-      fornecedor_id: forn?.[0]?.id || null,
-      url_certificado: anexo.url,
-      notas: `Auto-processado pelo Ag. Documental. Ticket: ${ticketId}`,
-    }).then(({ error }) => {
-      if (error) console.error('Insert certificado_material erro:', error)
-    })
-  }
-
-  // CIT → ligar ao colaborador
-  if (classificacao === 'cit' && dados.nome_colaborador) {
-    const nomeSearch = dados.nome_colaborador.toLowerCase()
-    const { data: colab } = await supabase
-      .from('colaboradores')
-      .select('id, nome')
-      .or(`nome.ilike.%${nomeSearch}%`)
-      .limit(1)
-
-    if (colab && colab.length > 0) {
-      dados.colaborador_id = colab[0].id
-      dados.colaborador_nome = colab[0].nome
-    }
-  }
-}
-
-// --- MAIN: Processar batch de tickets pendentes ---
-async function processarBatch(): Promise<{
-  processados: number
-  erros: number
-  detalhes: string[]
-}> {
-  const resultado = { processados: 0, erros: 0, detalhes: [] as string[] }
-
-  // Buscar tickets com anexos pendentes
-  const { data: tickets, error } = await supabase
-    .from('tickets')
-    .select('id, remetente, assunto, departamento, anexos')
-    .eq('anexos_estado', 'pendente')
-    .order('created_at', { ascending: true })
-    .limit(BATCH_SIZE)
-
-  if (error || !tickets || tickets.length === 0) {
-    resultado.detalhes.push('Nenhum ticket pendente')
-    return resultado
-  }
-
-  for (const ticket of tickets) {
-    // Marcar como a_processar
-    await supabase
-      .from('tickets')
-      .update({ anexos_estado: 'a_processar' })
-      .eq('id', ticket.id)
-
-    let anexos: AnexoInfo[]
+    // ── LOGO ──────────────────────────────────────────────
+    // Tenta carregar o logo do disco (Next.js server)
     try {
-      anexos = typeof ticket.anexos === 'string'
-        ? JSON.parse(ticket.anexos)
-        : ticket.anexos || []
+      const logoPath = path.join(process.cwd(), "public", "logo-horizontal.png")
+      if (fs.existsSync(logoPath)) {
+        const logoBytes = fs.readFileSync(logoPath)
+        const logoImg = await pdfDoc.embedPng(logoBytes)
+        const logoDims = logoImg.scale(0.18)
+        page.drawImage(logoImg, {
+          x: width / 2 - logoDims.width / 2,
+          y: height - 90,
+          width: logoDims.width,
+          height: logoDims.height,
+        })
+      }
     } catch {
-      anexos = []
-    }
-
-    let todosProcessados = true
-
-    for (let i = 0; i < anexos.length; i++) {
-      const anexo = anexos[i]
-
-      // Só processar PDFs (imagens e outros ficam como estão)
-      if (!anexo.tipo || !anexo.tipo.includes('pdf')) {
-        anexo.processado = true
-        anexo.classificacao = 'nao_pdf'
-        continue
-      }
-
-      if (!anexo.path) {
-        anexo.processado = true
-        anexo.erro = 'sem_path'
-        continue
-      }
-
-      try {
-        // Download do Storage
-        const pdfBase64 = await downloadFromStorage(anexo.path)
-        if (!pdfBase64) {
-          anexo.processado = true
-          anexo.erro = 'download_falhou'
-          todosProcessados = false
-          resultado.erros++
-          continue
-        }
-
-        // Classificar com Claude
-        const { classificacao, dados_extraidos } = await classificarDocumento(
-          pdfBase64,
-          anexo.nome,
-          {
-            remetente: ticket.remetente,
-            assunto: ticket.assunto,
-            departamento: ticket.departamento,
-          }
-        )
-
-        // Acções pós-classificação
-        await executarAccoes(ticket.id, anexo, classificacao, dados_extraidos, ticket.remetente)
-
-        // Actualizar anexo
-        anexo.classificacao = classificacao
-        anexo.dados_extraidos = dados_extraidos
-        anexo.processado = true
-
-        resultado.processados++
-        resultado.detalhes.push(
-          `${ticket.id}: ${anexo.nome} → ${classificacao}`
-        )
-      } catch (err: any) {
-        anexo.processado = true
-        anexo.erro = err.message?.slice(0, 100)
-        todosProcessados = false
-        resultado.erros++
-        resultado.detalhes.push(
-          `${ticket.id}: ${anexo.nome} → ERRO: ${err.message?.slice(0, 60)}`
-        )
-      }
-    }
-
-    // Actualizar ticket com anexos processados
-    await supabase
-      .from('tickets')
-      .update({
-        anexos: JSON.stringify(anexos),
-        anexos_estado: todosProcessados ? 'processado' : 'erro',
+      // Se logo não disponível, desenha placeholder texto
+      page.drawText("CSN", {
+        x: width / 2 - 20, y: height - 70,
+        size: 28, font: fontBold, color: BLACK,
       })
-      .eq('id', ticket.id)
-  }
+      page.drawText("TRANSFORMACAO DE VEICULOS", {
+        x: width / 2 - 80, y: height - 86,
+        size: 8, font: fontBold, color: BLACK,
+      })
+    }
 
-  return resultado
-}
+    let y = height - 110
 
-// --- POST: Processar batch ---
-export async function POST(request: NextRequest) {
-  try {
-    const resultado = await processarBatch()
+    // ── LINHA SEPARADORA ──────────────────────────────────
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
+    y -= 22
+
+    // ── TÍTULO ────────────────────────────────────────────
+    const title = "TERMO DE RESPONSABILIDADE"
+    const titleW = fontBold.widthOfTextAtSize(title, 14)
+    page.drawText(title, {
+      x: width / 2 - titleW / 2, y,
+      size: 14, font: fontBold, color: BLACK,
+    })
+    y -= 6
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
+    y -= 20
+
+    // ── TEXTO JURÍDICO ────────────────────────────────────
+    const tipoCarrocaria = (tipo_carrocaria || "").toUpperCase()
+
+    const textoIntro = [
+      "Eu, abaixo assinado com poderes para o efeito, na qualidade de gerente da empresa Carlos dos Santos",
+      "Nascimento, Lda, com o n.\u00BA de contribuinte 500 861790 e sede em Rua da Industria n.\u00BA 8, Casal do",
+      "Rodo, 2640-216 Encarnacao, declara que a carrocaria produzida e do Tipo:",
+    ]
+
+    for (const linha of textoIntro) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      y -= 13
+    }
+    y -= 4
+
+    // Tipo de carroçaria em bold centrado
+    const tipoW = fontBold.widthOfTextAtSize(tipoCarrocaria, 11)
+    page.drawText(tipoCarrocaria, {
+      x: width / 2 - tipoW / 2, y,
+      size: 11, font: fontBold, color: BLACK,
+    })
+    y -= 16
+
+    const textoConf = [
+      "esta em conformidade com as disposicoes legais aplicaveis, cumpre com as caracteristicas definidas na",
+      "folha de aprovacao de modelo e obedece as caracteristicas estabelecidas na Norma Portuguesa em",
+      "vigor.",
+    ]
+
+    for (const linha of textoConf) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      y -= 13
+    }
+    y -= 16
+
+    // ── TABELA VEÍCULO ────────────────────────────────────
+    const tableTop = y
+    const rowH = 18
+    const col1W = 120
+    const tableW = W
+
+    // Header "Veículo:"
+    page.drawRectangle({ x: L, y: tableTop - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    page.drawText("Veiculo:", { x: L + 4, y: tableTop - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y = tableTop - rowH
+
+    // Linhas da tabela veículo
+    const veiculoRows = [
+      ["Marca:", marca || "-"],
+      ["Modelo:", modelo || "-"],
+      ["Matricula:", matricula || "-"],
+      ["VIN:", vin || "-"],
+      ["Cod. Homologacao", cod_homologacao || "-"],
+    ]
+
+    for (const [label, value] of veiculoRows) {
+      page.drawRectangle({ x: L, y: y - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      page.drawText(label, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      page.drawText(value, { x: L + col1W, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+      y -= rowH
+    }
+
+    y -= 16
+
+    // ── TABELA DIMENSÕES / PESOS (lado a lado) ───────────
+    const halfW = W / 2
+    const col2Start = L + halfW
+
+    // Header linha 1: "Carroçaria" e "Conjunto"
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr1W = fontBold.widthOfTextAtSize("Carrocaria", 9)
+    page.drawText("Carrocaria", { x: L + halfW / 2 - hdr1W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr2W = fontBold.widthOfTextAtSize("Conjunto", 9)
+    page.drawText("Conjunto", { x: col2Start + halfW / 2 - hdr2W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    // Header linha 2: "Dimensões exteriores (mm)" e "Pesos (Kg)"
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr3W = fontBold.widthOfTextAtSize("Dimensoes exteriores (mm)", 9)
+    page.drawText("Dimensoes exteriores (mm)", { x: L + halfW / 2 - hdr3W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr4W = fontBold.widthOfTextAtSize("Pesos (Kg)", 9)
+    page.drawText("Pesos (Kg)", { x: col2Start + halfW / 2 - hdr4W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    // Linhas dimensões + pesos lado a lado
+    const dimCol = 100  // largura coluna label esquerda
+    const pesoCol = 110 // largura coluna label direita
+
+    const dimRows = [
+      ["Comprimento", comprimento ? String(comprimento) : "-"],
+      ["Largura", largura ? String(largura) : "-"],
+      ["Altura", altura ? String(altura) : "-"],
+      ["Dist. eixo ret. a frente", dist_eixo_frente ? String(dist_eixo_frente) : "-"],
+      ["Dist. eixo ret. a retaguarda", dist_eixo_retaguarda ? String(dist_eixo_retaguarda) : "-"],
+    ]
+
+    const pesoRows = [
+      ["Peso bruto:", peso_bruto ? String(peso_bruto) : "-"],
+      ["Peso tara total:", tara_total ? String(tara_total) : "-"],
+      ["Peso tara frontal:", tara_frontal ? String(tara_frontal) : "-"],
+      ["Peso tara traseira:", tara_traseira ? String(tara_traseira) : "-"],
+      ["", ""],
+    ]
+
+    const maxRows = Math.max(dimRows.length, pesoRows.length)
+    for (let i = 0; i < maxRows; i++) {
+      const [dLabel, dVal] = dimRows[i] || ["", ""]
+      const [pLabel, pVal] = pesoRows[i] || ["", ""]
+
+      // Lado esquerdo — dimensões
+      page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (dLabel) page.drawText(dLabel, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (dVal) page.drawText(dVal, { x: L + dimCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      // Lado direito — pesos
+      page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (pLabel) page.drawText(pLabel, { x: col2Start + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (pVal) page.drawText(pVal, { x: col2Start + pesoCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      y -= rowH
+    }
+
+    y -= 30
+
+    // ── LOCAL E DATA ──────────────────────────────────────
+    const dataGeracao = new Date()
+    const meses = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    const dataStr = `Encarnacao, ${String(dataGeracao.getDate()).padStart(2,"0")} de ${meses[dataGeracao.getMonth()]} de ${dataGeracao.getFullYear()}`
+    page.drawText(dataStr, { x: L, y, size: 9, font: fontReg, color: BLACK })
+
+    y -= 60
+
+    // ── ASSINATURA ────────────────────────────────────────
+    const sigW = 200
+    const sigX = width / 2 - sigW / 2
+    page.drawLine({ start: { x: sigX, y: y + 10 }, end: { x: sigX + sigW, y: y + 10 }, thickness: 0.5, color: BLACK })
+
+    const nome = "Duarte da Cunha Martins Bustorff-Silva"
+    const nomeW = fontBold.widthOfTextAtSize(nome, 10)
+    page.drawText(nome, {
+      x: width / 2 - nomeW / 2, y,
+      size: 10, font: fontBold, color: BLACK,
+    })
+    y -= 14
+
+    const certidao = "Certidao Permanente Codigo de acesso: 3172-1374-8252"
+    const certW = fontReg.widthOfTextAtSize(certidao, 8)
+    page.drawText(certidao, {
+      x: width / 2 - certW / 2, y,
+      size: 8, font: fontReg, color: GRAY,
+    })
+
+    // ── GUARDAR NO SUPABASE ───────────────────────────────
+    const pdfBytes = await pdfDoc.save()
+    const dataStr2 = new Date().toISOString().slice(0, 10).replace(/-/g, "")
+    const fileName = `TERM_${obra_id}_${dataStr2}.pdf`
+    const storagePath = `termos/${fileName}`
+
+    const { error: uploadError } = await supabase.storage
+      .from("documentos")
+      .upload(storagePath, pdfBytes, { contentType: "application/pdf", upsert: true })
+
+    if (uploadError) {
+      console.error("Erro upload:", uploadError)
+      return NextResponse.json({ error: "Erro ao guardar PDF" }, { status: 500 })
+    }
+
+    const { data: signedUrl } = await supabase.storage
+      .from("documentos")
+      .createSignedUrl(storagePath, 60 * 60 * 24 * 7)
 
     return NextResponse.json({
-      status: 'ok',
-      agente: 'L3-DOC Agente Documental',
-      ...resultado,
+      sucesso: true,
+      storage_path: storagePath,
+      download_url: signedUrl?.signedUrl ?? null,
+      file_name: fileName,
     })
-  } catch (err: any) {
-    console.error('Agente Documental error:', err)
-    return NextResponse.json(
-      { error: 'Erro no Agente Documental', detalhes: err.message },
-      { status: 500 }
-    )
-  }
-}
 
-// --- GET: Estado dos documentos pendentes ---
-export async function GET(request: NextRequest) {
-  try {
-    const { data: pendentes } = await supabase
-      .from('tickets')
-      .select('id, remetente, assunto, anexos_estado, created_at')
-      .eq('anexos_estado', 'pendente')
-      .order('created_at', { ascending: true })
-
-    const { data: processados } = await supabase
-      .from('tickets')
-      .select('id')
-      .eq('anexos_estado', 'processado')
-
-    const { data: erros } = await supabase
-      .from('tickets')
-      .select('id')
-      .eq('anexos_estado', 'erro')
-
-    return NextResponse.json({
-      agente: 'L3-DOC Agente Documental',
-      pendentes: pendentes?.length || 0,
-      processados: processados?.length || 0,
-      erros: erros?.length || 0,
-      fila: pendentes || [],
-    })
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message },
-      { status: 500 }
-    )
+  } catch (err) {
+    console.error("Erro gerar-termo:", err)
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 })
   }
 }
