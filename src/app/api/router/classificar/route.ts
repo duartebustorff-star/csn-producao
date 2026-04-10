@@ -2,6 +2,7 @@
 // CSN-L3-PRD-038-2026 — Router ISA-95 (Camada 3 Nucleus)
 // Classifica mensagens, identifica remetente, cria tickets ISA-95
 // ISA-95 Level: L3-MOM
+// v9: guarda data_email original + trigger Ag. Documental para anexos
 
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
@@ -173,7 +174,8 @@ async function criarTicket(
   corpo: string,
   remetente: RemetenteInfo,
   classificacao: ClassificacaoResult,
-  anexos?: any[]
+  anexos?: any[],
+  dataEmail?: string
 ): Promise<string> {
   const ticketId = `TKT-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 
@@ -184,6 +186,8 @@ async function criarTicket(
     PER: 'L3-MOM/PER',
     FIN: 'L4-BPL/FIN',
   }
+
+  const temAnexosPDF = anexos && anexos.some((a: any) => a.url && a.tipo?.includes('pdf'))
 
   const { error } = await supabase.from('tickets').insert({
     id: ticketId,
@@ -199,6 +203,8 @@ async function criarTicket(
     estado: 'aberto',
     nivel_isa95: nivelIsa95Map[classificacao.departamento] || 'L3-MOM',
     anexos: anexos ? JSON.stringify(anexos) : null,
+    anexos_estado: temAnexosPDF ? 'pendente' : null,
+    data_email: dataEmail || null,
     metadata: {
       remetente_nome: remetente.nome,
       remetente_nif: remetente.nif,
@@ -217,6 +223,22 @@ async function criarTicket(
   return ticketId
 }
 
+// --- STEP 5: Trigger Ag. Documental (fire-and-forget) ---
+async function triggerDocumental() {
+  try {
+    const baseUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'https://csn-producao.vercel.app'
+
+    fetch(`${baseUrl}/api/documental/processar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    }).catch(() => {}) // fire-and-forget, nao bloquear o Router
+  } catch {
+    // silencioso — o Documental pode ser chamado manualmente depois
+  }
+}
+
 // --- MAIN HANDLER ---
 export async function POST(request: NextRequest) {
   try {
@@ -227,6 +249,7 @@ export async function POST(request: NextRequest) {
       assunto = '',
       corpo = '',
       anexos,
+      data,
     } = body
 
     if (!email_remetente) {
@@ -249,10 +272,17 @@ export async function POST(request: NextRequest) {
     if (duplicado) {
       // Se tem anexos novos, actualizar o ticket existente
       if (anexos && anexos.length > 0 && ticket_existente) {
+        const temPDF = anexos.some((a: any) => a.url && a.tipo?.includes('pdf'))
         await supabase
           .from('tickets')
-          .update({ anexos: JSON.stringify(anexos) })
+          .update({
+            anexos: JSON.stringify(anexos),
+            anexos_estado: temPDF ? 'pendente' : null,
+          })
           .eq('id', ticket_existente)
+
+        // Trigger Ag. Documental se tem PDFs
+        if (temPDF) triggerDocumental()
       }
       return NextResponse.json({
         status: 'duplicado',
@@ -273,7 +303,8 @@ export async function POST(request: NextRequest) {
       corpo,
       remetente,
       classificacao,
-      anexos
+      anexos,
+      data
     )
 
     // 5. Accoes automaticas
@@ -288,6 +319,12 @@ export async function POST(request: NextRequest) {
 
     if (classificacao.departamento === 'FIN') {
       accao_automatica = 'reconciliacao_pendente'
+    }
+
+    // 6. Trigger Ag. Documental se tem PDFs no Storage
+    const temAnexosPDF = anexos && anexos.some((a: any) => a.url && a.tipo?.includes('pdf'))
+    if (temAnexosPDF) {
+      triggerDocumental()
     }
 
     return NextResponse.json({
