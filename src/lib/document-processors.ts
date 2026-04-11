@@ -180,6 +180,104 @@ Extrai TODOS os campos em JSON:
 }
 Se não conseguires ler algum campo, coloca null. Responde APENAS com JSON.`
 
+// ========== PROMPTS ECOSSISTEMA — CHAGAS ==========
+
+const CHAGAS_FACTURA_PROMPT = `Analisa esta factura do fornecedor CHAGAS (NIF 500117152) — distribuidora de aços.
+Existem DOIS formatos: v1 (2024, guia remessa com zeros à esquerda tipo 0015432, 1 página) e v2 (2025+, guia remessa sem zeros tipo 15432, 2 páginas com linhas divididas entre páginas).
+
+Extrai TODOS os dados em JSON com EXACTAMENTE esta estrutura:
+{
+  "formato": "v1"|"v2",
+  "numero_factura": "...",
+  "serie": "...",
+  "data_emissao": "YYYY-MM-DD",
+  "data_vencimento": "YYYY-MM-DD",
+  "cliente_chagas": "...",
+  "atcud": "...",
+  "base_tributavel": 0.00,
+  "iva": 0.00,
+  "total": 0.00,
+  "forma_pagamento": "...",
+  "iban": "...",
+  "linhas": [
+    {
+      "guia_remessa": "...",
+      "data_guia": "YYYY-MM-DD",
+      "referencia_encomenda": "...",
+      "numero_linha_chagas": 1,
+      "referencia_chagas": "...",
+      "descricao": "...",
+      "quantidade": 0.00,
+      "unidade": "TO|CH|M|CAL|CA|VAR|UN",
+      "preco_unitario": 0.00,
+      "desconto_pct": 0.00,
+      "valor_liquido": 0.00,
+      "valor_com_imposto": 0.00,
+      "taxa_iva": 23,
+      "qualidade_aco": "S235JR|S275JR|Zincor|null",
+      "dimensoes_mm": "espessura x largura x comprimento ou perfil"
+    }
+  ]
+}
+
+REGRAS CRÍTICAS:
+- desconto_pct é POR LINHA, nunca global. Se a coluna "Desc" estiver vazia numa linha, é 0.
+- unidade: TO=tonelada, CH=chapa, M=metro, CAL=calha, CA=cada, VAR=vários, UN=unidade
+- qualidade_aco: extrair da descrição (S235JR, S275JR, Zincor, DD11, DC01, etc). null se não mencionado.
+- dimensoes_mm: extrair da descrição (ex: "3x1250x2500", "60x60x3", "Ø42.4x2.6"). null se não aplicável.
+- Cuidado com v2: linhas podem estar divididas entre páginas. Não duplicar nem perder linhas.
+- Se houver múltiplas guias remessa na mesma factura, cada linha tem a SUA guia.
+Responde APENAS com JSON, sem markdown.`
+
+// ========== PROMPTS ECOSSISTEMA — PECOL ==========
+
+const PECOL_FACTURA_PROMPT = `Analisa esta factura do fornecedor PECOL (NIF 501425527) — parafusaria e fixações.
+
+Extrai TODOS os dados em JSON com EXACTAMENTE esta estrutura:
+{
+  "serie_numero": "25ALV/5328",
+  "data_emissao": "YYYY-MM-DD",
+  "data_vencimento": "YYYY-MM-DD",
+  "condicoes_pagamento": "...",
+  "cliente_pecol": "...",
+  "guia_remessa": "...",
+  "confirmacao_encomenda": "...",
+  "encomenda_cliente": "...",
+  "local_carga": "ALVERCA|ÁGUEDA|...",
+  "local_descarga": "...",
+  "portes": 0.00,
+  "base_tributavel": 0.00,
+  "iva": 0.00,
+  "total": 0.00,
+  "atcud": "...",
+  "linhas": [
+    {
+      "codigo_pecol": "...",
+      "codigo_cliente": "P222|...",
+      "descricao": "...",
+      "quantidade": 0.00,
+      "unidade": "Ml|UN|CX|...",
+      "preco_unitario": 0.00,
+      "valor_liquido": 0.00,
+      "taxa_iva": 23
+    }
+  ]
+}
+
+REGRAS CRÍTICAS:
+- serie_numero: formato "25ALV/5328" ou similar. Extrair exactamente como aparece.
+- Ml = milheiro = 1000 unidades. Manter "Ml" como unidade, NÃO converter.
+- codigo_cliente pode ser "P222" ou outro código CSN atribuído pela Pecol.
+- local_carga: normalmente ALVERCA ou ÁGUEDA.
+Responde APENAS com JSON, sem markdown.`
+
+// ========== NIF ROUTING MAP ==========
+
+const NIF_ECOSSISTEMA: Record<string, { fornecedor: string; fornecedor_id: number }> = {
+  '500117152': { fornecedor: 'chagas', fornecedor_id: 10 },
+  '501425527': { fornecedor: 'pecol', fornecedor_id: 34 },
+}
+
 // ========== HELPERS ==========
 
 function cleanJSON(raw: string): string {
@@ -197,13 +295,9 @@ function normalize(s: string): string {
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 }
 
-// NIF português: strip "PT" prefix. NIFs estrangeiros mantêm prefixo.
 function normalizarNIF(nif: string | null | undefined): string | null {
   if (!nif) return null
-  const clean = nif.replace(/\s/g, '').toUpperCase()
-  // Se começa com PT + 9 dígitos = NIF português, tirar PT
-  if (/^PT\d{9}$/.test(clean)) return clean.substring(2)
-  return clean
+  return nif.replace(/[\s.\-\/]/g, '').replace(/^PT/i, '')
 }
 
 // ========== MAIN: processar documento ==========
@@ -261,13 +355,12 @@ export async function processarDocumento(
   // --- PASSO 2: Registar em documentos (SEMPRE — camada geral) ---
   let documentoId: number | null = null
   try {
-    // Procurar fornecedor por NIF (normalizado — strip PT para NIFs portugueses)
+    // Procurar fornecedor por NIF
     let fornecedorId: number | null = null
-    const nifRaw = (geral.entidade_nif || especifico.nif_emitente) as string | null
-    const nifNormalizado = normalizarNIF(nifRaw)
-    if (nifNormalizado) {
+    const nifEmitente = (geral.entidade_nif || especifico.nif_emitente) as string | null
+    if (nifEmitente) {
       const { data: forn } = await supabase
-        .from('fornecedores').select('id').eq('nif', nifNormalizado).limit(1)
+        .from('fornecedores').select('id').eq('nif', nifEmitente).limit(1)
       if (forn && forn.length > 0) fornecedorId = forn[0].id
     }
 
@@ -278,7 +371,7 @@ export async function processarDocumento(
       origem: contexto.ticket_id ? 'email' : 'upload',
       tipo_documento: classificacao,
       entidade_nome: geral.entidade_nome || especifico.nome_emitente || null,
-      entidade_nif: nifNormalizado || null,
+      entidade_nif: nifEmitente || null,
       fornecedor_id: fornecedorId,
       classificacao: { geral, especifico },
       agente: 'L3-DOC',
@@ -308,8 +401,20 @@ export async function processarDocumento(
 
   // --- Extractores específicos ---
 
-  // FACTURA / NC / ORÇAMENTO / FATURA-RECIBO FORNECEDOR
+  // FACTURA / NC / ORÇAMENTO / FATURA-RECIBO FORNECEDOR — routing por NIF
   if (['factura_fornecedor', 'nota_credito_fornecedor', 'fatura_recibo_fornecedor', 'orcamento_fornecedor'].includes(classificacao)) {
+    const nifEmit = normalizarNIF((especifico.nif_emitente || geral.entidade_nif) as string | null)
+    const eco = nifEmit ? NIF_ECOSSISTEMA[nifEmit] : null
+
+    if (eco && ['factura_fornecedor', 'fatura_recibo_fornecedor'].includes(classificacao)) {
+      if (eco.fornecedor === 'chagas') {
+        return await processarFacturaChagas(pdfBase64, fileContent, fileUrl, storagePath, documentoId, contexto, anthropic, supabase)
+      }
+      if (eco.fornecedor === 'pecol') {
+        return await processarFacturaPecol(pdfBase64, fileContent, fileUrl, storagePath, documentoId, contexto, anthropic, supabase)
+      }
+    }
+    // Fallback genérico (NC, orçamentos, ou fornecedores sem ecossistema)
     return await processarDocumentoFornecedor(classificacao, especifico, geral, fileUrl, storagePath, documentoId, contexto, supabase)
   }
 
@@ -365,8 +470,7 @@ async function processarDocumentoFornecedor(
     orcamento_fornecedor: 'orcamento',
   }
   const tipo = tipoMap[classificacao] || 'factura'
-  const nifRaw = (especifico.nif_emitente || geral.entidade_nif) as string | null
-  const nifEmitente = normalizarNIF(nifRaw)
+  const nifEmitente = (especifico.nif_emitente || geral.entidade_nif) as string | null
 
   // Procurar fornecedor
   let fornecedorId: number | null = null
@@ -496,6 +600,312 @@ async function processarDocumentoFornecedor(
     registo_id: docForn.id,
     documento_id: documentoId,
     mensagem,
+  }
+}
+
+// ========== ECOSSISTEMA CHAGAS ==========
+
+async function processarFacturaChagas(
+  pdfBase64: string,
+  fileContent: ContentBlock,
+  fileUrl: string,
+  storagePath: string,
+  documentoId: number | null,
+  contexto: { ticket_id?: string; remetente?: string; uploaded_by?: string },
+  anthropic: Anthropic,
+  supabase: SupabaseClient
+): Promise<ProcessResult> {
+  // Segundo call Sonnet com prompt dedicado Chagas
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5-20250929',
+    max_tokens: 8192,
+    messages: [{ role: 'user', content: [fileContent, { type: 'text', text: CHAGAS_FACTURA_PROMPT }] }],
+  })
+
+  const rawText = response.content
+    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+    .map((b) => b.text).join('')
+
+  let dados: Record<string, unknown>
+  try { dados = JSON.parse(cleanJSON(rawText)) } catch {
+    return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados: { erro: 'JSON parse failed', raw: rawText.substring(0, 500) }, tabela_destino: null, registo_id: null, documento_id: documentoId, mensagem: 'Erro ao extrair factura Chagas', erro: 'JSON parse failed' }
+  }
+
+  const atcud = dados.atcud as string | null
+
+  // Dedup por ATCUD
+  if (atcud) {
+    const { data: existing } = await supabase.from('documentos_fornecedor').select('id').eq('atcud', atcud).maybeSingle()
+    if (existing) {
+      return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados, tabela_destino: 'documentos_fornecedor', registo_id: existing.id, documento_id: documentoId, mensagem: `Factura Chagas ${dados.numero_factura} já existe (ATCUD dedup)` }
+    }
+  }
+
+  // Match efatura
+  let efaturaId: string | null = null
+  if (atcud) {
+    const { data: ef } = await supabase.from('efatura').select('id').eq('atcud', atcud).limit(1)
+    if (ef && ef.length > 0) efaturaId = ef[0].id
+  }
+
+  // 1. Insert documentos_fornecedor (registo central)
+  const { data: docForn, error: docErr } = await supabase.from('documentos_fornecedor').insert({
+    tipo: 'factura',
+    numero: dados.numero_factura || null,
+    data_documento: dados.data_emissao || null,
+    fornecedor_id: 10,
+    nif_emitente: '500117152',
+    nome_emitente: 'Chagas',
+    base_tributavel: dados.base_tributavel as number | null,
+    iva: dados.iva as number | null,
+    total: dados.total as number | null,
+    atcud,
+    efatura_id: efaturaId,
+    documento_id: documentoId,
+    url_ficheiro: fileUrl,
+    storage_path: storagePath,
+    dados_raw: dados,
+  }).select('id').single()
+
+  if (docErr || !docForn) {
+    return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados, tabela_destino: null, registo_id: null, documento_id: documentoId, mensagem: 'Erro ao inserir documentos_fornecedor Chagas', erro: docErr?.message }
+  }
+
+  // 2. Insert facturas_chagas (ecossistema)
+  const { data: fc, error: fcErr } = await supabase.from('facturas_chagas').insert({
+    documento_fornecedor_id: docForn.id,
+    numero_factura: dados.numero_factura || null,
+    serie: dados.serie || null,
+    data_emissao: dados.data_emissao || null,
+    data_vencimento: dados.data_vencimento || null,
+    cliente_chagas: dados.cliente_chagas || null,
+    guia_remessa: null, // header-level, linhas têm as suas
+    data_guia: null,
+    referencia_encomenda: null,
+    base_tributavel: dados.base_tributavel as number | null,
+    iva: dados.iva as number | null,
+    total: dados.total as number | null,
+    atcud,
+    efatura_id: efaturaId,
+    url_ficheiro: fileUrl,
+    storage_path: storagePath,
+    dados_raw: dados,
+    formato: dados.formato || null,
+    forma_pagamento: dados.forma_pagamento || null,
+    iban: dados.iban || null,
+  }).select('id').single()
+
+  if (fcErr || !fc) {
+    return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados, tabela_destino: 'documentos_fornecedor', registo_id: docForn.id, documento_id: documentoId, mensagem: `Factura Chagas ${dados.numero_factura} — doc_forn OK mas erro ecossistema: ${fcErr?.message}`, erro: fcErr?.message }
+  }
+
+  // 3. Insert linhas
+  const linhas = (dados.linhas || []) as Array<Record<string, unknown>>
+  let linhasOk = 0
+
+  for (let i = 0; i < linhas.length; i++) {
+    const l = linhas[i]
+    const refChagas = l.referencia_chagas as string | null
+
+    // Auto-create materiais_fornecedor_ref
+    let matRefId: number | null = null
+    if (refChagas) {
+      const { data: existingRef } = await supabase.from('materiais_fornecedor_ref')
+        .select('id').eq('fornecedor_id', 10).eq('referencia_fornecedor', refChagas).maybeSingle()
+      if (existingRef) {
+        matRefId = existingRef.id
+      } else {
+        const { data: newRef } = await supabase.from('materiais_fornecedor_ref').insert({
+          fornecedor_id: 10,
+          referencia_fornecedor: refChagas,
+          descricao_fornecedor: l.descricao || null,
+        }).select('id').single()
+        if (newRef) matRefId = newRef.id
+      }
+    }
+
+    const { error: lineErr } = await supabase.from('facturas_chagas_linhas').insert({
+      factura_chagas_id: fc.id,
+      linha_num: i + 1,
+      referencia_chagas: refChagas,
+      descricao: l.descricao || 'Sem descrição',
+      quantidade: l.quantidade as number | null,
+      unidade: l.unidade || null,
+      preco_unitario: l.preco_unitario as number | null,
+      desconto_pct: l.desconto_pct as number || 0,
+      valor_liquido: l.valor_liquido as number | null,
+      valor_com_imposto: l.valor_com_imposto as number | null,
+      taxa_iva: l.taxa_iva as number | null,
+      qualidade_aco: l.qualidade_aco || null,
+      dimensoes_mm: l.dimensoes_mm || null,
+      material_fornecedor_ref_id: matRefId,
+      guia_remessa: l.guia_remessa || null,
+      data_guia: l.data_guia || null,
+      referencia_encomenda: l.referencia_encomenda || null,
+      numero_linha_chagas: l.numero_linha_chagas as number || (i + 1),
+    })
+
+    if (!lineErr) linhasOk++
+  }
+
+  // Update efatura
+  if (efaturaId) {
+    await supabase.from('efatura').update({ estado_documento: 'documentado', documento_url: fileUrl, updated_at: new Date().toISOString() }).eq('id', efaturaId)
+  }
+
+  return {
+    tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor',
+    dados: { ...dados, linhas_inseridas: linhasOk, efatura_match: !!efaturaId, ecossistema: 'chagas' },
+    tabela_destino: 'facturas_chagas', registo_id: fc.id, documento_id: documentoId,
+    mensagem: `Factura Chagas ${dados.numero_factura || '?'} — €${dados.total || '?'} — ${linhasOk}/${linhas.length} linhas — formato ${dados.formato || '?'}${efaturaId ? ' — e-Fatura OK' : ''}`,
+  }
+}
+
+// ========== ECOSSISTEMA PECOL ==========
+
+async function processarFacturaPecol(
+  pdfBase64: string,
+  fileContent: ContentBlock,
+  fileUrl: string,
+  storagePath: string,
+  documentoId: number | null,
+  contexto: { ticket_id?: string; remetente?: string; uploaded_by?: string },
+  anthropic: Anthropic,
+  supabase: SupabaseClient
+): Promise<ProcessResult> {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5-20250929',
+    max_tokens: 8192,
+    messages: [{ role: 'user', content: [fileContent, { type: 'text', text: PECOL_FACTURA_PROMPT }] }],
+  })
+
+  const rawText = response.content
+    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+    .map((b) => b.text).join('')
+
+  let dados: Record<string, unknown>
+  try { dados = JSON.parse(cleanJSON(rawText)) } catch {
+    return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados: { erro: 'JSON parse failed', raw: rawText.substring(0, 500) }, tabela_destino: null, registo_id: null, documento_id: documentoId, mensagem: 'Erro ao extrair factura Pecol', erro: 'JSON parse failed' }
+  }
+
+  const atcud = dados.atcud as string | null
+
+  // Dedup
+  if (atcud) {
+    const { data: existing } = await supabase.from('documentos_fornecedor').select('id').eq('atcud', atcud).maybeSingle()
+    if (existing) {
+      return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados, tabela_destino: 'documentos_fornecedor', registo_id: existing.id, documento_id: documentoId, mensagem: `Factura Pecol ${dados.serie_numero} já existe (ATCUD dedup)` }
+    }
+  }
+
+  let efaturaId: string | null = null
+  if (atcud) {
+    const { data: ef } = await supabase.from('efatura').select('id').eq('atcud', atcud).limit(1)
+    if (ef && ef.length > 0) efaturaId = ef[0].id
+  }
+
+  // 1. documentos_fornecedor
+  const { data: docForn, error: docErr } = await supabase.from('documentos_fornecedor').insert({
+    tipo: 'factura',
+    numero: dados.serie_numero || null,
+    data_documento: dados.data_emissao || null,
+    fornecedor_id: 34,
+    nif_emitente: '501425527',
+    nome_emitente: 'Pecol',
+    base_tributavel: dados.base_tributavel as number | null,
+    iva: dados.iva as number | null,
+    total: dados.total as number | null,
+    atcud,
+    efatura_id: efaturaId,
+    documento_id: documentoId,
+    url_ficheiro: fileUrl,
+    storage_path: storagePath,
+    dados_raw: dados,
+  }).select('id').single()
+
+  if (docErr || !docForn) {
+    return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados, tabela_destino: null, registo_id: null, documento_id: documentoId, mensagem: 'Erro ao inserir documentos_fornecedor Pecol', erro: docErr?.message }
+  }
+
+  // 2. facturas_pecol
+  const { data: fp, error: fpErr } = await supabase.from('facturas_pecol').insert({
+    documento_fornecedor_id: docForn.id,
+    serie_numero: dados.serie_numero || null,
+    data_emissao: dados.data_emissao || null,
+    data_vencimento: dados.data_vencimento || null,
+    condicoes_pagamento: dados.condicoes_pagamento || null,
+    cliente_pecol: dados.cliente_pecol || null,
+    guia_remessa: dados.guia_remessa || null,
+    confirmacao_encomenda: dados.confirmacao_encomenda || null,
+    encomenda_cliente: dados.encomenda_cliente || null,
+    local_carga: dados.local_carga || null,
+    local_descarga: dados.local_descarga || null,
+    portes: dados.portes as number | null,
+    base_tributavel: dados.base_tributavel as number | null,
+    iva: dados.iva as number | null,
+    total: dados.total as number | null,
+    atcud,
+    efatura_id: efaturaId,
+    url_ficheiro: fileUrl,
+    storage_path: storagePath,
+    dados_raw: dados,
+  }).select('id').single()
+
+  if (fpErr || !fp) {
+    return { tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor', dados, tabela_destino: 'documentos_fornecedor', registo_id: docForn.id, documento_id: documentoId, mensagem: `Factura Pecol ${dados.serie_numero} — doc_forn OK mas erro ecossistema: ${fpErr?.message}`, erro: fpErr?.message }
+  }
+
+  // 3. Linhas
+  const linhas = (dados.linhas || []) as Array<Record<string, unknown>>
+  let linhasOk = 0
+
+  for (let i = 0; i < linhas.length; i++) {
+    const l = linhas[i]
+    const codPecol = l.codigo_pecol as string | null
+
+    // Auto-create materiais_fornecedor_ref
+    let matRefId: number | null = null
+    if (codPecol) {
+      const { data: existingRef } = await supabase.from('materiais_fornecedor_ref')
+        .select('id').eq('fornecedor_id', 34).eq('referencia_fornecedor', codPecol).maybeSingle()
+      if (existingRef) {
+        matRefId = existingRef.id
+      } else {
+        const { data: newRef } = await supabase.from('materiais_fornecedor_ref').insert({
+          fornecedor_id: 34,
+          referencia_fornecedor: codPecol,
+          descricao_fornecedor: l.descricao || null,
+        }).select('id').single()
+        if (newRef) matRefId = newRef.id
+      }
+    }
+
+    const { error: lineErr } = await supabase.from('facturas_pecol_linhas').insert({
+      factura_pecol_id: fp.id,
+      linha_num: i + 1,
+      codigo_pecol: codPecol,
+      codigo_cliente: l.codigo_cliente || null,
+      descricao: l.descricao || 'Sem descrição',
+      quantidade: l.quantidade as number | null,
+      unidade: l.unidade || null,
+      preco_unitario: l.preco_unitario as number | null,
+      valor_liquido: l.valor_liquido as number | null,
+      taxa_iva: l.taxa_iva as number | null,
+      material_fornecedor_ref_id: matRefId,
+    })
+
+    if (!lineErr) linhasOk++
+  }
+
+  if (efaturaId) {
+    await supabase.from('efatura').update({ estado_documento: 'documentado', documento_url: fileUrl, updated_at: new Date().toISOString() }).eq('id', efaturaId)
+  }
+
+  return {
+    tipo: 'factura_fornecedor', classificacao: 'factura_fornecedor',
+    dados: { ...dados, linhas_inseridas: linhasOk, efatura_match: !!efaturaId, ecossistema: 'pecol' },
+    tabela_destino: 'facturas_pecol', registo_id: fp.id, documento_id: documentoId,
+    mensagem: `Factura Pecol ${dados.serie_numero || '?'} — €${dados.total || '?'} — ${linhasOk}/${linhas.length} linhas${efaturaId ? ' — e-Fatura OK' : ''}`,
   }
 }
 
@@ -750,7 +1160,7 @@ async function processarCertMaterial(
   supabase: SupabaseClient
 ): Promise<ProcessResult> {
   let fornecedorId: number | null = null
-  const nif = normalizarNIF((geral.entidade_nif) as string | null)
+  const nif = (geral.entidade_nif) as string | null
   if (nif) {
     const { data: forn } = await supabase.from('fornecedores').select('id').eq('nif', nif).limit(1)
     if (forn && forn.length > 0) fornecedorId = forn[0].id
