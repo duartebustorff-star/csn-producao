@@ -2,13 +2,12 @@
 // CSN-L3-PRD-038-2026 — Router ISA-95 (Camada 3 Nucleus)
 // Classifica mensagens, identifica remetente, cria tickets ISA-95
 // ISA-95 Level: L3-MOM
-// v9: guarda data_email original + trigger Ag. Documental para anexos
+// v10: dedup por message_id (fix para Apps Script v9 que envia por mensagem)
 
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 
-// Vercel: allow up to 30s for this function
 export const maxDuration = 30
 
 const supabase = createClient(
@@ -20,9 +19,7 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
 })
 
-// Departamentos ISA-95 activos
 const DEPT_ACTIVOS = ['COM', 'PRD', 'DOC', 'PER', 'FIN'] as const
-
 type DeptActivo = (typeof DEPT_ACTIVOS)[number]
 
 interface RemetenteInfo {
@@ -42,7 +39,7 @@ interface ClassificacaoResult {
   confianca: number
 }
 
-// --- STEP 1: Identificar remetente via funcao PostgreSQL ---
+// --- STEP 1: Identificar remetente ---
 async function identificarRemetente(email: string): Promise<RemetenteInfo> {
   const { data, error } = await supabase.rpc('identificar_remetente', {
     p_email: email.toLowerCase().trim(),
@@ -62,7 +59,7 @@ async function identificarRemetente(email: string): Promise<RemetenteInfo> {
   return data[0] as RemetenteInfo
 }
 
-// --- STEP 2: Classificar mensagem via Claude Haiku (rapido) ---
+// --- STEP 2: Classificar mensagem via Claude Haiku ---
 async function classificarMensagem(
   assunto: string,
   corpo: string,
@@ -117,50 +114,41 @@ Responde APENAS com JSON:
   }
 }
 
-// --- STEP 3: Deduplicacao 3 niveis ---
+// --- STEP 3: Deduplicacao (message_id primeiro, depois heuristicas) ---
 async function verificarDuplicado(
   email: string,
   assunto: string,
-  corpo: string
+  corpo: string,
+  messageId?: string
 ): Promise<{ duplicado: boolean; ticket_existente?: string }> {
-  // Nivel 1: Email exacto nos ultimos 5 minutos
-  const { data: recente } = await supabase
-    .from('tickets')
-    .select('id')
-    .eq('remetente', email)
-    .gte('created_at', new Date(Date.now() - 5 * 60 * 1000).toISOString())
-    .limit(1)
+  // Nivel 0: message_id exacto (mais fiavel — cada email tem ID unico)
+  if (messageId) {
+    const { data: byMsgId } = await supabase
+      .from('tickets')
+      .select('id')
+      .eq('message_id', messageId)
+      .limit(1)
 
-  if (recente && recente.length > 0) {
-    return { duplicado: true, ticket_existente: recente[0].id }
+    if (byMsgId && byMsgId.length > 0) {
+      return { duplicado: true, ticket_existente: byMsgId[0].id }
+    }
   }
 
-  // Nivel 2: Mesmo assunto nas ultimas 24h
-  const { data: mesmoAssunto } = await supabase
-    .from('tickets')
-    .select('id')
-    .eq('remetente', email)
-    .eq('assunto', assunto)
-    .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-    .limit(1)
-
-  if (mesmoAssunto && mesmoAssunto.length > 0) {
-    return { duplicado: true, ticket_existente: mesmoAssunto[0].id }
-  }
-
-  // Nivel 3: Corpo identico nos ultimos 7 dias
+  // Nivel 1: Corpo identico nos ultimos 7 dias (catch forwarded duplicates)
   const corpoHash = corpo.trim().toLowerCase().slice(0, 500)
-  const { data: mesmoCorpo } = await supabase
-    .from('tickets')
-    .select('id, corpo')
-    .eq('remetente', email)
-    .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+  if (corpoHash.length > 20) {
+    const { data: mesmoCorpo } = await supabase
+      .from('tickets')
+      .select('id, corpo')
+      .eq('remetente', email)
+      .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
 
-  if (mesmoCorpo) {
-    const dup = mesmoCorpo.find(
-      (t) => t.corpo?.trim().toLowerCase().slice(0, 500) === corpoHash
-    )
-    if (dup) return { duplicado: true, ticket_existente: dup.id }
+    if (mesmoCorpo) {
+      const dup = mesmoCorpo.find(
+        (t) => t.corpo?.trim().toLowerCase().slice(0, 500) === corpoHash
+      )
+      if (dup) return { duplicado: true, ticket_existente: dup.id }
+    }
   }
 
   return { duplicado: false }
@@ -175,7 +163,8 @@ async function criarTicket(
   remetente: RemetenteInfo,
   classificacao: ClassificacaoResult,
   anexos?: any[],
-  dataEmail?: string
+  dataEmail?: string,
+  messageId?: string
 ): Promise<string> {
   const ticketId = `TKT-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 
@@ -205,6 +194,7 @@ async function criarTicket(
     anexos: anexos ? JSON.stringify(anexos) : null,
     anexos_estado: temAnexosPDF ? 'pendente' : null,
     data_email: dataEmail || null,
+    message_id: messageId || null,
     metadata: {
       remetente_nome: remetente.nome,
       remetente_nif: remetente.nif,
@@ -233,9 +223,9 @@ async function triggerDocumental() {
     fetch(`${baseUrl}/api/documental/processar`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-    }).catch(() => {}) // fire-and-forget, nao bloquear o Router
+    }).catch(() => {})
   } catch {
-    // silencioso — o Documental pode ser chamado manualmente depois
+    // silencioso
   }
 }
 
@@ -250,6 +240,7 @@ export async function POST(request: NextRequest) {
       corpo = '',
       anexos,
       data,
+      message_id,
     } = body
 
     if (!email_remetente) {
@@ -266,7 +257,8 @@ export async function POST(request: NextRequest) {
     const { duplicado, ticket_existente } = await verificarDuplicado(
       email_remetente,
       assunto,
-      corpo
+      corpo,
+      message_id
     )
 
     if (duplicado) {
@@ -281,7 +273,6 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', ticket_existente)
 
-        // Trigger Ag. Documental se tem PDFs
         if (temPDF) triggerDocumental()
       }
       return NextResponse.json({
@@ -304,7 +295,8 @@ export async function POST(request: NextRequest) {
       remetente,
       classificacao,
       anexos,
-      data
+      data,
+      message_id
     )
 
     // 5. Accoes automaticas
@@ -321,7 +313,7 @@ export async function POST(request: NextRequest) {
       accao_automatica = 'reconciliacao_pendente'
     }
 
-    // 6. Trigger Ag. Documental se tem PDFs no Storage
+    // 6. Trigger Ag. Documental se tem PDFs
     const temAnexosPDF = anexos && anexos.some((a: any) => a.url && a.tipo?.includes('pdf'))
     if (temAnexosPDF) {
       triggerDocumental()
