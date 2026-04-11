@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="UTF-8"><title>CSN Skills S49</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#0a0a1a;color:#e0e0e0;padding:15px;font-size:12px}.c{max-width:1200px;margin:0 auto}h1{text-align:center;color:#e94560;font-size:1.5em}h2{color:#f39c12;font-size:1em;margin:12px 0 5px;border-bottom:1px solid #1a1a3e;padding-bottom:3px}.sub{text-align:center;color:#7f8c8d;font-size:.8em;margin-bottom:15px}table{width:100%;border-collapse:collapse;margin-bottom:12px}th{background:#0f3460;color:#fff;padding:4px 8px;text-align:left;font-size:.75em}td{padding:4px 8px;font-size:.75em;border-bottom:1px solid #111}tr:hover{background:#162447}.n{color:#e94560;font-weight:700}.n48{color:#3498db;font-weight:700}footer{text-align:center;color:#555;font-size:.7em;margin-top:15px;padding:8px;border-top:1px solid #1a1a3e}</style></head>
+<body><div class="c">
+<h1>Skills and Tools Registry S49</h1>
+<p class="sub">236 skills | 10 RPCs | 2 triggers | 7 routes | 6 integrações | 10/04/2026</p>
+
+<h2>RPCs KPI</h2><table><tr><th>Função</th><th>ISA-95</th><th>KPIs</th><th>S</th></tr>
+<tr><td>kpi_dashboard()</td><td>ALL</td><td>12 master</td><td class="n48">48</td></tr>
+<tr><td>kpi_throughput()</td><td>L3-PRD</td><td>P07</td><td class="n48">48</td></tr>
+<tr><td>kpi_delivery_performance()</td><td>L3-PRD</td><td>P08-09</td><td class="n48">48</td></tr>
+<tr><td>kpi_rentabilidade()</td><td>L4-FIN</td><td>F01-03</td><td class="n48">48</td></tr>
+<tr><td>kpi_custos_estruturais()</td><td>L4-FIN</td><td>F09-10</td><td class="n48">48</td></tr>
+<tr><td>kpi_revenue_per_employee()</td><td>L4-CST</td><td>G07</td><td class="n48">48</td></tr>
+<tr><td>kpi_pipeline_comercial()</td><td>L4-COM</td><td>C01-02</td><td class="n48">48</td></tr>
+<tr><td>kpi_workforce_cost()</td><td>L3-PER</td><td>H07</td><td class="n48">48</td></tr>
+<tr><td>kpi_capacity_utilization()</td><td>L4-CST</td><td>G08</td><td class="n48">48</td></tr>
+<tr><td>identificar_remetente()</td><td>L3-DOC</td><td>Router</td><td class="n48">48</td></tr>
+</table>
+
+<h2>Triggers</h2><table><tr><th>Nome</th><th>Tabela</th><th>Acção</th></tr>
+<tr><td>trg_ticket_to_lead</td><td>tickets</td><td>COM orçamento → lead</td></tr>
+<tr><td>trg_auto_close_spam</td><td>tickets</td><td>spam → arquivado</td></tr>
+</table>
+
+<h2>Routes</h2><table><tr><th>Path</th><th>Função</th><th>S</th></tr>
+<tr><td>/api/router/classificar</td><td>Router v9 Haiku + data_email + trigger Documental</td><td class="n">S49</td></tr>
+<tr><td>/api/documental/processar</td><td>Ag. Documental — classifica PDFs batch</td><td class="n">S49</td></tr>
+<tr><td>/api/faturacao/emitir</td><td>InvoiceXpress</td><td>S26</td></tr>
+<tr><td>/api/faturacao/listar</td><td>InvoiceXpress</td><td>S26</td></tr>
+<tr><td>/api/rh/recibo</td><td>Recibo PDF</td><td>S38</td></tr>
+<tr><td>/api/rh/declaracao-anual</td><td>Declaração</td><td>S38</td></tr>
+<tr><td>/api/rh/colaboradores</td><td>Lista</td><td>S38</td></tr>
+</table>
+
+<h2>Integrações</h2><table><tr><th>Serviço</th><th>Estado</th><th>S</th></tr>
+<tr><td>Apps Script v8 Gmail (5min trigger, anexos→Storage)</td><td>Operacional</td><td class="n">S49</td></tr>
+<tr><td>O365 Forward geral→Gmail</td><td>Operacional</td><td class="n48">S48</td></tr>
+<tr><td>Supabase Storage (bucket documentos, RLS)</td><td>Operacional</td><td class="n">S49</td></tr>
+<tr><td>InvoiceXpress cert AT 192</td><td>Operacional</td><td>S26</td></tr>
+<tr><td>matricula.co.pt</td><td>OK</td><td>S24</td></tr>
+<tr><td>Vincario VIN→specs</td><td>OK</td><td>S24</td></tr>
+</table>
+
+<h2>Agentes Operacionais</h2><table><tr><th>Agente</th><th>Camada</th><th>ISA-95</th><th>Estado</th><th>S</th></tr>
+<tr><td>Ag. Comercial</td><td>C3</td><td>L4-COM</td><td>Router v9 + pipeline</td><td class="n">S49</td></tr>
+<tr><td>Ag. Documental</td><td>C3</td><td>L3-DOC</td><td>OPERACIONAL — 14 categorias</td><td class="n">S49</td></tr>
+<tr><td>Ag. Financeiro</td><td>C3</td><td>L4-FIN</td><td>IES+InvoiceXpress+e-Fatura</td><td class="n48">S48</td></tr>
+<tr><td>Ag. Produção</td><td>C3</td><td>L3-PRD</td><td>10 fases, timetracking</td><td>S32</td></tr>
+<tr><td>Ag. Qualidade</td><td>C3</td><td>L3-QMS</td><td>NC + auditorias</td><td class="n48">S48</td></tr>
+<tr><td>Ag. RH</td><td>C3</td><td>L3-PER</td><td>45 recibos, formações</td><td class="n48">S48</td></tr>
+<tr><td>Ag. Manutenção</td><td>C3</td><td>L3-MNT</td><td>MNT-001 a MNT-004</td><td>S32</td></tr>
+<tr><td>Ag. Inventário</td><td>C3</td><td>L3-INV</td><td>Cert material, resíduos</td><td class="n48">S48</td></tr>
+<tr><td>Ag. Engenharia</td><td>C3</td><td>L4-ENG</td><td>COC, termo, 3D Inventor</td><td>S32</td></tr>
+<tr><td>Ag. Custos</td><td>C3</td><td>L4-CST</td><td>Riscos ISO 31000</td><td class="n48">S48</td></tr>
+<tr><td>R_AGENT</td><td>C3</td><td>L4-CST</td><td>Intel competitiva (standalone)</td><td>S40</td></tr>
+</table>
+
+<h2>Novo S49</h2><table><tr><th>Componente</th><th>Descrição</th></tr>
+<tr><td class="n">Apps Script v8</td><td>Upload automático de anexos PDF para Supabase Storage</td></tr>
+<tr><td class="n">Router v9</td><td>Campo data_email, anexos_estado, trigger Ag. Documental fire-and-forget</td></tr>
+<tr><td class="n">Ag. Documental</td><td>/api/documental/processar — Haiku classifica conteúdo real de PDFs. 14 categorias. Match ATCUD, cert material, CITs auto</td></tr>
+<tr><td class="n">Teste Chagas</td><td>105 PDFs classificados: 18 facturas, 7 orçamentos, 1 certificado, 77 emails/outro</td></tr>
+<tr><td class="n">Pipeline completo</td><td>O365→Gmail→Apps Script v8→Router v9→Ticket→Ag.Documental (end-to-end)</td></tr>
+<tr><td class="n">CSN Connect v3</td><td>Visão de produto documentada (4 páginas PDF). Assessor técnico do comercial</td></tr>
+<tr><td class="n">Migrations</td><td>data_email, anexos_estado, Storage RLS, constraints (canal+historico, remetente+conhecido)</td></tr>
+</table>
+
+<h2>Skills Custom (109)</h2><table><tr><th>Secção</th><th>Qty</th><th>Exemplos</th></tr>
+<tr><td>L4-COM</td><td>12</td><td>vendas, marketing</td></tr>
+<tr><td>L4-FIN</td><td>9</td><td>contabilidade</td></tr>
+<tr><td>L4-ENG</td><td>8</td><td>COC, FEA</td></tr>
+<tr><td>L4-CST</td><td>5</td><td>custos, riscos</td></tr>
+<tr><td>L3-QMS</td><td>22</td><td>registar-nc, ITP</td></tr>
+<tr><td>L3-PRD</td><td>10</td><td>plano-producao</td></tr>
+<tr><td>L3-MNT/PER/DOC/INV</td><td>13</td><td>manutenção, KPIs</td></tr>
+<tr><td>RH+AMB+JUR+EST</td><td>30</td><td>formações, RGPD</td></tr>
+</table>
+
+<footer>CSN | Mafra | NIF 500 861 790 | CSN-L4-DOC-049-2026 | S49</footer>
+</div></body></html>

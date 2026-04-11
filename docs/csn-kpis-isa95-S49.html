@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN OPUS — Mapa Completo KPIs por Secção ISA-95</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0e0;padding:20px;font-size:13px}
+.container{max-width:1400px;margin:0 auto}
+h1{text-align:center;font-size:1.8em;color:#e94560;margin-bottom:3px}
+.subtitle{text-align:center;color:#7f8c8d;margin-bottom:25px;font-size:.85em}
+.summary{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:25px}
+.sum-box{background:#162447;padding:12px;border-radius:8px;text-align:center}
+.sum-val{font-size:1.6em;font-weight:700;color:#e94560}
+.sum-label{font-size:.7em;color:#7f8c8d;margin-top:3px}
+.level-section{margin-bottom:25px;border:1px solid #1a1a3e;border-radius:10px;overflow:hidden}
+.level-header{padding:10px 16px;font-weight:700;font-size:1em;display:flex;justify-content:space-between;align-items:center}
+.l4{background:#0f3460}.l3{background:#1a472a}.l2{background:#4a1942}.l0{background:#1e1e1e}
+.level-header .count{font-size:.8em;font-weight:400;opacity:.8}
+.dept{margin:0;border-top:1px solid #1a1a3e}
+.dept-header{padding:8px 16px;background:#0d1b2a;display:flex;justify-content:space-between;align-items:center}
+.dept-header h3{font-size:.9em;color:#f39c12;margin:0}
+.dept-header .norm{font-size:.75em;color:#7f8c8d}
+.dept-header .dept-count{font-size:.75em;color:#2ecc71;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{background:#0a0a1a;color:#7f8c8d;padding:5px 8px;text-align:left;font-size:.75em;text-transform:uppercase;letter-spacing:.05em}
+td{padding:5px 8px;font-size:.8em;border-bottom:1px solid #111}
+tr:hover{background:#162447}
+.st{display:inline-block;padding:1px 7px;border-radius:3px;font-size:.7em;font-weight:700}
+.s-calc{background:#2ecc7133;color:#2ecc71}
+.s-pend{background:#3498db33;color:#3498db}
+.s-fut{background:#f39c1233;color:#f39c12}
+.s-hw{background:#e9456033;color:#e94560}
+.s-data{background:#9b59b633;color:#9b59b6}
+.legend{display:flex;gap:15px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.legend span{font-size:.75em;display:flex;align-items:center;gap:4px}
+.legend .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+footer{text-align:center;color:#555;font-size:.75em;margin-top:25px;padding:10px;border-top:1px solid #1a1a3e}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Mapa Completo de KPIs — CSN OPUS</h1>
+<p class="subtitle">Todos os niveis ISA-95 | Norma de origem por KPI | S49 — 10/04/2026 | CSN-L4-DOC-049-2026</p>
+<div class="summary">
+<div class="sum-box"><div class="sum-val">97</div><div class="sum-label">KPIs Total</div></div>
+<div class="sum-box"><div class="sum-val">12</div><div class="sum-label">Secções ISA-95</div></div>
+<div class="sum-box"><div class="sum-val">14</div><div class="sum-label">Normas Referência</div></div>
+<div class="sum-box"><div class="sum-val">18</div><div class="sum-label">Calculáveis Agora</div></div>
+<div class="sum-box"><div class="sum-val">62</div><div class="sum-label">Desbloqueáveis (PEND)</div></div>
+<div class="sum-box"><div class="sum-val">6</div><div class="sum-label">Hardware/Sensor</div></div>
+</div>
+<div class="legend">
+<span><span class="dot" style="background:#2ecc71"></span> CALC — calculável agora</span>
+<span><span class="dot" style="background:#3498db"></span> PEND — tabela existe, faltam dados</span>
+<span><span class="dot" style="background:#9b59b6"></span> DATA — falta migration/tabela</span>
+<span><span class="dot" style="background:#f39c12"></span> FUT — depende de infraestrutura</span>
+<span><span class="dot" style="background:#e94560"></span> HW — requer hardware/sensor</span>
+</div>
+<div class="level-section"><div class="level-header l4"><span>L4 — BPL</span><span class="count">38 KPIs | 4 secções</span></div>
+<div class="dept"><div class="dept-header"><h3>L4-FIN</h3><span class="norm">SNC · IAS/IFRS · ISO 22400 Am.</span><span class="dept-count">12 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>F01</td><td>Margem Bruta</td><td>(Vendas-CMVMC)/Vendas×100</td><td>SNC/IAS 1</td><td>demonstracao_resultados</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>F02</td><td>EBITDA</td><td>RL+Imp+Juros+Amort</td><td>SNC/IAS 1</td><td>demonstracao_resultados</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>F03</td><td>RL/Vendas</td><td>RL/Vol.Neg×100</td><td>SNC/IAS 1</td><td>ies_declaracoes</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>F04</td><td>ROI</td><td>RL/Capital×100</td><td>IAS/IFRS</td><td>ies_declaracoes</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>F05</td><td>Current Ratio</td><td>AC/PC</td><td>SNC/IAS 1</td><td>ies_declaracoes</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>F06</td><td>Debt-to-Equity</td><td>Passivo/CP</td><td>SNC/IAS 1</td><td>ies_declaracoes</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>F07</td><td>Cash Flow Op.</td><td>RL+Amort+ΔWC</td><td>SNC/IAS 7</td><td>movimentos_bancarios</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>F08</td><td>DSO</td><td>(CR/Vendas)×365</td><td>IAS/IFRS</td><td>faturas+movimentos</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>F09</td><td>Break-even</td><td>CF/(1-CV/Vendas)</td><td>Gestão</td><td>custos_fixos+ies</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>F10</td><td>Custo Hora Fábrica</td><td>CF Anuais/Horas Úteis</td><td>ISO 22400 Am.</td><td>custos_fixos+potencial</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>F11</td><td>Margem/Obra</td><td>(Fac-Custo)/Fac×100</td><td>Gestão</td><td>obras+faturas+reg_trab</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>F12</td><td>Overhead Ratio</td><td>Indirectos/Totais×100</td><td>IAS/IFRS</td><td>custos_fixos</td><td><span class="st s-pend">PEND</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L4-COM</h3><span class="norm">CRM · Pipeline</span><span class="dept-count">10 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>C01</td><td>Lead Conversion</td><td>Ganhas/Total×100</td><td>CRM</td><td>leads</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C02</td><td>Win Rate</td><td>Aceites/Enviados×100</td><td>CRM</td><td>leads</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C03</td><td>Pipeline Velocity</td><td>(N×Win%×Size)/Days</td><td>CRM</td><td>leads+obras</td><td><span class="st s-data">DATA</span></td></tr>
+<tr><td>C04</td><td>Avg Deal Size</td><td>ValorTotal/Nº Obras</td><td>CRM</td><td>obras</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C05</td><td>Quote-to-Order</td><td>Encomendas/Orç×100</td><td>CRM</td><td>leads</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C06</td><td>Lead Response Time</td><td>Média ticket→resposta</td><td>CRM</td><td>tickets</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C07</td><td>Revenue/Client</td><td>VN/Clientes Activos</td><td>CRM</td><td>faturas+clientes</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C08</td><td>Repeat Client</td><td>Repetentes/Total×100</td><td>CRM</td><td>obras+clientes</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C09</td><td>Sales Cycle</td><td>Dias lead→obra</td><td>CRM</td><td>leads+obras</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>C10</td><td>Backlog</td><td>Σ obras em producao</td><td>Gestão</td><td>obras</td><td><span class="st s-pend">PEND</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L4-ENG</h3><span class="norm">Reg.2018/858 · EN 1090 · PLM</span><span class="dept-count">8 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>E01-E07</td><td colspan="4">Time-to-Delivery, Eng Change, FTR, COC/CE/DoP Compliance, Homolog Rejection</td><td><span class="st s-pend">PEND ×7</span></td></tr>
+<tr><td>E08</td><td>Design Reuse</td><td>Reutilizados/Total×100</td><td>PLM</td><td>catalogo+obras</td><td><span class="st s-data">DATA</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L4-CST</h3><span class="norm">ISO 31000 · BSC</span><span class="dept-count">8 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>G01</td><td>Cost Variance</td><td>(Real-Orç)/Orç×100</td><td>Gestão</td><td>obras+reg_trab</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>G02</td><td>Labour Cost Ratio</td><td>MO/Total×100</td><td>Gestão</td><td>reg_trab+colab_rh</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>G03</td><td>Material Cost Ratio</td><td>Mat/Total×100</td><td>Gestão</td><td>consumos</td><td><span class="st s-data">DATA</span></td></tr>
+<tr><td>G04</td><td>Subcontracting</td><td>Subcon/Total×100</td><td>Gestão</td><td>efatura</td><td><span class="st s-data">DATA</span></td></tr>
+<tr><td>G05</td><td>Budget Adherence</td><td>Dentro orç/Total×100</td><td>Gestão</td><td>obras</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>G06</td><td>Risk Score</td><td>Σ(P×I) activos</td><td>ISO 31000</td><td>riscos (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>G07</td><td>Revenue/Employee</td><td>VN/Colab</td><td>ISO 30414</td><td>ies+colaboradores</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>G08</td><td>Capacity Util.</td><td>Horas/Potencial×100</td><td>ISO 22400</td><td>reg_trab+potencial</td><td><span class="st s-calc">CALC</span></td></tr>
+</table></div>
+</div>
+<div class="level-section"><div class="level-header l3"><span>L3 — MOM</span><span class="count">46 KPIs | 6 secções</span></div>
+<div class="dept"><div class="dept-header"><h3>L3-PRD</h3><span class="norm">ISO 22400:2014</span><span class="dept-count">10 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>ISO 22400</th><th>Ref</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>P01</td><td>Worker Efficiency</td><td>APT/AUBT</td><td>§5.3.1</td><td>reg_trab</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>P02</td><td>Allocation Ratio</td><td>AUBT/ADOT</td><td>§5.3.2</td><td>reg_trab</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>P03</td><td>Utilization Eff.</td><td>AUBT/PBT</td><td>§5.3.3</td><td>reg_trab</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>P04</td><td>Actual Prod Time</td><td>Σ timer</td><td>§5.2.1</td><td>reg_trab</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>P05</td><td>Setup Ratio</td><td>ASET/APT</td><td>§5.2.3</td><td>reg_trab(F1+F2)</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>P06</td><td>Process Ratio</td><td>APT/AUBT</td><td>§5.2.2</td><td>reg_trab</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>P07</td><td>Throughput</td><td>PQ/APT</td><td>§5.4.1</td><td>obras</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>P08</td><td>Schedule Attain.</td><td>On-sched/Total×100</td><td>§5.4.5</td><td>obras</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>P09</td><td>On-Time Delivery</td><td>No prazo/Total×100</td><td>§5.4.6</td><td>obras</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>P10</td><td>Prod Cost/Unit</td><td>(CF+H×CH)/Obras</td><td>§5.4.7</td><td>custos+reg_trab</td><td><span class="st s-calc">CALC</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L3-QMS</h3><span class="norm">ISO 22400 · ISO 9001 · EN 5817</span><span class="dept-count">10 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>Q01-Q08</td><td colspan="4">Quality/Scrap/Rework/FPY/Falloff/NC Rate/NC Closure/Complaints</td><td><span class="st s-pend">PEND ×8</span></td></tr>
+<tr><td>Q09</td><td>Audit Findings</td><td>Findings/Auditorias×100</td><td>ISO 9001 §9.2</td><td>auditorias (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>Q10</td><td>Weld Defect Rate</td><td>NC sold/Juntas insp</td><td>EN 5817</td><td>nao_conformidades</td><td><span class="st s-pend">PEND</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L3-MNT</h3><span class="norm">EN 15341 · ISO 55001</span><span class="dept-count">10 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>M01-M08</td><td colspan="4">MTBF, MTTR, Availability, Corrective%, Cost/Asset, Cost/Rev, Planned%, OEE-A</td><td><span class="st s-pend">PEND ×8</span></td></tr>
+<tr><td>M09</td><td>OEE Performance</td><td>Real/Teórica</td><td>ISO 22400</td><td>reg_trab+potencial</td><td><span class="st s-fut">FUT</span></td></tr>
+<tr><td>M10</td><td>OEE Total</td><td>A×P×Q</td><td>ISO 22400</td><td>composto</td><td><span class="st s-fut">FUT</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L3-INV</h3><span class="norm">ISO 22400 · EN 10204</span><span class="dept-count">6 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>I01</td><td>Inventory Turns</td><td>CMVMC/Stock Médio</td><td>ISO 22400</td><td>stock_movimentos</td><td><span class="st s-data">DATA</span></td></tr>
+<tr><td>I02</td><td>WIP Value</td><td>Σ custo em curso</td><td>ISO 22400</td><td>obras+reg_trab</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>I03</td><td>Mat Cert Compliance</td><td>c/cert/Total×100</td><td>EN 10204</td><td>cert_material+lotes</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>I04</td><td>Material Usage Eff.</td><td>Produto/Consumido×100</td><td>ISO 22400</td><td>consumos</td><td><span class="st s-data">DATA</span></td></tr>
+<tr><td>I05</td><td>Stock Accuracy</td><td>Correctos/Contados×100</td><td>Best Practice</td><td>contagens</td><td><span class="st s-data">DATA</span></td></tr>
+<tr><td>I06</td><td>Supplier OTD</td><td>No prazo/Total×100</td><td>ISO 9001 §8.4</td><td>fornecedores</td><td><span class="st s-data">DATA</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L3-PER</h3><span class="norm">ISO 30414 · EN 9606</span><span class="dept-count">8 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>H01</td><td>Absenteeism</td><td>Ausência/Trabalho×100</td><td>ISO 30414</td><td>ausencias</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>H02</td><td>Training Hours</td><td>Horas/Colaboradores</td><td>ISO 30414</td><td>formacoes (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>H03</td><td>Labour Productivity</td><td>Obras/Horas</td><td>ISO 30414</td><td>obras+reg_trab</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>H04</td><td>Revenue/Employee</td><td>VN/Colab</td><td>ISO 30414</td><td>ies+colaboradores</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>H05</td><td>Overtime Ratio</td><td>Extra/Normais×100</td><td>CT PT</td><td>reg_trab</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>H06</td><td>Turnover</td><td>Saídas/Média×100</td><td>ISO 30414</td><td>colaboradores_rh</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>H07</td><td>Workforce Cost</td><td>Pessoal/VN×100</td><td>ISO 30414</td><td>recibos+ies</td><td><span class="st s-calc">CALC</span></td></tr>
+<tr><td>H08</td><td>Cert Compliance</td><td>Cert válido/Total×100</td><td>EN 9606</td><td>qualificacoes</td><td><span class="st s-pend">PEND</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L3-DOC</h3><span class="norm">ISO 9001 §7.5</span><span class="dept-count">2 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>D01</td><td>Dossier Completion</td><td>Completo/Entregues×100</td><td>ISO 9001</td><td>dossie_obra</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>D02</td><td>Doc Processing</td><td>Dias pedido→entrega</td><td>ISO 9001</td><td>tickets(DOC)</td><td><span class="st s-pend">PEND</span></td></tr>
+</table></div>
+</div>
+<div class="level-section"><div class="level-header l2"><span>L2 — SUP (Energia)</span><span class="count">5 KPIs</span></div>
+<div class="dept"><div class="dept-header"><h3>L2-SUP</h3><span class="norm">ISO 50001 · ISO 22400 Am.1</span><span class="dept-count">5 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>N01-N04</td><td colspan="4">Energy/Unit, Efficiency, Peak Demand, Renewable Ratio — smart meter Bodor</td><td><span class="st s-hw">HW ×4</span></td></tr>
+<tr><td>N05</td><td>Energy Cost/Unit</td><td>Custo/Obras</td><td>EN 15341 E6</td><td>efatura(EDP)+obras</td><td><span class="st s-pend">PEND</span></td></tr>
+</table></div>
+</div>
+<div class="level-section"><div class="level-header l0"><span>L0 — PHY (SST + AMB)</span><span class="count">8 KPIs</span></div>
+<div class="dept"><div class="dept-header"><h3>L0-SST</h3><span class="norm">ISO 45001 §9.1</span><span class="dept-count">4 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>S01</td><td>LTIR</td><td>Acidentes/1Mh×100</td><td>ISO 45001</td><td>acidentes (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>S02</td><td>Near Miss</td><td>QA/Período</td><td>ISO 45001</td><td>acidentes (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>S03</td><td>Lost Time Freq</td><td>Dias/1000h</td><td>ISO 45001</td><td>acidentes (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>S04</td><td>Safety Training</td><td>c/SST/Total×100</td><td>ISO 45001 §7.2</td><td>formacoes (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+</table></div>
+<div class="dept"><div class="dept-header"><h3>L0-AMB</h3><span class="norm">ISO 14001 §9.1</span><span class="dept-count">4 KPIs</span></div>
+<table><tr><th>#</th><th>KPI</th><th>Fórmula</th><th>Norma</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>A01</td><td>Waste Ratio</td><td>kg/Obras</td><td>ISO 14001</td><td>residuos (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>A02</td><td>Recycling Rate</td><td>Recicl/Total×100</td><td>ISO 14001</td><td>residuos (S48)</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>A03</td><td>Env NC Rate</td><td>NC Amb/Total×100</td><td>ISO 14001</td><td>nao_conformidades</td><td><span class="st s-pend">PEND</span></td></tr>
+<tr><td>A04</td><td>Water/Unit</td><td>m³/Obras</td><td>ISO 14001</td><td>registo manual</td><td><span class="st s-data">DATA</span></td></tr>
+</table></div>
+</div>
+<div style="margin-top:25px;padding:15px;background:#162447;border-radius:10px">
+<h2 style="color:#e94560;font-size:1.1em;margin-bottom:10px">Resumo por Nível ISA-95</h2>
+<table>
+<tr><th>Nível</th><th>Secção</th><th>KPIs</th><th>CALC</th><th>PEND</th><th>DATA</th><th>FUT/HW</th></tr>
+<tr><td>L4</td><td>FIN</td><td>12</td><td>6</td><td>6</td><td>0</td><td>0</td></tr>
+<tr><td>L4</td><td>COM</td><td>10</td><td>0</td><td>8</td><td>2</td><td>0</td></tr>
+<tr><td>L4</td><td>ENG</td><td>8</td><td>0</td><td>6</td><td>2</td><td>0</td></tr>
+<tr><td>L4</td><td>CST</td><td>8</td><td>2</td><td>4</td><td>2</td><td>0</td></tr>
+<tr style="background:#1a472a33"><td>L3</td><td>PRD</td><td>10</td><td>8</td><td>2</td><td>0</td><td>0</td></tr>
+<tr style="background:#1a472a33"><td>L3</td><td>QMS</td><td>10</td><td>0</td><td>10</td><td>0</td><td>0</td></tr>
+<tr style="background:#1a472a33"><td>L3</td><td>MNT</td><td>10</td><td>0</td><td>8</td><td>0</td><td>2</td></tr>
+<tr style="background:#1a472a33"><td>L3</td><td>INV</td><td>6</td><td>0</td><td>2</td><td>4</td><td>0</td></tr>
+<tr style="background:#1a472a33"><td>L3</td><td>PER</td><td>8</td><td>2</td><td>6</td><td>0</td><td>0</td></tr>
+<tr style="background:#1a472a33"><td>L3</td><td>DOC</td><td>2</td><td>0</td><td>2</td><td>0</td><td>0</td></tr>
+<tr><td>L2</td><td>SUP</td><td>5</td><td>0</td><td>1</td><td>0</td><td>4</td></tr>
+<tr><td>L0</td><td>SST</td><td>4</td><td>0</td><td>4</td><td>0</td><td>0</td></tr>
+<tr><td>L0</td><td>AMB</td><td>4</td><td>0</td><td>3</td><td>1</td><td>0</td></tr>
+<tr style="background:#0f3460;font-weight:700"><td colspan="2">TOTAL</td><td>97</td><td>18</td><td>62</td><td>11</td><td>6</td></tr>
+</table>
+<p style="font-size:.75em;color:#7f8c8d;margin-top:8px">Delta S48→S49: 9 KPIs DATA→PEND (tabelas S48: formacoes, acidentes, residuos, auditorias, riscos). Ag. Documental classifica cert materiais automaticamente.</p>
+</div>
+<footer>CSN — Engenharia de Veículos Comerciais | Mafra | NIF 500 861 790 | CSN-L4-DOC-049-2026 | S49 — 10/04/2026<br>
+Normas: ISO 22400 · EN 15341 · ISO 30414 · ISO 9001 · ISO 14001 · ISO 45001 · ISO 50001 · ISO 31000 · ISO 55001 · EN 1090 · EN 10204 · EN 9606 · EN 5817 · Reg. 2018/858 · SNC/IAS</footer>
+</div></body></html>
