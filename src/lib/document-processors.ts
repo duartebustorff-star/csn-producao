@@ -197,6 +197,15 @@ function normalize(s: string): string {
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 }
 
+// NIF português: strip "PT" prefix. NIFs estrangeiros mantêm prefixo.
+function normalizarNIF(nif: string | null | undefined): string | null {
+  if (!nif) return null
+  const clean = nif.replace(/\s/g, '').toUpperCase()
+  // Se começa com PT + 9 dígitos = NIF português, tirar PT
+  if (/^PT\d{9}$/.test(clean)) return clean.substring(2)
+  return clean
+}
+
 // ========== MAIN: processar documento ==========
 
 export async function processarDocumento(
@@ -252,12 +261,13 @@ export async function processarDocumento(
   // --- PASSO 2: Registar em documentos (SEMPRE — camada geral) ---
   let documentoId: number | null = null
   try {
-    // Procurar fornecedor por NIF
+    // Procurar fornecedor por NIF (normalizado — strip PT para NIFs portugueses)
     let fornecedorId: number | null = null
-    const nifEmitente = (geral.entidade_nif || especifico.nif_emitente) as string | null
-    if (nifEmitente) {
+    const nifRaw = (geral.entidade_nif || especifico.nif_emitente) as string | null
+    const nifNormalizado = normalizarNIF(nifRaw)
+    if (nifNormalizado) {
       const { data: forn } = await supabase
-        .from('fornecedores').select('id').eq('nif', nifEmitente).limit(1)
+        .from('fornecedores').select('id').eq('nif', nifNormalizado).limit(1)
       if (forn && forn.length > 0) fornecedorId = forn[0].id
     }
 
@@ -268,7 +278,7 @@ export async function processarDocumento(
       origem: contexto.ticket_id ? 'email' : 'upload',
       tipo_documento: classificacao,
       entidade_nome: geral.entidade_nome || especifico.nome_emitente || null,
-      entidade_nif: nifEmitente || null,
+      entidade_nif: nifNormalizado || null,
       fornecedor_id: fornecedorId,
       classificacao: { geral, especifico },
       agente: 'L3-DOC',
@@ -355,7 +365,8 @@ async function processarDocumentoFornecedor(
     orcamento_fornecedor: 'orcamento',
   }
   const tipo = tipoMap[classificacao] || 'factura'
-  const nifEmitente = (especifico.nif_emitente || geral.entidade_nif) as string | null
+  const nifRaw = (especifico.nif_emitente || geral.entidade_nif) as string | null
+  const nifEmitente = normalizarNIF(nifRaw)
 
   // Procurar fornecedor
   let fornecedorId: number | null = null
@@ -739,7 +750,7 @@ async function processarCertMaterial(
   supabase: SupabaseClient
 ): Promise<ProcessResult> {
   let fornecedorId: number | null = null
-  const nif = (geral.entidade_nif) as string | null
+  const nif = normalizarNIF((geral.entidade_nif) as string | null)
   if (nif) {
     const { data: forn } = await supabase.from('fornecedores').select('id').eq('nif', nif).limit(1)
     if (forn && forn.length > 0) fornecedorId = forn[0].id
