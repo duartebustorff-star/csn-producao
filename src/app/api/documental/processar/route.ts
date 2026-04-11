@@ -140,15 +140,20 @@ async function processarBatch(): Promise<{
   return resultado
 }
 
-// --- POST: Processar batch (via Router trigger) ---
+// --- POST: Processar batch (via Router trigger) ou reprocess ---
 export async function POST(request: NextRequest) {
   try {
-    // Verificar se é upload directo (multipart) ou batch trigger
     const contentType = request.headers.get('content-type') || ''
     
     if (contentType.includes('multipart/form-data')) {
-      // Upload directo de 1..N ficheiros
       return await processarUploadDirecto(request)
+    }
+
+    // JSON body — reprocess ou batch
+    const body = await request.json().catch(() => ({}))
+    
+    if (body.reprocess_paths && Array.isArray(body.reprocess_paths)) {
+      return await reprocessarDoStorage(body.reprocess_paths)
     }
 
     // Batch trigger (do Router)
@@ -159,6 +164,56 @@ export async function POST(request: NextRequest) {
     console.error('Agente Documental error:', err)
     return NextResponse.json({ error: 'Erro no Agente Documental', detalhes: err.message }, { status: 500 })
   }
+}
+
+// --- Reprocessar PDFs que já estão no Storage ---
+async function reprocessarDoStorage(paths: string[]): Promise<NextResponse> {
+  const resultados: ProcessResult[] = []
+
+  for (const storagePath of paths) {
+    try {
+      const pdfBase64 = await downloadFromStorage(storagePath)
+      if (!pdfBase64) {
+        resultados.push({
+          tipo: 'erro', classificacao: 'download_falhou',
+          dados: { path: storagePath }, tabela_destino: null,
+          registo_id: null, documento_id: null,
+          mensagem: `Download falhou: ${storagePath}`,
+        })
+        continue
+      }
+
+      const { data: urlData } = await supabase.storage
+        .from('documentos')
+        .createSignedUrl(storagePath, 60 * 60 * 24 * 365)
+
+      const fileName = storagePath.split('/').pop() || 'unknown.pdf'
+
+      const result = await processarDocumento(
+        pdfBase64, fileName, storagePath,
+        urlData?.signedUrl || '',
+        { uploaded_by: 'reprocess' },
+        anthropic, supabase
+      )
+      resultados.push(result)
+    } catch (err: any) {
+      resultados.push({
+        tipo: 'erro', classificacao: 'erro_processamento',
+        dados: { path: storagePath }, tabela_destino: null,
+        registo_id: null, documento_id: null,
+        mensagem: `Erro: ${storagePath}`, erro: err.message,
+      })
+    }
+  }
+
+  return NextResponse.json({
+    status: 'ok',
+    agente: 'L3-DOC Agente Documental (reprocess)',
+    total: paths.length,
+    processados: resultados.filter(r => !r.erro).length,
+    erros: resultados.filter(r => !!r.erro).length,
+    resultados,
+  })
 }
 
 // --- Upload directo de múltiplos ficheiros ---
