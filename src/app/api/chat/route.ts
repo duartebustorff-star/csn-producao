@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+﻿import { NextRequest, NextResponse } from "next/server"
 import Anthropic from "@anthropic-ai/sdk"
 import { getServiceSupabase } from "@/lib/supabase"
 import { CLAUDE_TOOLS, executeTool } from "@/lib/chat-tools"
@@ -12,43 +12,43 @@ function buildSystemPrompt(
   timer: unknown | null
 ): string {
   const langLabel: Record<string, string> = {
-    pt: "Português",
+    pt: "PortuguÃªs",
     en: "English",
-    ua: "Українська",
+    ua: "Ð£ÐºÑ€Ð°Ñ—Ð½ÑÑŒÐºÐ°",
   }
 
-  return `Tu és o assistente de produção da CSN Carroçarias (Carlos dos Santos Nascimento Lda), uma metalomecânica em Mafra, Portugal, que fabrica carroçarias para veículos comerciais.
+  return `Tu Ã©s o assistente de produÃ§Ã£o da CSN CarroÃ§arias (Carlos dos Santos Nascimento Lda), uma metalomecÃ¢nica em Mafra, Portugal, que fabrica carroÃ§arias para veÃ­culos comerciais.
 
-Estás a falar com: ${colaborador.nome} (${colaborador.funcao})
-Língua preferida: ${langLabel[colaborador.lang] || "Português"}
+EstÃ¡s a falar com: ${colaborador.nome} (${colaborador.funcao})
+LÃ­ngua preferida: ${langLabel[colaborador.lang] || "PortuguÃªs"}
 
 REGRAS:
-- Responde SEMPRE na língua do colaborador (pt/en/ua)
-- Sê conciso e prático — é uma fábrica, não um escritório
-- Usa emojis com moderação para clareza visual
+- Responde SEMPRE na lÃ­ngua do colaborador (pt/en/ua)
+- SÃª conciso e prÃ¡tico â€” Ã© uma fÃ¡brica, nÃ£o um escritÃ³rio
+- Usa emojis com moderaÃ§Ã£o para clareza visual
 - Quando o colaborador pede tarefas, mostra primeiro as "em_curso", depois "pendentes"
-- Quando o colaborador diz que acabou uma tarefa, confirma e mostra a próxima
-- Quando há notas numa fase, mostra-as
-- Nunca inventes dados — usa apenas o que está no contexto fornecido
-- Se o colaborador pedir algo fora do âmbito (receitas, piadas...), redireciona educadamente para o trabalho
-- Formata as respostas de forma legível com listas e negrito quando útil
+- Quando o colaborador diz que acabou uma tarefa, confirma e mostra a prÃ³xima
+- Quando hÃ¡ notas numa fase, mostra-as
+- Nunca inventes dados â€” usa apenas o que estÃ¡ no contexto fornecido
+- Se o colaborador pedir algo fora do Ã¢mbito (receitas, piadas...), redireciona educadamente para o trabalho
+- Formata as respostas de forma legÃ­vel com listas e negrito quando Ãºtil
 
-DETEÇÃO DE PEDIDOS DE ORÇAMENTO:
-Quando o utilizador mencionar orçamento, carroçaria, basculante, caixa, estrado, furgão, plataforma, grua ou qualquer trabalho para veículo:
+DETEÃ‡ÃƒO DE PEDIDOS DE ORÃ‡AMENTO:
+Quando o utilizador mencionar orÃ§amento, carroÃ§aria, basculante, caixa, estrado, furgÃ£o, plataforma, grua ou qualquer trabalho para veÃ­culo:
 
-REGRA FUNDAMENTAL: Faz APENAS UMA pergunta de cada vez. NUNCA listes múltiplas perguntas. NUNCA mostres formulários. Conversa naturalmente como se estivesses ao telefone com o cliente.
+REGRA FUNDAMENTAL: Faz APENAS UMA pergunta de cada vez. NUNCA listes mÃºltiplas perguntas. NUNCA mostres formulÃ¡rios. Conversa naturalmente como se estivesses ao telefone com o cliente.
 
 Fluxo:
-1. Começa SEMPRE por perguntar: "O veículo é novo ou usado?"
-2. Espera resposta. Depois faz a PRÓXIMA pergunta apenas.
-3. Se USADO → pede matrícula → pede foto do DUA → pede tipo de trabalho → pede medidas
-4. Se NOVO → pede marca/modelo → pede PBT → pede tipo carroçaria → pede medidas → pergunta equipamentos
-5. Em AMBOS → pede nome do cliente → pede telefone → pede email
-6. Quando tiveres tudo (mínimo: nome, contacto, marca/modelo, tipo trabalho) → mostra RESUMO → pede confirmação → só então usa criar_lead
+1. ComeÃ§a SEMPRE por perguntar: "O veÃ­culo Ã© novo ou usado?"
+2. Espera resposta. Depois faz a PRÃ“XIMA pergunta apenas.
+3. Se USADO â†’ pede matrÃ­cula â†’ pede foto do DUA â†’ pede tipo de trabalho â†’ pede medidas
+4. Se NOVO â†’ pede marca/modelo â†’ pede PBT â†’ pede tipo carroÃ§aria â†’ pede medidas â†’ pergunta equipamentos
+5. Em AMBOS â†’ pede nome do cliente â†’ pede telefone â†’ pede email
+6. Quando tiveres tudo (mÃ­nimo: nome, contacto, marca/modelo, tipo trabalho) â†’ mostra RESUMO â†’ pede confirmaÃ§Ã£o â†’ sÃ³ entÃ£o usa criar_lead
 
 EXEMPLO CORRETO (uma pergunta por mensagem):
-- Utilizador: "Preciso de orçamento para uma caixa aberta"
-- Tu: "O veículo é novo ou usado?"
+- Utilizador: "Preciso de orÃ§amento para uma caixa aberta"
+- Tu: "O veÃ­culo Ã© novo ou usado?"
 - Utilizador: "Novo"
 - Tu: "Qual a marca e modelo?"
 - Utilizador: "Mercedes Sprinter"
@@ -61,10 +61,10 @@ ${JSON.stringify(obras, null, 2)}
 TIMER ATIVO:
 ${timer ? JSON.stringify(timer, null, 2) : "Nenhum timer ativo"}
 
-ANÁLISE DE IMAGENS:
-Quando recebes imagens, analisa-as com atenção. Extrai toda a informação visível: matrícula, VIN, marca, modelo, tipo de carroçaria actual, dados de documentos fotografados (DUA, FAM, certificados). Nunca digas que não consegues ler — tenta sempre. Se a imagem estiver desfocada, diz exactamente que parte não consegues ler e pede nova foto só dessa parte. Se vires um veículo, descreve-o e pergunta se o colaborador quer registar como lead ou associar a uma obra.
+ANÃLISE DE IMAGENS:
+Quando recebes imagens, analisa-as com atenÃ§Ã£o. Extrai toda a informaÃ§Ã£o visÃ­vel: matrÃ­cula, VIN, marca, modelo, tipo de carroÃ§aria actual, dados de documentos fotografados (DUA, FAM, certificados). Nunca digas que nÃ£o consegues ler â€” tenta sempre. Se a imagem estiver desfocada, diz exactamente que parte nÃ£o consegues ler e pede nova foto sÃ³ dessa parte. Se vires um veÃ­culo, descreve-o e pergunta se o colaborador quer registar como lead ou associar a uma obra.
 
-Usa as tools disponíveis para consultar dados atualizados e executar ações.`
+Usa as tools disponÃ­veis para consultar dados atualizados e executar aÃ§Ãµes.`
 }
 
 export async function POST(req: NextRequest) {
@@ -85,10 +85,10 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!colab) {
-      return NextResponse.json({ error: "Colaborador não encontrado" }, { status: 404 })
+      return NextResponse.json({ error: "Colaborador nÃ£o encontrado" }, { status: 404 })
     }
 
-    // 2. Buscar obras em produção
+    // 2. Buscar obras em produÃ§Ã£o
     const { data: obras } = await supabase
       .from("obras")
       .select("*, fases_obra(*)")
@@ -139,14 +139,14 @@ export async function POST(req: NextRequest) {
 
     // 6. Chamar Claude API (more tokens when processing images)
     let response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       max_tokens: hasImages ? 4096 : 2048,
       system: systemPrompt,
       tools: CLAUDE_TOOLS,
       messages,
     })
 
-    // 7. Processar tool calls (loop para permitir múltiplas tool calls)
+    // 7. Processar tool calls (loop para permitir mÃºltiplas tool calls)
     let iterations = 0
     while (response.stop_reason === "tool_use" && iterations < 5) {
       iterations++
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
       messages.push({ role: "user", content: toolResults })
 
       response = await anthropic.messages.create({
-        model: "claude-sonnet-4-5-20250929",
+        model: "claude-sonnet-4-6",
         max_tokens: 2048,
         system: systemPrompt,
         tools: CLAUDE_TOOLS,
@@ -219,3 +219,4 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+
