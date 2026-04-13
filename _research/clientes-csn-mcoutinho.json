@@ -1,0 +1,181 @@
+{
+  "grupo": {
+    "nome": "Grupo MCoutinho",
+    "nome_legal_holding": "M. Coutinho - SGPS S.A.",
+    "nif": "505296659",
+    "sede": "Rua 5 de Outubro, 10, 4630-230 Marco de Canaveses",
+    "fundado": 1956,
+    "fundador": "Manuel Moreira Coutinho (1932-2015)",
+    "ceo": "António Martinho Barbosa Gomes Coutinho (filho do fundador)",
+    "facturacao": "476 milhões EUR (2023)",
+    "colaboradores": 1300,
+    "veiculos_vendidos_ano": 15500,
+    "pontos_venda": 90,
+    "oficinas": 24,
+    "centros_colisao": 15,
+    "distritos": ["Bragança", "Vila Real", "Porto", "Aveiro", "Viseu", "Coimbra", "Leiria", "Lisboa"],
+    "compras_centralizadas": false,
+    "modelo_compras": "Semi-descentralizado. Cada empresa subsidiária regional opera autonomamente. Programa MCoutinho PRO centraliza estratégia B2B/frotas com Key Account Manager (Francisco Coutinho). B2B = ~60% das vendas de veículos novos.",
+    "marcas_comerciais_relevantes_csn": ["Renault", "Fiat Professional", "Ford", "Peugeot", "Opel", "Isuzu", "FUSO", "Citroën"],
+    "todas_marcas": ["Abarth", "Alfa Romeo", "BMW", "BMW Motorrad", "Citroën", "Dacia", "DS", "EBRO", "Fiat", "Fiat Professional", "Ford", "FUSO", "GasGas", "Husqvarna", "Isuzu", "Jaguar", "Jeep", "Kia", "KTM", "Land Rover", "Mazda", "Mercedes-Benz", "MG", "MINI", "Mitsubishi", "Opel", "Peugeot", "Renault", "SEAT", "Spoticar", "Toyota"]
+  },
+  "empresas": [
+    { "nome_legal": "M. Coutinho - SGPS S.A.", "nif": "505296659", "tipo": "Holding/SGPS", "morada": "Rua 5 de Outubro, 10, 4630-230 Marco de Canaveses" },
+    { "nome_legal": "M. Coutinho Corporate, Lda", "nif": "503575739", "tipo": "Serviços corporativos", "morada": "Marco de Canaveses" },
+    { "nome_legal": "M. Coutinho Douro - Comércio de Automóveis S.A.", "nif": "506659470", "tipo": "Concessionário (Douro/Trás-os-Montes)", "morada": "Marco de Canaveses" },
+    { "nome_legal": "M. Coutinho Porto - Comércio de Automóveis S.A.", "nif": "506629244", "tipo": "Concessionário (Porto)", "morada": "Gondomar, Porto", "capital": "3.743.000 EUR" },
+    { "nome_legal": "M. Coutinho Litoral - Comércio de Automóveis S.A.", "nif": "503255955", "tipo": "Concessionário (Aveiro)", "morada": "Estrada de São Bernardo, Apartado 32, 3810-175 Aveiro", "capital": "1.821.273 EUR" },
+    { "nome_legal": "M. Coutinho Centro - Comércio de Automóveis S.A.", "nif": "500037620", "tipo": "Concessionário (Coimbra/Viseu)", "morada": "Coimbra", "capital": "3.900.000 EUR" },
+    { "nome_legal": "M. Coutinho Nordeste - Comércio de Automóveis S.A.", "nif": "506609669", "tipo": "Concessionário (Bragança/Vila Real)", "morada": "Trás-os-Montes" },
+    { "nome_legal": "M. Coutinho Oeste - Comércio de Automóveis S.A.", "nif": "515889709", "tipo": "Concessionário (Leiria)", "morada": "Leiria", "capital": "3.000.000 EUR", "constituida": "2020-03-27" },
+    { "nome_legal": "M. Coutinho Lisboa - Comércio de Automóveis S.A.", "nif": "502257172", "tipo": "Concessionário (Lisboa - Ford/Stellantis)", "morada": "Lisboa" },
+    { "nome_legal": "M. Coutinho Lisboa II - Comércio de Automóveis S.A.", "nif": "504499831", "tipo": "Concessionário (Lisboa Oriente - Peugeot/DS/Alfa)", "morada": "Av. Infante D. Henrique, Lote 337, 1800-218 Lisboa", "capital": "445.000 EUR" },
+    { "nome_legal": "M. Coutinho Motors I - Comércio de Automóveis S.A.", "nif": "508996627", "tipo": "Concessionário (Toyota)", "morada": "N/D" },
+    { "nome_legal": "M. Coutinho Motors II - Comércio de Automóveis S.A.", "nif": "515115690", "tipo": "Concessionário (Toyota)", "morada": "N/D" },
+    { "nome_legal": "M. Coutinho - Peças e Reparação Automóvel S.A.", "nif": "506634515", "tipo": "Distribuição de peças", "morada": "Gondomar", "capital": "1.900.000 EUR" },
+    { "nome_legal": "M. Coutinho Colisão, Lda", "nif": "508223709", "tipo": "Centros de colisão", "morada": "Marco de Canaveses", "capital": "700.000 EUR" },
+    { "nome_legal": "M. Coutinho Usados 1956 - Comércio de Automóveis, Lda", "nif": "510334270", "tipo": "Venda de usados", "morada": "Marco de Canaveses", "capital": "500.000 EUR" },
+    { "nome_legal": "M. Coutinho Mobility, Lda", "nif": "504703846", "tipo": "Rent-a-car / Mobilidade", "morada": "Marco de Canaveses" }
+  ],
+  "concessoes_relevantes_csn": [
+    {
+      "nome": "MCoutinho Renault/Dacia Leiria",
+      "morada": "Rua dos Camponeses, Vale de Colmeia - Marrazes",
+      "codigo_postal": "2415-444",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "empresa_juridica": "M. Coutinho Oeste (NIF 515889709)",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "usados", "oficina", "peças"],
+      "telefone": "244 244 870",
+      "relevancia_csn": "ALTA — Renault Master chassis-cabina."
+    },
+    {
+      "nome": "MCoutinho Renault/Dacia Caldas da Rainha",
+      "morada": "Rua Estrada do Lavradio, 95, Tornada",
+      "codigo_postal": "2500-294",
+      "localidade": "Caldas da Rainha",
+      "distrito": "Leiria",
+      "empresa_juridica": "M. Coutinho Oeste (NIF 515889709)",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "usados", "oficina"],
+      "telefone": "262 248 580",
+      "relevancia_csn": "MÉDIA — Renault Master chassis-cabina."
+    },
+    {
+      "nome": "MCoutinho Lisboa Oriente (Peugeot/DS/Alfa/Opel)",
+      "morada": "Av. Infante D. Henrique, 337",
+      "codigo_postal": "1800-218",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "empresa_juridica": "M. Coutinho Lisboa II (NIF 504499831)",
+      "marcas": ["Peugeot", "DS", "Alfa Romeo", "Spoticar", "Opel"],
+      "servicos": ["vendas", "usados", "oficina", "peças", "colisão"],
+      "telefone": "800 910 710",
+      "relevancia_csn": "MÉDIA — Peugeot Boxer e Opel Movano chassis-cabina.",
+      "contactos_especificos": [
+        { "nome": "João Catalão Mano", "funcao": "Diretor Geral MCoutinho Lisboa Oriente" }
+      ]
+    },
+    {
+      "nome": "MCoutinho Ford Lisboa",
+      "morada": "Estrada da Luz, 60C",
+      "codigo_postal": "1600-159",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "empresa_juridica": "M. Coutinho Lisboa (NIF 502257172)",
+      "marcas": ["Ford"],
+      "servicos": ["vendas", "usados", "oficina"],
+      "telefone": "215 830 160",
+      "relevancia_csn": "ALTA — Ford Transit chassis-cabina 3.5T-5.0T."
+    },
+    {
+      "nome": "MCoutinho Ford Loures",
+      "morada": "Estrada Nacional 8, Mealhada, Km 4,3",
+      "codigo_postal": "2670-492",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "empresa_juridica": "M. Coutinho Lisboa (NIF 502257172)",
+      "marcas": ["Ford"],
+      "servicos": ["vendas", "usados", "oficina", "peças"],
+      "telefone": "215 830 160",
+      "relevancia_csn": "ALTA — Ford Transit chassis-cabina."
+    },
+    {
+      "nome": "MCoutinho Stellantis Loures (Fiat/Jeep/Alfa)",
+      "morada": "Estrada Nacional 8, Km 4,3",
+      "codigo_postal": "2670-492",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "empresa_juridica": "M. Coutinho Lisboa (NIF 502257172)",
+      "marcas": ["Fiat", "Fiat Professional", "Alfa Romeo", "Jeep", "Abarth"],
+      "servicos": ["vendas", "usados", "oficina"],
+      "relevancia_csn": "ALTA — Fiat Ducato chassis-cabina via Fiat Professional."
+    },
+    {
+      "nome": "MCoutinho FXP Torres Vedras (Ford/Stellantis/Isuzu)",
+      "morada": "Estrada Nacional 9, Fonte Santa, Paul",
+      "codigo_postal": "2560-250",
+      "localidade": "Torres Vedras",
+      "distrito": "Lisboa",
+      "empresa_juridica": "M. Coutinho Lisboa (NIF 502257172)",
+      "marcas": ["Ford", "Alfa Romeo", "Fiat", "Fiat Professional", "Jeep", "Abarth", "Isuzu"],
+      "servicos": ["vendas", "usados", "oficina", "colisão", "peças"],
+      "relevancia_csn": "MUITO ALTA — Isuzu N-Series + Ford Transit + Fiat Ducato. Único ponto Isuzu zona Lisboa-Oeste. ~30km de Mafra."
+    },
+    {
+      "nome": "MCoutinho Isuzu/Ford Carregado",
+      "morada": "Estrada Nacional 3, Km 2, Lugar do Casal Pinheiro",
+      "codigo_postal": "2580-596",
+      "localidade": "Carregado",
+      "distrito": "Lisboa",
+      "empresa_juridica": "M. Coutinho Lisboa (NIF 502257172)",
+      "marcas": ["Ford", "Isuzu", "Alfa Romeo", "Fiat", "Fiat Professional", "Jeep", "Abarth"],
+      "servicos": ["vendas", "usados", "oficina", "peças"],
+      "relevancia_csn": "MUITO ALTA — Isuzu chassis-cabina + Ford Transit. Ponto estratégico A1 entre Lisboa e Leiria. ~35km de Mafra."
+    }
+  ],
+  "contactos": [
+    { "nome": "António Martinho Barbosa Gomes Coutinho", "funcao": "CEO / Presidente Comissão Executiva", "email": null, "telefone": null, "notas": "Filho do fundador. Decisor máximo." },
+    { "nome": "Francisco Coutinho", "funcao": "Key Account Manager B2B / Dir. Geral Usados", "email": null, "telefone": null, "notas": "Responsável parcerias empresariais e frotas ao nível do grupo. Membro da família Coutinho." },
+    { "nome": "João Catalão Mano", "funcao": "Diretor Geral MCoutinho Lisboa Oriente", "email": null, "telefone": null, "notas": "Gestão operacional Lisboa (Peugeot/Stellantis)." },
+    { "nome": "Linha Geral MCoutinho", "funcao": "Contacto geral", "email": "mcoutinho@mcoutinho.pt", "telefone": "800 910 710 (gratuito)", "notas": "Todas as marcas e localizações." }
+  ],
+  "analise_csn": {
+    "prioridade": "A — PRIORITÁRIO",
+    "pontos_entrada": [
+      "1. Francisco Coutinho (Key Account B2B grupo) — acordo-quadro de fornecimento",
+      "2. MCoutinho FXP Torres Vedras (~30km Mafra) — Isuzu + Ford + Fiat, multimarca chassis-cabina",
+      "3. MCoutinho Carregado (~35km Mafra) — Isuzu + Ford + Fiat",
+      "4. João Catalão Mano (Dir. Geral Lisboa) — concessões zona Lisboa",
+      "5. Linha 800 910 710 pedindo MCoutinho PRO / departamento frotas"
+    ],
+    "marcas_chassis_cabina_disponiveis": {
+      "Renault_Master": ["Leiria", "Caldas da Rainha"],
+      "Ford_Transit": ["Lisboa", "Loures", "Torres Vedras", "Carregado"],
+      "Fiat_Ducato": ["Loures", "Torres Vedras", "Carregado"],
+      "Peugeot_Boxer": ["Lisboa (Oriente)"],
+      "Opel_Movano": ["Lisboa (Oriente — reparação autorizada)"],
+      "Isuzu_N_Series": ["Torres Vedras", "Carregado"],
+      "FUSO_Canter": ["Marco de Canaveses, Vila Real (norte apenas)"]
+    },
+    "modelo_compras": "Semi-descentralizado. MCoutinho PRO centraliza B2B/frotas. Abordar simultaneamente nível grupo (Francisco Coutinho) e nível local (Torres Vedras/Carregado).",
+    "proximidade_mafra": {
+      "Torres_Vedras": "~30 km",
+      "Carregado": "~35 km",
+      "Loures": "~35 km",
+      "Lisboa_Oriente": "~45 km",
+      "Leiria": "~130 km"
+    }
+  },
+  "fontes": [
+    "https://www.mcoutinho.pt/",
+    "https://www.mcoutinho.pt/localizacao",
+    "https://www.mcoutinho.pt/empresas/mcoutinho-pro",
+    "https://www.racius.com/m-coutinho-sgps-s-a/",
+    "https://fleetmagazine.pt/mcoutinho-b2b-vale-cerca-de-60-das-vendas-de-carros-novos/",
+    "https://eco.sapo.pt/2023/05/16/mcoutinho-compra-concessionarios-em-coimbra-e-leiria-com-138-funcionarios/",
+    "https://isuzu.pt/concessionarios/"
+  ],
+  "data_pesquisa": "2026-04-13"
+}

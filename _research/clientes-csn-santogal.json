@@ -1,0 +1,412 @@
+{
+  "grupo": {
+    "nome": "Grupo Santogal",
+    "nome_legal_holding": "Santogal-SGPS S.A.",
+    "nif": "502735090",
+    "sede": "Estrada de Paço de Arcos, 52, 2770-130 Paço de Arcos",
+    "fundado": "1946-05-25",
+    "fundador": "Fernando Espírito Santo Moniz Galvão",
+    "empresa_original": "Mocar (importador exclusivo Alfa Romeo)",
+    "holding_constituida": "1991-12-17",
+    "ceo": "Eduardo Lupi",
+    "presidente_ca": "Fernando Espírito Santo",
+    "familia": "Moniz Galvão (ramo Espírito Santo)",
+    "capital_social": 20000000,
+    "capital_social_fmt": "€20.000.000",
+    "lucro_2023": 24500000,
+    "lucro_2023_fmt": "€24.500.000",
+    "objectivo_facturacao": "€1.000.000.000 (mil milhões)",
+    "colaboradores": null,
+    "pontos_venda": 105,
+    "resultados_concessionarios": 204,
+    "compras_centralizadas": true,
+    "departamento_empresas": "Santogal Empresas (desde 2003)",
+    "departamento_empresas_tel": "213165094",
+    "apoio_cliente_24h": "808 202 204",
+    "email_geral": "[email protected]",
+    "site": "https://www.santogal.pt",
+    "zona_accao": "Grande Lisboa + Setúbal + Seixal (municípios: Almada, Amadora, Cascais, Lisboa, Loures, Odivelas, Oeiras, Seixal, Setúbal, Sintra)",
+    "notas": "Grupo familiar Moniz Galvão/Espírito Santo. Maior grupo multimarca na zona de Lisboa. Departamento Santogal Empresas centraliza vendas a empresas desde 2003 com gestor de cliente dedicado. Investimento recente de €3.5M em polo VW/Audi/Seat/Skoda/Cupra na Abrunheira (Sintra). Também activo em Madrid (Ferrari).",
+    "marcas_comerciais_relevantes_csn": [
+      "Mercedes-Benz (Sprinter Chassis Cabina)",
+      "Renault",
+      "Dacia",
+      "Nissan",
+      "Peugeot",
+      "Citroën",
+      "Fiat",
+      "Fiat Professional",
+      "Opel",
+      "Jeep",
+      "FUSO",
+      "Isuzu",
+      "Maxus",
+      "Mitsubishi",
+      "Hyundai",
+      "Volkswagen Comerciais"
+    ],
+    "todas_marcas": [
+      "Abarth", "Aiways", "Alfa Romeo", "Alpine", "Audi", "BMW", "BYD",
+      "Changan", "Citroën", "Cupra", "Dacia", "Dodge", "Fiat",
+      "Fiat Professional", "FUSO", "Honda", "Hyundai", "Isuzu", "Jeep",
+      "KGM", "Kia", "Maxus", "Mazda", "Mercedes-Benz", "MG", "Mini",
+      "Mitsubishi", "Nissan", "Opel", "Peugeot", "Polestar", "Renault",
+      "Seat", "Skoda", "Smart", "Volkswagen", "Volkswagen Comerciais", "Volvo"
+    ]
+  },
+  "empresas": [
+    {
+      "nome_legal": "Santogal-SGPS S.A.",
+      "nif": "502735090",
+      "tipo": "Holding (SGPS)",
+      "cae": "64202 - Actividades de sociedades gestoras de participações sociais não financeiras",
+      "morada": "Rua de Campolide 437/439, 1070-035 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal Automóvel, SGPS, S.A.",
+      "nif": "502970294",
+      "tipo": "Sub-holding automóvel",
+      "morada": "1049-027 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal F - Comércio e Reparação de Automóveis, S.A.",
+      "nif": "501122052",
+      "tipo": "Concessionária (Ford/Stellantis provável)",
+      "morada": "1070-035 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal H - Comércio e Reparação de Veículos, S.A.",
+      "nif": "500723532",
+      "tipo": "Concessionária",
+      "morada": "1000-093 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal L - Comércio e Reparação de Automóveis, S.A.",
+      "nif": "502220465",
+      "tipo": "Concessionária (Mercedes-Benz, BMW, frotas premium)",
+      "morada": "1069-081 Lisboa",
+      "estado": "Activa",
+      "notas": "Gere instalações em Carnaxide, Lisboa (Praça de Espanha, Estefânia), Oeiras, Loures, Setúbal, Seixal. Serviço premium para frotas."
+    },
+    {
+      "nome_legal": "Santogal V - Comércio e Reparação de Automóveis, S.A.",
+      "nif": "500625654",
+      "tipo": "Concessionária (VW/Audi/Seat/Skoda/Cupra)",
+      "morada": "1070-035 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal R - Comércio e Reparação de Automóveis, S.A.",
+      "nif": "503353892",
+      "tipo": "Concessionária (Renault/Dacia/Alpine provável)",
+      "morada": "1950-096 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal G - Comércio e Reparação de Automóveis, S.A.",
+      "nif": "503995770",
+      "tipo": "Concessionária",
+      "morada": "2710-161 Sintra",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal P - Comércio e Reparação de Automóveis, Lda.",
+      "nif": "503019569",
+      "tipo": "Concessionária (Peugeot provável)",
+      "morada": "1050-073 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal M - Comércio e Reparação de Automóveis, Lda.",
+      "nif": "500190992",
+      "tipo": "Concessionária (Mercedes provável)",
+      "morada": "1500-078 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal B - Comércio e Reparação de Automóveis, Unipessoal Lda.",
+      "nif": "506604373",
+      "tipo": "Concessionária",
+      "morada": "2710-037 Sintra",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal N - Importação, Comércio, Reparação e Aluguer de Automóveis, Lda.",
+      "nif": "503361437",
+      "tipo": "Importação e aluguer",
+      "morada": "1070-035 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal Peças - Distribuição e Comércio de Componentes Para Automóveis, S.A.",
+      "nif": "502669675",
+      "tipo": "Distribuição de peças",
+      "morada": "1049-027 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal Imobiliária, S.A.",
+      "nif": "500131465",
+      "tipo": "Imobiliária do grupo",
+      "morada": "1070-035 Lisboa",
+      "estado": "Activa"
+    },
+    {
+      "nome_legal": "Santogal - Mediação de Seguros, Lda.",
+      "nif": "503111961",
+      "tipo": "Seguros",
+      "morada": "1070-035 Lisboa",
+      "estado": "Activa"
+    }
+  ],
+  "concessoes_relevantes_csn": [
+    {
+      "nome": "Santogal Loures (Polo Comerciais)",
+      "morada": "Edifício Santogal, E.N. 115, Km 80, Casal de São Roque, Sto Antão do Tojal",
+      "codigo_postal": "2660-161",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "marcas": ["FUSO", "Isuzu", "Maxus", "Renault", "Dacia", "Citroën", "Opel", "Peugeot", "KIA", "KGM", "Mercedes", "BMW", "Mitsubishi", "Polestar"],
+      "servicos": ["vendas", "oficina", "peças"],
+      "relevancia_csn": "ALTA — concentra FUSO, Isuzu e Maxus (chassis-cabina). Ponto único para comerciais pesados do grupo.",
+      "contactos_especificos": [
+        {
+          "marca": "Isuzu",
+          "tipo": "Stand vendas",
+          "telefone": "210430210",
+          "email": "[email protected]",
+          "horario": "Seg-Sex 9h-19h, Sáb 10h-19h"
+        },
+        {
+          "marca": "FUSO",
+          "tipo": "Oficina",
+          "telefone": "210430990",
+          "email": "[email protected]",
+          "horario": "Seg-Sex 8h-12h30, 13h30-17h"
+        },
+        {
+          "marca": "Maxus",
+          "tipo": "Stand vendas",
+          "telefone": null,
+          "email": null,
+          "horario": null
+        },
+        {
+          "marca": "Renault",
+          "tipo": "Oficina",
+          "telefone": "211233900",
+          "email": "[email protected]",
+          "horario": "Seg-Sex 8h-18h"
+        }
+      ]
+    },
+    {
+      "nome": "Santogal Cascais (Polo Stellantis)",
+      "morada": "Av. da República - Edifício Santogal",
+      "codigo_postal": "2645-143",
+      "localidade": "Alcabideche / Cascais",
+      "distrito": "Lisboa",
+      "marcas": ["Peugeot", "Citroën", "Fiat", "Opel", "Jeep", "Hyundai", "Abarth", "Alfa Romeo", "Polestar"],
+      "servicos": ["vendas", "oficina", "peças"],
+      "relevancia_csn": "ALTA — concentra Stellantis (Peugeot Boxer, Citroën Jumper, Fiat Ducato, Opel Movano chassis-cabina).",
+      "contactos_especificos": [
+        {
+          "marca": "Peugeot",
+          "tipo": "Oficina",
+          "telefone": "210430440",
+          "email": "[email protected]"
+        },
+        {
+          "marca": "Citroën",
+          "tipo": "Oficina",
+          "telefone": "210430710",
+          "email": "[email protected]"
+        },
+        {
+          "marca": "Opel",
+          "tipo": "Oficina",
+          "telefone": "210430720",
+          "email": "[email protected]"
+        },
+        {
+          "marca": "Fiat",
+          "tipo": "Oficina",
+          "telefone": "210430730",
+          "email": "[email protected]"
+        }
+      ]
+    },
+    {
+      "nome": "Santogal Renault Chelas",
+      "morada": "Rua Doutor José Espírito Santo, Lote 11 – E",
+      "codigo_postal": "1950-096",
+      "localidade": "Lisboa (Chelas)",
+      "distrito": "Lisboa",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina"],
+      "relevancia_csn": "MÉDIA — Renault Master chassis-cabina.",
+      "contactos_especificos": [
+        {
+          "marca": "Renault",
+          "tipo": "Oficina",
+          "telefone": "218361400",
+          "email": "[email protected]"
+        }
+      ]
+    },
+    {
+      "nome": "Santogal Renault Telheiras",
+      "morada": "Avenida Professor Francisco da Gama Caeiro",
+      "codigo_postal": "1600-830",
+      "localidade": "Lisboa (Telheiras)",
+      "distrito": "Lisboa",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina"],
+      "relevancia_csn": "MÉDIA — Renault Master chassis-cabina.",
+      "contactos_especificos": [
+        {
+          "marca": "Renault",
+          "tipo": "Oficina",
+          "telefone": "217114500",
+          "email": "[email protected]"
+        }
+      ]
+    },
+    {
+      "nome": "Santogal Alfragide (Polo VW/Hyundai)",
+      "morada": "Rua do Entreposto Industrial",
+      "codigo_postal": "2610-135",
+      "localidade": "Alfragide",
+      "distrito": "Lisboa",
+      "marcas": ["Volkswagen", "Volkswagen Comerciais", "Audi", "Cupra", "Seat", "Skoda", "BYD", "Honda", "Hyundai"],
+      "servicos": ["vendas", "oficina"],
+      "relevancia_csn": "MÉDIA — VW Crafter chassis-cabina e Hyundai comerciais.",
+      "contactos_especificos": []
+    },
+    {
+      "nome": "Santogal Abrunheira (Polo VW novo)",
+      "morada": "Abrunheira",
+      "codigo_postal": null,
+      "localidade": "Sintra",
+      "distrito": "Lisboa",
+      "marcas": ["Volkswagen", "Volkswagen Comerciais", "Seat", "Skoda", "Cupra", "Audi"],
+      "servicos": ["vendas", "oficina"],
+      "relevancia_csn": "MÉDIA — VW Crafter chassis-cabina. Novo polo inaugurado 2025 (investimento €3.5M).",
+      "contactos_especificos": []
+    },
+    {
+      "nome": "Santogal Mercedes Sete Rios (Polo Mercedes/Smart)",
+      "morada": "Sete Rios",
+      "codigo_postal": null,
+      "localidade": "Lisboa (Sete Rios)",
+      "distrito": "Lisboa",
+      "marcas": ["Mercedes-Benz", "Smart"],
+      "servicos": ["vendas", "oficina"],
+      "relevancia_csn": "ALTA — Mercedes Sprinter Chassis Cabina (VS30, cabina simples/dupla, 3 comprimentos). Anúncios activos no site Santogal para Sprinter Chassis Cabina diesel e VS30.",
+      "contactos_especificos": []
+    },
+    {
+      "nome": "Santogal Setúbal (Mercedes/BMW)",
+      "morada": null,
+      "codigo_postal": null,
+      "localidade": "Setúbal",
+      "distrito": "Setúbal",
+      "marcas": ["BMW", "Mercedes-Benz"],
+      "servicos": ["vendas", "oficina", "usados"],
+      "relevancia_csn": "MÉDIA — Mercedes Sprinter Chassis Cabina disponível via rede Mercedes Santogal. Ponto de presença zona sul.",
+      "contactos_especificos": [
+        {
+          "telefone": "265096600"
+        }
+      ]
+    },
+    {
+      "nome": "Santogal Seixal",
+      "morada": null,
+      "codigo_postal": null,
+      "localidade": "Seixal",
+      "distrito": "Setúbal",
+      "marcas": ["BMW", "BMW Motorrad"],
+      "servicos": ["vendas", "oficina"],
+      "relevancia_csn": "BAIXA",
+      "contactos_especificos": []
+    }
+  ],
+  "contactos": [
+    {
+      "nome": null,
+      "funcao": "Santogal Empresas (vendas a empresas/frotas)",
+      "email": null,
+      "telefone": "213165094",
+      "notas": "Departamento centralizado desde 2003. Gestor de cliente dedicado para empresas. Multimarca. Contacto principal para abordagem comercial CSN."
+    },
+    {
+      "nome": null,
+      "funcao": "Apoio ao Cliente 24h",
+      "email": "[email protected]",
+      "telefone": "808 202 204",
+      "notas": "Linha geral 24h/365 dias. Pode encaminhar para departamento correcto."
+    },
+    {
+      "nome": null,
+      "funcao": "Sede SGPS",
+      "email": "[email protected]",
+      "telefone": "210430656",
+      "notas": "Contacto geral da holding."
+    },
+    {
+      "nome": "Eduardo Lupi",
+      "funcao": "CEO",
+      "email": null,
+      "telefone": null,
+      "notas": "CEO do grupo. LinkedIn disponível."
+    },
+    {
+      "nome": "Fernando Espírito Santo",
+      "funcao": "Presidente do Conselho de Administração",
+      "email": null,
+      "telefone": null,
+      "notas": "Família fundadora Moniz Galvão."
+    }
+  ],
+  "analise_csn": {
+    "prioridade": "ALTA",
+    "pontos_entrada": [
+      "1. Santogal Empresas (tel: 213165094) — departamento centralizado de vendas a empresas, multimarca. Melhor ponto de entrada para proposta de fornecimento de carroçarias.",
+      "2. Santogal Loures — polo de comerciais com FUSO Canter, Isuzu, Maxus (chassis-cabina directos). Contactar stand Isuzu (210430210) e oficina FUSO (210430990).",
+      "3. Santogal Cascais — polo Stellantis com Peugeot Boxer, Citroën Jumper, Fiat Ducato, Opel Movano (todos chassis-cabina). Contactar oficinas individualmente.",
+      "4. Santogal Renault (Chelas/Loures/Telheiras) — Renault Master chassis-cabina."
+    ],
+    "marcas_chassis_cabina_disponiveis": [
+      "Mercedes Sprinter Chassis Cabina (Sete Rios, Setúbal)",
+      "FUSO Canter (Loures)",
+      "Isuzu (Loures)",
+      "Maxus eDeliver (Loures)",
+      "Renault Master (Chelas, Loures, Telheiras)",
+      "Peugeot Boxer (Cascais, Cacém, Lisboa, Loures)",
+      "Citroën Jumper (Cascais, Cacém, Loures)",
+      "Fiat Ducato (Cascais)",
+      "Opel Movano (Cascais, Cacém, Loures)",
+      "VW Crafter (Alfragide, Abrunheira)"
+    ],
+    "modelo_compras": "Centralizado via Santogal Empresas para frotas/empresas. Concessões individuais têm autonomia para vendas directas a particulares e PMEs.",
+    "cobertura_geografica_relevante": "Grande Lisboa (Cascais → Loures → Seixal → Setúbal). Não tem presença em Leiria, Santarém, Alentejo ou Algarve — os telefones encontrados (Leiria 244880110, Santarém 243351971, Faro 289860140) parecem ser apenas pontos de serviço limitados."
+  },
+  "fontes": [
+    "https://www.santogal.pt/pt/santogal-sgps/",
+    "https://www.santogal.pt/pt/concessionarios/",
+    "https://www.santogal.pt/as-nossas-marcas/",
+    "https://www.santogal.pt/pt/servicos-santogal/santogal-empresas/",
+    "https://www.nif.pt/?q=SANTOGAL",
+    "https://www.racius.com/santogal-sgps-s-a/",
+    "https://gruporenault.santogal.pt/",
+    "https://eco.sapo.pt/2025/01/31/santogal-estaciona-35-milhoes-em-sintra-para-concessionarios-do-grupo-volkswagen/",
+    "https://jornaleconomico.sapo.pt/noticias/familia-moniz-galvao-de-espirito-santo-ao-imperio-santogal/"
+  ],
+  "data_pesquisa": "2026-04-13",
+  "notas_pesquisa": "NIFs confirmados via nif.pt. Moradas parciais — site Santogal usa carregamento dinâmico que dificulta extracção completa. Contactos de compras/homologações não disponíveis publicamente — necessário contacto directo via Santogal Empresas."
+}

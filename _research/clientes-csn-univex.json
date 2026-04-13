@@ -1,0 +1,100 @@
+{
+  "grupo": {
+    "nome": "Astara Retail (anteriormente Univex)",
+    "nome_legal_holding": "Astara Portugal, SGPS, Unipessoal Lda",
+    "nif_holding": "504246020",
+    "nome_legal_retail": "Univex - Comércio de Automóveis, Sociedade Unipessoal, Lda",
+    "nif_retail": "503895873",
+    "sede": "Rua Dr. José Espírito Santo, nº 38, 1950-097 Lisboa",
+    "fundado": "1960s (Univex original); holding portuguesa desde 1998 (como Bergé Portugal SGPS); Univex adquirida em 2015",
+    "fundadores_originais": "Grupo de empresários do sector automóvel (slogan: Unidos Venceremos = UNIVEX)",
+    "grupo_mae": "Astara (ex-Bergé Automoción), grupo espanhol fundado em 1871 em Bilbau pela família Bergé-Gorbeña-Enciso",
+    "ceo_astara_portugal": "Francisco Geraldes (CEO Astara Portugal, ex-Director Geral Kia Portugal)",
+    "diretor_geral_retail": "Pedro Lourenço (Diretor-Geral Astara Retail / ex-Univex)",
+    "diretor_comercial_retail": "Pedro Rodrigues (Diretor Comercial, baseado em Cascais)",
+    "facturacao_grupo_astara_global": "~4 mil milhões EUR (grupo global, 14 países)",
+    "facturacao_astara_portugal": "Não publicada; 13.152 veículos vendidos em 2023 (melhor ano de sempre); objectivo 17.000+ em 2024",
+    "colaboradores_retail": "65-70",
+    "capital_social_univex": "750.000 EUR",
+    "compras_centralizadas": true,
+    "modelo_compras": "Astara Portugal é importador/distribuidor nacional. Univex/Astara Retail é o braço de retalho em Lisboa/Cascais. Compras de chassis-cabina canalizadas via departamento de frotas. Frotas >70% das vendas de veículos novos.",
+    "marcas_comerciais_relevantes_csn": ["Fuso (Canter, eCanter)", "Isuzu (N-Series NLR/NPR/FRR/FSR, D-Max)", "Maxus (eDeliver 9, Deliver 9, eDeliver 7, Deliver 7, eDeliver 3 Chassis Cabina, T90 EV, EH300)"],
+    "todas_marcas": ["Kia", "Mitsubishi", "Suzuki", "KGM (ex-SsangYong)", "Fuso", "Isuzu", "Maxus", "Piaggio Commercial"],
+    "vendas_2023": {
+      "total": 13152,
+      "kia": 7012,
+      "isuzu": 1068,
+      "fuso": 871
+    }
+  },
+  "empresas": [
+    { "nome_legal": "Astara Portugal, SGPS, Unipessoal Lda", "nif": "504246020", "tipo": "Holding / SGPS", "morada": "Rua Dr. José Espírito Santo, nº 38, 1950-097 Lisboa" },
+    { "nome_legal": "Univex - Comércio de Automóveis, Sociedade Unipessoal, Lda", "nif": "503895873", "tipo": "Retail / Concessionário", "morada": "Rua Dr. José Espírito Santo, nº 38, 1950-097 Lisboa", "capital_social": "750.000 EUR", "data_constituicao": "1997-07-01" },
+    { "nome_legal": "Astara Portugal, Unipessoal Lda", "nif": "508191416", "tipo": "Consultoria / Importação-Distribuição", "morada": "Rua Dr. José Espírito Santo, nº 38, 1950-097 Lisboa" },
+    { "nome_legal": "Astara Move Portugal, Unipessoal Lda", "nif": "517298767", "tipo": "Mobilidade / Aluguer", "morada": "Lisboa" }
+  ],
+  "concessoes_relevantes_csn": [
+    {
+      "nome": "Astara Retail Lisboa (ex-Univex Marvila)",
+      "morada": "Rua Dr. José Espírito Santo, nº 38",
+      "codigo_postal": "1950-097",
+      "localidade": "Lisboa (Marvila)",
+      "distrito": "Lisboa",
+      "marcas": ["Kia", "Mitsubishi", "Suzuki", "KGM", "Fuso", "Isuzu", "Maxus", "Piaggio Commercial"],
+      "servicos": ["vendas", "usados", "oficina", "peças", "frotas"],
+      "telefone": "+351 21 839 46 00",
+      "email_comercial": "comercial@astara.com",
+      "email_apos_venda": "aposvendalisboa@univex.pt",
+      "horario_vendas": "Seg-Sex 09:00-19:00, Sáb 10:00-18:00",
+      "horario_oficina": "Seg-Sex 08:00-18:00",
+      "relevancia_csn": "ALTA — Fuso Canter, Isuzu N-Series, Maxus chassis-cabina. A 30 min de Mafra."
+    },
+    {
+      "nome": "Astara Retail Cascais (ex-Univex Cascais)",
+      "morada": "Rua São João, nº 8, Alcoitão",
+      "codigo_postal": "2645-303",
+      "localidade": "Alcabideche (Cascais)",
+      "distrito": "Lisboa",
+      "marcas": ["Kia", "Mitsubishi", "Suzuki", "KGM", "Fuso", "Isuzu", "Maxus", "Piaggio Commercial"],
+      "servicos": ["vendas", "usados", "oficina", "peças"],
+      "telefone": "+351 21 460 88 80",
+      "email_comercial": "comercial@astara.com",
+      "email_pecas": "pecascascais@astara.com",
+      "horario_vendas": "Seg-Sex 09:00-19:00, Sáb 10:00-18:00",
+      "relevancia_csn": "MÉDIA — Mesmo portefólio, mais orientado a particulares."
+    }
+  ],
+  "contactos": [
+    { "nome": "Francisco Geraldes", "funcao": "CEO Astara Portugal", "email": "gerencia@astara.com", "telefone": "+351 21 839 46 00", "notas": "Decisor máximo. Nível C-suite." },
+    { "nome": "Pedro Lourenço", "funcao": "Diretor-Geral Astara Retail", "email": "gerencia@astara.com", "telefone": "+351 21 839 46 00", "notas": "Responsável operacional retail." },
+    { "nome": "Pedro Rodrigues", "funcao": "Diretor Comercial Astara Retail", "email": "comercial@astara.com", "telefone": "+351 21 460 88 80", "notas": "Baseado em Cascais. Ponto de contacto directo para propostas." },
+    { "nome": "Marketing", "funcao": "Marketing", "email": "marketing.univex@astara.com", "telefone": "+351 21 839 46 00", "notas": "Parcerias e comunicação." }
+  ],
+  "analise_csn": {
+    "prioridade": "ALTA",
+    "pontos_entrada": [
+      "1. Pedro Rodrigues (Dir. Comercial) — proposta parceria chassis-cabina",
+      "2. Pedro Lourenço (Dir. Geral) — acordo estratégico fornecedor preferencial",
+      "3. Francisco Geraldes (CEO) — acordo a nível de grupo/importador",
+      "4. Departamento Frotas — acesso a clientes que compram chassis e precisam carroçaria"
+    ],
+    "marcas_chassis_cabina_disponiveis": [
+      "Fuso Canter 3.5T-8.55T (diesel + eCanter eléctrico) — 871 vendas 2023, mais vendido em PT",
+      "Isuzu N-Series NLR 3.5T / NPR 7.5T / FRR 12T / FSR 18T — 1068 vendas 2023",
+      "Maxus eDeliver 3/9 Chassis Cabina (eléctricos) + Deliver 9 diesel"
+    ],
+    "modelo_compras": "Centralizado. Astara é importador nacional de Fuso/Isuzu/Maxus. Pode propor-se como carroçador homologado junto do importador para aceder a TODA a rede (~14+ concessionários independentes no país).",
+    "nota": "Astara NÃO vende Renault, Peugeot, Citroën, Fiat, VW, Ford ou Opel."
+  },
+  "fontes": [
+    "https://astararetail.pt/sobre/",
+    "https://astararetail.pt/contactos/",
+    "https://automotiverevista.pt/index.php/2024/02/19/univex-unir-esforcos-para-alcancar-as-frotas/",
+    "https://fleetmagazine.pt/univex-astara-retail/",
+    "https://www.racius.com/univex-comercio-de-automoveis-sociedade-unipessoal-lda/",
+    "https://www.racius.com/astara-portugal-sgps-unipessoal-lda/",
+    "https://isuzu.pt/concessionarios/",
+    "https://maxusportugal.pt/concessionarios/"
+  ],
+  "data_pesquisa": "2026-04-13"
+}
