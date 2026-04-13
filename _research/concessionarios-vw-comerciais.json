@@ -1,0 +1,250 @@
+{
+  "marca": "Volkswagen Veículos Comerciais",
+  "site_fonte": "https://www.volkswagen-comerciais.pt",
+  "zona": "Leiria para baixo + ilhas",
+  "data_pesquisa": "2026-04-13",
+  "total": 21,
+  "concessionarios": [
+    {
+      "nome": "Lubrigaz - Leiria",
+      "morada": "Carvoeiros, Santa Eufémia, 1220",
+      "codigo_postal": "2420-500",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "grupo": "Lubrigaz",
+      "telefone": "+351 244 830 000",
+      "email": "geral@lubrigaz.pt",
+      "servicos": ["vendas", "oficina", "pecas", "comerciais"]
+    },
+    {
+      "nome": "Lubrigaz - Caldas da Rainha",
+      "morada": "",
+      "codigo_postal": "2500-187",
+      "localidade": "Caldas da Rainha",
+      "distrito": "Leiria",
+      "grupo": "Lubrigaz",
+      "telefone": "+351 262 840 510",
+      "email": "geral@lubrigaz.pt",
+      "servicos": ["vendas", "oficina", "pecas", "comerciais"]
+    },
+    {
+      "nome": "Auto Maran - Coimbra",
+      "morada": "Rua Manuel de Almeida e Sousa, 315",
+      "codigo_postal": "3025-046",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "grupo": "Auto Maran",
+      "telefone": "+351 239 490 400",
+      "email": "geral@auto-maran.pt",
+      "servicos": ["vendas", "oficina", "pecas", "comerciais"]
+    },
+    {
+      "nome": "Carby - Santarém",
+      "morada": "Estrada Nacional 114, Km 73,8, Quinta do Mocho",
+      "codigo_postal": "2005-002",
+      "localidade": "Várzea",
+      "distrito": "Santarém",
+      "grupo": "Carby (Entreposto Auto)",
+      "telefone": "+351 217 652 768",
+      "email": "",
+      "servicos": ["vendas", "oficina", "colisao", "pecas"]
+    },
+    {
+      "nome": "Tecauto - Torres Vedras",
+      "morada": "Avenida Carlos Lopes, 23",
+      "codigo_postal": "2560-629",
+      "localidade": "Torres Vedras",
+      "distrito": "Lisboa",
+      "grupo": "Tecline Auto",
+      "telefone": "+351 261 327 700",
+      "email": "comercial.vw@tecauto.pt",
+      "servicos": ["vendas", "oficina", "pecas", "comerciais"]
+    },
+    {
+      "nome": "Santogal VW Comerciais - Abrunheira",
+      "morada": "Quinta da Lavi, Limites de Abrunheira",
+      "codigo_postal": "2710-089",
+      "localidade": "Abrunheira (Sintra)",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 200",
+      "email": "oficina.vw.abrunheira@santogal.pt",
+      "servicos": ["vendas", "oficina", "pecas", "comerciais"]
+    },
+    {
+      "nome": "Santogal VW - Alfragide",
+      "morada": "Rua do Entreposto Industrial, 4",
+      "codigo_postal": "2610-171",
+      "localidade": "Alfragide (Amadora)",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 700",
+      "email": "stand.alfragide@santogal.pt",
+      "servicos": ["vendas", "oficina"]
+    },
+    {
+      "nome": "Santogal VW - Lisboa",
+      "morada": "Rua D. Luís de Noronha, 40",
+      "codigo_postal": "1069-081",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 110",
+      "email": "stand.vw.lisboa@santogal.pt",
+      "servicos": ["vendas", "oficina"]
+    },
+    {
+      "nome": "Soauto VGRP - Loures",
+      "morada": "Rua do Funchal, Olival da Quinta Nova, Fanqueiro",
+      "codigo_postal": "2670-364",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "grupo": "Soauto VGRP (Grupo VW Retail)",
+      "telefone": "+351 218 610 250",
+      "email": "geral@soautovgrp.pt",
+      "servicos": ["vendas", "oficina", "pecas", "usados"]
+    },
+    {
+      "nome": "Soauto VGRP - Laranjeiras",
+      "morada": "Rua das Laranjeiras, 24",
+      "codigo_postal": "1600-141",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "Soauto VGRP (Grupo VW Retail)",
+      "telefone": "+351 218 610 250",
+      "email": "geral@soautovgrp.pt",
+      "servicos": ["vendas", "oficina"]
+    },
+    {
+      "nome": "Melvar - Lisboa",
+      "morada": "Azinhaga dos Lameiros, Estrada do Paço do Lumiar",
+      "codigo_postal": "1600-485",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "independente",
+      "telefone": "+351 217 119 500",
+      "email": "geral@melvar.pt",
+      "servicos": ["oficina", "pecas", "usados", "comerciais"]
+    },
+    {
+      "nome": "Caetano Drive - Cascais",
+      "morada": "Rua São Francisco, 539",
+      "codigo_postal": "2649-503",
+      "localidade": "Alcabideche (Cascais)",
+      "distrito": "Lisboa",
+      "grupo": "Salvador Caetano",
+      "telefone": "+351 214 603 770",
+      "email": "",
+      "servicos": ["vendas", "oficina", "comerciais"]
+    },
+    {
+      "nome": "Carby - Almada",
+      "morada": "Rua Joaquim Pires Jorge, 28",
+      "codigo_postal": "2814-509",
+      "localidade": "Almada (Feijó)",
+      "distrito": "Setúbal",
+      "grupo": "Carby (Entreposto Auto)",
+      "telefone": "+351 217 652 765",
+      "email": "",
+      "servicos": ["vendas", "oficina", "colisao", "pecas"]
+    },
+    {
+      "nome": "Caetano Drive - Setúbal",
+      "morada": "Azinhaga Cruz do Peixe, São Sebastião",
+      "codigo_postal": "2910-741",
+      "localidade": "Setúbal",
+      "distrito": "Setúbal",
+      "grupo": "Salvador Caetano",
+      "telefone": "+351 265 521 850",
+      "email": "",
+      "servicos": ["vendas", "oficina", "comerciais"]
+    },
+    {
+      "nome": "Evoracar - Évora",
+      "morada": "Rua Armando Antunes da Silva, 12",
+      "codigo_postal": "7005-145",
+      "localidade": "Évora",
+      "distrito": "Évora",
+      "grupo": "Multiauto-Galilei",
+      "telefone": "+351 266 739 040",
+      "email": "evoracar.vw@multiauto-galilei.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Evoracar - Portalegre",
+      "morada": "Avenida Francisco Fino Industrial, 30",
+      "codigo_postal": "7300-053",
+      "localidade": "Portalegre",
+      "distrito": "Portalegre",
+      "grupo": "Multiauto-Galilei",
+      "telefone": "+351 245 300 980",
+      "email": "evoracar.vw@multiauto-galilei.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Carby - Faro",
+      "morada": "Avenida Doutor Gordinho Moreira, 5",
+      "codigo_postal": "8005-518",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "grupo": "Carby (Entreposto Auto)",
+      "telefone": "+351 289 880 000",
+      "email": "",
+      "servicos": ["vendas", "oficina", "colisao", "pecas"]
+    },
+    {
+      "nome": "Carportil - Portimão",
+      "morada": "Avenida D. Afonso Henriques",
+      "codigo_postal": "8500-502",
+      "localidade": "Portimão",
+      "distrito": "Faro",
+      "grupo": "FIAAL Group",
+      "telefone": "+351 282 410 660",
+      "email": "geral@carportil.com",
+      "servicos": ["vendas", "oficina", "pecas", "comerciais"]
+    },
+    {
+      "nome": "CIAM - Funchal",
+      "morada": "Caminho do Poço Barral, 31",
+      "codigo_postal": "9000-155",
+      "localidade": "Funchal",
+      "distrito": "Madeira",
+      "grupo": "CIAM",
+      "telefone": "+351 291 700 570",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "J.H. Ornelas - Ponta Delgada",
+      "morada": "Largo Vasco Bensaude, 13",
+      "codigo_postal": "9500-103",
+      "localidade": "Ponta Delgada",
+      "distrito": "Açores (São Miguel)",
+      "grupo": "Grupo Bensaude",
+      "telefone": "+351 296 304 773",
+      "email": "jhornelas@bensaude.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Motor 9 - Angra do Heroísmo",
+      "morada": "Avenida Álvaro Martins Homem, 23",
+      "codigo_postal": "9700-017",
+      "localidade": "Angra do Heroísmo",
+      "distrito": "Açores (Terceira)",
+      "grupo": "independente",
+      "telefone": "+351 295 214 156",
+      "email": "infom9@motor9.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    }
+  ],
+  "notas": [
+    "Dados recolhidos via web search em 2026-04-13. O site oficial volkswagen-comerciais.pt carrega dealers via JavaScript e nao foi possivel scraping directo.",
+    "Santogal: apenas a localizacao Abrunheira e oficialmente VW Comerciais; Alfragide e Lisboa vendem VW passageiros mas servem tambem comerciais na oficina.",
+    "Soauto VGRP: retalho oficial do Grupo VW em Portugal (Loures e Laranjeiras).",
+    "Carby: antigo Entreposto Auto / JAPblue / Tecnitagus - rebrand para Carby em 2023.",
+    "Evoracar: parte do grupo Multiauto-Galilei. Nao foi encontrado concessionario especifico para Beja.",
+    "Melvar: oficina autorizada VW Comerciais mas nao e concessionario de vendas de novos - vende usados.",
+    "Ilhas: CIAM (Madeira), J.H. Ornelas (Sao Miguel), Motor 9 (Terceira). Nao foram encontrados dealers nas restantes ilhas dos Acores.",
+    "Emails em falta para Carby Santarem/Almada/Faro e Caetano Drive - contactar via site oficial."
+  ]
+}

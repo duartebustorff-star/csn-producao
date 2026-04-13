@@ -1,0 +1,162 @@
+{
+  "grupo": "Carby (Grupo JAP / Entreposto)",
+  "site_fonte": "https://www.carby.pt/pt/contactos",
+  "data_pesquisa": "2026-04-13",
+  "total": 14,
+  "localizacoes": [
+    {
+      "nome": "Carby Torres Vedras - Renault / Dacia",
+      "morada": "Estrada Nacional 9, Fonte Santa",
+      "codigo_postal": "2560-250",
+      "localidade": "Torres Vedras",
+      "distrito": "Lisboa",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "808 200 380",
+      "email": ""
+    },
+    {
+      "nome": "Carby Abrunheira - Renault / Dacia",
+      "morada": "Avenida dos Combatentes, 74, Abrunheira",
+      "codigo_postal": "2710-034",
+      "localidade": "Sintra",
+      "distrito": "Lisboa",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "808 200 380",
+      "email": ""
+    },
+    {
+      "nome": "Carby Casal do Cotao - Colisao",
+      "morada": "Rua Marciano Tomaz da Costa, 3D-3G",
+      "codigo_postal": "2735-512",
+      "localidade": "Cacem",
+      "distrito": "Lisboa",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["colisao"],
+      "telefone": "",
+      "email": ""
+    },
+    {
+      "nome": "Carby Alfragide - Renault / Dacia / Mitsubishi",
+      "morada": "Avenida Marconi, Casal de Alfragide, Lote 7",
+      "codigo_postal": "2720-413",
+      "localidade": "Amadora",
+      "distrito": "Lisboa",
+      "marcas": ["Renault", "Dacia", "Mitsubishi"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "217 652 761",
+      "email": ""
+    },
+    {
+      "nome": "Carby Tagus Park - Renault / Dacia",
+      "morada": "Estrada Nacional 249-3, Zoom Business Park, Armazem 4 e 5",
+      "codigo_postal": "2735-307",
+      "localidade": "Cacem (Oeiras)",
+      "distrito": "Lisboa",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "217 652 761",
+      "email": ""
+    },
+    {
+      "nome": "Carby Lisboa - Hyundai / Nissan / Opel",
+      "morada": "Praca Jose Queiros, 1",
+      "codigo_postal": "1800-237",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "marcas": ["Hyundai", "Nissan", "Opel", "SEAT"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "217 652 760",
+      "email": ""
+    },
+    {
+      "nome": "Carby Loures - Hyundai / Nissan / SEAT",
+      "morada": "Rua da Republica, 6",
+      "codigo_postal": "2670-468",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "marcas": ["Hyundai", "Nissan", "SEAT"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "219 838 222",
+      "email": ""
+    },
+    {
+      "nome": "Carby Vila Franca de Xira - Peugeot / Citroen",
+      "morada": "Estrada do Poligono dos Alamos, Lote 14",
+      "codigo_postal": "2600-695",
+      "localidade": "Castanheira do Ribatejo",
+      "distrito": "Lisboa",
+      "marcas": ["Peugeot", "Citroen"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "210 496 921",
+      "email": ""
+    },
+    {
+      "nome": "Carby Almada - Volkswagen / Audi / SEAT / CUPRA",
+      "morada": "Rua Joaquim Pires Jorge, Lote 2",
+      "codigo_postal": "2814-509",
+      "localidade": "Feijo (Almada)",
+      "distrito": "Setubal",
+      "marcas": ["Volkswagen", "Audi", "SEAT", "CUPRA"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "217 652 765",
+      "email": ""
+    },
+    {
+      "nome": "Carby Santarem - Volkswagen / Hyundai / Renault",
+      "morada": "Estrada Nacional 114, Km 73,8, Quinta do Mocho",
+      "codigo_postal": "2005-002",
+      "localidade": "Varzea (Santarem)",
+      "distrito": "Santarem",
+      "marcas": ["Volkswagen", "Hyundai", "Renault", "Dacia", "SEAT"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "243 359 800",
+      "email": ""
+    },
+    {
+      "nome": "Carby Faro - Renault / Dacia / Nissan / Mitsubishi / Hyundai",
+      "morada": "Sitio dos Salgados, Apartado 426",
+      "codigo_postal": "8001-905",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "marcas": ["Renault", "Dacia", "Nissan", "Mitsubishi", "Hyundai"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "289 880 000",
+      "email": ""
+    },
+    {
+      "nome": "Carby Faro - Volkswagen",
+      "morada": "Avenida Doutor Gordinho Moreira, 5",
+      "codigo_postal": "8000-000",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "marcas": ["Volkswagen"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "",
+      "email": ""
+    },
+    {
+      "nome": "Carby Portimao - Renault / Dacia",
+      "morada": "Avenida Dom Afonso Henriques",
+      "codigo_postal": "8500-502",
+      "localidade": "Portimao",
+      "distrito": "Faro",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "282 410 520",
+      "email": ""
+    },
+    {
+      "nome": "Carby Portimao - Hyundai / Nissan",
+      "morada": "Pedra Mourinha, Lote 12",
+      "codigo_postal": "8500-815",
+      "localidade": "Portimao",
+      "distrito": "Faro",
+      "marcas": ["Hyundai", "Nissan"],
+      "servicos": ["oficina", "pecas"],
+      "telefone": "217 652 769",
+      "email": ""
+    }
+  ]
+}

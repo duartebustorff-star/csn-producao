@@ -1,0 +1,229 @@
+{
+  "marca": "Fiat Professional",
+  "site_fonte": "https://www.fiatprofessional.com/pt/localizador-concessionario",
+  "zona": "Leiria para baixo + ilhas",
+  "data_pesquisa": "2026-04-13",
+  "total": 20,
+  "concessionarios": [
+    {
+      "nome": "LPM - Leiria",
+      "morada": "Quinta da Pedreira, Alto do Vieiro, Lote 2",
+      "codigo_postal": "2400-822",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "grupo": "independente",
+      "telefone": "+351 244 850 150",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "LPM - Caldas da Rainha",
+      "morada": "Rua Martires de Timor, 25",
+      "codigo_postal": "2500-839",
+      "localidade": "Caldas da Rainha",
+      "distrito": "Leiria",
+      "grupo": "independente",
+      "telefone": "+351 262 839 810",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "LPM - Pombal",
+      "morada": "Pombal",
+      "codigo_postal": "",
+      "localidade": "Pombal",
+      "distrito": "Leiria",
+      "grupo": "independente",
+      "telefone": "+351 236 209 860",
+      "email": "",
+      "servicos": ["oficina", "pecas"]
+    },
+    {
+      "nome": "LPM - Tomar",
+      "morada": "Tomar",
+      "codigo_postal": "",
+      "localidade": "Tomar",
+      "distrito": "Santarem",
+      "grupo": "independente",
+      "telefone": "+351 962 108 687",
+      "email": "",
+      "servicos": ["oficina", "pecas"]
+    },
+    {
+      "nome": "LPM - Santarem",
+      "morada": "Rua do Matadouro Regional, 41",
+      "codigo_postal": "2005-002",
+      "localidade": "Varzea (Santarem)",
+      "distrito": "Santarem",
+      "grupo": "independente",
+      "telefone": "+351 962 108 429",
+      "email": "",
+      "servicos": ["oficina", "pecas"]
+    },
+    {
+      "nome": "MCoutinho Centro - Coimbra",
+      "morada": "Zona Industrial da Pedrulha",
+      "codigo_postal": "3020-317",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "grupo": "MCoutinho",
+      "telefone": "+351 239 499 300",
+      "email": "mcoutinhocentro@mcoutinho.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "GDAuto - Torres Vedras",
+      "morada": "Avenida Carlos Lopes, 73",
+      "codigo_postal": "2560-629",
+      "localidade": "Torres Vedras",
+      "distrito": "Lisboa",
+      "grupo": "independente",
+      "telefone": "+351 261 249 900",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal - Cacem",
+      "morada": "Alto da Bela Vista, E.N. 249-3",
+      "codigo_postal": "2735-307",
+      "localidade": "Agualva-Cacem",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 206",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal - Cascais",
+      "morada": "Avenida da Republica, Edificio Santogal",
+      "codigo_postal": "2645-143",
+      "localidade": "Alcabideche",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 730",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal - Loures",
+      "morada": "Edificio Santogal, E.N. 115, Km 80",
+      "codigo_postal": "2660-161",
+      "localidade": "Santo Antao do Tojal",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 526",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Stellantis &You - Amadora",
+      "morada": "Rua Irmaos Siemens, 2",
+      "codigo_postal": "2720-093",
+      "localidade": "Amadora",
+      "distrito": "Lisboa",
+      "grupo": "Stellantis &You",
+      "telefone": "+351 214 166 300",
+      "email": "apv_stellantisandyoulisboa@stellantis.com",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Stellantis &You - Sacavem (Portela)",
+      "morada": "Rua Vasco da Gama, 20",
+      "codigo_postal": "2685-244",
+      "localidade": "Portela de Sacavem",
+      "distrito": "Lisboa",
+      "grupo": "Stellantis &You",
+      "telefone": "+351 219 407 400",
+      "email": "stellantisandyousacavem@stellantis.com",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Automeclis - Lisboa",
+      "morada": "Rua Antonio Patricio, 9 F/G",
+      "codigo_postal": "1700-047",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "independente",
+      "telefone": "+351 217 927 777",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "SGS CAR - Setubal",
+      "morada": "Estrada Nacional 252, Miraventos, Quinta Tome Dias",
+      "codigo_postal": "2950-067",
+      "localidade": "Setubal",
+      "distrito": "Setubal",
+      "grupo": "independente",
+      "telefone": "+351 215 905 600",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas", "colisao"]
+    },
+    {
+      "nome": "Lubripor (A MatosCar) - Portalegre",
+      "morada": "Av. Francisco Fino, Zona Industrial, 17",
+      "codigo_postal": "7300-053",
+      "localidade": "Portalegre",
+      "distrito": "Portalegre",
+      "grupo": "independente",
+      "telefone": "",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Lubripor (A MatosCar) - Evora",
+      "morada": "Rua da Metalurgica Alentejana, 4",
+      "codigo_postal": "7800-007",
+      "localidade": "Evora",
+      "distrito": "Evora",
+      "grupo": "independente",
+      "telefone": "",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "MSCAR - Faro",
+      "morada": "E.N. 125, Km 98,6, Sitio do Arneiro",
+      "codigo_postal": "8005-412",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "grupo": "independente",
+      "telefone": "+351 289 090 000",
+      "email": "fiat@mscar.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "MSCAR - Portimao",
+      "morada": "Rua Candido dos Reis, 1",
+      "codigo_postal": "8500-575",
+      "localidade": "Portimao",
+      "distrito": "Faro",
+      "grupo": "independente",
+      "telefone": "+351 707 282 700",
+      "email": "fiat.ptm@mscar.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Mendes Gomes (MGL) - Madeira",
+      "morada": "Parque Industrial da Cancela",
+      "codigo_postal": "9125-042",
+      "localidade": "Canico",
+      "distrito": "Madeira",
+      "grupo": "independente",
+      "telefone": "+351 291 934 400",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto Acoreana - Ponta Delgada",
+      "morada": "Praceta da Pranchinha, 20",
+      "codigo_postal": "9500-330",
+      "localidade": "Ponta Delgada",
+      "distrito": "Acores",
+      "grupo": "independente",
+      "telefone": "+351 296 304 900",
+      "email": "autoacoreana@autoacoreana.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "grupo": "M. Coutinho",
+  "site_fonte": "https://www.mcoutinho.pt/localizacao",
+  "data_pesquisa": "2026-04-13",
+  "total": 10,
+  "localizacoes": [
+    {
+      "nome": "MCoutinho Centro - Coimbra (Multimarca)",
+      "morada": "Rua Antonio Sergio, s/n, Zona Industrial da Pedrulha",
+      "codigo_postal": "3020-317",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "marcas": ["Kia", "Peugeot", "Alfa Romeo", "Fiat", "Jaguar", "Land Rover"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "239 433 500",
+      "email": "mcoutinhocentro@mcoutinho.pt"
+    },
+    {
+      "nome": "MCoutinho Coimbra - Jaguar Land Rover",
+      "morada": "Rua Antonio Sergio, s/n, Zona Industrial da Pedrulha",
+      "codigo_postal": "3025-041",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "marcas": ["Jaguar", "Land Rover"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "239 196 720",
+      "email": "mcoutinhocentro@mcoutinho.pt"
+    },
+    {
+      "nome": "MCoutinho Bomcar Coimbra - BMW / MINI / MG",
+      "morada": "Rua das Areias, Trouxemil",
+      "codigo_postal": "3025-137",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "marcas": ["BMW", "MINI", "MG", "BMW Motorrad", "KTM", "Husqvarna", "GasGas"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "244 026 185",
+      "email": "mcoutinhobomcar@mcoutinho.pt"
+    },
+    {
+      "nome": "MCoutinho Bomcar Leiria - BMW / MINI / MG",
+      "morada": "Variante da Marinha Grande, Carreira d'Agua, Barosa",
+      "codigo_postal": "2400-016",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "marcas": ["BMW", "MINI", "MG", "BMW Motorrad", "KTM", "Husqvarna", "GasGas"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "244 880 110",
+      "email": "mcoutinhobomcar@mcoutinho.pt"
+    },
+    {
+      "nome": "MCoutinho Leiria - Jaguar Land Rover",
+      "morada": "Rua Antonio Sergio, s/n, Zona Industrial",
+      "codigo_postal": "2400-000",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "marcas": ["Jaguar", "Land Rover"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "800 910 710",
+      "email": ""
+    },
+    {
+      "nome": "MCoutinho Leiria - Renault / Dacia",
+      "morada": "Rua dos Camponeses, Vale de Colmeia",
+      "codigo_postal": "2415-444",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "244 244 870",
+      "email": ""
+    },
+    {
+      "nome": "MCoutinho Caldas da Rainha - Renault / Dacia",
+      "morada": "Rua Estrada do Lavradio, 95, Tornada",
+      "codigo_postal": "2500-294",
+      "localidade": "Caldas da Rainha",
+      "distrito": "Leiria",
+      "marcas": ["Renault", "Dacia"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "262 248 580",
+      "email": ""
+    },
+    {
+      "nome": "MCoutinho Lisboa Oriente - Peugeot / Alfa Romeo / DS / Opel",
+      "morada": "Av. Infante D. Henrique, 337 E 337A",
+      "codigo_postal": "1800-218",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "marcas": ["Peugeot", "Alfa Romeo", "DS", "Opel"],
+      "servicos": ["vendas", "oficina", "pecas", "colisao"],
+      "telefone": "219 828 620",
+      "email": ""
+    },
+    {
+      "nome": "MCoutinho Lisboa Oriente - Loures (Peugeot)",
+      "morada": "E.N. 8, Km 4",
+      "codigo_postal": "2670-492",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "marcas": ["Peugeot"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "219 828 620",
+      "email": ""
+    },
+    {
+      "nome": "MCoutinho Louresfor - Ford",
+      "morada": "E.N. 8, Km 4",
+      "codigo_postal": "2670-492",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "marcas": ["Ford"],
+      "servicos": ["vendas", "oficina", "pecas"],
+      "telefone": "219 828 620",
+      "email": ""
+    }
+  ]
+}

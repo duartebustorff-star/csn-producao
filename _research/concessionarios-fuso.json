@@ -1,0 +1,124 @@
+{
+  "marca": "FUSO",
+  "site_fonte": "https://www.fuso-trucks.com.pt/operadores/",
+  "importador": "Astara (distribuicao via rede Mitsubishi/Astara em Portugal)",
+  "zona": "Leiria para baixo + ilhas",
+  "data_pesquisa": "2026-04-13",
+  "notas": "FUSO (Daimler Truck) e distribuido em Portugal pela Astara, partilhando a rede Mitsubishi. Fabrica Canter/eCanter no Tramagal. Rede FUSO sobrepoe-se largamente a rede Mitsubishi. Concessionarios confirmados via sites oficiais dos grupos e paginas de marcas.",
+  "total": 10,
+  "concessionarios": [
+    {
+      "nome": "Auto-Industrial Coimbra",
+      "morada": "Av. Fernao de Magalhaes, 333",
+      "codigo_postal": "3000-176",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "grupo": "Grupo Auto-Industrial",
+      "telefone": "+351 239 003 000",
+      "email": "vendas.coimbra@auto-industrial.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto-Industrial Leiria",
+      "morada": "Rua do Alto Vieiro, 1, Estrada Nacional 1/IC2, Alto do Vieiro",
+      "codigo_postal": "2400-822",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "grupo": "Grupo Auto-Industrial",
+      "telefone": "+351 244 003 000",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Carby - Torres Vedras",
+      "morada": "Estrada Nacional 9",
+      "codigo_postal": "2560-250",
+      "localidade": "Torres Vedras",
+      "distrito": "Lisboa",
+      "grupo": "Carby / Entreposto Auto",
+      "telefone": "",
+      "email": "",
+      "servicos": ["vendas", "oficina"],
+      "nota": "Carby e a marca comercial Entreposto Auto para Mitsubishi/FUSO"
+    },
+    {
+      "nome": "Xanauto",
+      "morada": "Rua Combatentes do Ultramar, 222, Guerreiros",
+      "codigo_postal": "2670-379",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "grupo": "Xanauto",
+      "telefone": "+351 219 835 144",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal FUSO - Loures",
+      "morada": "EN115, Km 80, Casal de Roque, Santo Antao do Tojal",
+      "codigo_postal": "2660-161",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 990",
+      "email": "oficina.fuso@santogal.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Astara Retail (ex-Univex) - Lisboa",
+      "morada": "Rua Dr. Jose Espirito Santo, 38",
+      "codigo_postal": "1950-097",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "Astara",
+      "telefone": "+351 218 394 600",
+      "email": "marketing.univex@astara.com",
+      "servicos": ["vendas", "oficina", "pecas"],
+      "nota": "Univex/Astara Retail e o concessionario historico FUSO em Portugal desde os anos 1960"
+    },
+    {
+      "nome": "CAM - Carnaxide/Sintra",
+      "morada": "Rua do Proletariado, 1, Portela da Ajuda, Carnaxide",
+      "codigo_postal": "2790-138",
+      "localidade": "Carnaxide",
+      "distrito": "Lisboa",
+      "grupo": "CAM / Grupo Auto-Industrial",
+      "telefone": "+351 211 329 921",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Motorpor - Almada (ex-SGS Car)",
+      "morada": "Rua Sergio Malpique, 2",
+      "codigo_postal": "2810-500",
+      "localidade": "Almada",
+      "distrito": "Setubal",
+      "grupo": "Motorpor",
+      "telefone": "+351 300 600 768",
+      "email": "geral@motorpor.pt",
+      "servicos": ["vendas", "oficina", "pecas"],
+      "nota": "Motorpor assumiu representacao FUSO da SGS Car em julho 2025"
+    },
+    {
+      "nome": "Motorpor - Evora",
+      "morada": "Praceta Francisco Maria Silva, 10, Zona Industrial",
+      "codigo_postal": "7005-841",
+      "localidade": "Evora",
+      "distrito": "Evora",
+      "grupo": "Motorpor",
+      "telefone": "+351 936 540 672",
+      "email": "geral@motorpor.pt",
+      "servicos": ["vendas", "oficina"]
+    },
+    {
+      "nome": "Carby / Entreposto Algarve - Faro",
+      "morada": "Sitio dos Salgados, Apartado 426",
+      "codigo_postal": "8001-905",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "grupo": "Carby / Entreposto Auto",
+      "telefone": "+351 289 860 196",
+      "email": "geral@entrepostoauto.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "marca": "Maxus",
+  "site_fonte": "https://maxusportugal.pt/concessionarios/",
+  "importador": "Astara / Bermax Auto",
+  "zona": "Leiria para baixo + ilhas",
+  "data_pesquisa": "2026-04-13",
+  "notas": "Maxus e distribuido em Portugal pela Astara. Rede com 17 parceiros e 20 pontos de venda/assistencia no continente e ilhas (dados oficiais). A rede sobrepoe-se largamente as redes Isuzu e Mitsubishi/FUSO da Astara. Xanauto, Socarros, Auto-Industrial e Astara Retail sao os principais pontos.",
+  "total": 11,
+  "concessionarios": [
+    {
+      "nome": "Auto-Industrial Coimbra",
+      "morada": "Av. Fernao de Magalhaes, 333",
+      "codigo_postal": "3000-176",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "grupo": "Grupo Auto-Industrial",
+      "telefone": "+351 239 003 000",
+      "email": "vendas.coimbra@auto-industrial.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto-Industrial Leiria",
+      "morada": "Rua do Alto Vieiro, 1, Estrada Nacional 1/IC2, Alto do Vieiro",
+      "codigo_postal": "2400-822",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "grupo": "Grupo Auto-Industrial",
+      "telefone": "+351 244 003 000",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Socarros - Caldas da Rainha",
+      "morada": "Rua Martires de Timor, 25",
+      "codigo_postal": "2500-839",
+      "localidade": "Caldas da Rainha",
+      "distrito": "Leiria",
+      "grupo": "Grupo NOV Automoveis",
+      "telefone": "+351 262 839 590",
+      "email": "",
+      "servicos": ["vendas", "oficina"]
+    },
+    {
+      "nome": "Socarros - Santarem",
+      "morada": "Rua do Matadouro Regional, Lote 41",
+      "codigo_postal": "2005-002",
+      "localidade": "Santarem",
+      "distrito": "Santarem",
+      "grupo": "Grupo NOV Automoveis",
+      "telefone": "+351 243 359 190",
+      "email": "",
+      "servicos": ["vendas", "oficina"]
+    },
+    {
+      "nome": "Xanauto",
+      "morada": "Rua Combatentes do Ultramar, 222, Guerreiros",
+      "codigo_postal": "2670-379",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "grupo": "Xanauto",
+      "telefone": "+351 219 835 144",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal Maxus - Loures",
+      "morada": "EN115, Km 80, Casal de Roque, Santo Antao do Tojal",
+      "codigo_postal": "2660-161",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "+351 210 430 760",
+      "email": "",
+      "servicos": ["vendas"]
+    },
+    {
+      "nome": "Astara Retail (ex-Univex) - Lisboa",
+      "morada": "Rua Dr. Jose Espirito Santo, 38",
+      "codigo_postal": "1950-097",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "Astara",
+      "telefone": "+351 218 394 600",
+      "email": "marketing.univex@astara.com",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "CAM - Carnaxide/Sintra",
+      "morada": "Rua do Proletariado, 1, Portela da Ajuda, Carnaxide",
+      "codigo_postal": "2790-138",
+      "localidade": "Carnaxide",
+      "distrito": "Lisboa",
+      "grupo": "CAM / Grupo Auto-Industrial",
+      "telefone": "+351 211 329 921",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Motorpor - Almada (ex-SGS Car)",
+      "morada": "Rua Sergio Malpique, 2",
+      "codigo_postal": "2810-500",
+      "localidade": "Almada",
+      "distrito": "Setubal",
+      "grupo": "Motorpor",
+      "telefone": "+351 300 600 768",
+      "email": "geral@motorpor.pt",
+      "servicos": ["vendas", "oficina", "pecas"],
+      "nota": "Motorpor assumiu representacao Maxus da SGS Car em julho 2025"
+    },
+    {
+      "nome": "Motorpor - Evora",
+      "morada": "Praceta Francisco Maria Silva, 10, Zona Industrial",
+      "codigo_postal": "7005-841",
+      "localidade": "Evora",
+      "distrito": "Evora",
+      "grupo": "Motorpor",
+      "telefone": "+351 936 540 672",
+      "email": "geral@motorpor.pt",
+      "servicos": ["vendas", "oficina"]
+    },
+    {
+      "nome": "MSCAR - Faro",
+      "morada": "Estrada Nacional 125, Km 98.6, Sitio do Arneiro",
+      "codigo_postal": "8001-904",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "grupo": "MSCAR",
+      "telefone": "+351 289 090 101",
+      "email": "geral@mscar.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    }
+  ]
+}

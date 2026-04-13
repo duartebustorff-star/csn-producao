@@ -1,0 +1,262 @@
+{
+  "marca": "Nissan",
+  "site_fonte": "https://www.nissan.pt/localizador-concessionarios.html",
+  "zona": "Leiria para baixo + ilhas",
+  "data_pesquisa": "2026-04-13",
+  "total": 23,
+  "concessionarios": [
+    {
+      "nome": "AJulio Mobility - Leiria",
+      "morada": "Rua Vale Gracioso, Azoia",
+      "codigo_postal": "2400-827",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "grupo": "Grupo Auto Julio",
+      "telefone": "+351 244 830 080",
+      "email": "ajuliomobility@autojulio.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto Julio - Caldas da Rainha",
+      "morada": "Rua Bernardino Simoes 3",
+      "codigo_postal": "2500-138",
+      "localidade": "Caldas da Rainha",
+      "distrito": "Leiria",
+      "grupo": "Grupo Auto Julio",
+      "telefone": "+351 707 202 425",
+      "email": "ajuliomobility@autojulio.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "AJulio Mobility - Torres Vedras",
+      "morada": "Rua Antonio Leal D'Ascencao 2C",
+      "codigo_postal": "2560-295",
+      "localidade": "Torres Vedras",
+      "distrito": "Lisboa",
+      "grupo": "Grupo Auto Julio",
+      "telefone": "+351 261 326 682",
+      "email": "rentacartorresvedras@autojulio.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Ferreira Morais & Morais - Coimbra",
+      "morada": "Rua Adriano Lucas, Monte de Sao Miguel",
+      "codigo_postal": "3020-430",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "grupo": "independente",
+      "telefone": "+351 239 857 300",
+      "email": "geral@ferreiramorais.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Ferreira Morais & Morais - Figueira da Foz",
+      "morada": "Rua da Vidreira 176, Salmanha",
+      "codigo_postal": "3090-650",
+      "localidade": "Figueira da Foz",
+      "distrito": "Coimbra",
+      "grupo": "independente",
+      "telefone": "+351 233 418 621",
+      "email": "geral@ferreiramorais.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "AutoGirar - Santarem",
+      "morada": "Rua Zeferino Silva, S. Domingos",
+      "codigo_postal": "2005-321",
+      "localidade": "Santarem",
+      "distrito": "Santarem",
+      "grupo": "independente",
+      "telefone": "+351 243 309 030",
+      "email": "vendas@autogirar.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Carby - Lisboa (Olivais)",
+      "morada": "Praca Jose Queiros, 1",
+      "codigo_postal": "1800-237",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "Carby (ex-Entreposto/Japautomotive)",
+      "telefone": "+351 218 548 533",
+      "email": "geral@carby.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Carby - Loures",
+      "morada": "Rua da Republica, 6",
+      "codigo_postal": "2670-468",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "grupo": "Carby (ex-Entreposto/Japautomotive)",
+      "telefone": "+351 217 652 761",
+      "email": "geral@carby.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Carby - Vila Franca de Xira",
+      "morada": "Quinta das Areias, Lote 14, Zona B",
+      "codigo_postal": "2600-660",
+      "localidade": "Vila Franca de Xira",
+      "distrito": "Lisboa",
+      "grupo": "Carby (ex-Entreposto/Japautomotive)",
+      "telefone": "+351 263 280 785",
+      "email": "pbento@entreposto.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Caetano Power - Lisboa (Benfica)",
+      "morada": "Rua Carolina Michaelis de Vasconcelos, 6",
+      "codigo_postal": "1500-144",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "Caetano (Salvador Caetano)",
+      "telefone": "+351 217 109 080",
+      "email": "marco.correia@caetanoretail.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Caetano Power - Cascais (Alcabideche)",
+      "morada": "Rua Sao Francisco, 539",
+      "codigo_postal": "2649-503",
+      "localidade": "Alcabideche",
+      "distrito": "Lisboa",
+      "grupo": "Caetano (Salvador Caetano)",
+      "telefone": "+351 214 603 812",
+      "email": "geral@caetanopower.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Caetano Power - Sintra (Rio de Mouro)",
+      "morada": "Estrada Terras da Lagoa, 66",
+      "codigo_postal": "2635-595",
+      "localidade": "Rio de Mouro",
+      "distrito": "Lisboa",
+      "grupo": "Caetano (Salvador Caetano)",
+      "telefone": "+351 219 256 277",
+      "email": "geral@caetanopower.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Caetano Power - Almada",
+      "morada": "Rua Joaquim Pires Jorge, 10",
+      "codigo_postal": "2814-510",
+      "localidade": "Almada",
+      "distrito": "Setubal",
+      "grupo": "Caetano (Salvador Caetano)",
+      "telefone": "+351 939 630 089",
+      "email": "joao.grave@caetanoretail.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Caetano Power - Setubal",
+      "morada": "Azinhaga Cruz do Peixe, Sao Sebastiao",
+      "codigo_postal": "2910-741",
+      "localidade": "Setubal",
+      "distrito": "Setubal",
+      "grupo": "Caetano (Salvador Caetano)",
+      "telefone": "+351 265 521 841",
+      "email": "joao.grave@caetanoretail.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Lubripor - Portalegre",
+      "morada": "Av. da Estremadura Espanhola, 12",
+      "codigo_postal": "7300-051",
+      "localidade": "Portalegre",
+      "distrito": "Portalegre",
+      "grupo": "A MatosCar (Lubripor)",
+      "telefone": "+351 245 300 300",
+      "email": "intermediario@amatoscar.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Boutigest - Elvas",
+      "morada": "Estrada Nacional 373, Zona Industrial",
+      "codigo_postal": "7350-231",
+      "localidade": "Elvas",
+      "distrito": "Portalegre",
+      "grupo": "independente",
+      "telefone": "+351 268 639 492",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Lubripor - Evora",
+      "morada": "Rua Artur da Silva Barreiros, Lote 6",
+      "codigo_postal": "7005-872",
+      "localidade": "Evora",
+      "distrito": "Evora",
+      "grupo": "A MatosCar (Lubripor)",
+      "telefone": "+351 266 740 913",
+      "email": "intermediario@amatoscar.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Lubripor - Beja",
+      "morada": "Rua da Metalurgica Alentejana, 4",
+      "codigo_postal": "7800-007",
+      "localidade": "Beja",
+      "distrito": "Beja",
+      "grupo": "A MatosCar (Lubripor)",
+      "telefone": "+351 245 300 300",
+      "email": "intermediario@amatoscar.pt",
+      "servicos": ["oficina", "pecas"]
+    },
+    {
+      "nome": "Carby - Faro",
+      "morada": "Sitio dos Salgados, Apartado 426",
+      "codigo_postal": "8001-905",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "grupo": "Carby (ex-Entreposto/Japautomotive)",
+      "telefone": "+351 289 860 184",
+      "email": "geral@carby.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Carby - Portimao",
+      "morada": "Sitio da Pedra Mourinha, Lote 12",
+      "codigo_postal": "8500-815",
+      "localidade": "Portimao",
+      "distrito": "Faro",
+      "grupo": "Carby (ex-Entreposto/Japautomotive)",
+      "telefone": "+351 282 460 272",
+      "email": "geral@carby.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Diversauto - Funchal",
+      "morada": "Estrada de Sao Joao, Ed. UPTOWN, 13, Loja A/B",
+      "codigo_postal": "9000-163",
+      "localidade": "Funchal",
+      "distrito": "Madeira",
+      "grupo": "independente",
+      "telefone": "+351 291 742 722",
+      "email": "",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto Elge - Ponta Delgada",
+      "morada": "Rua Eduardo Soares de Albergaria, 12, Canada dos Valados, Relva",
+      "codigo_postal": "9500-652",
+      "localidade": "Ponta Delgada",
+      "distrito": "Acores (Sao Miguel)",
+      "grupo": "Grupo Ilha Verde",
+      "telefone": "+351 296 285 460",
+      "email": "comercialautoelge@ilhaverde.com",
+      "servicos": ["vendas", "oficina", "pecas"]
+    },
+    {
+      "nome": "Terauto - Angra do Heroismo",
+      "morada": "Reguinho, Sao Bento",
+      "codigo_postal": "9700-110",
+      "localidade": "Angra do Heroismo",
+      "distrito": "Acores (Terceira)",
+      "grupo": "independente",
+      "telefone": "+351 295 204 890",
+      "email": "geral@terauto.pt",
+      "servicos": ["vendas", "oficina", "pecas"]
+    }
+  ]
+}

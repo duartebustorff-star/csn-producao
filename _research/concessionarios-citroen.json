@@ -1,0 +1,273 @@
+{
+  "marca": "Citroen",
+  "site_fonte": "https://www.citroen.pt",
+  "zona": "Leiria para baixo + ilhas",
+  "data_pesquisa": "2026-04-13",
+  "total": 24,
+  "concessionarios": [
+    {
+      "nome": "SACEL - Leiria",
+      "morada": "IC2, n.1493 - Azoia",
+      "codigo_postal": "2400-822",
+      "localidade": "Leiria",
+      "distrito": "Leiria",
+      "grupo": "SACEL",
+      "telefone": "244 870 200",
+      "email": "geral@sacel.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas", "aluguer"]
+    },
+    {
+      "nome": "SACEL - Caldas da Rainha",
+      "morada": "Rua Estr. do Lavradio, N.3",
+      "codigo_postal": "2500-294",
+      "localidade": "Caldas da Rainha",
+      "distrito": "Leiria",
+      "grupo": "SACEL",
+      "telefone": "262 831 155",
+      "email": "geral@sacel.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "SACEL - Santarem",
+      "morada": "R. Conde da Ribeira Grande, n.11, Lt. 4, Zona Industrial",
+      "codigo_postal": "2005-002",
+      "localidade": "Varzea de Santarem",
+      "distrito": "Santarem",
+      "grupo": "SACEL",
+      "telefone": "",
+      "email": "geral@sacel.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "SACEL - Torres Vedras",
+      "morada": "Estrada Nacional 8, Km 44 - Arrepiado, Parque Expo Joper",
+      "codigo_postal": "2560-629",
+      "localidade": "Torres Vedras",
+      "distrito": "Lisboa",
+      "grupo": "SACEL",
+      "telefone": "261 336 150",
+      "email": "geral@sacel.pt",
+      "servicos": ["oficina", "pecas"]
+    },
+    {
+      "nome": "Carlos Simoes - Mafra",
+      "morada": "EN 116 - Edificio Carlos Simoes, n.37, Paz",
+      "codigo_postal": "2644-012",
+      "localidade": "Mafra",
+      "distrito": "Lisboa",
+      "grupo": "independente",
+      "telefone": "261 817 750",
+      "email": "comercial@carlossimoes.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Barreiros & Vilas - Coimbra",
+      "morada": "Estrada de Coselhas, 230",
+      "codigo_postal": "3000-125",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "grupo": "independente",
+      "telefone": "239 841 815",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Barreiros & Vilas - Figueira da Foz",
+      "morada": "Rua Arnaldo Sobral, n. 23, 25, 27 e 29",
+      "codigo_postal": "3080-048",
+      "localidade": "Figueira da Foz",
+      "distrito": "Coimbra",
+      "grupo": "independente",
+      "telefone": "233 098 352",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto Industrial - Coimbra",
+      "morada": "Avenida Fernao de Magalhaes, 333",
+      "codigo_postal": "3000-176",
+      "localidade": "Coimbra",
+      "distrito": "Coimbra",
+      "grupo": "Grupo Auto-Industrial",
+      "telefone": "239 003 000",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal - Lisboa (Av. Republica)",
+      "morada": "Rua D. Luis de Noronha, 40",
+      "codigo_postal": "1069-081",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "210 430 160",
+      "email": "assistencia.citroen.as@santogal.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal - Cacem",
+      "morada": "Alto da Bela Vista, 249-3",
+      "codigo_postal": "2735-307",
+      "localidade": "Cacem",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "210 430 560",
+      "email": "assistencia.citroen.ac@santogal.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal - Cascais (Alcabideche)",
+      "morada": "Avenida da Republica - Edificio Santogal",
+      "codigo_postal": "2645-143",
+      "localidade": "Alcabideche",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "210 430 710",
+      "email": "assistencia.citroen.at@santogal.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Santogal - Loures",
+      "morada": "Edificio Santogal, EN115 km80, Casal de Roque, Santo Antao do Tojal",
+      "codigo_postal": "2660-161",
+      "localidade": "Loures",
+      "distrito": "Lisboa",
+      "grupo": "Santogal",
+      "telefone": "210 430 760",
+      "email": "assistencia.citroen.al@santogal.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto Benfica - Lisboa (Stand)",
+      "morada": "Rua Prof. Reinaldo dos Santos, 17",
+      "codigo_postal": "1500-501",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "independente",
+      "telefone": "217 712 070",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Auto Benfica - Lisboa (Oficina)",
+      "morada": "Av. Conselheiro Barjona de Freitas, 13A",
+      "codigo_postal": "1500-203",
+      "localidade": "Lisboa",
+      "distrito": "Lisboa",
+      "grupo": "independente",
+      "telefone": "217 788 070",
+      "email": "",
+      "servicos": ["oficina", "pecas"]
+    },
+    {
+      "nome": "Stellantis & You - Carnaxide",
+      "morada": "Rua Quinta do Paizinho, 5",
+      "codigo_postal": "2794-068",
+      "localidade": "Carnaxide",
+      "distrito": "Lisboa",
+      "grupo": "Stellantis &You",
+      "telefone": "214 166 600",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Stellantis & You - Setubal",
+      "morada": "Est. Miraventos a Av. Ciprestes (EN252), Quinta da Varzinha",
+      "codigo_postal": "2900-501",
+      "localidade": "Setubal",
+      "distrito": "Setubal",
+      "grupo": "Stellantis &You",
+      "telefone": "265 550 100",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "A MatosCar - Evora",
+      "morada": "Rua da Barba Rala, N1-A",
+      "codigo_postal": "7005-345",
+      "localidade": "Evora",
+      "distrito": "Evora",
+      "grupo": "A MatosCar",
+      "telefone": "266 079 120",
+      "email": "vendasevora@amatoscar.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "A MatosCar - Beja",
+      "morada": "Rua da Metalurgica Alentejana, 4 e 5",
+      "codigo_postal": "7800-007",
+      "localidade": "Beja",
+      "distrito": "Beja",
+      "grupo": "A MatosCar",
+      "telefone": "284 313 400",
+      "email": "vendasbeja@amatoscar.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "A MatosCar - Portalegre",
+      "morada": "Av. Estremadura Espanhola, 14",
+      "codigo_postal": "7300-051",
+      "localidade": "Portalegre",
+      "distrito": "Portalegre",
+      "grupo": "A MatosCar",
+      "telefone": "245 300 100",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Motorpor Algarve - Faro",
+      "morada": "E.N. 125 - Rio Seco",
+      "codigo_postal": "8005-528",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "grupo": "Motorpor",
+      "telefone": "289 894 800",
+      "email": "geral@motorpor.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Motorpor Algarve - Portimao",
+      "morada": "Zona Industrial Coca Maravilhas, LT 56",
+      "codigo_postal": "8500-483",
+      "localidade": "Portimao",
+      "distrito": "Faro",
+      "grupo": "Motorpor",
+      "telefone": "282 419 724",
+      "email": "geral@motorpor.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "MSCar - Faro",
+      "morada": "Estrada Nacional 125, km 98,6, Sitio do Arneiro",
+      "codigo_postal": "8001-904",
+      "localidade": "Faro",
+      "distrito": "Faro",
+      "grupo": "independente",
+      "telefone": "289 897 060",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    },
+    {
+      "nome": "Madeira Auto Car - Funchal",
+      "morada": "Caminho de Regedor, Nazare - Sao Martinho",
+      "codigo_postal": "9000-096",
+      "localidade": "Funchal",
+      "distrito": "Madeira",
+      "grupo": "independente",
+      "telefone": "291 702 670",
+      "email": "",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas", "colisao_pintura"]
+    },
+    {
+      "nome": "Auto Acoreana - Ponta Delgada",
+      "morada": "Praceta da Pranchinha, 20 - Sao Pedro",
+      "codigo_postal": "9500-330",
+      "localidade": "Ponta Delgada",
+      "distrito": "Acores",
+      "grupo": "independente",
+      "telefone": "296 304 900",
+      "email": "autoacoreana@autoacoreana.pt",
+      "servicos": ["venda_novos", "venda_usados", "oficina", "pecas"]
+    }
+  ]
+}
