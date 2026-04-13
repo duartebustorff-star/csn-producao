@@ -66,7 +66,7 @@ Usa as tools disponíveis para consultar dados atualizados e executar ações.`
 
 export async function POST(req: NextRequest) {
   try {
-    const { colaborador_id, message, history } = await req.json()
+    const { colaborador_id, message, history, images } = await req.json()
 
     if (!colaborador_id || !message) {
       return NextResponse.json({ error: "Faltam campos" }, { status: 400 })
@@ -103,12 +103,31 @@ export async function POST(req: NextRequest) {
     const systemPrompt = buildSystemPrompt(colab, obras || [], timer)
 
     // 5. Montar mensagens
+    // Build user content: if images are attached, create multi-block content
+    type ImageAttachment = { data: string; media_type: string }
+    let userContent: Anthropic.ContentBlockParam[] | string = message
+    if (images && Array.isArray(images) && images.length > 0) {
+      const blocks: Anthropic.ContentBlockParam[] = []
+      for (const img of images as ImageAttachment[]) {
+        blocks.push({
+          type: "image",
+          source: {
+            type: "base64",
+            media_type: img.media_type as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
+            data: img.data,
+          },
+        })
+      }
+      blocks.push({ type: "text", text: message })
+      userContent = blocks
+    }
+
     const messages: Anthropic.MessageParam[] = [
       ...(history || []).slice(-20).map((m: { role: string; content: string }) => ({
         role: m.role as "user" | "assistant",
         content: m.content,
       })),
-      { role: "user" as const, content: message },
+      { role: "user" as const, content: userContent },
     ]
 
     // 6. Chamar Claude API

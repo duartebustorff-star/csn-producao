@@ -12,6 +12,7 @@ const IDENTIFY_PROMPT = `Analisa este documento. Identifica o tipo:
 - "CIT" se for um Certificado de Incapacidade Temporária (documento da Segurança Social com dados de baixa médica)
 - "VIN_PLATE" se for uma foto da placa VIN de um veículo
 - "INSPECAO" se for um Relatório de Inspeção automóvel (cabeçalho com "Relatório de Inspeção", "Controlauto" ou centro de inspeção IMT, com dados de frénómetro/opacímetro/ripómetro)
+- "FOTO" se for uma fotografia genérica (veículo, peça, obra, local, selfie) que NÃO é um documento oficial
 - "OUTRO" para qualquer outro documento
 Responde APENAS com o tipo (uma palavra).`
 
@@ -340,6 +341,12 @@ export async function POST(req: NextRequest) {
     if (docType === "CIT") return await processCIT(fileContent, file, uploadedBy, supabase)
     if (docType === "INSPECAO") return await processINSPECAO(fileContent, file, uploadedBy, supabase)
     if (docType === "VIN_PLATE") return await processVINPlate(fileContent, supabase)
+    if (docType === "FOTO") {
+      return NextResponse.json({
+        tipo: "FOTO",
+        mensagem: "Esta imagem é uma foto, não um documento. Envia-a pelo chat para o assistente a ver e responder.",
+      })
+    }
     return await processOUTRO(file, uploadedBy, supabase)
 
   } catch (error) {

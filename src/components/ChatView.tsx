@@ -130,6 +130,17 @@ export default function ChatView({ user }: { user: Colaborador }) {
 
   const [uploadProgress, setUploadProgress] = useState<string | null>(null)
 
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        const result = reader.result as string
+        resolve(result.split(",")[1]) // strip data:...;base64, prefix
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+
   const handleFileUpload = async (files: File[], type: "foto" | "documento") => {
     const total = files.length
     setLoading(true)
@@ -145,6 +156,33 @@ export default function ChatView({ user }: { user: Colaborador }) {
       }
 
       try {
+        // FOTOS → send to chat so Claude sees the image in conversation
+        if (type === "foto" && file.type.startsWith("image/")) {
+          const base64 = await fileToBase64(file)
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              colaborador_id: user.id,
+              message: `[Foto: ${file.name}]`,
+              history: messages.slice(-20),
+              images: [{ data: base64, media_type: file.type }],
+            }),
+          })
+          const data = await res.json()
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: data.response || data.error || "Erro ao processar foto.",
+              timestamp: new Date().toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" }),
+            },
+          ])
+          checkTimer()
+          continue
+        }
+
+        // DOCUMENTOS → send to classifier pipeline
         const formData = new FormData()
         formData.append("file", file)
         formData.append("colaborador_id", user.id)
