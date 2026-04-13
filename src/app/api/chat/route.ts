@@ -61,6 +61,9 @@ ${JSON.stringify(obras, null, 2)}
 TIMER ATIVO:
 ${timer ? JSON.stringify(timer, null, 2) : "Nenhum timer ativo"}
 
+ANÁLISE DE IMAGENS:
+Quando recebes imagens, analisa-as com atenção. Extrai toda a informação visível: matrícula, VIN, marca, modelo, tipo de carroçaria actual, dados de documentos fotografados (DUA, FAM, certificados). Nunca digas que não consegues ler — tenta sempre. Se a imagem estiver desfocada, diz exactamente que parte não consegues ler e pede nova foto só dessa parte. Se vires um veículo, descreve-o e pergunta se o colaborador quer registar como lead ou associar a uma obra.
+
 Usa as tools disponíveis para consultar dados atualizados e executar ações.`
 }
 
@@ -105,8 +108,12 @@ export async function POST(req: NextRequest) {
     // 5. Montar mensagens
     // Build user content: if images are attached, create multi-block content
     type ImageAttachment = { data: string; media_type: string }
+    const hasImages = images && Array.isArray(images) && images.length > 0
+    if (hasImages) {
+      console.log(`[chat] Received ${images.length} image(s) from ${colab.nome}, sizes: ${(images as ImageAttachment[]).map(i => `${(i.data.length / 1024).toFixed(0)}KB`).join(", ")}`)
+    }
     let userContent: Anthropic.ContentBlockParam[] | string = message
-    if (images && Array.isArray(images) && images.length > 0) {
+    if (hasImages) {
       const blocks: Anthropic.ContentBlockParam[] = []
       for (const img of images as ImageAttachment[]) {
         blocks.push({
@@ -130,10 +137,10 @@ export async function POST(req: NextRequest) {
       { role: "user" as const, content: userContent },
     ]
 
-    // 6. Chamar Claude API
+    // 6. Chamar Claude API (more tokens when processing images)
     let response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
-      max_tokens: 2048,
+      max_tokens: hasImages ? 4096 : 2048,
       system: systemPrompt,
       tools: CLAUDE_TOOLS,
       messages,

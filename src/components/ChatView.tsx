@@ -130,15 +130,32 @@ export default function ChatView({ user }: { user: Colaborador }) {
 
   const [uploadProgress, setUploadProgress] = useState<string | null>(null)
 
-  const fileToBase64 = (file: File): Promise<string> =>
+  // Compress image to max 1280px and JPEG quality 0.8 — keeps payload under Vercel 4.5MB limit
+  const compressImage = (file: File): Promise<{ base64: string; media_type: string }> =>
     new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        const result = reader.result as string
-        resolve(result.split(",")[1]) // strip data:...;base64, prefix
+      const img = new Image()
+      const url = URL.createObjectURL(file)
+      img.onload = () => {
+        URL.revokeObjectURL(url)
+        const MAX = 1280
+        let w = img.width
+        let h = img.height
+        if (w > MAX || h > MAX) {
+          const ratio = Math.min(MAX / w, MAX / h)
+          w = Math.round(w * ratio)
+          h = Math.round(h * ratio)
+        }
+        const canvas = document.createElement("canvas")
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext("2d")!
+        ctx.drawImage(img, 0, 0, w, h)
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.8)
+        const base64 = dataUrl.split(",")[1]
+        resolve({ base64, media_type: "image/jpeg" })
       }
-      reader.onerror = reject
-      reader.readAsDataURL(file)
+      img.onerror = reject
+      img.src = url
     })
 
   const handleFileUpload = async (files: File[], type: "foto" | "documento") => {
@@ -156,20 +173,36 @@ export default function ChatView({ user }: { user: Colaborador }) {
       }
 
       try {
-        // FOTOS → send to chat so Claude sees the image in conversation
+        // FOTOS → compress and send to chat so Claude sees the image in conversation
         if (type === "foto" && file.type.startsWith("image/")) {
-          const base64 = await fileToBase64(file)
+          const { base64, media_type } = await compressImage(file)
+          console.log("[ChatView] Sending photo to /api/chat", {
+            fileName: file.name,
+            originalSize: `${(file.size / 1024).toFixed(0)}KB`,
+            base64Length: `${(base64.length / 1024).toFixed(0)}KB`,
+            media_type,
+          })
+
+          const payload = {
+            colaborador_id: user.id,
+            message: `[Foto: ${file.name}] Analisa esta imagem. Extrai toda a informação visível: matrícula, VIN, marca, modelo, estado do veículo, dados de documentos.`,
+            history: messages.slice(-20),
+            images: [{ data: base64, media_type }],
+          }
+
           const res = await fetch("/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              colaborador_id: user.id,
-              message: `[Foto: ${file.name}]`,
-              history: messages.slice(-20),
-              images: [{ data: base64, media_type: file.type }],
-            }),
+            body: JSON.stringify(payload),
           })
+
+          if (!res.ok) {
+            console.error("[ChatView] /api/chat error:", res.status, res.statusText)
+            throw new Error(`Chat API error: ${res.status}`)
+          }
+
           const data = await res.json()
+          console.log("[ChatView] Photo response received:", data.response?.substring(0, 100))
           setMessages((prev) => [
             ...prev,
             {
