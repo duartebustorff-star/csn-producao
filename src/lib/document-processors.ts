@@ -489,6 +489,22 @@ async function processarDocumentoFornecedor(
     if (ef && ef.length > 0) efaturaId = ef[0].id
   }
 
+  // Dedup por ATCUD — se já existe, devolver sucesso (idempotente)
+  if (atcud) {
+    const { data: existing } = await supabase
+      .from('documentos_fornecedor').select('id').eq('atcud', atcud).maybeSingle()
+    if (existing) {
+      return {
+        tipo: classificacao, classificacao,
+        dados: { geral, especifico, dedup: true },
+        tabela_destino: 'documentos_fornecedor',
+        registo_id: existing.id,
+        documento_id: documentoId,
+        mensagem: `${tipo} ${especifico.numero || '?'} já existe (ATCUD dedup)`,
+      }
+    }
+  }
+
   // Inserir cabeçalho
   const { data: docForn, error: insertErr } = await supabase.from('documentos_fornecedor').insert({
     tipo,
