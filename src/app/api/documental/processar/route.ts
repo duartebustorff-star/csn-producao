@@ -131,9 +131,11 @@ async function processarBatch(): Promise<{
       }
     }
 
+    const primeiroErro = anexos.find((a) => a.erro)?.erro || null
     await supabase.from('tickets').update({
       anexos: JSON.stringify(anexos),
       anexos_estado: todosProcessados ? 'processado' : 'erro',
+      anexos_erro: todosProcessados ? null : primeiroErro,
     }).eq('id', ticket.id)
   }
 
