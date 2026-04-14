@@ -14,10 +14,12 @@ import DocumentosView from "@/components/DocumentosView"
 import LeadsView from "@/components/LeadsView"
 import RoteadorView from "@/components/RoteadorView"
 import WorkerDashboard from "@/components/WorkerDashboard"
+import RegistoVeiculoView from "@/components/RegistoVeiculoView"
+import EncomendasView from "@/components/EncomendasView"
 import type { Colaborador } from "@/lib/types"
 import type { Lang } from "@/lib/translations"
 
-export type WorkerMode = "producao" | "pessoal"
+export type WorkerMode = "producao" | "pessoal" | "veiculo" | "encomendas"
 
 export default function Home() {
   const [user, setUser] = useState<Colaborador | null>(null)
@@ -99,8 +101,39 @@ export default function Home() {
         user={user}
         onSelectProducao={() => { setWorkerMode("producao"); setActiveView("fernando") }}
         onSelectPessoal={() => { setWorkerMode("pessoal"); setActiveView("rh") }}
+        onSelectVeiculo={() => { setWorkerMode("veiculo"); setActiveView("chat") }}
+        onSelectEncomendas={() => { setWorkerMode("encomendas"); setActiveView("chat") }}
         onLogout={handleLogout}
       />
+    )
+  }
+
+  // Dedicated full-screen modes (workers only)
+  if (!isAdmin && workerMode === "veiculo") {
+    return (
+      <div className="h-dvh bg-background relative">
+        <button
+          onClick={handleBackToModeSelector}
+          className="absolute top-4 right-4 z-50 text-muted hover:text-foreground text-sm"
+        >
+          Sair
+        </button>
+        <RegistoVeiculoView user={user} />
+      </div>
+    )
+  }
+
+  if (!isAdmin && workerMode === "encomendas") {
+    return (
+      <div className="h-dvh bg-background relative">
+        <button
+          onClick={handleBackToModeSelector}
+          className="absolute top-4 right-4 z-50 text-muted hover:text-foreground text-sm"
+        >
+          Sair
+        </button>
+        <EncomendasView />
+      </div>
     )
   }
 

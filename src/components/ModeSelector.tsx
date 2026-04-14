@@ -7,6 +7,8 @@ interface ModeSelectorProps {
   user: Colaborador
   onSelectProducao: () => void
   onSelectPessoal: () => void
+  onSelectVeiculo: () => void
+  onSelectEncomendas: () => void
   onLogout: () => void
 }
 
@@ -14,6 +16,8 @@ export default function ModeSelector({
   user,
   onSelectProducao,
   onSelectPessoal,
+  onSelectVeiculo,
+  onSelectEncomendas,
   onLogout,
 }: ModeSelectorProps) {
   const [showPin, setShowPin] = useState(false)
@@ -129,25 +133,41 @@ export default function ModeSelector({
         <h2 className="mt-3 text-xl font-semibold text-foreground">{user.nome}</h2>
       </div>
 
-      <div className="flex flex-col gap-4 w-full max-w-xs">
-        {/* Produção — botão grande, directo */}
+      <div className="grid grid-cols-2 gap-3 w-full max-w-md">
+        {/* Produção */}
         <button onClick={onSelectProducao}
-          className="flex flex-col items-center gap-3 rounded-2xl bg-accent/10 border-2 border-accent p-8 transition-all hover:bg-accent/20 active:scale-[0.98]"
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-accent/10 border-2 border-accent p-6 transition-all hover:bg-accent/20 active:scale-[0.98]"
         >
-          <span className="text-5xl">🏗️</span>
-          <span className="text-xl font-bold text-accent">Produção</span>
-          <span className="text-muted text-xs">Obras · Fases · Timer</span>
+          <span className="text-4xl">🏗️</span>
+          <span className="text-base font-bold text-accent">Produção</span>
+          <span className="text-muted text-[10px] text-center">Obras · Fases · Timer</span>
         </button>
 
-        {/* Pessoal — botão pequeno, pede PIN */}
-        <button onClick={() => setShowPin(true)}
-          className="flex items-center gap-3 rounded-2xl bg-card p-4 transition-all hover:bg-card-hover active:scale-[0.98]"
+        {/* Registo de Veículo */}
+        <button onClick={onSelectVeiculo}
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-green-500/10 border-2 border-green-500 p-6 transition-all hover:bg-green-500/20 active:scale-[0.98]"
         >
-          <span className="text-2xl">🔒</span>
-          <div className="text-left">
-            <span className="text-sm font-medium text-foreground">Área Pessoal</span>
-            <p className="text-muted text-xs">Recibos · Férias · Dados</p>
-          </div>
+          <span className="text-4xl">🚛</span>
+          <span className="text-base font-bold text-green-500">Registo Veículo</span>
+          <span className="text-muted text-[10px] text-center">Entrada · Saída · Fotos</span>
+        </button>
+
+        {/* Encomendas */}
+        <button onClick={onSelectEncomendas}
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-blue-500/10 border-2 border-blue-500 p-6 transition-all hover:bg-blue-500/20 active:scale-[0.98]"
+        >
+          <span className="text-4xl">📦</span>
+          <span className="text-base font-bold text-blue-500">Encomendas</span>
+          <span className="text-muted text-[10px] text-center">Entradas · Saídas · Material</span>
+        </button>
+
+        {/* Pessoal — pede PIN */}
+        <button onClick={() => setShowPin(true)}
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-card border-2 border-border p-6 transition-all hover:bg-card-hover active:scale-[0.98]"
+        >
+          <span className="text-4xl">🔒</span>
+          <span className="text-base font-bold text-foreground">Área Pessoal</span>
+          <span className="text-muted text-[10px] text-center">Recibos · Férias · Dados</span>
         </button>
       </div>
     </div>
