@@ -73,21 +73,36 @@ function buildContext(chunks: InventorChunk[]): string {
     .join("\n\n---\n\n")
 }
 
+// ---------- CORS ----------
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+}
+
+function jsonWithCors(data: unknown, init?: { status?: number }) {
+  return NextResponse.json(data, { status: init?.status, headers: CORS_HEADERS })
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS })
+}
+
 // ---------- handler ----------
 export async function POST(req: NextRequest) {
   let body: QueryBody
   try {
     body = (await req.json()) as QueryBody
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+    return jsonWithCors({ error: "Invalid JSON body" }, { status: 400 })
   }
 
   const question = typeof body.question === "string" ? body.question.trim() : ""
   if (!question) {
-    return NextResponse.json({ error: "question (string) is required" }, { status: 400 })
+    return jsonWithCors({ error: "question (string) is required" }, { status: 400 })
   }
   if (question.length > 2000) {
-    return NextResponse.json({ error: "question too long (max 2000 chars)" }, { status: 400 })
+    return jsonWithCors({ error: "question too long (max 2000 chars)" }, { status: 400 })
   }
 
   // 1. Embed the question
@@ -97,7 +112,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e)
     console.error("[inventor/query] voyage error:", msg)
-    return NextResponse.json({ error: "embedding_failed", detail: msg }, { status: 500 })
+    return jsonWithCors({ error: "embedding_failed", detail: msg }, { status: 500 })
   }
 
   // 2. Vector search via RPC match_inventor_docs
@@ -109,7 +124,7 @@ export async function POST(req: NextRequest) {
 
   if (rpcError) {
     console.error("[inventor/query] rpc error:", rpcError.message)
-    return NextResponse.json(
+    return jsonWithCors(
       { error: "rpc_failed", detail: rpcError.message },
       { status: 500 }
     )
@@ -137,7 +152,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e)
     console.error("[inventor/query] claude error:", msg)
-    return NextResponse.json({ error: "claude_failed", detail: msg }, { status: 500 })
+    return jsonWithCors({ error: "claude_failed", detail: msg }, { status: 500 })
   }
 
   // 4. Build response
@@ -148,7 +163,7 @@ export async function POST(req: NextRequest) {
     similarity: Number(c.similarity?.toFixed?.(4) ?? c.similarity),
   }))
 
-  return NextResponse.json({
+  return jsonWithCors({
     answer: answer.trim(),
     sources,
   })
