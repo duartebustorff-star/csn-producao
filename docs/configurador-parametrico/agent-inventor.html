@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN — Agent Inventor</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c0c0e;--surface:#16161a;--surface2:#1e1e24;--border:#2a2a32;--text:#e2e2e6;--dim:#8a8a96;--accent:#f5a623;--accent-dim:#f5a62320;--green:#34d399;--red:#f87171;--code-bg:#1a1a22}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo{width:34px;height:34px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#0c0c0e}
+header h1{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.badge{font-size:10px;font-family:'JetBrains Mono',monospace;background:var(--accent-dim);color:var(--accent);padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim)}
+.dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+#chat::-webkit-scrollbar{width:5px}
+#chat::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.msg{max-width:85%;line-height:1.6;font-size:14px;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end;background:var(--surface2);border:1px solid var(--border);padding:10px 14px;border-radius:12px 12px 3px 12px}
+.msg.bot{align-self:flex-start;background:var(--surface);border:1px solid var(--border);padding:14px 18px;border-radius:3px 12px 12px 12px}
+.msg.bot h1,.msg.bot h2,.msg.bot h3{color:var(--accent);margin:12px 0 6px;font-size:14px;font-weight:700}
+.msg.bot h1:first-child,.msg.bot h2:first-child,.msg.bot h3:first-child{margin-top:0}
+.msg.bot p{margin:5px 0}
+.msg.bot code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--code-bg);padding:2px 5px;border-radius:3px;color:var(--accent)}
+.msg.bot pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;padding:12px;margin:8px 0;overflow-x:auto;font-size:12.5px;line-height:1.5}
+.msg.bot pre code{background:none;padding:0;color:var(--text)}
+.msg.bot ul,.msg.bot ol{margin:6px 0 6px 20px}
+.msg.bot li{margin:3px 0}
+.msg.bot strong{color:var(--text);font-weight:600}
+.sources{margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--dim)}
+.sources span{display:inline-block;background:var(--surface2);padding:2px 7px;border-radius:3px;margin:2px 3px 2px 0;font-family:'JetBrains Mono',monospace}
+.typing{align-self:flex-start;color:var(--dim);font-size:13px;display:flex;align-items:center;gap:8px}
+.typing-dots span{display:inline-block;width:5px;height:5px;background:var(--dim);border-radius:50%;animation:blink 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+#input-area{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;background:var(--surface)}
+#q{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:none;min-height:44px;max-height:120px}
+#q:focus{border-color:var(--accent)}
+#q::placeholder{color:var(--dim)}
+#send{background:var(--accent);color:#0c0c0e;border:none;border-radius:10px;padding:0 20px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .15s}
+#send:hover{opacity:.85}
+#send:disabled{opacity:.4;cursor:not-allowed}
+.welcome{text-align:center;color:var(--dim);margin:auto;max-width:420px}
+.welcome h2{color:var(--text);font-size:20px;margin-bottom:8px}
+.welcome p{font-size:13px;line-height:1.6;margin-bottom:16px}
+.examples{display:flex;flex-direction:column;gap:6px}
+.examples button{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;transition:border-color .15s}
+.examples button:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Iv</div>
+  <h1>Agent Inventor</h1>
+  <div class="badge">RAG · 7419 docs</div>
+  <div class="status"><div class="dot"></div>L4-ENG</div>
+</header>
+<div id="chat">
+  <div class="welcome" id="welcome">
+    <h2>Agent Inventor</h2>
+    <p>Perguntas sobre Autodesk Inventor 2026, iLogic, VB.NET, API, Sheet Metal, Assemblies — grounded na documentação oficial.</p>
+    <div class="examples">
+      <button onclick="ask(this.textContent)">Como criar uma variável partilhada entre regras iLogic?</button>
+      <button onclick="ask(this.textContent)">Como aceder a propriedades de um componente num assembly?</button>
+      <button onclick="ask(this.textContent)">Como exportar DXF via iLogic?</button>
+      <button onclick="ask(this.textContent)">Funções de Sheet Metal disponíveis em iLogic?</button>
+    </div>
+  </div>
+</div>
+<div id="input-area">
+  <textarea id="q" placeholder="Pergunta sobre Inventor..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
+  <button id="send" onclick="send()">Enviar</button>
+</div>
+<script>
+const API='https://csn-producao.vercel.app/api/inventor/query';
+const chat=document.getElementById('chat');
+const input=document.getElementById('q');
+const btn=document.getElementById('send');
+
+function ask(t){input.value=t;send()}
+
+async function send(){
+  const q=input.value.trim();
+  if(!q)return;
+  const w=document.getElementById('welcome');
+  if(w)w.remove();
+  const u=document.createElement('div');
+  u.className='msg user';u.textContent=q;chat.appendChild(u);
+  input.value='';input.style.height='auto';btn.disabled=true;
+  const tp=document.createElement('div');
+  tp.className='typing';
+  tp.innerHTML='A pesquisar documentação <div class="typing-dots"><span></span><span></span><span></span></div>';
+  chat.appendChild(tp);chat.scrollTop=chat.scrollHeight;
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
+    const data=await res.json();tp.remove();
+    const b=document.createElement('div');b.className='msg bot';
+    let h=md(data.answer||data.error||'Sem resposta.');
+    if(data.sources&&data.sources.length){
+      h+='<div class="sources">Fontes: ';
+      data.sources.forEach(s=>{h+=`<span title="similarity: ${(s.similarity*100).toFixed(0)}%">${s.title}</span>`});
+      h+='</div>';
+    }
+    b.innerHTML=h;chat.appendChild(b);
+  }catch(e){
+    tp.remove();
+    const er=document.createElement('div');er.className='msg bot';
+    er.innerHTML='<p style="color:var(--red)">Erro de conexão. Verifica se o endpoint está online.</p>';
+    chat.appendChild(er);
+  }
+  btn.disabled=false;chat.scrollTop=chat.scrollHeight;input.focus();
+}
+
+function md(s){
+  return s
+    .replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/^\- (.+)$/gm,'<li>$1</li>')
+    .replace(/^\* (.+)$/gm,'<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    .replace(/\n\n/g,'<br><br>');
+}
+
+input.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'});
+</script>
+</body>
+</html>
