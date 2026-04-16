@@ -1,7 +1,7 @@
-// src/app/api/veiculo/identificar/route.ts
-// CSN Opus — L3-MOM Gate 1
-// VIN → Vincario decode → catalogo_chassis (upsert)
-// Código: CSN-L3-PRD-001-2026
+﻿// src/app/api/veiculo/identificar/route.ts
+// CSN Opus â€” L3-MOM Gate 1
+// VIN â†’ Vincario decode â†’ catalogo_chassis (upsert)
+// CÃ³digo: CSN-L3-PRD-001-2026
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -12,7 +12,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-// Calcular controlSum Vincario: SHA1(VIN|id|apiKey|secretKey) → primeiros 10 chars
+// Calcular controlSum Vincario: SHA1(VIN|id|apiKey|secretKey) â†’ primeiros 10 chars
 function vincarioHash(vin: string, id: string): string {
   const apiKey = process.env.VINCARIO_API_KEY!
   const secretKey = process.env.VINCARIO_SECRET_KEY!
@@ -26,7 +26,7 @@ function getField(decode: Array<{ label: string; value: unknown }>, label: strin
   return item?.value ?? null
 }
 
-// Mapear response Vincario → estrutura catalogo_chassis
+// Mapear response Vincario â†’ estrutura catalogo_chassis
 function mapVincarioToChassis(vin: string, decode: Array<{ label: string; value: unknown }>) {
   return {
     vin,
@@ -57,9 +57,8 @@ function mapVincarioToChassis(vin: string, decode: Array<{ label: string; value:
     co2_wltp: getField(decode, 'CO2 Emission (g/km) (WLTP)'),
     consumo_urbano: getField(decode, 'Fuel Consumption Urban (l/100km) (WLTP)'),
 
-    // Dimensões
+    // DimensÃµes
     distancia_eixos_mm: getField(decode, 'Wheelbase (mm)'),
-    distancia_eixos_array: getField(decode, 'Wheelbase Array (mm)'),
     comprimento_total_mm: getField(decode, 'Length (mm)'),
     largura_total_mm: getField(decode, 'Width (mm)'),
     altura_total_mm: getField(decode, 'Height (mm)'),
@@ -70,7 +69,7 @@ function mapVincarioToChassis(vin: string, decode: Array<{ label: string; value:
 
     // Pesos
     pbt_kg: getField(decode, 'Max Weight (kg)'),
-    // tara_kg → NULL, preenchida manualmente pelo operador via DUA
+    // tara_kg â†’ NULL, preenchida manualmente pelo operador via DUA
     carga_tecto_kg: getField(decode, 'Max roof load (kg)'),
     reboque_sem_travoes_kg: getField(decode, 'Permitted trailer load without brakes (kg)'),
     reboque_com_travoes_8_kg: getField(decode, 'Permitted trailer load with brakes 8% (kg)'),
@@ -89,9 +88,7 @@ function mapVincarioToChassis(vin: string, decode: Array<{ label: string; value:
 
     // Pneus / Jantes
     dimensao_pneu: getField(decode, 'Wheel Size'),
-    dimensao_pneu_array: getField(decode, 'Wheel Size Array'),
     jante: getField(decode, 'Wheel Rims Size'),
-    jante_array: getField(decode, 'Wheel Rims Size Array'),
 
     // Fabricante
     fabricante: getField(decode, 'Manufacturer'),
@@ -107,14 +104,14 @@ export async function POST(req: NextRequest) {
 
     if (!vin || vin.length !== 17) {
       return NextResponse.json(
-        { error: 'VIN inválido — deve ter 17 caracteres' },
+        { error: 'VIN invÃ¡lido â€” deve ter 17 caracteres' },
         { status: 400 }
       )
     }
 
     const vinUpper = vin.toUpperCase()
 
-    // 1. Verificar se já existe no catalogo_chassis
+    // 1. Verificar se jÃ¡ existe no catalogo_chassis
     const { data: existing } = await supabase
       .from('catalogo_chassis')
       .select('*')
@@ -124,7 +121,7 @@ export async function POST(req: NextRequest) {
     if (existing) {
       return NextResponse.json({
         source: 'cache',
-        message: 'VIN já existe no catálogo',
+        message: 'VIN jÃ¡ existe no catÃ¡logo',
         data: existing,
       })
     }
@@ -147,7 +144,7 @@ export async function POST(req: NextRequest) {
     const decode = vincarioData.decode
     if (!decode || !Array.isArray(decode)) {
       return NextResponse.json(
-        { error: 'Resposta Vincario inválida' },
+        { error: 'Resposta Vincario invÃ¡lida' },
         { status: 502 }
       )
     }
@@ -180,7 +177,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET — consultar VIN existente no catálogo sem consumir crédito
+// GET â€” consultar VIN existente no catÃ¡logo sem consumir crÃ©dito
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const vin = searchParams.get('vin')
@@ -196,7 +193,7 @@ export async function GET(req: NextRequest) {
     .single()
 
   if (error || !data) {
-    return NextResponse.json({ error: 'VIN não encontrado no catálogo' }, { status: 404 })
+    return NextResponse.json({ error: 'VIN nÃ£o encontrado no catÃ¡logo' }, { status: 404 })
   }
 
   return NextResponse.json({ source: 'cache', data })
