@@ -58,9 +58,9 @@ function mapVincarioToChassis(vin: string, decode: Array<{ label: string; value:
     consumo_urbano: getField(decode, 'Fuel Consumption Urban (l/100km) (WLTP)'),
 
     // DimensÃµes
-    distancia_eixos_mm: getField(decode, 'Wheelbase (mm)'),
-    comprimento_total_mm: getField(decode, 'Length (mm)'),
-    largura_total_mm: getField(decode, 'Width (mm)'),
+    entre_eixos_mm: getField(decode, 'Wheelbase (mm)'),
+    comp_total_mm: getField(decode, 'Length (mm)'),
+    largura_caixa_max_mm: getField(decode, 'Width (mm)'),
     altura_total_mm: getField(decode, 'Height (mm)'),
     overhang_traseiro_mm: getField(decode, 'Rear Overhang (mm)'),
     overhang_frontal_mm: getField(decode, 'Front Overhang (mm)'),
