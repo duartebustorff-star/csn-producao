@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="UTF-8"><title>CSN Skills S51</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#0a0a1a;color:#e0e0e0;padding:15px;font-size:12px}.c{max-width:1200px;margin:0 auto}h1{text-align:center;color:#e94560;font-size:1.5em}h2{color:#f39c12;font-size:1em;margin:12px 0 5px;border-bottom:1px solid #1a1a3e;padding-bottom:3px}.sub{text-align:center;color:#7f8c8d;font-size:.8em;margin-bottom:15px}table{width:100%;border-collapse:collapse;margin-bottom:12px}th{background:#0f3460;color:#fff;padding:4px 8px;text-align:left;font-size:.75em}td{padding:4px 8px;font-size:.75em;border-bottom:1px solid #111}tr:hover{background:#162447}.n{color:#e94560;font-weight:700}.n51{color:#27ae60;font-weight:700}.n48{color:#3498db;font-weight:700}footer{text-align:center;color:#555;font-size:.7em;margin-top:15px;padding:8px;border-top:1px solid #1a1a3e}</style></head>
+<body><div class="c">
+<h1>Skills and Tools Registry S51</h1>
+<p class="sub">236 skills | 10 RPCs | 2 triggers | 11 routes | 7 integrações | 11 agentes | 17/04/2026</p>
+
+<h2>RPCs KPI</h2><table><tr><th>Função</th><th>ISA-95</th><th>KPIs</th><th>S</th></tr>
+<tr><td>kpi_dashboard()</td><td>ALL</td><td>12 master</td><td class="n48">S48</td></tr>
+<tr><td>kpi_throughput()</td><td>L3-PRD</td><td>P07</td><td class="n48">S48</td></tr>
+<tr><td>kpi_delivery_performance()</td><td>L3-PRD</td><td>P08-09</td><td class="n48">S48</td></tr>
+<tr><td>kpi_rentabilidade()</td><td>L4-FIN</td><td>F01-03</td><td class="n48">S48</td></tr>
+<tr><td>kpi_custos_estruturais()</td><td>L4-FIN</td><td>F09-10</td><td class="n48">S48</td></tr>
+<tr><td>kpi_revenue_per_employee()</td><td>L4-CST</td><td>G07</td><td class="n48">S48</td></tr>
+<tr><td>kpi_pipeline_comercial()</td><td>L4-COM</td><td>C01-02</td><td class="n48">S48</td></tr>
+<tr><td>kpi_workforce_cost()</td><td>L3-PER</td><td>H07</td><td class="n48">S48</td></tr>
+<tr><td>kpi_capacity_utilization()</td><td>L4-CST</td><td>G08</td><td class="n48">S48</td></tr>
+<tr><td>identificar_remetente()</td><td>L3-DOC</td><td>Router</td><td class="n48">S48</td></tr>
+</table>
+
+<h2>Triggers Supabase</h2><table><tr><th>Nome</th><th>Tabela</th><th>Acção</th><th>S</th></tr>
+<tr><td>trg_ticket_to_lead</td><td>tickets</td><td>COM orçamento → lead automático</td><td>S32</td></tr>
+<tr><td>trg_auto_close_spam</td><td>tickets</td><td>spam → arquivado automático</td><td>S48</td></tr>
+</table>
+
+<h2>Routes API</h2><table><tr><th>Path</th><th>Função</th><th>Modelo</th><th>S</th></tr>
+<tr><td>/api/router/classificar</td><td>Router v9 — classifica emails ISA-95, data_email, trigger Documental</td><td>Sonnet 4.6</td><td>S49</td></tr>
+<tr><td>/api/documental/processar</td><td>Ag. Documental — classifica PDFs batch (15 categorias)</td><td>Haiku</td><td>S49</td></tr>
+<tr><td class="n51">/api/marta/mensagem</td><td class="n51">Marta conversational engine — processa input C2, gera resposta</td><td class="n51">Sonnet 4.6</td><td class="n51">S51</td></tr>
+<tr><td class="n51">/api/veiculo/identificar</td><td class="n51">VIN decode via Vincario → specs chassis (marca, modelo, ano, dimensões)</td><td class="n51">Vincario API</td><td class="n51">S51</td></tr>
+<tr><td class="n51">/api/inventor/query</td><td class="n51">inventor/query com CORS (OPTIONS + Access-Control-Allow-Origin)</td><td class="n51">—</td><td class="n51">S51</td></tr>
+<tr><td>/api/faturacao/emitir</td><td>InvoiceXpress — emitir fatura</td><td>—</td><td>S26</td></tr>
+<tr><td>/api/faturacao/listar</td><td>InvoiceXpress — listar faturas</td><td>—</td><td>S26</td></tr>
+<tr><td>/api/rh/recibo</td><td>Recibo PDF gerado</td><td>—</td><td>S38</td></tr>
+<tr><td>/api/rh/declaracao-anual</td><td>Declaração anual</td><td>—</td><td>S38</td></tr>
+<tr><td>/api/rh/colaboradores</td><td>Lista colaboradores</td><td>—</td><td>S38</td></tr>
+<tr><td>/api/timer</td><td>Timer início/parar/concluir fases obra</td><td>—</td><td>S32</td></tr>
+</table>
+
+<h2>Integrações</h2><table><tr><th>Serviço</th><th>Estado</th><th>Detalhe</th><th>S</th></tr>
+<tr><td>Apps Script v8 Gmail</td><td>Operacional</td><td>5min trigger, anexos→Storage, dedup messageId</td><td>S49</td></tr>
+<tr><td>O365 Forward geral→Gmail</td><td>Operacional</td><td>Pipeline email end-to-end</td><td>S48</td></tr>
+<tr><td>Supabase Storage</td><td>Operacional</td><td>bucket documentos, RLS, pg_cron batch 5min</td><td>S49</td></tr>
+<tr><td>InvoiceXpress</td><td>Operacional</td><td>AT cert 192, account carlosdossantosna</td><td>S26</td></tr>
+<tr><td class="n51">Vincario VIN→specs</td><td class="n51">Operacional</td><td class="n51">/api/veiculo/identificar — decode + dimensões catalogo_chassis</td><td class="n51">S51</td></tr>
+<tr><td>matricula.co.pt</td><td>Operacional</td><td>Matrícula → VIN (€0.20/consulta)</td><td>S24</td></tr>
+<tr><td>Voyage AI pgvector</td><td>Operacional</td><td>voyage-3, 2927 embeddings</td><td>S40</td></tr>
+</table>
+
+<h2>Agentes Operacionais (C3)</h2><table><tr><th>Agente</th><th>Camada</th><th>ISA-95</th><th>Estado</th><th>S</th></tr>
+<tr><td class="n51">Ag. COM (Marta engine)</td><td>C3</td><td>L4-COM</td><td>OPERACIONAL — /api/marta/mensagem LIVE</td><td class="n51">S51</td></tr>
+<tr><td>Ag. Router</td><td>C3</td><td>L4-COM</td><td>Router v9 + pipeline + Sonnet 4.6</td><td>S49</td></tr>
+<tr><td>Ag. Documental</td><td>C3</td><td>L3-DOC</td><td>OPERACIONAL — 15 categorias, ATCUD dedup</td><td>S49</td></tr>
+<tr><td class="n51">Ag. Engenharia</td><td>C3</td><td>L4-ENG</td><td>VIN decode Vincario + inventor/query CORS</td><td class="n51">S51</td></tr>
+<tr><td>Ag. Financeiro</td><td>C3</td><td>L4-FIN</td><td>IES+InvoiceXpress+e-Fatura</td><td>S48</td></tr>
+<tr><td>Ag. Produção</td><td>C3</td><td>L3-PRD</td><td>7 obras standard, 21 fases, timer</td><td>S32</td></tr>
+<tr><td>Ag. Qualidade</td><td>C3</td><td>L3-QMS</td><td>NC + auditorias + registar-nc skill</td><td>S48</td></tr>
+<tr><td>Ag. RH</td><td>C3</td><td>L3-PER</td><td>45 recibos, WorkerRHView, formações</td><td>S48</td></tr>
+<tr><td>Ag. Manutenção</td><td>C3</td><td>L3-MNT</td><td>STD-MNT obras internas</td><td>S32</td></tr>
+<tr><td>Ag. Inventário</td><td>C3</td><td>L3-INV</td><td>Cert material, resíduos, Ferromar €/kg</td><td>S48</td></tr>
+<tr><td>R_AGENT</td><td>C3</td><td>L4-CST</td><td>Satélite standalone, intel competitiva</td><td>S40</td></tr>
+</table>
+
+<h2>Personas (C2) — Interface Only</h2><table><tr><th>Persona</th><th>ISA-95</th><th>Canal</th><th>Regra</th></tr>
+<tr><td>Marta</td><td>L4-COM</td><td>WhatsApp/Telegram/chat</td><td>Nunca processa. Só apresenta output Ag.COM</td></tr>
+<tr><td>Fernando</td><td>L3-PRD</td><td>ChatView portal</td><td>Nunca processa. Só apresenta output ChatView (Sonnet)</td></tr>
+<tr><td>Carolina</td><td>L3-PER</td><td>WorkerRHView</td><td>Nunca processa. Só apresenta output Ag.RH</td></tr>
+<tr><td>Luísa</td><td>L4 (CEO)</td><td>Dashboard admin</td><td>Definida, não activada</td></tr>
+<tr><td>Leonor</td><td>L4-COM</td><td>Aftersales</td><td>Definida, não activada</td></tr>
+</table>
+
+<h2>Novo S51</h2><table><tr><th>Componente</th><th>Descrição</th></tr>
+<tr><td class="n51">/api/marta/mensagem</td><td>Marta conversational engine operacional — L4-COM C3. Processa input C2, gera resposta estruturada via Sonnet 4.6</td></tr>
+<tr><td class="n51">/api/veiculo/identificar</td><td>VIN decode via Vincario — retorna marca, modelo, ano, dimensões. Integrado com catalogo_chassis (fixes: encoding, JSONB, colunas)</td></tr>
+<tr><td class="n51">inventor/query CORS</td><td>OPTIONS + Access-Control-Allow-Origin para integração Inventor/agente-inventor.html</td></tr>
+<tr><td class="n51">Docs configurador-paramétrico</td><td>7 ficheiros commitados: manual montagem, variáveis modelo, registo completo, convenção nomes, fecho sessão, CSN_CaixaAberta_v7.vb, agent-inventor.html</td></tr>
+<tr><td class="n51">Guia Colaborador PDF</td><td>CSN-Guia-Colaborador.pdf — 3 páginas A4, logo CSN, PINs, 6 secções utilização portal</td></tr>
+<tr><td class="n51">PPTX Formação Workers</td><td>Portal-CSN-Guia-Trabalhadores.pptx — 6 slides, verde #27AE60, logo CSN, fluxos de utilização</td></tr>
+</table>
+
+<h2>Skills Custom (109)</h2><table><tr><th>Secção</th><th>Qty</th><th>Exemplos</th></tr>
+<tr><td>L4-COM</td><td>12</td><td>vendas, marketing, marta-engine</td></tr>
+<tr><td>L4-FIN</td><td>9</td><td>contabilidade, IES, InvoiceXpress</td></tr>
+<tr><td>L4-ENG</td><td>8</td><td>COC, FEA, iLogic, VIN-decode</td></tr>
+<tr><td>L4-CST</td><td>5</td><td>custos, riscos ISO 31000</td></tr>
+<tr><td>L3-QMS</td><td>22</td><td>registar-nc, ITP, EN 5817</td></tr>
+<tr><td>L3-PRD</td><td>10</td><td>plano-producao, timer, obras</td></tr>
+<tr><td>L3-MNT/PER/DOC/INV</td><td>13</td><td>manutenção, KPIs, documental</td></tr>
+<tr><td>RH+AMB+JUR+EST</td><td>30</td><td>formações, RGPD, ambiental</td></tr>
+</table>
+
+<footer>CSN | Mafra | NIF 500 861 790 | CSN-L4-DOC-051-2026 | S51 | 17/04/2026</footer>
+</div></body></html>

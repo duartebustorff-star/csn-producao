@@ -1,5 +1,5 @@
 # CSN Opus — Estado do Sistema
-## Pré-S51 · 14 Abril 2026 · HEAD: 5b5a721
+## S51 · 17 Abril 2026 · HEAD: 9b81fed
 
 ---
 
@@ -15,12 +15,14 @@
 ## PORTAL
 
 **URL raiz** → Lista nomes → ModeSelector 4 botões:
-1. **Produção** (laranja) — obras, fases, timer, chat Fernando
+1. **Produção** (accent) — obras, fases, timer, chat Fernando
 2. **Registo de Veículo** (verde) — carroçaria nova / reparação / entrada-saída viatura
 3. **Encomendas** (azul) — placeholder
 4. **Área Pessoal** (cinza) — recibos, baixas, dados
 
-**Portal /portal** → Login PIN → Dashboard produção v3 (verde #34C759)
+**Marta:** `/api/marta/mensagem` — conversational engine operacional (be42e52)
+**VIN decode:** `/api/veiculo/identificar` — VIN → specs via Vincario (6783b52, fixes 9b81fed)
+**inventor/query:** CORS support activo (244fdea)
 
 **PINs:** Bohdan 1001, José Julio 1002, João António 1003, Duarte 1234
 
@@ -78,10 +80,41 @@
 - Peças: CSN_PAR_*.ipt (paramétricas) + CSN_STD_*.ipt (standard)
 - Assemblies: CSN_ASM_[tipo]_[secção].iam
 
+### Docs configurador-paramétrico commitados (b01e92d):
+- CSN-Manual-Montagem-Parametrica.md
+- CSN-Variaveis-Parametricas-Modelo.md
+- CSN-Configurador-Parametrico-Registo-Completo.md
+- CSN-Convencao-Nomes-Inventor.md
+- CSN-Configurador-Fecho-Sessao-15Abr2026.md
+- CSN_CaixaAberta_v7.vb
+- agent-inventor.html
+
 ### catalogo_chassis:
 - Renault: 20 configs (PRONTO)
 - FUSO: 27 (PDF existe, não extraído)
 - Isuzu/Ford/Mercedes/Stellantis/VW: PENDENTE
+
+---
+
+## DOCUMENTOS S51
+
+- **CSN-Guia-Colaborador.pdf** — guia de utilização portal (3 páginas A4, logo CSN, PINs, 6 secções)
+- **Portal-CSN-Guia-Trabalhadores.pptx** — apresentação 6 slides para trabalhadores (verde #27AE60)
+
+---
+
+## COMMITS S51
+
+| Hash | Descrição |
+|------|-----------|
+| b01e92d | docs: configurador parametrico - registo sessao 11-15 Abr 2026 |
+| be42e52 | feat: Marta conversational engine /api/marta/mensagem |
+| 244fdea | feat(inventor/query): add CORS support |
+| ca8cbaa | merge: CORS inventor/query |
+| 6783b52 | feat: route veiculo/identificar VIN decode via Vincario |
+| 724c370 | fix: remover campos JSONB schema cache route veiculo/identificar |
+| 9aeea0d | fix: alinhar nomes colunas com schema catalogo_chassis |
+| 9b81fed | fix: encoding e dimensoes route veiculo/identificar v2 |
 
 ---
 
@@ -93,28 +126,27 @@
 
 ---
 
-## PENDENTE S51
+## PENDENTE S52
 
 ### Urgente
-- Termo responsabilidade BZ-93-LE (2º pedido)
-- Testar portal com trabalhadores
-- Email Ferromar: tubo 100×60×2 + desconto
-- Foto VIN ISUZU ao colaborador
+- Termo responsabilidade BZ-93-LE (2º pedido — juliana.sousa@caasolution.pt)
+- Testar portal com trabalhadores (guia e apresentação prontos)
+- Email Ferromar: tubo 100×60×2 + desconto (Gonçalo goncalo.goncalves@ferro.pt)
+- Ford BBAS Q-381 — boletim bomba combustível (ticket aberto)
 
 ### Portal
-- Unificar / e /portal
 - Logística funcional (fotos + parque)
 - PropostaWizard end-to-end
 - Rota /api/upload para fotos
 
 ### Engenharia
 - Validar ADAP01 com BBG Renault
-- Extrair BBG FUSO
-- Commitar docs variáveis iLogic
+- Extrair BBG FUSO (CANTER-TUDO.json → tabela veiculos_tecnicos)
+- Isuzu/Ford/Mercedes/Stellantis/VW pendente no catalogo_chassis
 
 ### Sistema
-- 4 docs fecho S49
-- Obras JAP por facturar
+- 4 docs fecho S49 (ainda pendentes)
+- Obras JAP por facturar (6 × €2.100+IVA)
 - Power Automate off
 - Fix double-encoding JSON
 - COC Eletrónico IMT (Jul 2026)

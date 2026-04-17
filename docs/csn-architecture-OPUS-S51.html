@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt"><head><meta charset="UTF-8"><title>CSN OPUS Architecture S51</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0a0a1a;color:#e0e0e0;padding:15px;font-size:12px}
+.c{max-width:1400px;margin:0 auto}
+h1{text-align:center;color:#e94560;font-size:1.6em;margin-bottom:2px}
+.sub{text-align:center;color:#7f8c8d;font-size:.8em;margin-bottom:8px}
+.grid{display:grid;gap:10px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+.box{background:#162447;padding:10px;border-radius:8px;border:1px solid #1a1a3e}
+.box h3{color:#f39c12;font-size:.9em;margin-bottom:5px}
+.box h4{color:#2ecc71;font-size:.8em;margin:5px 0 3px}
+.box li{font-size:.75em;color:#bbb;line-height:1.4}
+ul{list-style:none;padding:0}
+li:before{content:"\2192 ";color:#f39c12}
+.l4{border-left:3px solid #3498db}
+.l3{border-left:3px solid #2ecc71}
+.l2{border-left:3px solid #9b59b6}
+.l1{border-left:3px solid #e67e22}
+.l0{border-left:3px solid #e74c3c}
+.new{border-left:3px solid #e94560}
+.tag{display:inline-block;padding:1px 5px;border-radius:3px;font-size:.65em;font-weight:700}
+.tn{background:#e9456033;color:#e94560}
+.ts1{background:#27ae6033;color:#27ae60}
+.tc2{background:#3498db33;color:#3498db}
+.nucleo{background:#0d1b2a;border:1px solid #2ecc7133;border-radius:10px;padding:12px;margin-top:10px}
+.nucleo-title{color:#2ecc71;font-size:.9em;font-weight:700;margin-bottom:6px;text-align:center;letter-spacing:1px}
+.agent{background:#162447;border-radius:6px;padding:8px;border:1px solid #1a1a3e}
+.agent h4{color:#f39c12;font-size:.8em;margin-bottom:2px}
+.agent .lvl{font-size:.65em;color:#7f8c8d;margin-bottom:3px}
+.agent li{font-size:.7em}
+.persona{background:#1a0a2e;border:1px solid #9b59b633;border-radius:6px;padding:8px}
+.persona h4{color:#9b59b6;font-size:.8em;margin-bottom:2px}
+.persona .lvl{font-size:.65em;color:#7f8c8d;margin-bottom:3px}
+.persona li{font-size:.7em}
+.persona li:before{color:#9b59b6}
+.hub{background:#0a1628;border:2px solid #3498db44;border-radius:10px;padding:10px;margin-top:10px}
+.hub-title{color:#3498db;font-size:.85em;font-weight:700;margin-bottom:6px;text-align:center}
+.hub-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.hub-pill{background:#162447;border:1px solid #3498db33;border-radius:20px;padding:2px 9px;font-size:.68em;color:#b0b8cc}
+.audit{background:#0d1b2a;padding:10px;border-radius:8px;margin-top:12px}
+.audit h3{color:#e94560;margin-bottom:8px}
+.bar{height:8px;background:#333;border-radius:4px;margin:3px 0}
+.bf{height:100%;border-radius:4px}
+.pct{font-size:.7em;color:#7f8c8d}
+footer{text-align:center;color:#555;font-size:.7em;margin-top:15px;padding:8px;border-top:1px solid #1a1a3e}
+.sep{color:#3498db;font-size:.75em;font-weight:700;margin:12px 0 5px;padding:4px 0 3px;border-bottom:1px solid #1a1a3e22}
+.norm-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.65em;background:#162447;border:1px solid #2ecc7144;color:#2ecc71;margin:1px}
+</style></head>
+<body><div class="c">
+
+<h1>CSN OPUS &mdash; Arquitectura S51</h1>
+<p class="sub">ISA-95/IEC 62264 &middot; ~90 tabelas &middot; ~82 migrations &middot; HEAD 9b81fed &middot; 17/04/2026</p>
+<p class="sub">
+  <span class="norm-badge">ISO 9001</span>
+  <span class="norm-badge">EN 1090</span>
+  <span class="norm-badge">EN ISO 3834</span>
+  <span class="norm-badge">Reg.2018/858</span>
+  <span class="norm-badge">ISO 14001 &#10003;</span>
+  <span class="norm-badge">ISO 45001 &#10003;</span>
+  <span class="norm-badge">ISO 22400</span>
+  <span class="norm-badge">ISO 55000</span>
+  <span class="norm-badge">ISA-95</span>
+  <span class="norm-badge">IEC 62443</span>
+</p>
+
+<div class="hub">
+  <div class="hub-title">&#9679; SUPABASE &mdash; Single Source of Truth &middot; oysfxhlzilazeznpaafc &middot; ~90 tabelas &middot; pgvector 2927 embeddings &middot; Vercel / Next.js / TypeScript</div>
+  <div class="hub-row">
+    <span class="hub-pill">obras + fases_obra</span>
+    <span class="hub-pill">leads + tickets</span>
+    <span class="hub-pill">colaboradores + timetracking</span>
+    <span class="hub-pill">documentos_fornecedor</span>
+    <span class="hub-pill">facturas_chagas/pecol/eni/ferromar</span>
+    <span class="hub-pill">catalogo_chassis (Renault 20)</span>
+    <span class="hub-pill">variaveis_ilogic (80)</span>
+    <span class="hub-pill">embeddings pgvector</span>
+    <span class="hub-pill">config_calendarios (9)</span>
+    <span class="hub-pill">movimentos_stock</span>
+    <span class="hub-pill">pg_cron 5min batch</span>
+    <span class="hub-pill">ATCUD UNIQUE</span>
+  </div>
+</div>
+
+<p class="sep">L4 &mdash; Business Planning &amp; Logistics (ISA-95 Part 4 / B2MML / ISO 31000)</p>
+<div class="grid g4">
+  <div class="box l4"><h3>L4-FIN</h3><h4>Ag. Financeiro (C3)</h4><ul>
+    <li>IES 2024 &mdash; 435k vendas</li>
+    <li>InvoiceXpress cert AT 192</li>
+    <li>e-Fatura 4.409 registos</li>
+    <li>Custos fixos 112.631/ano</li>
+    <li>kpi_rentabilidade()</li>
+    <li>kpi_custos_estruturais()</li>
+    <li>Obras JAP pendente facturar</li>
+  </ul></div>
+
+  <div class="box l4"><h3>L4-COM</h3>
+    <h4>Marta (C2 &mdash; Persona) <span class="tag tc2">interface only</span></h4>
+    <ul><li>Recebe input humano</li><li>Apresenta output Ag.COM</li><li>Nunca processa nem decide</li></ul>
+    <h4>Ag. COM (C3) <span class="tag ts1">S51</span></h4>
+    <ul>
+      <li>/api/marta/mensagem LIVE <span class="tag ts1">S51</span></li>
+      <li>Router v9 &mdash; Sonnet 4.6</li>
+      <li>Pipeline email completo</li>
+      <li>Ticket&rarr;Lead automático</li>
+      <li>CSN Connect visão v3</li>
+      <li>kpi_pipeline_comercial()</li>
+    </ul>
+  </div>
+
+  <div class="box l4"><h3>L4-ENG</h3><h4>Ag. Engenharia (C3) <span class="tag ts1">S51</span></h4><ul>
+    <li>catalogo_chassis Renault 20 OK</li>
+    <li>variaveis_ilogic 80 (G1-G6)</li>
+    <li>Docs configurador-parametrico <span class="tag ts1">S51</span></li>
+    <li>CSN_CaixaAberta_v7.vb <span class="tag ts1">S51</span></li>
+    <li>inventor/query CORS <span class="tag ts1">S51</span></li>
+    <li>/api/veiculo/identificar VIN <span class="tag ts1">S51</span></li>
+    <li>Vincario API operacional <span class="tag ts1">S51</span></li>
+    <li>FUSO 27 config pendente</li>
+    <li>COC multi-etapa &middot; gerar-termo</li>
+  </ul></div>
+
+  <div class="box l4"><h3>L4-CST</h3><h4>Ag. Custos/Riscos (C3)</h4><ul>
+    <li>Tab riscos ISO 31000</li>
+    <li>kpi_revenue_per_employee()</li>
+    <li>kpi_capacity_utilization()</li>
+    <li>R_AGENT satélite</li>
+    <li>research_findings table</li>
+    <li>Puppeteer pendente</li>
+  </ul></div>
+</div>
+
+<p class="sep">L3 &mdash; Manufacturing Operations Management (MESA-11 / ISO 22400 / ISO 55001 / ISO 45001)</p>
+<div class="grid g3">
+  <div class="box l3"><h3>L3-PRD</h3><h4>Ag. Produção (C3)</h4><ul>
+    <li>0 obras carroçaria activas</li>
+    <li>7 obras standard (21 fases)</li>
+    <li>STD-PRD (8 fases)</li>
+    <li>STD-MNT-BODOR (4) &middot; POLIR (3)</li>
+    <li>STD-LMP-LASER/MONTAGEM/PINTURA</li>
+    <li>STD-ORG-RESIDUOS (3 fases)</li>
+    <li>Timetracking &mdash; timer activo</li>
+    <li>Guia colaborador PDF <span class="tag ts1">S51</span></li>
+    <li>PPTX formação workers <span class="tag ts1">S51</span></li>
+    <li>kpi_throughput() &middot; kpi_delivery()</li>
+  </ul></div>
+
+  <div class="box l3"><h3>L3-QMS</h3><h4>Ag. Qualidade (C3)</h4><ul>
+    <li>NC skill (registar-nc)</li>
+    <li>Tab auditorias internas</li>
+    <li>EN ISO 5817 &mdash; nível C (EXC2)</li>
+    <li>EN ISO 17637 &mdash; inspecção visual</li>
+    <li>EN 1090-2 EXC2</li>
+    <li>EN ISO 3834-3</li>
+    <li>22 skills QMS</li>
+  </ul></div>
+
+  <div class="box l3"><h3>L3-MNT</h3><h4>Ag. Manutenção (C3)</h4><ul>
+    <li>Equipamentos &amp; manutenção</li>
+    <li>Bodor 60kW &middot; KUKA robot</li>
+    <li>STD-MNT obras internas</li>
+    <li>ISO 55001 activo</li>
+    <li>EN 15341 KPIs</li>
+  </ul></div>
+
+  <div class="box l3"><h3>L3-PER</h3>
+    <h4>Carolina (C2 &mdash; Persona) <span class="tag tc2">interface only</span></h4>
+    <ul><li>Interface RH workers</li></ul>
+    <h4>Ag. RH (C3)</h4><ul>
+      <li>45 recibos Jan25-Mar26</li>
+      <li>WorkerRHView operacional</li>
+      <li>Tab formações &amp; acidentes</li>
+      <li>ISO 45001 &#10003; activo</li>
+      <li>kpi_workforce_cost()</li>
+    </ul>
+  </div>
+
+  <div class="box l3"><h3>L3-DOC</h3><h4>Ag. Documental (C3)</h4><ul>
+    <li>15 categorias documento</li>
+    <li>18.169 emails geral@</li>
+    <li>10.992 emails sapo@</li>
+    <li>/api/documental/processar</li>
+    <li>105 PDFs Chagas classif.</li>
+    <li>nota_encomenda S50</li>
+    <li>ATCUD UNIQUE dedup</li>
+    <li>pg_cron batch 5min</li>
+    <li>wake/emit/sleep pendente</li>
+  </ul></div>
+
+  <div class="box l3"><h3>L3-INV</h3><h4>Ag. Inventário (C3)</h4><ul>
+    <li>Cert material EN 10204 (3.1)</li>
+    <li>Tab resíduos STD-ORG</li>
+    <li>Ferromar: 9 mat + €/kg</li>
+    <li>ENI: 29 facturas kWh</li>
+    <li>movimentos_stock trigger</li>
+    <li>materiais_fornecedor_ref</li>
+  </ul></div>
+</div>
+
+<div class="nucleo">
+  <div class="nucleo-title">&#9679; NÚCLEO AGÉNTICO &mdash; Camada 3 (C3 Agentes) vs Camada 2 (C2 Personas)</div>
+  <div style="text-align:center;font-size:.7em;color:#7f8c8d;margin-bottom:8px">
+    Regra inviolável: C2 Personas = interface humana apenas (nunca processam, nunca decidem, nunca geram) &nbsp;|&nbsp; C3 Agentes = todo o processamento, decisão e geração
+  </div>
+  <div class="grid g4">
+    <div class="persona"><h4>Marta (C2)</h4><div class="lvl">L4-COM &middot; Persona comercial</div><ul>
+      <li>Recebe msgs clientes</li><li>Apresenta output Ag.COM</li><li>WhatsApp/Telegram/chatbot</li>
+    </ul></div>
+    <div class="persona"><h4>Fernando (C2)</h4><div class="lvl">L3-PRD &middot; Persona produção</div><ul>
+      <li>Interface chat workers</li><li>ChatView frontend</li><li>Claude Sonnet 4.6 backend</li>
+    </ul></div>
+    <div class="persona"><h4>Carolina (C2)</h4><div class="lvl">L3-PER &middot; Persona RH</div><ul>
+      <li>Interface RH workers</li><li>WorkerRHView frontend</li>
+    </ul></div>
+    <div class="persona"><h4>Luísa / Leonor (C2)</h4><div class="lvl">L4-FIN / L4-COM &middot; pendente</div><ul>
+      <li>Definidas, não activadas</li>
+    </ul></div>
+    <div class="agent"><h4>Ag. Router (C3)</h4><div class="lvl">L4-COM &middot; Claude Sonnet 4.6 &middot; v9</div><ul>
+      <li>Classifica emails ISA-95</li><li>Cria tickets automáticos</li><li>Trigger Ag. Documental</li>
+    </ul></div>
+    <div class="agent"><h4>Ag. COM (C3) <span class="tag ts1">S51</span></h4><div class="lvl">L4-COM &middot; /api/marta/mensagem</div><ul>
+      <li>Engine conversacional LIVE</li><li>Processa input Marta C2</li><li>Gera respostas estruturadas</li>
+    </ul></div>
+    <div class="agent"><h4>Ag. Documental (C3)</h4><div class="lvl">L3-DOC &middot; Claude Haiku</div><ul>
+      <li>Classifica PDFs por conteúdo</li><li>Extrai dados estruturados</li><li>15 categorias</li><li>wake/emit/sleep pendente</li>
+    </ul></div>
+    <div class="agent"><h4>Ag. Engenharia (C3) <span class="tag ts1">S51</span></h4><div class="lvl">L4-ENG &middot; inventor/query</div><ul>
+      <li>VIN decode Vincario LIVE</li><li>inventor/query CORS LIVE</li><li>iLogic 80 variáveis</li>
+    </ul></div>
+  </div>
+</div>
+
+<p class="sep">L2 &mdash; Supervisory (IEC 62443 / ISO 50001) &nbsp;|&nbsp; L1 &mdash; Basic Control &nbsp;|&nbsp; L0 &mdash; Physical (EN 1090 / EN ISO 3834 / EN 12642)</p>
+<div class="grid g4">
+  <div class="box l2"><h3>L2-SUP Energia</h3><ul>
+    <li>ISO 50001 &mdash; smart meter Bodor pendente</li>
+    <li>IEC 62443 cibersegurança</li>
+    <li>ENI 29 facturas kWh rastreadas</li>
+    <li>Pipeline email L2&rarr;L4</li>
+    <li>Apps Script v8 &middot; O365&rarr;Gmail</li>
+  </ul></div>
+  <div class="box l1"><h3>L1-INS</h3><ul>
+    <li>Inspecção EN ISO 5817</li>
+    <li>EN ISO 17637 visual</li>
+    <li>Critério EXC2 nível C</li>
+  </ul></div>
+  <div class="box l0"><h3>L0-SST / AMB</h3><ul>
+    <li>ISO 45001 &#10003; &middot; ISO 14001 &#10003;</li>
+    <li>Tab acidentes &middot; Tab resíduos</li>
+    <li>4 KPIs SST &middot; 4 KPIs AMB</li>
+  </ul></div>
+  <div class="box l0"><h3>L0-EQP / PHY</h3><ul>
+    <li>Bodor 60kW &middot; KUKA robot</li>
+    <li>3 workers (1001/1002/1003)</li>
+    <li>ISUZU N35.150 NLR Lugar 1</li>
+    <li>50 lugares parque</li>
+    <li>EN 12642 L/XL pendente FEA</li>
+  </ul></div>
+</div>
+
+<div class="audit">
+<h3>Prontidão para Auditoria</h3>
+<div class="grid g3" style="margin-top:8px">
+  <div><p><b>ISO 9001:2015</b></p><div class="bar"><div class="bf" style="width:35%;background:#f39c12"></div></div><p class="pct">35% &mdash; SGQ parcial, Ag.Documental rastreabilidade. WPS/WPQR/FPC/coord.soldadura pendentes</p></div>
+  <div><p><b>Marcação CE / Reg.2018/858</b></p><div class="bar"><div class="bf" style="width:40%;background:#f39c12"></div></div><p class="pct">40% &mdash; COC multi-etapa, termo responsabilidade. COC electrónico jul/2026</p></div>
+  <div><p><b>EN 1090-1/-2 (EXC2)</b></p><div class="bar"><div class="bf" style="width:25%;background:#e94560"></div></div><p class="pct">25% &mdash; WPS/WPQR/FPC/ITP/coordenador soldadura pendentes</p></div>
+  <div><p><b>EN 12642 L/XL</b></p><div class="bar"><div class="bf" style="width:15%;background:#e94560"></div></div><p class="pct">15% &mdash; FEA/cálculo resistência estrutural pendente</p></div>
+  <div><p><b>ISO 14001:2015</b></p><div class="bar"><div class="bf" style="width:20%;background:#e94560"></div></div><p class="pct">20% &mdash; Tab resíduos, KPIs mapeados, certificação pendente</p></div>
+  <div><p><b>ISO 45001:2018</b></p><div class="bar"><div class="bf" style="width:20%;background:#e94560"></div></div><p class="pct">20% &mdash; Tab acidentes+formações, certificação pendente</p></div>
+</div></div>
+
+<footer>CSN &mdash; Engenharia de Veículos Comerciais | Mafra, Portugal | NIF 500 861 790 | CSN-L4-DOC-051-2026 | S51 | 17/04/2026</footer>
+</div></body></html>
