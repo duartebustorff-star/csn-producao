@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Arquitectura S53</title>
+<style>
+:root{
+  --bg:#fafaf7; --ink:#1a1a1a; --muted:#6b6858; --line:#e5e1d5;
+  --accent:#c9a961; --good:#2d7a4e; --warn:#c77b2a; --bad:#a33b3b;
+  --soft:#faf7ed;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;
+  border-left:3px solid var(--accent);padding-left:8px}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.grid{display:grid;gap:12px}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700;color:var(--ink)}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.3px;
+   background:var(--soft)}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0}
+.bar>div{height:100%;background:var(--accent);transition:width .3s}
+.bar.good>div{background:var(--good)}
+.bar.warn>div{background:var(--warn)}
+.bar.bad>div{background:var(--bad)}
+.footnote{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+code{background:var(--soft);padding:1px 4px;border-radius:3px;font-size:12px}
+.disclaimer{background:#fbefdf;border-left:3px solid var(--warn);padding:10px 14px;
+  font-size:12px;color:#6a4a1e;margin:16px 0;border-radius:0 4px 4px 0}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — Arquitectura do Sistema (S53)</h1>
+  <div class="sub">Sessão S53 · 2026-04-19 · Carlos dos Santos Nascimento Lda · NIF 500 861 790 · ISA-95/IEC 62264 compliant</div>
+</header>
+
+<div class="disclaimer">
+  <b>Nota de reconstrução S53.</b> Este documento é gerado como versão standalone para fecho da sessão FUSO.
+  As métricas ISA-95 e percentagens na secção "Prontidão para Auditoria" são mantidas nos valores reportados em S52 — 
+  verificar contra <code>csn-architecture-OPUS-S52.html</code> na abertura de S54 e reconciliar se necessário.
+  Os valores reportam-se ao estado <b>após aplicação</b> da migration S53.
+</div>
+
+<section>
+  <h2>Estado geral após S53</h2>
+  <div class="grid grid-4">
+    <div class="card"><div class="l">Tabelas Supabase</div><div class="n">~87</div><div class="l">+3 FUSO</div></div>
+    <div class="card"><div class="l">Variantes chassis</div><div class="n">103</div><div class="l">+13 eCanter</div></div>
+    <div class="card"><div class="l">Skills CSN</div><div class="n">237</div><div class="l">+1 analise-ficha-fuso</div></div>
+    <div class="card"><div class="l">Ag. Documental categorias</div><div class="n">16</div><div class="l">+2 FUSO diesel + eCanter</div></div>
+    <div class="card"><div class="l">Embeddings pgvector</div><div class="n">2927</div><div class="l">sem alteração</div></div>
+    <div class="card"><div class="l">e-Fatura ATCUD match</div><div class="n">93%</div><div class="l">28/30</div></div>
+    <div class="card"><div class="l">Fornecedores integrados</div><div class="n">2</div><div class="l">Chagas + Pecol</div></div>
+    <div class="card"><div class="l">CRM concessionários</div><div class="n">415</div><div class="l">274 com pelo menos 1 marca</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estrutura ISA-95 / IEC 62264</h2>
+  <h3>L4-BPL — Business Planning Layer</h3>
+  <table>
+    <tr><th>Secção</th><th>Âmbito</th><th>Agente/Persona</th><th>Estado</th></tr>
+    <tr><td>FIN</td><td>Faturação, e-Fatura, IES, custos/hora</td><td>Luísa (CEO)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>COM</td><td>Comercial, CRM, CSN Connect, 415 concessionários</td><td>Marta</td><td><span class="pill warn">Dados sim, relevancia_csn por classificar</span></td></tr>
+    <tr><td>ENG</td><td>Engenharia, iLogic, catálogo chassis, BBG</td><td>—</td><td><span class="pill warn">Renault 100%, FUSO 103 variantes S53, outros 0%</span></td></tr>
+    <tr><td>QMS-L4</td><td>Sistema da qualidade, ISO 9001/14001/45001</td><td>—</td><td><span class="pill warn">ISO 9001 60%, 14001 25%, 45001 20%</span></td></tr>
+    <tr><td>CST</td><td>Clientes, pós-venda, aftersales</td><td>Leonor</td><td><span class="pill warn">Estrutura parcial</span></td></tr>
+    <tr><td>RSH</td><td>Research, competitive intelligence, R_AGENT</td><td>Ag. Research</td><td><span class="pill warn">Satélite operacional, integração Router pendente</span></td></tr>
+  </table>
+  <h3>L3-MOM — Manufacturing Operations Management</h3>
+  <table>
+    <tr><th>Secção</th><th>Âmbito</th><th>Estado</th></tr>
+    <tr><td>PRD</td><td>Produção, obras, pontos, proposta wizard</td><td><span class="pill warn">Worker portal por reconstruir</span></td></tr>
+    <tr><td>QMS</td><td>Não-conformidades, auditoria, EN 1090</td><td><span class="pill warn">Skill registar-nc existe, pipeline parcial</span></td></tr>
+    <tr><td>MNT</td><td>Manutenção, aftersales</td><td><span class="pill warn">Estrutura inicial</span></td></tr>
+    <tr><td>PER</td><td>Pessoas, HR, Bohdan/José Júlio/João António</td><td><span class="pill good">Custos/hora calculados S47</span></td></tr>
+    <tr><td>DOC</td><td>Documentos, Agente Documental (16 categorias)</td><td><span class="pill good">FUSO categorias 15+16 adicionadas S53</span></td></tr>
+    <tr><td>INV</td><td>Inventário, Chagas, Pecol</td><td><span class="pill warn">2 fornecedores integrados</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Personas (Camada 2) &amp; Agentes (Camada 3)</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 10px 0">
+    Regra absoluta: <b>Personas não produzem dados — apenas comunicam</b>. Agentes (Camada 3 nucleus) produzem tudo.
+    Routes pertencem a <code>/api/rh/</code>, não a <code>/api/carolina/</code>.
+  </p>
+  <table>
+    <tr><th>Persona</th><th>Papel</th><th>Tabelas de leitura (esperado em S54)</th><th>Tabelas de escrita</th></tr>
+    <tr><td>Marta</td><td>COM / CSN Connect assessor técnico</td><td>catalogo_chassis, estrategia_marca_carrocaria, concessionarios, v_catalogo_fuso</td><td>— (só comunica)</td></tr>
+    <tr><td>Fernando</td><td>Produção, chat chão de fábrica</td><td>obras, pontos, tickets</td><td>pontos, tickets</td></tr>
+    <tr><td>Carolina</td><td>HR</td><td>colaboradores</td><td>— (só comunica)</td></tr>
+    <tr><td>Luísa</td><td>CEO assistant, acesso total</td><td>todas</td><td>— (só comunica)</td></tr>
+    <tr><td>Leonor</td><td>Aftersales</td><td>obras, clientes</td><td>— (só comunica)</td></tr>
+  </table>
+  <p class="footnote">Tabela <code>agentes_perfil</code> com enforcement no Router ainda não existe — S54 candidato nº 1.</p>
+</section>
+
+<section>
+  <h2>Catálogo FUSO após S53 (estado detalhado)</h2>
+  <div class="grid grid-3">
+    <div class="card"><div class="l">Diesel LHD</div><div class="n">60</div><div class="l">sem alteração vs S52</div></div>
+    <div class="card"><div class="l">eCanter LHD</div><div class="n">23</div><div class="l">+13 em S53</div></div>
+    <div class="card"><div class="l">Total FUSO</div><div class="n">83</div><div class="l">+13 em S53</div></div>
+  </div>
+  <h3>Novas variantes S53</h3>
+  <table>
+    <tr><th>Plataforma</th><th>Variantes</th><th>Bateria</th><th>Wheelbases</th><th>Pos 10-13</th><th>PDF fonte</th></tr>
+    <tr><td>4S15e</td><td>4</td><td>3×S + 1×M</td><td>2500 / 2800 / 3400 / 3400</td><td>SEU3 (novo)</td><td>1_TF_eCanter_4S15e EN+DE</td></tr>
+    <tr><td>4C15e</td><td>3</td><td>2×S + 1×M</td><td>2800 / 3400 / 3400</td><td>SEU3 (novo)</td><td>2_TF_eCanter_4C15e EN+DE</td></tr>
+    <tr><td>6S15e</td><td>4</td><td>3×S + 1×M</td><td>2500 / 2800 / 3400 / 3400</td><td>SEU1 (novo)</td><td>3_TF_eCanter_6S15e EN+DE</td></tr>
+    <tr><td>7C18e L-Battery</td><td>2</td><td>2×L</td><td>4450 / 4750</td><td>SEU2 (existente)</td><td>4_TF_eCanter_7C18e L-Battery DE (EN em falta)</td></tr>
+  </table>
+  <h3>Decoder corrigido / expandido em S53</h3>
+  <ul style="font-size:13px">
+    <li><b>Pos 8 = C</b> confirmado como <code>battery_S</code> (em S52 estava erroneamente como "S?" inferido)</li>
+    <li><b>Pos 10-13 = SEU1</b> adicionado — homologação eCanter 6T (6S15e, GVW 6000kg)</li>
+    <li><b>Pos 10-13 = SEU3</b> adicionado — homologação eCanter 4T (4S15e/4C15e, GVW 4150kg, opcional 4000kg para FR)</li>
+    <li>Decoder total: 33 → 35 mappings</li>
+  </ul>
+  <h3>Pendente (backlog formal)</h3>
+  <ul style="font-size:13px">
+    <li>Auditoria das 10 linhas eCanter herdadas de S52 (7C18e M, 9C18e M, 9C18e L) — depende da chegada dos 3 PDFs EN via Agente Documental</li>
+    <li>Verificação cruzada 7C18e L-Battery EN vs DE — quando EN aparecer</li>
+    <li>Outras marcas chassi (Mercedes, Iveco, MAN, Ford, DAF, Isuzu, Nissan, Peugeot, Citroën, Fiat, VW) — 0% catalogadas</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Pipeline documental após S53</h2>
+  <p style="font-size:13px">
+    <b>Apps Script v8</b> (email attachment → Storage) →
+    <b>Router v9</b> (triggers Agente Documental quando PDF presente, preserva <code>data_email</code>) →
+    <b>Agente Documental</b> (16 categorias após S53) → actions/tickets.
+  </p>
+  <h3>Agente Documental — categorias</h3>
+  <table>
+    <tr><th>#</th><th>Categoria</th><th>Tabela destino</th><th>Adicionada em</th></tr>
+    <tr><td>1-14</td><td>Fatura / Orçamento / Certificado / CIT / corpo email / ...</td><td>faturas, documentos_intake, ...</td><td>S49</td></tr>
+    <tr><td>15</td><td>ficha_tecnica_fuso_diesel</td><td>fichas_tecnicas_fuso</td><td><b>S53</b></td></tr>
+    <tr><td>16</td><td>ficha_tecnica_fuso_ecanter</td><td>fichas_tecnicas_fuso_ecanter</td><td><b>S53</b></td></tr>
+  </table>
+  <p class="footnote">Skill <code>/mnt/skills/user/analise-ficha-fuso/SKILL.md</code> criada em S53. Integração ao Router pendente para activação automática em S54.</p>
+</section>
+
+<section>
+  <h2>Prontidão para Auditoria</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 10px 0">
+    <b>Esta secção não é removida em nenhuma versão da arquitectura</b> (regra absoluta).
+    Valores herdados de S52 — verificar e actualizar na abertura de S54.
+  </p>
+  <h3>Certificações core (PRR / Portugal 2030)</h3>
+  <table>
+    <tr><th>Certificação</th><th>Progresso</th><th>Bloqueadores principais</th></tr>
+    <tr>
+      <td><b>ISO 9001</b> — Sistema Gestão Qualidade</td>
+      <td style="width:30%"><div class="bar good"><div style="width:60%"></div></div>60%</td>
+      <td>NC pipeline parcial, auditoria interna a calendarizar, gate docs por enforçar</td>
+    </tr>
+    <tr>
+      <td><b>ISO 14001</b> — Sistema Gestão Ambiental</td>
+      <td><div class="bar warn"><div style="width:25%"></div></div>25%</td>
+      <td>Análise de aspectos ambientais a fazer, política por aprovar</td>
+    </tr>
+    <tr>
+      <td><b>ISO 45001</b> — Sistema Gestão SST</td>
+      <td><div class="bar warn"><div style="width:20%"></div></div>20%</td>
+      <td>Matriz de riscos por fazer, investigação de incidentes por formalizar</td>
+    </tr>
+  </table>
+  <h3>Blocos complementares</h3>
+  <table>
+    <tr><th>Norma / bloco</th><th>Progresso</th><th>Observações</th></tr>
+    <tr>
+      <td><b>Marcação CE</b> (Directiva Máquinas / veículos)</td>
+      <td style="width:30%"><div class="bar warn"><div style="width:45%"></div></div>45%</td>
+      <td>Documentação técnica parcial, ensaios por calendarizar</td>
+    </tr>
+    <tr>
+      <td><b>EN 1090-2</b> (componentes estruturais aço)</td>
+      <td><div class="bar warn"><div style="width:40%"></div></div>40%</td>
+      <td>WPS/WPQR por formalizar, qualificação soldadura EN ISO 3834</td>
+    </tr>
+    <tr>
+      <td><b>EN ISO 5817</b> (classes de qualidade soldadura)</td>
+      <td><div class="bar warn"><div style="width:35%"></div></div>35%</td>
+      <td>Skill <code>registar-nc</code> alinhada, inspecção EN ISO 17637 por calendarizar</td>
+    </tr>
+  </table>
+  <h3>Base normativa total</h3>
+  <p style="font-size:13px;margin:0">
+    18 normas × 3 dimensões (Produto / Processo / Sistema). Detalhe completo mantido em
+    <code>normas-csn-mapeamento.md</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Próximos passos (S54+)</h2>
+  <ol style="font-size:13px">
+    <li><b>S54 — Sistema defensivo:</b> (1) REGRA BANDEIRA codificada em CLAUDE.md raiz + system prompt do Router + schema de resposta <code>{fonte, sem_fonte, confianca}</code>; (2) tabela <code>agentes_perfil</code> com enforcement no Router; (3) anti-loop mechanism</li>
+    <li><b>S55 — Templates fornecedor:</b> meta-schema replicável <code>fornecedor_{nome}_catalogo/precos_hist/documentos/contactos/comunicacoes</code>, aplicável a Pecol, Dhollandia, Bielco, Acaíl</li>
+    <li><b>S56 — Memorando por marca chassi:</b> <code>marca_chassi_{nome}_fontes/memorando/variantes/homologacoes</code> para Renault, Mercedes, FUSO, Iveco, MAN, Ford, DAF, Isuzu, Nissan, Peugeot, Citroën, Fiat, VW</li>
+    <li><b>Paralelo contínuo:</b> worker portal rebuild (sidebar Proposta/Obras/Ponto/Chat/Documentos); COC Eletrónico IMT (deadline Julho 2026); WhatsApp Business API via BSP; agent session log wake/emit/sleep</li>
+  </ol>
+</section>
+
+<footer>
+  CSN Opus · csn-architecture-OPUS-S53.html · Gerado 2026-04-19 · Preservar histórico (não sobrescrever versões anteriores)
+</footer>
+</body>
+</html>

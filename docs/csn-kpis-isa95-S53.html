@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — KPIs ISA-95 S53</title>
+<style>
+:root{
+  --bg:#fafaf7; --ink:#1a1a1a; --muted:#6b6858; --line:#e5e1d5;
+  --accent:#c9a961; --good:#2d7a4e; --warn:#c77b2a; --bad:#a33b3b; --soft:#faf7ed;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;
+  border-left:3px solid var(--accent);padding-left:8px}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.3px;background:var(--soft)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.delta{font-size:11px;color:var(--muted);margin-left:6px}
+.delta.up{color:var(--good)}
+.delta.down{color:var(--bad)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0}
+.bar>div{height:100%;background:var(--accent)}
+.bar.good>div{background:var(--good)}
+.bar.warn>div{background:var(--warn)}
+.bar.bad>div{background:var(--bad)}
+.footnote{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.disclaimer{background:#fbefdf;border-left:3px solid var(--warn);padding:10px 14px;
+  font-size:12px;color:#6a4a1e;margin:16px 0;border-radius:0 4px 4px 0}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — KPIs ISA-95 (S53)</h1>
+  <div class="sub">Sessão S53 · 2026-04-19 · ISO 22400 alinhados onde aplicável · Deltas vs S52</div>
+</header>
+
+<div class="disclaimer">
+  Valores de produção (OEE, scrap, rework, FPY) herdados de S52 sem alteração em S53 — esta sessão foi de
+  catalogação FUSO, não tocou em produção. Verificar contra <code>csn-kpis-isa95-S52.html</code> quando disponível.
+</div>
+
+<section>
+  <h2>Snapshot — indicadores principais</h2>
+  <div class="grid-4">
+    <div class="card"><div class="l">Tabelas Supabase</div><div class="n">~87</div><div class="l">+3 (migration FUSO)</div></div>
+    <div class="card"><div class="l">Variantes catalogadas</div><div class="n">103</div><div class="l">+13 eCanter</div></div>
+    <div class="card"><div class="l">Skills</div><div class="n">237</div><div class="l">+1</div></div>
+    <div class="card"><div class="l">Ag. Documental categ.</div><div class="n">16</div><div class="l">+2</div></div>
+    <div class="card"><div class="l">Embeddings</div><div class="n">2927</div><div class="l">=</div></div>
+    <div class="card"><div class="l">e-Fatura ATCUD match</div><div class="n">93%</div><div class="l">28/30</div></div>
+    <div class="card"><div class="l">Concessionários CRM</div><div class="n">415</div><div class="l">=</div></div>
+    <div class="card"><div class="l">Fornecedores integrados</div><div class="n">2</div><div class="l">Chagas, Pecol</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>L3-ENG — Catálogo de chassis</h2>
+  <table>
+    <tr><th>Marca</th><th>Variantes</th><th>Completude BBG</th><th>Estado</th></tr>
+    <tr>
+      <td>Renault (Master XDD)</td>
+      <td class="n">20</td>
+      <td><div class="bar good"><div style="width:100%"></div></div>100%</td>
+      <td><span class="pill good">Completo S46</span></td>
+    </tr>
+    <tr>
+      <td>FUSO Canter diesel LHD</td>
+      <td class="n">60</td>
+      <td><div class="bar good"><div style="width:100%"></div></div>100%</td>
+      <td><span class="pill good">Completo S52</span></td>
+    </tr>
+    <tr>
+      <td>FUSO eCanter LHD</td>
+      <td class="n">23 <span class="delta up">+13</span></td>
+      <td><div class="bar good"><div style="width:87%"></div></div>87%</td>
+      <td><span class="pill warn">Audit de 10 linhas em backlog (PDFs EN em falta)</span></td>
+    </tr>
+    <tr>
+      <td>Mercedes Sprinter / Atego</td>
+      <td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr>
+      <td>Iveco Daily / Eurocargo</td>
+      <td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr>
+      <td>Outras (MAN/DAF/Ford/Isuzu/Nissan/PSA/Fiat/VW)</td>
+      <td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr style="background:var(--soft);font-weight:600">
+      <td>TOTAL</td>
+      <td class="n">103 <span class="delta up">+13</span></td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+  </table>
+  <h3>Novas variantes eCanter S53 — taxa de completude por PDF disponível</h3>
+  <table>
+    <tr><th>Grupo</th><th>Variantes</th><th>Campos preenchidos</th><th>REGRA BANDEIRA</th></tr>
+    <tr><td>4S15e</td><td class="n">4</td><td>~88/89 cols por linha</td><td><span class="pill good">100% verbatim</span></td></tr>
+    <tr><td>4C15e</td><td class="n">3</td><td>~88/89 cols por linha</td><td><span class="pill good">100% verbatim</span></td></tr>
+    <tr><td>6S15e</td><td class="n">4</td><td>~88/89 cols por linha</td><td><span class="pill good">100% verbatim</span></td></tr>
+    <tr><td>7C18e L-Battery</td><td class="n">2</td><td>~87/89 cols por linha</td><td><span class="pill warn">100% verbatim do DE; EN em falta</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L3-DOC — Agente Documental (ISO 9001 §7.5)</h2>
+  <table>
+    <tr><th>Indicador</th><th>Valor</th><th>Delta</th></tr>
+    <tr><td>Categorias de classificação suportadas</td><td class="n">16</td><td><span class="delta up">+2 (FUSO)</span></td></tr>
+    <tr><td>PDFs processados cumulativamente</td><td class="n">105 (Chagas test S49)</td><td><span class="delta">=</span></td></tr>
+    <tr><td>Taxa match ATCUD (universal trigger)</td><td class="n">93% (28/30)</td><td><span class="delta">=</span></td></tr>
+    <tr><td>Skill <code>analise-ficha-fuso</code> — estado</td><td>Criada S53, não integrada no Router</td><td><span class="delta up">Nova</span></td></tr>
+    <tr><td>Tickets abertos para revisão humana</td><td>—</td><td>—</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L4-FIN — Financeiro (ISO 22400 §8)</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px 0">Herdado de S47/S48 — sem recálculo em S53.</p>
+  <table>
+    <tr><th>KPI</th><th>Valor</th><th>Fonte</th></tr>
+    <tr><td>Vendas IES 2024</td><td class="n">€435.000</td><td>IES 2024 processada S47</td></tr>
+    <tr><td>Resultado líquido 2024</td><td class="n">€59.000</td><td>IES 2024</td></tr>
+    <tr><td>Custo/hora Bohdan</td><td class="n">€11,16</td><td>S47</td></tr>
+    <tr><td>Custo/hora João António</td><td class="n">€12,89</td><td>S47</td></tr>
+    <tr><td>Custo/hora José Júlio</td><td class="n">€10,68</td><td>S47</td></tr>
+    <tr><td>Custos fixos anuais</td><td class="n">€112.631</td><td>S47</td></tr>
+    <tr><td>IES 2023</td><td>Pendente via <code>processar-ies</code></td><td>—</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L3-PRD — Produção (ISO 22400 KPIs)</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px 0">
+    OEE e rácios de qualidade dependem do worker portal completo (não operacional). KPIs abaixo são metas.
+  </p>
+  <table>
+    <tr><th>KPI</th><th>Meta</th><th>Estado actual</th><th>Bloqueio</th></tr>
+    <tr><td>First Pass Yield (FPY)</td><td>≥ 92%</td><td>—</td><td>Sem dados — NC pipeline parcial</td></tr>
+    <tr><td>Scrap ratio</td><td>≤ 3%</td><td>—</td><td>Idem</td></tr>
+    <tr><td>Rework ratio</td><td>≤ 5%</td><td>—</td><td>Idem</td></tr>
+    <tr><td>OEE</td><td>≥ 75%</td><td>—</td><td>Worker portal não registra microparagens</td></tr>
+    <tr><td>Veículos produzidos / ano</td><td>~150</td><td>Aproximação</td><td>Registo por obra não estruturado</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L3-QMS — Qualidade (ISO 9001 §10.2)</h2>
+  <table>
+    <tr><th>Indicador</th><th>Valor</th><th>Referência</th></tr>
+    <tr><td>NC registadas (cumulativo)</td><td class="n">—</td><td>Skill <code>registar-nc</code> disponível, pipeline integração parcial</td></tr>
+    <tr><td>NC de soldadura (EN ISO 5817)</td><td class="n">—</td><td>Idem</td></tr>
+    <tr><td>Reclamações cliente abertas</td><td class="n">—</td><td>Sem tabela <code>reclamacoes</code> formal</td></tr>
+    <tr><td>Auditoria interna — planeamento</td><td>Não calendarizada</td><td>S54+</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L4-COM — Comercial / CRM</h2>
+  <table>
+    <tr><th>Indicador</th><th>Valor</th><th>Nota</th></tr>
+    <tr><td>Concessionários no CRM</td><td class="n">415</td><td>CAE 45110, Portugal (Leiria sul + ilhas) + grupos (Santogal/JAP/MCoutinho/Astara)</td></tr>
+    <tr><td>Com pelo menos 1 marca relevante</td><td class="n">274</td><td>Filtragem por <code>relevancia_csn</code> pendente S54</td></tr>
+    <tr><td>Marcas chassi mapeadas (estratégia carroçaria)</td><td class="n">13</td><td>Tabela <code>estrategia_marca_carrocaria</code></td></tr>
+    <tr><td>View <code>v_briefing_visita</code></td><td>Existente</td><td>Captura multi-marca dealers (ex.: Santogal Loures 9 marcas)</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Prontidão para Auditoria — KPI agregado</h2>
+  <table>
+    <tr><th>Certificação</th><th>Progresso</th><th>Delta S53</th></tr>
+    <tr><td>ISO 9001</td><td><div class="bar good"><div style="width:60%"></div></div>60%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>ISO 14001</td><td><div class="bar warn"><div style="width:25%"></div></div>25%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>ISO 45001</td><td><div class="bar warn"><div style="width:20%"></div></div>20%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>Marcação CE</td><td><div class="bar warn"><div style="width:45%"></div></div>45%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>EN 1090</td><td><div class="bar warn"><div style="width:40%"></div></div>40%</td><td><span class="delta">=</span></td></tr>
+  </table>
+  <p class="footnote">Valores não tocados em S53 (sessão focada em catalogação, não em compliance). Revisão regular em S54+.</p>
+</section>
+
+<footer>
+  CSN Opus · csn-kpis-isa95-S53.html · 2026-04-19 · Não sobrescrever versões anteriores
+</footer>
+</body>
+</html>

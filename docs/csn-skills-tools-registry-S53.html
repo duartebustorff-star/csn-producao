@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Skills &amp; Tools Registry S53</title>
+<style>
+:root{
+  --bg:#fafaf7; --ink:#1a1a1a; --muted:#6b6858; --line:#e5e1d5;
+  --accent:#c9a961; --good:#2d7a4e; --warn:#c77b2a; --bad:#a33b3b; --soft:#faf7ed;
+  --custom:#5a4a8a;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;
+  border-left:3px solid var(--accent);padding-left:8px}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.3px;background:var(--soft)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.pill.custom{background:#eae6f3;color:var(--custom)}
+.pill.new{background:#faf7ed;color:var(--accent);border:1px solid var(--accent)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.delta{font-size:11px;color:var(--muted);margin-left:6px}
+.delta.up{color:var(--good)}
+code{background:var(--soft);padding:1px 4px;border-radius:3px;font-size:12px}
+.footnote{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — Skills &amp; Tools Registry (S53)</h1>
+  <div class="sub">Sessão S53 · 2026-04-19 · 237 skills totais · 110 custom (IP CSN) · Organização ISA-95</div>
+</header>
+
+<section>
+  <h2>Snapshot — agregados</h2>
+  <div class="grid-4">
+    <div class="card"><div class="l">Skills totais</div><div class="n">237</div><div class="l">+1 em S53</div></div>
+    <div class="card"><div class="l">Community skills</div><div class="n">127</div><div class="l">base <code>alirezarezvani</code></div></div>
+    <div class="card"><div class="l">Custom CSN (IP)</div><div class="n">110</div><div class="l">+1 em S53</div></div>
+    <div class="card"><div class="l">Secções ISA-95 cobertas</div><div class="n">16</div><div class="l">sem alteração</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Distribuição por secção ISA-95 (custom CSN)</h2>
+  <table>
+    <tr><th>Camada</th><th>Secção</th><th>Skills custom</th><th>Delta S53</th><th>Notas</th></tr>
+    <tr><td>L4-BPL</td><td>FIN</td><td class="n">11</td><td>=</td><td>faturação, IES, custo/hora</td></tr>
+    <tr><td>L4-BPL</td><td>COM</td><td class="n">14</td><td>=</td><td>CSN Connect, Marta, CRM, briefing visita</td></tr>
+    <tr><td>L4-BPL</td><td>ENG</td><td class="n">16</td><td><span class="delta up">+1</span></td><td><code>analise-ficha-fuso</code> adicionada</td></tr>
+    <tr><td>L4-BPL</td><td>QMS-L4</td><td class="n">6</td><td>=</td><td>auditoria, normas, compliance</td></tr>
+    <tr><td>L4-BPL</td><td>CST</td><td class="n">5</td><td>=</td><td>aftersales, reclamações (Leonor)</td></tr>
+    <tr><td>L4-BPL</td><td>RSH</td><td class="n">12</td><td>=</td><td>research, scraping, competitive intel (R_AGENT)</td></tr>
+    <tr><td>L3-MOM</td><td>PRD</td><td class="n">9</td><td>=</td><td>produção, pontos, obras</td></tr>
+    <tr><td>L3-MOM</td><td>QMS</td><td class="n">8</td><td>=</td><td><code>registar-nc</code>, EN 1090, EN ISO 5817</td></tr>
+    <tr><td>L3-MOM</td><td>MNT</td><td class="n">3</td><td>=</td><td>manutenção</td></tr>
+    <tr><td>L3-MOM</td><td>PER</td><td class="n">5</td><td>=</td><td>HR, Carolina</td></tr>
+    <tr><td>L3-MOM</td><td>DOC</td><td class="n">10</td><td>=</td><td>Agente Documental skills (<code>analise-ficha-fuso</code> também listada aqui por relevância operacional)</td></tr>
+    <tr><td>L3-MOM</td><td>INV</td><td class="n">7</td><td>=</td><td>fornecedores, Chagas, Pecol</td></tr>
+    <tr><td>L2-SUP / L1-SEN / L0-PHY</td><td>—</td><td class="n">4</td><td>=</td><td>skills instrumentais</td></tr>
+    <tr style="background:var(--soft);font-weight:600">
+      <td colspan="2">TOTAL custom CSN</td>
+      <td class="n">110</td>
+      <td><span class="delta up">+1</span></td>
+      <td>IP — base de CSN Brain como produto futuro</td>
+    </tr>
+  </table>
+  <p class="footnote">
+    Os números por secção são aproximações baseadas na distribuição S48. Recomenda-se recount exaustivo em S54 como
+    parte do sistema defensivo (tabela <code>agentes_perfil</code> obrigará a re-mapear skills por agente).
+  </p>
+</section>
+
+<section>
+  <h2>Skill adicionada em S53</h2>
+  <table>
+    <tr><th>Nome</th><th>Path</th><th>ISA-95 level</th><th>Categorias Ag. Doc</th><th>Estado</th></tr>
+    <tr>
+      <td><code>analise-ficha-fuso</code></td>
+      <td><code>/mnt/skills/user/analise-ficha-fuso/SKILL.md</code></td>
+      <td>L3-DOC</td>
+      <td>15 (ficha_tecnica_fuso_diesel) + 16 (ficha_tecnica_fuso_ecanter)</td>
+      <td><span class="pill new">Criada S53</span> — <span class="pill warn">Integração Router pendente S54</span></td>
+    </tr>
+  </table>
+  <h3>Triggers documentados</h3>
+  <ul style="font-size:13px">
+    <li>Texto literal <code>FUSO model code</code> (EN) / <code>FUSO Modellcode</code> (DE)</li>
+    <li>Header <code>Mitsubishi FUSO</code> + tabela <code>DIMENSIONS [MM]</code> / <code>ABMESSUNGEN [MM]</code></li>
+    <li>Filename contém <code>eCanter</code>, <code>Canter_LHD</code>, ou <code>_TF_</code></li>
+    <li>Regex model code: <code>^FE[A-Z][0-9A-Z]{9,10}$</code></li>
+  </ul>
+  <h3>Capacidades da skill</h3>
+  <ul style="font-size:13px">
+    <li>Distinção automática diesel (ENGINE 4P10) vs eCanter (ELECTRIC DRIVE S40)</li>
+    <li>Extracção verbatim de ~89 campos para <code>fichas_tecnicas_fuso_*</code></li>
+    <li>Layout multi-coluna (uma linha BD por coluna do PDF)</li>
+    <li>Suporte fichas legacy via <code>ficha_valida_em</code> + <code>extraido_de</code></li>
+    <li>Validação pós-extracção: regex code + decoder consistency + plausibility check</li>
+    <li>Abre ticket <code>ficha_fuso_ambiguo</code> / <code>ficha_fuso_decoder_inconsistencia</code> em caso de falha — nunca inventa</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Tools &amp; Integrações — estado S53</h2>
+  <table>
+    <tr><th>Integração</th><th>Âmbito</th><th>Estado</th></tr>
+    <tr><td>Supabase (<code>oysfxhlzilazeznpaafc</code>)</td><td>Base de dados primária (~87 tabelas após migration FUSO)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Claude API</td><td>Haiku (routing/classification), Sonnet 4.6 (vision/worker portal)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Vercel</td><td>Produção <code>csn-producao.vercel.app</code></td><td><span class="pill good">Operacional, sem deploys S53</span></td></tr>
+    <tr><td>GitHub</td><td><code>duartebustorff-star/csn-producao</code></td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Google Apps Script v8</td><td>Email attachments → Storage</td><td><span class="pill good">Operacional S49</span></td></tr>
+    <tr><td>Voyage AI voyage-3</td><td>Embeddings pgvector (2927 vectores)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>InvoiceXpress</td><td>Faturação AT cert 192</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>matricula.co.pt</td><td>Plate → VIN (€0,20)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Vincario</td><td>VIN → specs</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Google Calendar</td><td><code>carrocariascsn@gmail.com</code> — 9 ISA-95 calendars</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>e-Fatura AT</td><td>4409 records ~€1,5M, ATCUD trigger 93% match</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Autodesk Inventor + iLogic</td><td>Modelação paramétrica (caixa aberta 80 variáveis)</td><td><span class="pill warn">Renault completo, FUSO início</span></td></tr>
+    <tr><td>Autodesk Nastran</td><td>FEA</td><td><span class="pill warn">iLogic scripts iniciados</span></td></tr>
+    <tr><td>Blender</td><td>Rendering GLTF para CSN Connect</td><td><span class="pill warn">Pipeline com freelancer Murtaza (Nagpur)</span></td></tr>
+    <tr><td>R_AGENT</td><td>Satélite <code>chat.html</code>, web search</td><td><span class="pill warn">Operacional, ligação Router pendente</span></td></tr>
+    <tr><td>WhatsApp Business API</td><td>Via BSP (360dialog recomendado)</td><td><span class="pill bad">Não configurado</span></td></tr>
+    <tr><td>Puppeteer/Playwright (R_AGENT)</td><td>Browsing autenticado portais FUSO/Mercedes BB</td><td><span class="pill bad">Não implementado</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Artefactos S53 — catálogo de entregáveis</h2>
+  <table>
+    <tr><th>#</th><th>Ficheiro</th><th>Destino</th><th>Propósito</th></tr>
+    <tr><td>1</td><td><code>ESTADO.OPUS.S53.md</code></td><td>raiz + <code>docs/</code></td><td>Estado de fecho S53 + recomendação S54</td></tr>
+    <tr><td>2</td><td><code>CSN-Controlo-OPUS-S53.pdf</code></td><td><code>docs/</code></td><td>Controlo de sessão</td></tr>
+    <tr><td>3</td><td><code>csn-architecture-OPUS-S53.html</code></td><td><code>docs/</code></td><td>Arquitectura (este conjunto de artefactos)</td></tr>
+    <tr><td>4</td><td><code>csn-kpis-isa95-S53.html</code></td><td><code>docs/</code></td><td>KPIs ISA-95</td></tr>
+    <tr><td>5</td><td><code>csn-skills-tools-registry-S53.html</code></td><td><code>docs/</code></td><td>Este ficheiro</td></tr>
+    <tr><td>6</td><td><code>CSN_FUSO_Catalog_S52_v3.xlsx</code></td><td><code>docs/fornecedores/fuso/</code></td><td>Catálogo FUSO 83 variantes</td></tr>
+    <tr><td>7</td><td><code>053_fuso_catalog.sql</code></td><td><code>migrations/</code></td><td>DDL idempotente</td></tr>
+    <tr><td>8</td><td><code>import_fuso_xlsx.ts</code></td><td><code>scripts/</code></td><td>Import xlsx → Supabase</td></tr>
+    <tr><td>9</td><td><code>SKILL.md</code></td><td><code>/mnt/skills/user/analise-ficha-fuso/</code></td><td>Skill nova (categorias 15+16)</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Ciclo de actualização de skills — próximas fontes a monitorizar</h2>
+  <table>
+    <tr><th>Fonte</th><th>Tipo</th><th>Frequência sugerida</th></tr>
+    <tr><td><code>alirezarezvani/claude-skills</code> (GitHub)</td><td>Community skills base</td><td>Semanal (sync)</td></tr>
+    <tr><td>Matt Pocock / AI Hero</td><td>Claude Code skills (<code>/grill-me</code>, <code>/write-a-prd</code>, <code>/prd-to-issues</code>, <code>/tdd</code>, <code>/improve-codebase-architecture</code>)</td><td>Bi-semanal</td></tr>
+    <tr><td>Anthropic docs + changelog</td><td>Product self-knowledge</td><td>Por release</td></tr>
+  </table>
+</section>
+
+<footer>
+  CSN Opus · csn-skills-tools-registry-S53.html · 2026-04-19 · Não sobrescrever versões anteriores
+</footer>
+</body>
+</html>
