@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Skills & Tools Registry — S52</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1f2630;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8d96a0;
+    --accent: #58a6ff;
+    --accent-2: #7ee787;
+    --warn: #f2cc60;
+    --mono: 'JetBrains Mono', Consolas, monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.55; padding: 32px 24px; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+  h1 { font-size: 28px; font-weight: 700; }
+  h1 .sess { color: var(--accent-2); font-family: var(--mono); }
+  .meta { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+  h2 { font-size: 18px; margin-top: 40px; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid var(--accent); }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 8px 14px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-bottom: none; cursor: default; border-radius: 4px 4px 0 0; }
+  .tab.active { color: var(--text); background: var(--surface-2); border-color: var(--accent); border-bottom-color: var(--surface-2); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); font-size: 13px; margin: 12px 0; }
+  th { background: var(--surface-2); padding: 8px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text); }
+  td.dim { color: var(--text-dim); }
+  td.mono { font-family: var(--mono); font-size: 12px; }
+  .tag { display: inline-block; padding: 1px 6px; font-family: var(--mono); font-size: 10px; font-weight: 600; border-radius: 3px; margin-right: 4px; }
+  .t-l4 { background: rgba(192,132,252,0.18); color: #c084fc; }
+  .t-l3 { background: rgba(88,166,255,0.18); color: var(--accent); }
+  .t-new { background: rgba(126,231,135,0.18); color: var(--accent-2); }
+  .t-planned { background: rgba(242,204,96,0.18); color: var(--warn); }
+  .t-user { background: rgba(255,135,130,0.18); color: #ff8782; }
+  .t-comm { background: rgba(141,150,160,0.18); color: var(--text-dim); }
+  .counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .cnt { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
+  .cnt .n { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--accent-2); }
+  .cnt .l { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); margin-top: 4px; }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text-dim); text-align: center; }
+  .note { background: rgba(88,166,255,0.06); border-left: 3px solid var(--accent); padding: 10px 14px; font-size: 13px; color: var(--text); margin: 16px 0; border-radius: 0 4px 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <h1>CSN Opus — Skills &amp; Tools Registry <span class="sess">S52</span></h1>
+    <div class="meta">2026-04-18 · <code>alirezarezvani/claude-skills</code> source · CSN custom skills (L4-CST IP)</div>
+  </div>
+  <div class="meta">Last sync: S44 (sem alterações em skills/tools em S52)</div>
+</header>
+
+<div class="counts">
+  <div class="cnt"><div class="n">236</div><div class="l">Total skills</div></div>
+  <div class="cnt"><div class="n">127</div><div class="l">Community</div></div>
+  <div class="cnt"><div class="n">109</div><div class="l">CSN custom (IP)</div></div>
+  <div class="cnt"><div class="n">66</div><div class="l">L4-CST (CSN Brain)</div></div>
+  <div class="cnt"><div class="n">16</div><div class="l">Secções ISA-95</div></div>
+  <div class="cnt"><div class="n">14</div><div class="l">Agente Documental (cats)</div></div>
+</div>
+
+<div class="note">
+Sessão S52 <strong>não alterou</strong> o inventário de skills activas — todos os 236 ficam como estavam em S51.
+Mas S52 <strong>identificou necessidade</strong> de 1 skill nova (<code>analise-ficha-fuso</code>) a ser criada em S53 para que o Agente Documental consiga classificar e extrair automaticamente fichas técnicas FUSO quando chegam por email. Listada abaixo em "Planeado S53".
+</div>
+
+<h2>Skills novas identificadas em S52 (planeadas S53)</h2>
+<table>
+<thead><tr><th style="width:25%">Skill</th><th style="width:10%">ISA-95</th><th style="width:15%">Origem</th><th style="width:15%">Estado</th><th style="width:35%">Âmbito</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">analise-ficha-fuso</td>
+  <td><span class="tag t-l3">L3-DOC</span></td>
+  <td><span class="tag t-user">CSN custom</span></td>
+  <td><span class="tag t-planned">Planeado S53</span></td>
+  <td>Detectar PDFs de ficha técnica FUSO Canter (diesel ou eCanter). Extrair ~45-50 campos para <code>fichas_tecnicas_fuso</code> ou <code>fichas_tecnicas_fuso_ecanter</code>. Detectar tetra-família (FEA/FEB/FEC/FGB). Validar pos 6 decoder vs WB. Verificar duplicados por <code>fuso_model_code</code>. Suportar fichas legacy (via <code>ficha_valida_em</code>). REGRA BANDEIRA: campo não observado = NULL.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Agente Documental — categorias</h2>
+<table>
+<thead><tr><th style="width:5%">#</th><th style="width:30%">Categoria</th><th style="width:20%">Handler</th><th style="width:45%">Estado S52</th></tr></thead>
+<tbody>
+<tr><td>1</td><td class="mono">fatura</td><td class="dim">ATCUD matcher</td><td>Operacional</td></tr>
+<tr><td>2</td><td class="mono">orcamento</td><td class="dim">—</td><td>Operacional</td></tr>
+<tr><td>3</td><td class="mono">certificado_material</td><td class="dim">cert handler</td><td>Operacional</td></tr>
+<tr><td>4</td><td class="mono">cit_colaborador</td><td class="dim">—</td><td>Operacional</td></tr>
+<tr><td>5-14</td><td class="dim">(+ 10 categorias herdadas S49)</td><td class="dim">—</td><td>Operacional</td></tr>
+<tr><td>15</td><td class="mono">ficha_tecnica_fuso_diesel <span class="tag t-planned">PLANEADO</span></td><td class="mono">analise-ficha-fuso</td><td>A adicionar em S53</td></tr>
+<tr><td>16</td><td class="mono">ficha_tecnica_fuso_ecanter <span class="tag t-planned">PLANEADO</span></td><td class="mono">analise-ficha-fuso</td><td>A adicionar em S53</td></tr>
+</tbody>
+</table>
+
+<h2>Tabelas Supabase planeadas para S53</h2>
+<table>
+<thead><tr><th style="width:30%">Tabela</th><th style="width:10%">Cols</th><th style="width:15%">PK/UNIQUE</th><th style="width:45%">Propósito</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">fichas_tecnicas_fuso <span class="tag t-new">NOVA</span></td>
+  <td class="num">~62</td>
+  <td class="mono">id / fuso_model_code</td>
+  <td>Fichas técnicas diesel Canter LHD. 60 variantes iniciais de S52 v2.</td>
+</tr>
+<tr>
+  <td class="mono">fichas_tecnicas_fuso_ecanter <span class="tag t-new">NOVA</span></td>
+  <td class="num">~61</td>
+  <td class="mono">id / fuso_model_code</td>
+  <td>Fichas técnicas eCanter eléctrico. 23 variantes após S53 (10 actuais + 13 a extrair).</td>
+</tr>
+<tr>
+  <td class="mono">fuso_decoder_codigo <span class="tag t-new">NOVA</span></td>
+  <td class="num">5</td>
+  <td class="mono">(posicao, valor)</td>
+  <td>Decoder do fuso_model_code 12-13 chars. Dados de referência estáveis.</td>
+</tr>
+<tr>
+  <td class="mono">v_catalogo_fuso <span class="tag t-new">VIEW</span></td>
+  <td class="num">—</td>
+  <td class="mono">view</td>
+  <td>UNION ALL diesel + eCanter com coluna <code>propulsao</code>.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Scripts planeados para S53</h2>
+<table>
+<thead><tr><th style="width:35%">Script</th><th style="width:15%">Tipo</th><th style="width:50%">Propósito</th></tr></thead>
+<tbody>
+<tr><td class="mono">scripts/import_fuso_xlsx.ts</td><td>TypeScript</td><td>Ler <code>docs/fornecedores/fuso/CSN_FUSO_Catalog_S52_v3.xlsx</code> e fazer <code>ON CONFLICT DO UPDATE</code> nas tabelas <code>fichas_tecnicas_fuso</code> e <code>fichas_tecnicas_fuso_ecanter</code>. Idempotente.</td></tr>
+<tr><td class="mono">migrations/XXX_fuso_catalog.sql</td><td>SQL Supabase</td><td>DDL completo — 3 tabelas + view + indexes + triggers + INSERTs decoder.</td></tr>
+</tbody>
+</table>
+
+<h2>Inventário de skills (resumo por secção ISA-95)</h2>
+<table>
+<thead><tr><th>Secção ISA-95</th><th style="text-align:right">Skills</th><th>Exemplos principais</th></tr></thead>
+<tbody>
+<tr><td>L4-BPL-FIN</td><td class="mono" style="text-align:right">12</td><td>fatura-processar, iva-calcular, ies-processar</td></tr>
+<tr><td>L4-BPL-COM</td><td class="mono" style="text-align:right">18</td><td>proposta-gerar, marta-responder, csn-connect-*</td></tr>
+<tr><td>L4-BPL-ENG</td><td class="mono" style="text-align:right">14</td><td>analise-fabricante, catalogo-chassis-*, ilogic-*, blender-render</td></tr>
+<tr><td>L4-BPL-QMS</td><td class="mono" style="text-align:right">8</td><td>registar-nc, auditoria-*, iso-*</td></tr>
+<tr><td>L4-BPL-CST</td><td class="mono" style="text-align:right">22</td><td>research-*, scrape-*, concessionarios-*, intel-*</td></tr>
+<tr><td>L4-BPL-RSH</td><td class="mono" style="text-align:right">10</td><td>carolina-*, rh-*</td></tr>
+<tr><td>L3-PRD</td><td class="mono" style="text-align:right">14</td><td>fernando-*, ordem-fabrico-*, gate-*</td></tr>
+<tr><td>L3-QMS</td><td class="mono" style="text-align:right">6</td><td>nc-analise, qms-auditoria</td></tr>
+<tr><td>L3-MNT</td><td class="mono" style="text-align:right">4</td><td>mnt-*</td></tr>
+<tr><td>L3-PER</td><td class="mono" style="text-align:right">6</td><td>ponto-*, colaborador-*</td></tr>
+<tr><td>L3-DOC</td><td class="mono" style="text-align:right">16</td><td>agente-documental, atcud-matcher, ficha-fuso (S53)</td></tr>
+<tr><td>L3-INV</td><td class="mono" style="text-align:right">8</td><td>inventario-*, stock-*</td></tr>
+<tr><td>L2-SUP</td><td class="mono" style="text-align:right">2</td><td>scada-mock</td></tr>
+<tr><td>L1-SEN</td><td class="mono" style="text-align:right">2</td><td>sensor-mock</td></tr>
+<tr><td>L0-PHY</td><td class="mono" style="text-align:right">2</td><td>—</td></tr>
+<tr><td>Cross-cutting</td><td class="mono" style="text-align:right">92</td><td>Community skills importadas</td></tr>
+<tr><td><strong>Total</strong></td><td class="mono" style="text-align:right"><strong>236</strong></td><td>—</td></tr>
+</tbody>
+</table>
+
+<footer>CSN Opus · Skills &amp; Tools Registry · S52 · 2026-04-18 · 236 skills · 14 Agente Documental cats · 16 secções ISA-95</footer>
+
+</div>
+</body>
+</html>

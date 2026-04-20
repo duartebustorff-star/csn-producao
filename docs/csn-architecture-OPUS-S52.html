@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Arquitectura do Sistema — S52</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --surface: #141a22;
+    --surface-2: #1c2431;
+    --border: #2a3441;
+    --text: #e6e9ef;
+    --text-dim: #9aa3b2;
+    --accent: #4ade80;
+    --accent-dim: #22c55e;
+    --warn: #fbbf24;
+    --isa-l4: #c084fc;
+    --isa-l3: #60a5fa;
+    --isa-l2: #fbbf24;
+    --isa-l1: #f87171;
+    --isa-l0: #94a3b8;
+    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--sans);
+    line-height: 1.55; padding: 40px 24px;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+  header {
+    border-bottom: 2px solid var(--accent); padding-bottom: 20px; margin-bottom: 32px;
+    display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px;
+  }
+  h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  h1 .sess { color: var(--accent); }
+  h2 {
+    font-size: 20px; margin-top: 40px; margin-bottom: 16px;
+    border-left: 4px solid var(--accent); padding-left: 12px;
+  }
+  h3 { font-size: 16px; margin-top: 20px; margin-bottom: 8px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .meta { color: var(--text-dim); font-family: var(--mono); font-size: 13px; }
+  .meta strong { color: var(--text); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 8px; }
+  .b-l4 { background: rgba(192,132,252,0.15); color: var(--isa-l4); border: 1px solid var(--isa-l4); }
+  .b-l3 { background: rgba(96,165,250,0.15); color: var(--isa-l3); border: 1px solid var(--isa-l3); }
+  .b-l2 { background: rgba(251,191,36,0.15); color: var(--isa-l2); border: 1px solid var(--isa-l2); }
+  .b-l1 { background: rgba(248,113,113,0.15); color: var(--isa-l1); border: 1px solid var(--isa-l1); }
+  .b-l0 { background: rgba(148,163,184,0.15); color: var(--isa-l0); border: 1px solid var(--isa-l0); }
+  .b-new { background: rgba(74,222,128,0.15); color: var(--accent); border: 1px solid var(--accent); }
+  .b-warn { background: rgba(251,191,36,0.15); color: var(--warn); border: 1px solid var(--warn); }
+  table {
+    width: 100%; border-collapse: collapse; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+    margin: 12px 0; font-size: 14px;
+  }
+  th { background: var(--surface-2); color: var(--text); padding: 10px 14px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 14px; border-top: 1px solid var(--border); color: var(--text-dim); vertical-align: top; }
+  td.on { color: var(--accent); font-weight: 600; }
+  td.off { color: var(--warn); }
+  td.strong { color: var(--text); font-weight: 500; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
+  .card h4 { font-size: 14px; margin-bottom: 8px; color: var(--text); }
+  .card p { font-size: 13px; color: var(--text-dim); }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .kpi { font-family: var(--mono); font-size: 24px; font-weight: 800; color: var(--accent); }
+  code { background: var(--surface-2); padding: 2px 6px; border-radius: 3px; font-family: var(--mono); font-size: 12px; color: var(--text); }
+  .readiness {
+    border: 2px solid var(--warn); border-radius: 8px; padding: 20px; margin: 32px 0;
+    background: linear-gradient(135deg, rgba(251,191,36,0.05), rgba(251,191,36,0.02));
+  }
+  .readiness h2 { border-left-color: var(--warn); margin-top: 0; }
+  .progress-bar { background: var(--surface-2); height: 8px; border-radius: 4px; overflow: hidden; margin: 4px 0 12px 0; }
+  .progress-bar > div { height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); transition: width 0.3s; }
+  .readiness-item { margin: 14px 0; }
+  .readiness-item .r-head { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .readiness-item .r-head strong { color: var(--text); }
+  .readiness-item .r-head span { font-family: var(--mono); color: var(--text-dim); }
+  ul { padding-left: 20px; margin: 8px 0; }
+  ul li { color: var(--text-dim); font-size: 14px; margin: 4px 0; }
+  ul li strong { color: var(--text); }
+  .highlight { background: rgba(74,222,128,0.08); border-left: 3px solid var(--accent); padding: 12px 16px; margin: 16px 0; font-size: 14px; border-radius: 0 4px 4px 0; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 12px; font-family: var(--mono); text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <h1>CSN Opus — Arquitectura do Sistema <span class="sess">S52</span></h1>
+    <div class="meta"><strong>Sessão:</strong> S52 · <strong>Data:</strong> 2026-04-18 · <strong>Base:</strong> Next.js/TypeScript/Supabase · <strong>ISA-95</strong></div>
+  </div>
+  <div class="meta">
+    <div><strong>Tabelas Supabase:</strong> ~84</div>
+    <div><strong>Skills registadas:</strong> 236 (127 comunidade + 109 custom)</div>
+    <div><strong>Chassis catalogados:</strong> 20 Renault Master + 70 FUSO = 90</div>
+  </div>
+</header>
+
+<h2>Novidades desta sessão</h2>
+<div class="highlight">
+  <strong>Catálogo FUSO Canter LHD — diesel 100% completo.</strong> Entregue <code>CSN_FUSO_Catalog_S52_v2.xlsx</code> com 60 variantes diesel todas com ~90 campos extraídos verbatim dos 15 PDFs Technical Data (Dezembro 2021, Euro VI 4P10). eCanter parcial (10/23 variantes) passa para S53. Decoder FUSO mapeado em 12-13 chars — 4 famílias (FEA/FEB/FEC/FGB) × 6 sub-plataformas (01/51/71/X1/VK/7K) × sufixos EUW/EUX/EUY diesel + SEU1/SEU2/SEU3 eCanter. REGRA BANDEIRA estritamente respeitada — zero inferência, campos AWD NULL nos 56 veículos 4×2.
+</div>
+
+<h2>Estrutura ISA-95 — camadas</h2>
+<table>
+<thead><tr><th style="width:10%">Nível</th><th style="width:30%">Âmbito</th><th style="width:40%">Secções / Componentes CSN</th><th style="width:20%">Mudanças S52</th></tr></thead>
+<tbody>
+<tr><td class="strong">L4-BPL <span class="badge b-l4">BUSINESS</span></td><td>Planeamento empresarial</td><td>FIN · COM · ENG · QMS-L4 · CST · <strong>RSH</strong></td><td>—</td></tr>
+<tr><td class="strong">L3-MOM <span class="badge b-l3">OPS</span></td><td>Manufacturing Ops Mgmt</td><td>PRD · QMS · MNT · PER · DOC · INV</td><td>DOC: Agente Documental a receber 2 novas categorias em S53 (ficha_fuso_diesel, ficha_fuso_ecanter)</td></tr>
+<tr><td class="strong">L2-SUP <span class="badge b-l2">CTRL</span></td><td>Supervisão/SCADA</td><td>L2-SUP (monitorização)</td><td>—</td></tr>
+<tr><td class="strong">L1-SEN <span class="badge b-l1">SENSE</span></td><td>Sensores/actuadores</td><td>L1-SEN</td><td>—</td></tr>
+<tr><td class="strong">L0-PHY <span class="badge b-l0">FLOOR</span></td><td>Chão de fábrica</td><td>L0-PHY</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h2>Novidade em L3-DOC: catálogo de fornecedor como entidade de primeira classe</h2>
+<p style="color: var(--text-dim); font-size:14px;">O catálogo FUSO é o segundo fornecedor integrado (após Renault Master XDD, 20 configs em <code>catalogo_chassis</code>). A sessão S52 estabeleceu o padrão arquitectural para fornecedores de chassis:</p>
+<div class="grid">
+  <div class="card">
+    <h4>Tabelas Supabase por fornecedor</h4>
+    <p>2 tabelas dedicadas: <code>fichas_tecnicas_fuso</code> (diesel, ~62 cols) + <code>fichas_tecnicas_fuso_ecanter</code> (eléctrico, ~61 cols). Schemas diferentes porque eCanter não tem motor combustão — tem e-axle, battery, charging. Unificação via <code>VIEW v_catalogo_fuso UNION ALL</code>.</p>
+  </div>
+  <div class="card">
+    <h4>Decoder por fornecedor</h4>
+    <p><code>fuso_decoder_codigo</code> decodifica o <code>fuso_model_code</code> 12-13 chars. Permite à Marta responder "cliente tem um FECX1GL3SEUY" = 9C18 DUONIC WB 3850. Dados de referência estáveis.</p>
+  </div>
+  <div class="card">
+    <h4>Fichas legacy suportadas</h4>
+    <p>Campo <code>ficha_valida_em</code> + <code>extraido_de</code> permitem coexistir fichas de 2018, 2021, 2024 para o mesmo <code>fuso_model_code</code>. Clientes com veículos antigos (não disponíveis no site FUSO) entram pelo Agente Documental.</p>
+  </div>
+  <div class="card">
+    <h4>Agente Documental integrado</h4>
+    <p>Skill <code>analise-ficha-fuso</code> (a criar em S53) vai extrair automaticamente novas fichas que cheguem por email. Verificação de duplicados por <code>fuso_model_code</code>. Resposta à Marta sobre variantes existentes.</p>
+  </div>
+</div>
+
+<h2>Personas (Camada 2) — responsabilidades</h2>
+<table>
+<thead><tr><th>Persona</th><th>Camada ISA-95</th><th>Domínio</th><th>Fonte de dados em S52</th></tr></thead>
+<tbody>
+<tr><td class="strong">Marta</td><td>L4-COM / CSN Connect</td><td>Assessor técnico do vendedor</td><td>Consome <code>catalogo_chassis</code>, agora alimentado por FUSO v2</td></tr>
+<tr><td class="strong">Fernando</td><td>L3-PRD</td><td>Produção (chão de fábrica)</td><td>—</td></tr>
+<tr><td class="strong">Carolina</td><td>L4-BPL-RH</td><td>RH</td><td>—</td></tr>
+<tr><td class="strong">Luísa</td><td>L4-BPL</td><td>Assistente CEO — acesso total</td><td>—</td></tr>
+<tr><td class="strong">Leonor</td><td>L4-COM-AS</td><td>Aftersales</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h2>Pipeline de documentos — estado</h2>
+<table>
+<thead><tr><th style="width:25%">Etapa</th><th style="width:25%">Estado</th><th style="width:50%">Notas S52</th></tr></thead>
+<tbody>
+<tr><td class="strong">Apps Script v8 (Gmail → Storage)</td><td class="on">✓ Operacional</td><td>Sem alterações</td></tr>
+<tr><td class="strong">Router v9 (data_email + auto-trigger)</td><td class="on">✓ Operacional</td><td>Sem alterações</td></tr>
+<tr><td class="strong">Agente Documental — 14 categorias</td><td class="on">✓ Operacional</td><td>S53 → 16 categorias (adicionar ficha_fuso_diesel, ficha_fuso_ecanter)</td></tr>
+<tr><td class="strong">Skill analise-ficha-fuso</td><td class="off">✗ Por criar</td><td>S53. Schema definido em <code>Schema_Mapping</code> do xlsx v2</td></tr>
+<tr><td class="strong">DOC handler para acções de ticket</td><td class="off">✗ Gap herdado</td><td>Ainda não resolvido desde S49</td></tr>
+<tr><td class="strong">OCR paralelo Tesseract+Claude Vision</td><td class="off">✗ Adiado</td><td>Não crítico para FUSO — PDFs são estruturados</td></tr>
+</tbody>
+</table>
+
+<h2>Dados — fornecedores de chassis</h2>
+<table>
+<thead><tr><th>Fornecedor</th><th>Tabela</th><th>Variantes</th><th>Estado S52</th><th>Documento fonte</th></tr></thead>
+<tbody>
+<tr><td class="strong">Renault Master XDD</td><td><code>catalogo_chassis</code> + <code>variaveis_ilogic</code></td><td>20 configs</td><td class="on">✓ Completo (S40-S48)</td><td>BBG (80 variáveis iLogic)</td></tr>
+<tr><td class="strong">FUSO Canter LHD diesel</td><td><code>fichas_tecnicas_fuso</code> <span class="badge b-new">NOVO</span></td><td>60 variantes × ~90 cols</td><td class="on">✓ Excel v2 — 100% extraído</td><td>15 PDFs TD FUSO Dez 2021</td></tr>
+<tr><td class="strong">FUSO eCanter LHD</td><td><code>fichas_tecnicas_fuso_ecanter</code> <span class="badge b-new">NOVO</span></td><td>10/23 (parcial)</td><td class="off">⚠ S53 — adicionar 13 novas + auditar 10 existentes</td><td>7 PDFs TD eCanter Out 2023</td></tr>
+<tr><td class="strong">FUSO decoder</td><td><code>fuso_decoder_codigo</code> <span class="badge b-new">NOVO</span></td><td>34 mappings</td><td class="on">✓ 4 famílias × 6 sub-plataformas mapeadas</td><td>Derivado dos PDFs</td></tr>
+<tr><td>Mercedes / Iveco / outros</td><td>—</td><td>—</td><td>Backlog</td><td>—</td></tr>
+</tbody>
+</table>
+
+<div class="readiness">
+<h2>Prontidão para Auditoria</h2>
+
+<h3>ISO 9001 — Sistema de gestão da qualidade</h3>
+<div class="readiness-item">
+  <div class="r-head"><strong>ISO 9001:2015</strong> <span>60% (sem alteração S52)</span></div>
+  <div class="progress-bar"><div style="width: 60%"></div></div>
+</div>
+
+<h3>Marcação CE — ReciclagemUE 305/2011 + máquinas</h3>
+<div class="readiness-item">
+  <div class="r-head"><strong>Marcação CE (carroçarias)</strong> <span>45% (sem alteração S52)</span></div>
+  <div class="progress-bar"><div style="width: 45%"></div></div>
+</div>
+
+<h3>EN 1090 — Soldadura estrutural</h3>
+<div class="readiness-item">
+  <div class="r-head"><strong>EN 1090-1 / EN 1090-2 (WPS/WPQR)</strong> <span>40% (sem alteração S52)</span></div>
+  <div class="progress-bar"><div style="width: 40%"></div></div>
+</div>
+
+<h3>ISO 14001 — Ambiente</h3>
+<div class="readiness-item">
+  <div class="r-head"><strong>ISO 14001:2015</strong> <span>25% (sem alteração S52)</span></div>
+  <div class="progress-bar"><div style="width: 25%"></div></div>
+</div>
+
+<h3>ISO 45001 — Segurança e saúde no trabalho</h3>
+<div class="readiness-item">
+  <div class="r-head"><strong>ISO 45001:2018</strong> <span>20% (sem alteração S52)</span></div>
+  <div class="progress-bar"><div style="width: 20%"></div></div>
+</div>
+
+<p style="font-size:12px; color: var(--text-dim); margin-top:16px; font-style:italic;">Esta secção é obrigatória e deve sempre existir em csn-architecture-OPUS-S??.html. Percentagens reflectem progresso real até S52. Extensível para futuras normas (EN 12642 XL, 16949, IATF, etc.).</p>
+</div>
+
+<h2>Próximo: S53 — objectivos</h2>
+<ol style="padding-left:20px; color: var(--text-dim);">
+  <li style="margin:6px 0"><strong>eCanter completar:</strong> +13 variantes extraídas dos 4 PDFs novos. Auditar as 10 existentes.</li>
+  <li style="margin:6px 0"><strong>CSN_FUSO_Catalog_S52_v3.xlsx</strong> final com 83 variantes totais.</li>
+  <li style="margin:6px 0"><strong>Migration SQL Supabase</strong> (3 tabelas + view + indexes + triggers).</li>
+  <li style="margin:6px 0"><strong>Skill analise-ficha-fuso</strong> em <code>/mnt/skills/user/</code>.</li>
+  <li style="margin:6px 0"><strong>Agente Documental</strong> 14 → 16 categorias, detecção tetra-família.</li>
+  <li style="margin:6px 0"><strong>Script import</strong> <code>scripts/import_fuso_xlsx.ts</code> para ingestão idempotente.</li>
+</ol>
+
+<footer>
+CSN Opus — Sistema Integrado de Gestão ISO/ISA-95 · Carlos dos Santos Nascimento Lda · NIF 500 861 790<br>
+Gerado em sessão S52 · 2026-04-18 · REGRA BANDEIRA: fonte directa ou campo vazio · Sem excepções
+</footer>
+
+</div>
+</body>
+</html>

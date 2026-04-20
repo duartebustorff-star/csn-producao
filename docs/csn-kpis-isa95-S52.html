@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — KPIs ISA-95 / ISO 22400 — S52</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --surface: #ffffff;
+    --border: #e5e1d5;
+    --text: #1a1a1a;
+    --text-dim: #6b6858;
+    --accent: #c9a961;
+    --accent-dark: #8b7334;
+    --good: #4a7c4e;
+    --warn: #c9782f;
+    --bad: #a14242;
+    --neutral: #6b6858;
+    --mono: 'IBM Plex Mono', Consolas, monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --serif: 'IBM Plex Serif', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; padding: 40px 24px; }
+  .container { max-width: 1280px; margin: 0 auto; }
+  header { border-bottom: 3px double var(--accent); padding-bottom: 16px; margin-bottom: 32px; }
+  h1 { font-family: var(--serif); font-size: 32px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+  h1 small { display:block; font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--text-dim); margin-top: 6px; letter-spacing: 0.1em; text-transform: uppercase; }
+  h2 { font-family: var(--serif); font-size: 22px; margin-top: 48px; margin-bottom: 16px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { font-family: var(--mono); font-size: 11px; margin-top: 24px; margin-bottom: 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.15em; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 16px 0; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); padding: 20px; position: relative; }
+  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); }
+  .kpi-card .label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+  .kpi-card .value { font-family: var(--serif); font-size: 32px; font-weight: 600; margin: 6px 0 2px; color: var(--text); }
+  .kpi-card .delta { font-family: var(--mono); font-size: 12px; }
+  .kpi-card .delta.up { color: var(--good); }
+  .kpi-card .delta.down { color: var(--bad); }
+  .kpi-card .delta.flat { color: var(--neutral); }
+  .kpi-card .target { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); margin: 16px 0; font-size: 14px; }
+  th { background: var(--bg); font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; text-align: left; padding: 10px 14px; border-bottom: 2px solid var(--accent); color: var(--text-dim); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  td.num { font-family: var(--mono); text-align: right; }
+  td.good { color: var(--good); font-weight: 600; }
+  td.warn { color: var(--warn); font-weight: 600; }
+  td.bad { color: var(--bad); font-weight: 600; }
+  .bar { display: inline-block; height: 8px; background: var(--accent); margin-right: 6px; vertical-align: middle; border-radius: 2px; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text-dim); text-align: center; letter-spacing: 0.05em; }
+  .note { background: rgba(201,169,97,0.08); border-left: 3px solid var(--accent); padding: 12px 16px; font-size: 13px; color: var(--text); margin: 16px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>KPIs ISA-95 / ISO 22400 <small>Sessão S52 · 2026-04-18 · Scope catálogo fornecedores</small></h1>
+</header>
+
+<div class="note">
+KPIs de S52 focam no avanço do <strong>catálogo de chassis de fornecedores</strong>. A produção e qualidade de fabrico em 2026 Q2 mantém-se estável vs Q1 e não foi medida nesta sessão. Métricas de produção retornam em S53 após processamento de faturação Q1 pendente.
+</div>
+
+<h2>Dados de fornecedor — cobertura do catálogo</h2>
+
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="label">Variantes catalogadas</div>
+    <div class="value">90</div>
+    <div class="delta up">+70 vs S51</div>
+    <div class="target">Meta end-2026: 200 (FUSO + Merc + Iveco + outros)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Fornecedores integrados</div>
+    <div class="value">2</div>
+    <div class="delta up">+1 (FUSO)</div>
+    <div class="target">Renault Master · FUSO</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Campos FUSO diesel completos</div>
+    <div class="value">100%</div>
+    <div class="delta up">+22 p.p. vs v1 do xlsx</div>
+    <div class="target">60 variantes × ~85 cols extraídos verbatim</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Campos FUSO eCanter completos</div>
+    <div class="value">43%</div>
+    <div class="delta flat">10/23 (pendente S53)</div>
+    <div class="target">4 PDFs eCanter por extrair</div>
+  </div>
+</div>
+
+<h2>Detalhe FUSO — cobertura por plataforma</h2>
+<table>
+<thead><tr><th>Plataforma</th><th style="text-align:right">Variantes</th><th style="text-align:right">WB</th><th>Transmissões</th><th>Motor</th><th>Estado</th></tr></thead>
+<tbody>
+<tr><td>3S13 (3.5T Std)</td><td class="num">6</td><td class="num">3</td><td>Manual + DUONIC</td><td>EUW 96kW</td><td class="good">✓ Completo</td></tr>
+<tr><td>3S15 (3.5T Std)</td><td class="num">4</td><td class="num">2</td><td>Manual + DUONIC</td><td>EUX 110kW</td><td class="good">✓ Completo</td></tr>
+<tr><td>3C13 (3.5T Comf)</td><td class="num">8</td><td class="num">4</td><td>Manual + DUONIC</td><td>EUW</td><td class="good">✓ Completo</td></tr>
+<tr><td>3C15 (3.5T Comf)</td><td class="num">8</td><td class="num">4</td><td>Manual + DUONIC</td><td>EUX</td><td class="good">✓ Completo</td></tr>
+<tr><td>3C15D crew</td><td class="num">2</td><td class="num">1</td><td>Manual + DUONIC</td><td>EUX</td><td class="good">✓ Completo</td></tr>
+<tr><td>6S15 (6T Std)</td><td class="num">3</td><td class="num">3</td><td>Manual</td><td>EUX</td><td class="good">✓ Completo</td></tr>
+<tr><td>6C18 4×4 (FGB)</td><td class="num">2</td><td class="num">2</td><td>Manual AWD</td><td>EUY 129kW</td><td class="good">✓ Completo + AWD fields</td></tr>
+<tr><td>6C18D 4×4 crew (FGB)</td><td class="num">2</td><td class="num">2</td><td>Manual AWD</td><td>EUY</td><td class="good">✓ Completo + AWD fields</td></tr>
+<tr><td>7C15 (7.49T Comf)</td><td class="num">8</td><td class="num">4</td><td>Manual + DUONIC</td><td>EUX</td><td class="good">✓ Completo</td></tr>
+<tr><td>7C15D crew</td><td class="num">1</td><td class="num">1</td><td>Manual</td><td>EUX</td><td class="good">✓ Completo</td></tr>
+<tr><td>7C18 (7.49T Comf)</td><td class="num">9</td><td class="num">5</td><td>Manual + DUONIC</td><td>EUY</td><td class="good">✓ Completo (preenchido em S52)</td></tr>
+<tr><td>7C18D crew</td><td class="num">3</td><td class="num">2</td><td>Manual + DUONIC</td><td>EUY</td><td class="good">✓ Completo (preenchido em S52)</td></tr>
+<tr><td>9C18 (8.55T)</td><td class="num">4</td><td class="num">4</td><td>DUONIC</td><td>EUY (rear_axle_ratio 5.714 único)</td><td class="good">✓ Completo (preenchido em S52)</td></tr>
+<tr><td><strong>Total diesel</strong></td><td class="num" style="font-weight:600">60</td><td class="num" style="font-weight:600">—</td><td>—</td><td>—</td><td class="good">✓ 100%</td></tr>
+<tr><td>eCanter 7C18e M</td><td class="num">4</td><td class="num">4</td><td>e-axle</td><td>S40 129kW peak</td><td class="warn">Auditar S53</td></tr>
+<tr><td>eCanter 9C18e M</td><td class="num">4</td><td class="num">4</td><td>e-axle</td><td>S40</td><td class="warn">Auditar S53</td></tr>
+<tr><td>eCanter 9C18e L</td><td class="num">2</td><td class="num">2</td><td>e-axle</td><td>S40</td><td class="warn">Auditar S53</td></tr>
+<tr><td>eCanter 4S15e S/M</td><td class="num">4</td><td class="num">3</td><td>e-axle</td><td>TBD</td><td class="bad">Extrair S53</td></tr>
+<tr><td>eCanter 4C15e S/M</td><td class="num">3</td><td class="num">2</td><td>e-axle</td><td>TBD</td><td class="bad">Extrair S53</td></tr>
+<tr><td>eCanter 6S15e S/M</td><td class="num">4</td><td class="num">3</td><td>e-axle</td><td>TBD</td><td class="bad">Extrair S53</td></tr>
+<tr><td>eCanter 7C18e L</td><td class="num">2</td><td class="num">2</td><td>e-axle</td><td>S40</td><td class="bad">Extrair S53</td></tr>
+<tr><td><strong>Total eCanter</strong></td><td class="num" style="font-weight:600">23</td><td class="num" style="font-weight:600">—</td><td>—</td><td>—</td><td class="warn">10/23 = 43%</td></tr>
+</tbody>
+</table>
+
+<h2>KPIs ISO 22400 — produção (herdados, sem medição S52)</h2>
+<table>
+<thead><tr><th>KPI</th><th style="text-align:right">Valor S51</th><th style="text-align:right">Alvo</th><th>Estado</th><th>Notas</th></tr></thead>
+<tbody>
+<tr><td>Quality Ratio</td><td class="num">—</td><td class="num">≥97%</td><td class="warn">Por medir</td><td>Depende de registos NC — skill <code>registar-nc</code> activa</td></tr>
+<tr><td>Scrap Ratio</td><td class="num">—</td><td class="num">≤2%</td><td class="warn">Por medir</td><td>—</td></tr>
+<tr><td>Rework Ratio</td><td class="num">—</td><td class="num">≤3%</td><td class="warn">Por medir</td><td>—</td></tr>
+<tr><td>First Pass Yield</td><td class="num">—</td><td class="num">≥95%</td><td class="warn">Por medir</td><td>—</td></tr>
+<tr><td>OEE</td><td class="num">—</td><td class="num">≥75%</td><td class="warn">Por medir</td><td>—</td></tr>
+</tbody>
+</table>
+
+<h2>Skills e Agente Documental</h2>
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="label">Skills totais</div>
+    <div class="value">236</div>
+    <div class="delta flat">0 vs S51</div>
+    <div class="target">127 comunidade + 109 custom CSN</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Agente Documental — categorias</div>
+    <div class="value">14</div>
+    <div class="delta flat">0 vs S51 (S53 → 16)</div>
+    <div class="target">+ficha_fuso_diesel +ficha_fuso_ecanter</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Embeddings pgvector</div>
+    <div class="value">2927</div>
+    <div class="delta flat">0 vs S51</div>
+    <div class="target">Voyage-3</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">e-Fatura ATCUD match</div>
+    <div class="value">93%</div>
+    <div class="delta flat">28/30 vs S49</div>
+    <div class="target">Universal trigger activo</div>
+  </div>
+</div>
+
+<h2>Documentos de sessão gerados em S52</h2>
+<table>
+<thead><tr><th>#</th><th>Ficheiro</th><th>Destino</th><th>Estado</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>ESTADO.OPUS.S52.md</code></td><td>raiz + <code>docs/</code></td><td class="good">✓</td></tr>
+<tr><td>2</td><td><code>CSN-Controlo-OPUS-S52.pdf</code></td><td><code>docs/</code></td><td class="good">✓</td></tr>
+<tr><td>3</td><td><code>csn-architecture-OPUS-S52.html</code></td><td><code>docs/</code></td><td class="good">✓</td></tr>
+<tr><td>4</td><td><code>csn-kpis-isa95-S52.html</code> (este)</td><td><code>docs/</code></td><td class="good">✓</td></tr>
+<tr><td>5</td><td><code>csn-skills-tools-registry-S52.html</code></td><td><code>docs/</code></td><td class="good">✓</td></tr>
+<tr><td>6</td><td><code>CSN_FUSO_Catalog_S52_v2.xlsx</code></td><td><code>docs/fornecedores/fuso/</code></td><td class="good">✓ (entregável principal)</td></tr>
+</tbody>
+</table>
+
+<footer>CSN Opus · KPIs ISA-95 / ISO 22400 · S52 · 2026-04-18 · Próxima revisão S53</footer>
+
+</div>
+</body>
+</html>
