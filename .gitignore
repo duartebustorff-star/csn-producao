@@ -46,3 +46,8 @@ next-env.d.ts
 .env*.local
 Marcas - Veiculos/
 public/modelo-carrocaria.stl
+
+# Research scripts (JSONs tracked, scripts não)
+_research/*.sql
+_research/*.mjs
+*.bak
