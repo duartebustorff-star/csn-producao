@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — KPIs ISA-95 S54</title>
+<style>
+:root{
+  --bg:#fafaf7; --ink:#1a1a1a; --muted:#6b6858; --line:#e5e1d5;
+  --accent:#c9a961; --good:#2d7a4e; --warn:#c77b2a; --bad:#a33b3b; --soft:#faf7ed;
+  --hub:#3a6a8a;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+section.new{border-left:4px solid var(--hub)}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;
+  border-left:3px solid var(--accent);padding-left:8px}
+section.new h2{border-left-color:var(--hub)}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.3px;background:var(--soft)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.pill.new{background:#e0edf3;color:var(--hub)}
+.delta{font-size:11px;color:var(--muted);margin-left:6px}
+.delta.up{color:var(--good)}
+.delta.down{color:var(--bad)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0}
+.bar>div{height:100%;background:var(--accent)}
+.bar.good>div{background:var(--good)}
+.bar.warn>div{background:var(--warn)}
+.bar.bad>div{background:var(--bad)}
+.footnote{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.disclaimer{background:#fbefdf;border-left:3px solid var(--warn);padding:10px 14px;
+  font-size:12px;color:#6a4a1e;margin:16px 0;border-radius:0 4px 4px 0}
+.new-badge{display:inline-block;padding:2px 6px;font-size:10px;border-radius:3px;
+  background:var(--hub);color:white;font-weight:600;letter-spacing:.5px;margin-left:6px}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — KPIs ISA-95 (S54)</h1>
+  <div class="sub">Sessão S54 · 2026-04-22 · ISO 22400 alinhados onde aplicável · Deltas vs S53</div>
+</header>
+
+<div class="disclaimer">
+  S54 introduz 5 KPIs fundadores novos no domínio L3-MOM / CSN NestHub: sucata, tempo programação,
+  piercings, obras agregadas, aproveitamento offcuts. Valores baseline a medir em S55-S56.
+  KPIs de produção (OEE, scrap, rework, FPY) herdados sem alteração.
+</div>
+
+<section>
+  <h2>Snapshot — indicadores principais</h2>
+  <div class="grid-4">
+    <div class="card"><div class="l">Tabelas Supabase</div><div class="n">~87</div><div class="l">sem alteração</div></div>
+    <div class="card"><div class="l">Variantes catalogadas</div><div class="n">103</div><div class="l">sem alteração</div></div>
+    <div class="card"><div class="l">Skills</div><div class="n">239</div><div class="l">+2 (iLogic export + param long.)</div></div>
+    <div class="card"><div class="l">Rules iLogic produção</div><div class="n">2</div><div class="l">+2 <span class="pill new">NOVO</span></div></div>
+    <div class="card"><div class="l">Ag. Documental categ.</div><div class="n">16</div><div class="l">=</div></div>
+    <div class="card"><div class="l">Embeddings</div><div class="n">2927</div><div class="l">=</div></div>
+    <div class="card"><div class="l">e-Fatura ATCUD match</div><div class="n">93%</div><div class="l">28/30</div></div>
+    <div class="card"><div class="l">Commits por pushar</div><div class="n">3</div><div class="l">S52 retro + limpeza + S54</div></div>
+  </div>
+</section>
+
+<section class="new">
+  <h2>L3-MOM — CSN NestHub (KPIs fundadores) <span class="new-badge">NOVO S54</span></h2>
+  <p>5 KPIs que medem a eficácia do módulo de corte laser integrado. Baseline a capturar em S55 para decidir investimento em Almacam Tube (Q4 2026).</p>
+  <div class="grid-5">
+    <div class="card">
+      <div class="l">NEST-1</div>
+      <div class="n">—</div>
+      <div class="l">% sucata por corte</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Meta: ≤10% chapa / ≤15% tubo</div>
+    </div>
+    <div class="card">
+      <div class="l">NEST-2</div>
+      <div class="n">—</div>
+      <div class="l">Tempo prog. (min)</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Meta: −50% c/ Almacam</div>
+    </div>
+    <div class="card">
+      <div class="l">NEST-3</div>
+      <div class="n">—</div>
+      <div class="l">Piercings/programa</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Meta: minimizar</div>
+    </div>
+    <div class="card">
+      <div class="l">NEST-4</div>
+      <div class="n">—</div>
+      <div class="l">Obras/sessão corte</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Meta: ≥3</div>
+    </div>
+    <div class="card">
+      <div class="l">NEST-5</div>
+      <div class="n">—</div>
+      <div class="l">% offcuts usados</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Meta: ≥30%</div>
+    </div>
+  </div>
+  <h3>Medição — estado</h3>
+  <table>
+    <tr><th>KPI</th><th>Fonte de dados</th><th>Disponível em</th></tr>
+    <tr><td>NEST-1 — % sucata</td><td><code>nesting_queue</code> + pesagem sucata pós-corte</td><td>S55 (após criar tabela e UI operador)</td></tr>
+    <tr><td>NEST-2 — tempo programação</td><td>Timer portal operador</td><td>S55</td></tr>
+    <tr><td>NEST-3 — piercings</td><td>Relatório software nesting</td><td>S55 (parse manual inicial)</td></tr>
+    <tr><td>NEST-4 — obras agregadas</td><td><code>nesting_queue GROUP BY nesting_batch</code></td><td>S55 automático</td></tr>
+    <tr><td>NEST-5 — offcuts</td><td>Almacam Tube (post-install) / manual</td><td>Q4 2026+</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L3-ENG — Catálogo de chassis (sem alteração vs S53)</h2>
+  <table>
+    <tr><th>Marca</th><th>Variantes</th><th>Completude BBG</th><th>Estado</th></tr>
+    <tr>
+      <td>Renault (Master XDD)</td>
+      <td class="n">20</td>
+      <td><div class="bar good"><div style="width:100%"></div></div>100%</td>
+      <td><span class="pill good">Completo S46</span></td>
+    </tr>
+    <tr>
+      <td>FUSO Canter diesel LHD</td>
+      <td class="n">60</td>
+      <td><div class="bar good"><div style="width:100%"></div></div>100%</td>
+      <td><span class="pill good">Completo S52</span></td>
+    </tr>
+    <tr>
+      <td>FUSO eCanter LHD</td>
+      <td class="n">23</td>
+      <td><div class="bar good"><div style="width:87%"></div></div>87%</td>
+      <td><span class="pill warn">Audit de 10 linhas em backlog (PDFs EN em falta)</span></td>
+    </tr>
+    <tr>
+      <td>Mercedes Sprinter / Atego</td>
+      <td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr>
+      <td>Iveco Daily / Eurocargo</td>
+      <td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr>
+      <td>Outras (MAN/DAF/Ford/Isuzu/Nissan/PSA/Fiat/VW)</td>
+      <td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr style="background:var(--soft);font-weight:600">
+      <td>TOTAL</td>
+      <td class="n">103</td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h2>L4-ENG — Modelação Inventor (novidade S54)</h2>
+  <table>
+    <tr><th>Indicador</th><th>Valor</th><th>Estado</th></tr>
+    <tr><td>Rules iLogic produção-ready</td><td class="n">2</td><td><span class="pill good">CSN_Inventario_Recursivo + CSN_Export_Nesting_v2</span></td></tr>
+    <tr><td>Peças paramétricas CSN_PAR_*</td><td class="n">0/4</td><td><span class="pill warn">Planeadas; remodelação Murtaza</span></td></tr>
+    <tr><td>Convenção nomenclatura</td><td>Finalizada</td><td><span class="pill good">SR_ prefix, Px/Nx/Py/Ny axes</span></td></tr>
+    <tr><td>Sistema coordenadas</td><td>Definido</td><td><span class="pill good">X=0 eixo traseiro, ISO 8855</span></td></tr>
+    <tr><td>Peças testadas pela rule export</td><td class="n">56 únicas / 194 instâncias</td><td><span class="pill good">26 CHAPA + 60 TUBO + 76 IGNORAR</span></td></tr>
+    <tr><td>Peças com material MISSING</td><td class="n">26</td><td><span class="pill warn">Backlog Murtaza — iProperty material</span></td></tr>
+    <tr><td>Peças sem flat pattern</td><td class="n">3 (18 instâncias)</td><td><span class="pill warn">Backlog Murtaza — remodelar SheetMetal</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L3-DOC — Agente Documental (sem alteração vs S53)</h2>
+  <table>
+    <tr><th>Indicador</th><th>Valor</th></tr>
+    <tr><td>Categorias de classificação suportadas</td><td class="n">16</td></tr>
+    <tr><td>Taxa match ATCUD (universal trigger)</td><td class="n">93% (28/30)</td></tr>
+    <tr><td>Skill analise-ficha-fuso — integração Router</td><td><span class="pill warn">Pendente S55</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L4-FIN — Financeiro (herdado, sem recálculo)</h2>
+  <table>
+    <tr><th>KPI</th><th>Valor</th><th>Fonte</th></tr>
+    <tr><td>Vendas IES 2024</td><td class="n">€435.000</td><td>IES 2024 processada S47</td></tr>
+    <tr><td>Resultado líquido 2024</td><td class="n">€59.000</td><td>IES 2024</td></tr>
+    <tr><td>Custo/hora Bohdan</td><td class="n">€11,16</td><td>S47</td></tr>
+    <tr><td>Custo/hora João António</td><td class="n">€12,89</td><td>S47</td></tr>
+    <tr><td>Custo/hora José Júlio</td><td class="n">€10,68</td><td>S47</td></tr>
+    <tr><td>Custos fixos anuais</td><td class="n">€112.631</td><td>S47</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L3-PRD — Produção (ISO 22400, herdado)</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 8px 0">
+    OEE e rácios de qualidade dependem do worker portal completo (não operacional). KPIs abaixo são metas.
+  </p>
+  <table>
+    <tr><th>KPI</th><th>Meta</th><th>Estado actual</th><th>Bloqueio</th></tr>
+    <tr><td>First Pass Yield (FPY)</td><td>≥ 92%</td><td>—</td><td>Sem dados — NC pipeline parcial</td></tr>
+    <tr><td>Scrap ratio</td><td>≤ 3%</td><td>—</td><td>Idem</td></tr>
+    <tr><td>Rework ratio</td><td>≤ 5%</td><td>—</td><td>Idem</td></tr>
+    <tr><td>OEE</td><td>≥ 75%</td><td>—</td><td>Worker portal não regista microparagens</td></tr>
+    <tr><td>Veículos produzidos / ano</td><td>~150</td><td>Aproximação</td><td>Registo por obra não estruturado</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Prontidão para Auditoria — KPI agregado</h2>
+  <table>
+    <tr><th>Certificação</th><th>Progresso</th><th>Delta S54</th></tr>
+    <tr><td>ISO 9001</td><td><div class="bar good"><div style="width:60%"></div></div>60%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>ISO 14001</td><td><div class="bar warn"><div style="width:25%"></div></div>25%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>ISO 45001</td><td><div class="bar warn"><div style="width:20%"></div></div>20%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>Marcação CE</td><td><div class="bar warn"><div style="width:45%"></div></div>45%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>EN 1090</td><td><div class="bar warn"><div style="width:40%"></div></div>40%</td><td><span class="delta">=</span></td></tr>
+  </table>
+  <p class="footnote">Valores herdados de S52. Reconciliação pendente quando houver progresso real (ex: WPS/WPQR formalizados → EN 1090 sobe).</p>
+</section>
+
+<footer>
+  CSN Opus · csn-kpis-isa95-S54.html · 2026-04-22 · Não sobrescrever versões anteriores
+</footer>
+</body>
+</html>

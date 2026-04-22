@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Skills &amp; Tools Registry S54</title>
+<style>
+:root{
+  --bg:#fafaf7; --ink:#1a1a1a; --muted:#6b6858; --line:#e5e1d5;
+  --accent:#c9a961; --good:#2d7a4e; --warn:#c77b2a; --bad:#a33b3b; --soft:#faf7ed;
+  --custom:#5a4a8a; --hub:#3a6a8a;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;
+  border-left:3px solid var(--accent);padding-left:8px}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.3px;background:var(--soft)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.pill.custom{background:#eae6f3;color:var(--custom)}
+.pill.new{background:#faf7ed;color:var(--accent);border:1px solid var(--accent)}
+.pill.hub{background:#e0edf3;color:var(--hub)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.delta{font-size:11px;color:var(--muted);margin-left:6px}
+.delta.up{color:var(--good)}
+code{background:var(--soft);padding:1px 4px;border-radius:3px;font-size:12px}
+.footnote{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — Skills &amp; Tools Registry (S54)</h1>
+  <div class="sub">Sessão S54 · 2026-04-22 · 239 skills totais · 112 custom (IP CSN) · Organização ISA-95</div>
+</header>
+
+<section>
+  <h2>Snapshot — agregados</h2>
+  <div class="grid-4">
+    <div class="card"><div class="l">Skills totais</div><div class="n">239</div><div class="l">+2 em S54</div></div>
+    <div class="card"><div class="l">Community skills</div><div class="n">127</div><div class="l">base alirezarezvani</div></div>
+    <div class="card"><div class="l">Custom CSN (IP)</div><div class="n">112</div><div class="l">+2 em S54</div></div>
+    <div class="card"><div class="l">Secções ISA-95 cobertas</div><div class="n">16</div><div class="l">sem alteração</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Skills adicionadas em S54</h2>
+  <table>
+    <tr><th>Nome</th><th>Path</th><th>ISA-95 level</th><th>Estado</th></tr>
+    <tr>
+      <td><code>export-nesting-inventor</code></td>
+      <td><code>/mnt/skills/user/export-nesting-inventor/</code></td>
+      <td>L4-ENG</td>
+      <td><span class="pill new">Criada S54</span></td>
+    </tr>
+    <tr>
+      <td><code>modelacao-parametrica-longarina</code></td>
+      <td><code>/mnt/skills/user/modelacao-parametrica-longarina/</code></td>
+      <td>L4-ENG</td>
+      <td><span class="pill new">Criada S54</span></td>
+    </tr>
+  </table>
+
+  <h3>Skill 1 — <code>export-nesting-inventor</code></h3>
+  <ul style="font-size:13px">
+    <li><b>Propósito:</b> exportar peças de um assembly Inventor para DXF (chapa, flat pattern) e STEP (tubo), organizadas por obra e prontas para agregação pelo NestHub.</li>
+    <li><b>Triggers:</b> iLogic rule invocada manualmente pelo operador ao fechar um assembly de obra.</li>
+    <li><b>Inputs:</b> assembly activo (<code>ThisApplication.ActiveDocument</code>), obra_id (prompt ao utilizador).</li>
+    <li><b>Outputs:</b> ficheiros DXF/STEP em <code>C:\Users\Utilizador\Projectos-AI\Nesting\{obra_id}\{Chapas|Tubos}\</code> + CSV de inventário no Desktop + (S55) registo em <code>nesting_queue</code>.</li>
+    <li><b>Nomenclatura:</b> <code>{nome}_{t=Xmm|NxNxN}_{material}_{NNN}.{dxf|step}</code></li>
+    <li><b>Fallbacks:</b> material via iProperty → regex nome → string <code>MISSING</code>.</li>
+    <li><b>Ficheiros de implementação:</b> <code>docs/inventor/CSN_Export_Nesting_v2.vb</code> + <code>docs/inventor/CSN_Inventario_Recursivo.vb</code>.</li>
+  </ul>
+
+  <h3>Skill 2 — <code>modelacao-parametrica-longarina</code></h3>
+  <ul style="font-size:13px">
+    <li><b>Propósito:</b> guia de modelação de longarinas CSN paramétricas no Inventor, aplicável a qualquer chassis.</li>
+    <li><b>Triggers:</b> consulta por freelancer 3D (Murtaza) ou engenheiro CSN antes de criar novo ficheiro <code>CSN_PAR_Stringer_*.ipt</code>.</li>
+    <li><b>Conteúdo:</b> convenção de nomes (<code>SR_</code> prefix), sistema de coordenadas (Px/Nx/Py/Ny), estrutura sketch (Opção 2 — sketch único com 12 centros ligados a User Parameters + dimensões partilhadas), features nomeadas (<code>Feat_SR_Tooth_N</code>).</li>
+    <li><b>Documentação:</b> <code>docs/inventor/CSN-Convencao-Nomes-Inventor-v2.md</code>, <code>docs/inventor/BRIEFING-Murtaza-Longarinas-S54.md</code>.</li>
+    <li><b>Validação:</b> 12 dentes no lado +X, 8 dentes no lado −X, total 20 bases numa peça única <code>CSN_PAR_Bases.ipt</code>.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Distribuição por secção ISA-95 (custom CSN)</h2>
+  <table>
+    <tr><th>Camada</th><th>Secção</th><th>Skills custom</th><th>Delta S54</th><th>Notas</th></tr>
+    <tr><td>L4-BPL</td><td>FIN</td><td class="n">11</td><td>=</td><td>faturação, IES, custo/hora</td></tr>
+    <tr><td>L4-BPL</td><td>COM</td><td class="n">14</td><td>=</td><td>CSN Connect, Marta, CRM, briefing visita</td></tr>
+    <tr><td>L4-BPL</td><td>ENG</td><td class="n">18</td><td><span class="delta up">+2</span></td><td><code>export-nesting-inventor</code>, <code>modelacao-parametrica-longarina</code> adicionadas</td></tr>
+    <tr><td>L4-BPL</td><td>QMS-L4</td><td class="n">6</td><td>=</td><td>auditoria, normas, compliance</td></tr>
+    <tr><td>L4-BPL</td><td>CST</td><td class="n">5</td><td>=</td><td>aftersales, reclamações (Leonor)</td></tr>
+    <tr><td>L4-BPL</td><td>RSH</td><td class="n">12</td><td>=</td><td>research, scraping, competitive intel (R_AGENT)</td></tr>
+    <tr><td>L3-MOM</td><td>PRD</td><td class="n">9</td><td>=</td><td>produção, pontos, obras</td></tr>
+    <tr><td>L3-MOM</td><td>QMS</td><td class="n">8</td><td>=</td><td><code>registar-nc</code>, EN 1090, EN ISO 5817</td></tr>
+    <tr><td>L3-MOM</td><td>MNT</td><td class="n">3</td><td>=</td><td>manutenção</td></tr>
+    <tr><td>L3-MOM</td><td>PER</td><td class="n">5</td><td>=</td><td>HR, Carolina</td></tr>
+    <tr><td>L3-MOM</td><td>DOC</td><td class="n">10</td><td>=</td><td>Agente Documental skills</td></tr>
+    <tr><td>L3-MOM</td><td>INV</td><td class="n">7</td><td>=</td><td>fornecedores, Chagas, Pecol</td></tr>
+    <tr><td>L2-SUP / L1-SEN / L0-PHY</td><td>—</td><td class="n">4</td><td>=</td><td>skills instrumentais</td></tr>
+    <tr style="background:var(--soft);font-weight:600">
+      <td colspan="2">TOTAL custom CSN</td>
+      <td class="n">112</td>
+      <td><span class="delta up">+2</span></td>
+      <td>IP — base de CSN Brain como produto futuro</td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h2>Tools &amp; Integrações — estado S54</h2>
+  <table>
+    <tr><th>Integração</th><th>Âmbito</th><th>Estado</th></tr>
+    <tr><td>Supabase (<code>oysfxhlzilazeznpaafc</code>)</td><td>Base de dados primária (~87 tabelas)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Claude API</td><td>Haiku (routing/classification), Sonnet 4.6 (vision/worker portal)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Vercel</td><td>Produção <code>csn-producao.vercel.app</code></td><td><span class="pill good">Operacional, sem deploys S54</span></td></tr>
+    <tr><td>GitHub</td><td><code>duartebustorff-star/csn-producao</code></td><td><span class="pill good">Operacional — 3 commits locais por pushar</span></td></tr>
+    <tr><td>Google Apps Script v8</td><td>Email attachments → Storage</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Voyage AI voyage-3</td><td>Embeddings pgvector (2927)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>InvoiceXpress</td><td>Faturação AT cert 192</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>matricula.co.pt + Vincario</td><td>Plate → VIN → specs</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Google Calendar</td><td>9 ISA-95 calendars</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>e-Fatura AT</td><td>4409 records · ATCUD 93%</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td><b>Autodesk Inventor + iLogic</b> <span class="pill new">expandido S54</span></td><td>2 rules produção (inventário recursivo + export nesting) + convenção CSN</td><td><span class="pill good">Produção ready</span></td></tr>
+    <tr><td>Autodesk Nastran</td><td>FEA</td><td><span class="pill warn">iLogic scripts iniciados</span></td></tr>
+    <tr><td>Blender</td><td>Rendering GLTF para CSN Connect</td><td><span class="pill warn">Pipeline com freelancer Murtaza (Nagpur)</span></td></tr>
+    <tr><td>R_AGENT</td><td>Satélite <code>chat.html</code>, web search</td><td><span class="pill warn">Operacional, ligação Router pendente</span></td></tr>
+    <tr><td><b>Bodor A3T6</b> <span class="pill new">corrigido S54</span></td><td>Máquina corte 6kW fibra híbrida 3000×1500mm Weihong</td><td><span class="pill good">Em produção</span></td></tr>
+    <tr><td><b>Almacam Tube</b> <span class="pill hub">PLANEADO</span></td><td>Nesting óptimo 3D tubo — integração com CSN NestHub</td><td><span class="pill warn">Investimento Q4 2026 / Q1 2027</span></td></tr>
+    <tr><td>WhatsApp Business API</td><td>Via BSP (360dialog recomendado)</td><td><span class="pill bad">Não configurado</span></td></tr>
+    <tr><td>Puppeteer/Playwright (R_AGENT)</td><td>Browsing autenticado portais FUSO/Mercedes BB</td><td><span class="pill bad">Não implementado</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Artefactos S54 — catálogo de entregáveis</h2>
+  <table>
+    <tr><th>#</th><th>Ficheiro</th><th>Destino</th><th>Propósito</th></tr>
+    <tr><td>1</td><td><code>ESTADO.OPUS.S54.md</code></td><td>raiz + <code>docs/</code></td><td>Estado de fecho S54 + recomendação S55</td></tr>
+    <tr><td>2</td><td><code>CSN-Controlo-OPUS-S54.pdf</code></td><td><code>docs/</code></td><td>Controlo de sessão</td></tr>
+    <tr><td>3</td><td><code>csn-architecture-OPUS-S54.html</code></td><td><code>docs/</code></td><td>Arquitectura (com L3-MOM NestHub + L4-ENG Convenção Inventor)</td></tr>
+    <tr><td>4</td><td><code>csn-kpis-isa95-S54.html</code></td><td><code>docs/</code></td><td>KPIs ISA-95 (com 5 KPIs NestHub novos)</td></tr>
+    <tr><td>5</td><td><code>csn-skills-tools-registry-S54.html</code></td><td><code>docs/</code></td><td>Este ficheiro</td></tr>
+    <tr><td>6</td><td><code>CSN-Convencao-Nomes-Inventor-v2.md</code></td><td><code>docs/inventor/</code></td><td>Convenção nomenclatura CSN</td></tr>
+    <tr><td>7</td><td><code>BRIEFING-Murtaza-Longarinas-S54.md</code></td><td><code>docs/inventor/</code></td><td>Briefing técnico freelancer 3D</td></tr>
+    <tr><td>8</td><td><code>CSN_Export_Nesting_v2.vb</code></td><td><code>docs/inventor/</code></td><td>Rule iLogic exportação</td></tr>
+    <tr><td>9</td><td><code>CSN_Inventario_Recursivo.vb</code></td><td><code>docs/inventor/</code></td><td>Rule iLogic inventário</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Ciclo de actualização de skills — próximas fontes a monitorizar</h2>
+  <table>
+    <tr><th>Fonte</th><th>Tipo</th><th>Frequência</th></tr>
+    <tr><td><code>alirezarezvani/claude-skills</code> (GitHub)</td><td>Community skills base</td><td>Semanal (sync)</td></tr>
+    <tr><td>Matt Pocock / AI Hero</td><td>Claude Code skills (/grill-me, /write-a-prd, /prd-to-issues, /tdd)</td><td>Bi-semanal</td></tr>
+    <tr><td>Anthropic docs + changelog</td><td>Product self-knowledge</td><td>Por release</td></tr>
+    <tr><td>Autodesk Inventor iLogic + VB.NET API</td><td>Skills de modelação paramétrica</td><td>Ad-hoc (conforme novas peças)</td></tr>
+  </table>
+</section>
+
+<footer>
+  CSN Opus · csn-skills-tools-registry-S54.html · 2026-04-22 · Não sobrescrever versões anteriores
+</footer>
+</body>
+</html>

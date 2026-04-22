@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Arquitectura S54</title>
+<style>
+:root{
+  --bg:#fafaf7; --ink:#1a1a1a; --muted:#6b6858; --line:#e5e1d5;
+  --accent:#c9a961; --good:#2d7a4e; --warn:#c77b2a; --bad:#a33b3b;
+  --soft:#faf7ed; --hub:#3a6a8a; --inv:#6a3a8a;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+section.new{border-left:4px solid var(--hub)}
+section.new-inv{border-left:4px solid var(--inv)}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;
+  border-left:3px solid var(--accent);padding-left:8px}
+section.new h2{border-left-color:var(--hub)}
+section.new-inv h2{border-left-color:var(--inv)}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.grid{display:grid;gap:12px}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700;color:var(--ink)}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.3px;
+   background:var(--soft)}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.pill.new{background:#e0edf3;color:var(--hub)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0}
+.bar>div{height:100%;background:var(--accent);transition:width .3s}
+.bar.good>div{background:var(--good)}
+.bar.warn>div{background:var(--warn)}
+.bar.bad>div{background:var(--bad)}
+.footnote{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+code{background:var(--soft);padding:1px 4px;border-radius:3px;font-size:12px}
+pre{background:var(--soft);padding:10px;border-radius:4px;font-size:11px;
+    overflow-x:auto;border-left:3px solid var(--accent);white-space:pre}
+.disclaimer{background:#fbefdf;border-left:3px solid var(--warn);padding:10px 14px;
+  font-size:12px;color:#6a4a1e;margin:16px 0;border-radius:0 4px 4px 0}
+.new-badge{display:inline-block;padding:2px 6px;font-size:10px;border-radius:3px;
+  background:var(--hub);color:white;font-weight:600;letter-spacing:.5px;margin-left:6px}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — Arquitectura do Sistema (S54)</h1>
+  <div class="sub">Sessão S54 · 2026-04-22 · Carlos dos Santos Nascimento Lda · NIF 500 861 790 · ISA-95/IEC 62264 compliant</div>
+</header>
+
+<div class="disclaimer">
+  <b>S54 introduz 2 novas secções arquitecturais:</b>
+  (1) <b>L3-MOM — CSN NestHub</b> (módulo integrador de corte laser, entre iLogic e máquina Bodor);
+  (2) <b>L4-ENG — Convenção Inventor CSN</b> (nomenclatura, sistema de coordenadas, parâmetros).
+  Prontidão para Auditoria herdada de S53 sem alteração — reconciliar percentagens quando houver progresso real.
+</div>
+
+<section>
+  <h2>Estado geral após S54</h2>
+  <div class="grid grid-4">
+    <div class="card"><div class="l">Tabelas Supabase</div><div class="n">~87</div><div class="l">sem alteração</div></div>
+    <div class="card"><div class="l">Variantes chassis</div><div class="n">103</div><div class="l">sem alteração</div></div>
+    <div class="card"><div class="l">Skills CSN</div><div class="n">239</div><div class="l">+2 (iLogic export + param long.)</div></div>
+    <div class="card"><div class="l">Rules iLogic prod</div><div class="n">2</div><div class="l">+2 <span class="pill new">NOVO</span></div></div>
+    <div class="card"><div class="l">Ag. Documental categ.</div><div class="n">16</div><div class="l">sem alteração</div></div>
+    <div class="card"><div class="l">Embeddings pgvector</div><div class="n">2927</div><div class="l">sem alteração</div></div>
+    <div class="card"><div class="l">Máquina corte</div><div class="n">A3T6</div><div class="l">Bodor 6kW híbrida <span class="pill warn">corrigido</span></div></div>
+    <div class="card"><div class="l">Fornecedores integrados</div><div class="n">2</div><div class="l">Chagas, Pecol</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estrutura ISA-95 / IEC 62264</h2>
+  <h3>L4-BPL — Business Planning Layer</h3>
+  <table>
+    <tr><th>Secção</th><th>Âmbito</th><th>Agente/Persona</th><th>Estado S54</th></tr>
+    <tr><td>FIN</td><td>Faturação, e-Fatura, IES, custos/hora</td><td>Luísa (CEO)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>COM</td><td>Comercial, CRM, CSN Connect, 415 concessionários</td><td>Marta</td><td><span class="pill warn">Dados sim, relevancia_csn por classificar</span></td></tr>
+    <tr><td>ENG <span class="pill new">EXPANDIDO</span></td><td>Engenharia, iLogic, catálogo chassis, BBG, <b>convenção Inventor CSN</b></td><td>—</td><td><span class="pill warn">Renault 100%, FUSO 103 variantes, convenção Inventor finalizada S54</span></td></tr>
+    <tr><td>QMS-L4</td><td>Sistema da qualidade, ISO 9001/14001/45001</td><td>—</td><td><span class="pill warn">ISO 9001 60%, 14001 25%, 45001 20%</span></td></tr>
+    <tr><td>CST</td><td>Clientes, pós-venda, aftersales</td><td>Leonor</td><td><span class="pill warn">Estrutura parcial</span></td></tr>
+    <tr><td>RSH</td><td>Research, competitive intelligence, R_AGENT</td><td>Ag. Research</td><td><span class="pill warn">Satélite operacional, integração Router pendente</span></td></tr>
+  </table>
+  <h3>L3-MOM — Manufacturing Operations Management</h3>
+  <table>
+    <tr><th>Secção</th><th>Âmbito</th><th>Estado S54</th></tr>
+    <tr><td>PRD</td><td>Produção, obras, pontos, proposta wizard</td><td><span class="pill warn">Worker portal por reconstruir</span></td></tr>
+    <tr><td>QMS</td><td>Não-conformidades, auditoria, EN 1090</td><td><span class="pill warn">Skill registar-nc existe, pipeline parcial</span></td></tr>
+    <tr><td>MNT</td><td>Manutenção, aftersales</td><td><span class="pill warn">Estrutura inicial</span></td></tr>
+    <tr><td>PER</td><td>Pessoas, HR, Bohdan/José Júlio/João António</td><td><span class="pill good">Custos/hora calculados S47</span></td></tr>
+    <tr><td>DOC</td><td>Documentos, Agente Documental (16 categorias)</td><td><span class="pill good">FUSO categorias 15+16 adicionadas S53</span></td></tr>
+    <tr><td>INV</td><td>Inventário, Chagas, Pecol</td><td><span class="pill warn">2 fornecedores integrados</span></td></tr>
+    <tr><td><b>NestHub <span class="pill new">NOVO S54</span></b></td><td>Camada integradora corte laser (iLogic → agregação → Bodor → rastreabilidade)</td><td><span class="pill warn">Visão documentada; implementação S55</span></td></tr>
+  </table>
+</section>
+
+<section class="new-inv">
+  <h2>L4-ENG — Convenção Inventor CSN <span class="new-badge">NOVO S54</span></h2>
+  <p>Nomenclatura, sistema de coordenadas e convenções de parâmetros para todas as peças e assemblies Inventor da CSN. Aplicável a novas modelações e remodelações (longarinas Fiat, bases universais, travessas, caixa aberta).</p>
+
+  <h3>Sistema de coordenadas</h3>
+  <ul style="font-size:13px">
+    <li><code>X = 0</code> no eixo traseiro do chassis</li>
+    <li><code>+X</code> direcção cabine · <code>−X</code> direcção traseira</li>
+    <li><code>+Y</code> esquerda (ISO 8855) · <code>−Y</code> direita</li>
+    <li><code>Z = 0</code> plano XY = face inferior das peças da carroçaria</li>
+    <li>Convenção abreviada: <code>Px</code>, <code>Nx</code>, <code>Py</code>, <code>Ny</code></li>
+  </ul>
+
+  <h3>Nomenclatura de peças (obrigatório em inglês)</h3>
+  <table>
+    <tr><th>Ficheiro</th><th>Conteúdo</th></tr>
+    <tr><td><code>CSN_PAR_Bases.ipt</code></td><td>20 bases de fixação (12 em +X + 8 em −X) numa peça paramétrica</td></tr>
+    <tr><td><code>CSN_PAR_Stringer_Front_Xp.ipt</code></td><td>Longarina traseira lado +X (12 dentes)</td></tr>
+    <tr><td><code>CSN_PAR_Stringer_Rear_Xn.ipt</code></td><td>Longarina frontal lado −X (8 dentes)</td></tr>
+    <tr><td><code>CSN_PAR_Crossbeams.ipt</code></td><td>Travessas transversais</td></tr>
+  </table>
+
+  <h3>User Parameters (prefixo <code>SR_</code> = Stringer)</h3>
+  <table>
+    <tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td><code>SR_Length_Xp</code></td><td>mm</td><td>Comprimento total da longarina no eixo X</td></tr>
+    <tr><td><code>SR_Height</code></td><td>mm</td><td>Altura da secção</td></tr>
+    <tr><td><code>SR_Thickness</code></td><td>mm</td><td>Espessura da chapa base</td></tr>
+    <tr><td><code>SR_Tooth_1 … SR_Tooth_12</code></td><td>mm</td><td>Posição X de cada dente no lado +X (12 dentes)</td></tr>
+    <tr><td><code>T_Xn_1 … T_Xn_8</code></td><td>mm</td><td>Posição X de cada dente no lado −X (8 dentes)</td></tr>
+    <tr><td><code>SR_Tooth_Width</code></td><td>mm</td><td>Largura do dente (partilhada por todos)</td></tr>
+    <tr><td><code>SR_Tooth_Height</code></td><td>mm</td><td>Altura do dente (partilhada)</td></tr>
+    <tr><td><code>SR_Tooth_Hole_Dist</code></td><td>mm</td><td>Distância centro-centro dos furos no dente</td></tr>
+    <tr><td><code>SR_Tooth_Hole_Diam</code></td><td>mm</td><td>Diâmetro dos furos do dente</td></tr>
+  </table>
+
+  <h3>Convenção de nomes de features</h3>
+  <ul style="font-size:13px">
+    <li><code>Feat_SR_Tooth_N</code> — feature do dente N</li>
+    <li><code>Feat_Rasgo_Xp_N</code> — rasgo entre dentes N</li>
+  </ul>
+
+  <h3>Valores de referência Renault Master L3 (teste)</h3>
+  <table>
+    <tr><th>Parâmetro</th><th>Valor [mm]</th></tr>
+    <tr><td><code>Tooth_Px_1</code></td><td>659.2</td></tr>
+    <tr><td><code>Tooth_Px_2</code></td><td>1074.2</td></tr>
+    <tr><td><code>Tooth_Px_3</code></td><td>1694.2</td></tr>
+    <tr><td><code>Tooth_Px_4</code></td><td>1764.2</td></tr>
+    <tr><td><code>Tooth_Nx_1</code></td><td>152.8</td></tr>
+    <tr><td><code>Tooth_Nx_2</code></td><td>985.8</td></tr>
+  </table>
+
+  <p class="footnote">Documentação completa em <code>docs/inventor/CSN-Convencao-Nomes-Inventor-v2.md</code>.
+  Briefing técnico para remodelação em <code>docs/inventor/BRIEFING-Murtaza-Longarinas-S54.md</code>.</p>
+</section>
+
+<section class="new">
+  <h2>L3-MOM — CSN NestHub <span class="new-badge">NOVO S54</span></h2>
+  <p>Módulo integrador entre modelação (Inventor) e máquina de corte (Bodor A3T6). Não substitui motor de nesting especializado — gere ciclo de obra, agregação de peças, rastreabilidade EN 1090 e interface com operador.</p>
+
+  <h3>Arquitectura em 4 etapas</h3>
+  <pre>ETAPA 1 — EXPORT (contínuo, dia da modelação)
+  Inventor + rule CSN_Export_Nesting_v2
+    → C:\CSN\Obras\{obra_id}\Chapas\ (DXF flat patterns)
+    → C:\CSN\Obras\{obra_id}\Tubos\  (STEP AP214)
+  Registo em Supabase: nesting_queue (status="exported")
+
+ETAPA 2 — AGREGAÇÃO (domingo 20h00, automático)
+  Agente CSN lê nesting_queue (obras activas)
+  Copia ficheiros agrupados por perfil/espessura/material:
+    C:\CSN\NestingPool\Tubos\80x40x3_S235\
+    C:\CSN\NestingPool\Chapas\t=3mm_S235\
+  Nome ficheiro: {obra_id}_{peça}_{perfil}_{material}_{NNN}.{dxf|step}
+  Status="ready_to_cut"
+
+ETAPA 3 — CORTE (segunda ou terça, manual)
+  Operador Bodor A3T6:
+    - Portal mostra "Próximo corte: {data} tipo={chapa|tubo}"
+    - Operador escolhe tipo da sessão
+    - Software de nesting (Almacam Tube para tubo / gratuito para chapa)
+      lê o pool e gera programa óptimo
+    - Ao importar: ficheiros movem-se para NestingPool\_processed\{data}\
+    - Corte em série (várias obras agregadas na mesma barra/chapa)
+  Status="cut"
+
+ETAPA 4 — RASTREABILIDADE (pós-corte)
+  Cada peça cortada volta à pasta da obra:
+    C:\CSN\Obras\{obra_id}\Corte_Realizado\
+  Registo Supabase: status="in_production", data_corte, operador, programa
+  Palete por obra com etiqueta QR → portal operário lê QR
+  Dossier EN 1090 recebe automaticamente: certificado 3.1 do lote +
+    programa de corte + data + operador</pre>
+
+  <h3>Tabela <code>nesting_queue</code> (schema planeado S55)</h3>
+  <pre>CREATE TABLE nesting_queue (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  obra_id text REFERENCES obras(id),
+  ficheiro_path text NOT NULL,
+  ficheiro_nome text NOT NULL,
+  tipo text CHECK (tipo IN ('CHAPA', 'TUBO')),
+  perfil_ou_espessura text,
+  material text,
+  peca_origem text,
+  quantidade integer DEFAULT 1,
+  status text CHECK (status IN (
+    'exported','ready_to_cut','in_nesting','cut','in_production','consumed'
+  )),
+  data_export timestamptz DEFAULT now(),
+  data_agregacao timestamptz,
+  data_corte timestamptz,
+  data_consumo timestamptz,
+  programa_corte text,
+  nesting_batch text
+);</pre>
+
+  <h3>Decisão estratégica — motores de nesting</h3>
+  <table>
+    <tr><th>Domínio</th><th>Escolha</th><th>Custo</th><th>Quando</th></tr>
+    <tr><td>Tubos 3D</td><td><b>Almacam Tube</b> (Alma)</td><td>€25-45k + 15%/ano</td><td>Investimento Q4 2026 / Q1 2027</td></tr>
+    <tr><td>Chapas 2D</td><td>Deepnest.io / SVGnest / Weihong nativo</td><td>€0</td><td>Já (actual)</td></tr>
+    <tr><td>Rastreabilidade + integração ERP</td><td><b>CSN NestHub</b> (próprio)</td><td>desenvolvimento interno</td><td>S55-S56</td></tr>
+  </table>
+
+  <h3>KPIs fundadores (baseline a medir em S55)</h3>
+  <table>
+    <tr><th>KPI</th><th>Descrição</th><th>Objectivo</th></tr>
+    <tr><td><code>NEST-1</code></td><td>% sucata por corte (por obra e lote)</td><td>≤ 10% (chapa) / ≤ 15% (tubo)</td></tr>
+    <tr><td><code>NEST-2</code></td><td>Tempo médio programação nesting (min/programa)</td><td>reduzir 50% após Almacam</td></tr>
+    <tr><td><code>NEST-3</code></td><td>Piercings por programa</td><td>minimizar</td></tr>
+    <tr><td><code>NEST-4</code></td><td>Obras agregadas por sessão de corte</td><td>≥ 3</td></tr>
+    <tr><td><code>NEST-5</code></td><td>Aproveitamento de offcuts (%)</td><td>≥ 30%</td></tr>
+  </table>
+
+  <p class="footnote">Módulo único no mercado PT para fabricantes de carroçarias da dimensão CSN — integração que Almacam, SigmaNEST e Lantek não fazem.</p>
+</section>
+
+<section>
+  <h2>Máquina de corte — Bodor A3T6 <span class="pill warn">CORRIGIDO S54</span></h2>
+  <table>
+    <tr><th>Especificação</th><th>Valor</th></tr>
+    <tr><td>Modelo</td><td>Bodor <b>A3T6</b> (híbrida chapa + tubo)</td></tr>
+    <tr><td>Potência laser</td><td>6 kW fibra</td></tr>
+    <tr><td>Área de corte chapa</td><td>3000 × 1500 mm</td></tr>
+    <tr><td>Corte tubular</td><td>Incluído (T no modelo)</td></tr>
+    <tr><td>Controlador</td><td>Weihong (FSCUT / CypCut)</td></tr>
+    <tr><td>Material — aço</td><td>até 20 mm</td></tr>
+    <tr><td>Material — inox</td><td>até 12 mm</td></tr>
+    <tr><td>Material — alumínio</td><td>até 10 mm</td></tr>
+    <tr><td>Modo operação</td><td>Corte em batch (chapa OU tubo, não ambos simultâneo)</td></tr>
+  </table>
+  <p class="footnote">Na memória anterior aparecia "Bodor P3015" — era erro. Corrigido via <code>memory_user_edits</code> no fim da sessão S54.</p>
+</section>
+
+<section>
+  <h2>Personas (Camada 2) &amp; Agentes (Camada 3)</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 10px 0">
+    Regra absoluta: <b>Personas não produzem dados — apenas comunicam</b>. Agentes (Camada 3 nucleus) produzem tudo.
+  </p>
+  <table>
+    <tr><th>Persona</th><th>Papel</th><th>Tabelas de leitura</th></tr>
+    <tr><td>Marta</td><td>COM / CSN Connect assessor técnico</td><td>catalogo_chassis, estrategia_marca_carrocaria, concessionarios, v_catalogo_fuso</td></tr>
+    <tr><td>Fernando</td><td>Produção, chat chão de fábrica</td><td>obras, pontos, tickets, <b>nesting_queue</b> (S55)</td></tr>
+    <tr><td>Carolina</td><td>HR</td><td>colaboradores</td></tr>
+    <tr><td>Luísa</td><td>CEO assistant, acesso total</td><td>todas</td></tr>
+    <tr><td>Leonor</td><td>Aftersales</td><td>obras, clientes</td></tr>
+  </table>
+  <p class="footnote">Tabela <code>agentes_perfil</code> com enforcement no Router ainda não existe — pendência rolled from S54 → S55.</p>
+</section>
+
+<section>
+  <h2>Catálogo FUSO (estado S53, sem alteração em S54)</h2>
+  <div class="grid grid-3">
+    <div class="card"><div class="l">Diesel LHD</div><div class="n">60</div><div class="l">completo</div></div>
+    <div class="card"><div class="l">eCanter LHD</div><div class="n">23</div><div class="l">audit 10 em backlog</div></div>
+    <div class="card"><div class="l">Total FUSO</div><div class="n">83</div><div class="l">variantes</div></div>
+  </div>
+  <p class="footnote">Detalhes completos em <code>docs/csn-architecture-OPUS-S53.html</code>.</p>
+</section>
+
+<section>
+  <h2>Pipeline documental (estado S53, sem alteração em S54)</h2>
+  <p style="font-size:13px">
+    <b>Apps Script v8</b> → <b>Router v9</b> → <b>Agente Documental</b> (16 categorias) → actions/tickets.
+    Skill <code>analise-ficha-fuso</code> criada em S53; integração Router pendente S55.
+  </p>
+</section>
+
+<section>
+  <h2>Prontidão para Auditoria</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 10px 0">
+    <b>Esta secção não é removida em nenhuma versão da arquitectura</b> (regra absoluta).
+    Valores herdados de S52 — reconciliação pendente quando houver progresso real.
+  </p>
+  <h3>Certificações core (PRR / Portugal 2030)</h3>
+  <table>
+    <tr><th>Certificação</th><th>Progresso</th><th>Bloqueadores principais</th></tr>
+    <tr>
+      <td><b>ISO 9001</b> — Sistema Gestão Qualidade</td>
+      <td style="width:30%"><div class="bar good"><div style="width:60%"></div></div>60%</td>
+      <td>NC pipeline parcial, auditoria interna a calendarizar, gate docs por enforçar</td>
+    </tr>
+    <tr>
+      <td><b>ISO 14001</b> — Sistema Gestão Ambiental</td>
+      <td><div class="bar warn"><div style="width:25%"></div></div>25%</td>
+      <td>Análise de aspectos ambientais a fazer, política por aprovar</td>
+    </tr>
+    <tr>
+      <td><b>ISO 45001</b> — Sistema Gestão SST</td>
+      <td><div class="bar warn"><div style="width:20%"></div></div>20%</td>
+      <td>Matriz de riscos por fazer, investigação de incidentes por formalizar</td>
+    </tr>
+  </table>
+  <h3>Blocos complementares</h3>
+  <table>
+    <tr><th>Norma / bloco</th><th>Progresso</th><th>Observações</th></tr>
+    <tr>
+      <td><b>Marcação CE</b> (Directiva Máquinas / veículos)</td>
+      <td style="width:30%"><div class="bar warn"><div style="width:45%"></div></div>45%</td>
+      <td>Documentação técnica parcial, ensaios por calendarizar</td>
+    </tr>
+    <tr>
+      <td><b>EN 1090-2</b> (componentes estruturais aço)</td>
+      <td><div class="bar warn"><div style="width:40%"></div></div>40%</td>
+      <td>WPS/WPQR por formalizar, qualificação soldadura EN ISO 3834</td>
+    </tr>
+    <tr>
+      <td><b>EN ISO 5817</b> (classes de qualidade soldadura)</td>
+      <td><div class="bar warn"><div style="width:35%"></div></div>35%</td>
+      <td>Skill <code>registar-nc</code> alinhada, inspecção EN ISO 17637 por calendarizar</td>
+    </tr>
+  </table>
+  <h3>Base normativa total</h3>
+  <p style="font-size:13px;margin:0">
+    18 normas × 3 dimensões (Produto / Processo / Sistema). Detalhe completo mantido em
+    <code>normas-csn-mapeamento.md</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Próximos passos (S55+)</h2>
+  <ol style="font-size:13px">
+    <li><b>S55 — Decisão vector:</b> (A) sistema defensivo (REGRA BANDEIRA codificada + agentes_perfil + anti-loop); (B) NestHub — implementar <code>nesting_queue</code> + agente agregação dominical; (C) worker portal rebuild</li>
+    <li><b>S55 — Briefing Murtaza:</b> enviar em inglês os 5 pontos de remodelação (3 chapas + 2 longarinas paramétricas + bases)</li>
+    <li><b>S56 — Templates fornecedor:</b> meta-schema replicável aplicável a Pecol, Dhollandia, Bielco, Acaíl</li>
+    <li><b>S57 — Memorando por marca chassi:</b> Mercedes, Iveco, MAN, Ford, DAF, Isuzu, Nissan, Peugeot, Citroën, Fiat, VW</li>
+    <li><b>Paralelo contínuo:</b> COC Eletrónico IMT (deadline Julho 2026); WhatsApp Business API via BSP; agent session log wake/emit/sleep</li>
+  </ol>
+</section>
+
+<footer>
+  CSN Opus · csn-architecture-OPUS-S54.html · Gerado 2026-04-22 · Preservar histórico (não sobrescrever versões anteriores)
+</footer>
+</body>
+</html>
