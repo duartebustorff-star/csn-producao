@@ -1,222 +1,270 @@
-﻿import { NextRequest, NextResponse } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
-import { getServiceSupabase } from "@/lib/supabase"
-import { CLAUDE_TOOLS, executeTool } from "@/lib/chat-tools"
-import { audit } from "@/lib/audit"
+import { NextRequest, NextResponse } from "next/server"
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
+import { createClient } from "@supabase/supabase-js"
+import fs from "fs"
+import path from "path"
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-function buildSystemPrompt(
-  colaborador: { nome: string; funcao: string; lang: string },
-  obras: unknown[],
-  timer: unknown | null
-): string {
-  const langLabel: Record<string, string> = {
-    pt: "PortuguÃªs",
-    en: "English",
-    ua: "Ð£ÐºÑ€Ð°Ñ—Ð½ÑÑŒÐºÐ°",
-  }
-
-  return `Tu Ã©s o assistente de produÃ§Ã£o da CSN CarroÃ§arias (Carlos dos Santos Nascimento Lda), uma metalomecÃ¢nica em Mafra, Portugal, que fabrica carroÃ§arias para veÃ­culos comerciais.
-
-EstÃ¡s a falar com: ${colaborador.nome} (${colaborador.funcao})
-LÃ­ngua preferida: ${langLabel[colaborador.lang] || "PortuguÃªs"}
-
-REGRAS:
-- Responde SEMPRE na lÃ­ngua do colaborador (pt/en/ua)
-- SÃª conciso e prÃ¡tico â€” Ã© uma fÃ¡brica, nÃ£o um escritÃ³rio
-- Usa emojis com moderaÃ§Ã£o para clareza visual
-- Quando o colaborador pede tarefas, mostra primeiro as "em_curso", depois "pendentes"
-- Quando o colaborador diz que acabou uma tarefa, confirma e mostra a prÃ³xima
-- Quando hÃ¡ notas numa fase, mostra-as
-- Nunca inventes dados â€” usa apenas o que estÃ¡ no contexto fornecido
-- Se o colaborador pedir algo fora do Ã¢mbito (receitas, piadas...), redireciona educadamente para o trabalho
-- Formata as respostas de forma legÃ­vel com listas e negrito quando Ãºtil
-
-DETEÃ‡ÃƒO DE PEDIDOS DE ORÃ‡AMENTO:
-Quando o utilizador mencionar orÃ§amento, carroÃ§aria, basculante, caixa, estrado, furgÃ£o, plataforma, grua ou qualquer trabalho para veÃ­culo:
-
-REGRA FUNDAMENTAL: Faz APENAS UMA pergunta de cada vez. NUNCA listes mÃºltiplas perguntas. NUNCA mostres formulÃ¡rios. Conversa naturalmente como se estivesses ao telefone com o cliente.
-
-Fluxo:
-1. ComeÃ§a SEMPRE por perguntar: "O veÃ­culo Ã© novo ou usado?"
-2. Espera resposta. Depois faz a PRÃ“XIMA pergunta apenas.
-3. Se USADO â†’ pede matrÃ­cula â†’ pede foto do DUA â†’ pede tipo de trabalho â†’ pede medidas
-4. Se NOVO â†’ pede marca/modelo â†’ pede PBT â†’ pede tipo carroÃ§aria â†’ pede medidas â†’ pergunta equipamentos
-5. Em AMBOS â†’ pede nome do cliente â†’ pede telefone â†’ pede email
-6. Quando tiveres tudo (mÃ­nimo: nome, contacto, marca/modelo, tipo trabalho) â†’ mostra RESUMO â†’ pede confirmaÃ§Ã£o â†’ sÃ³ entÃ£o usa criar_lead
-
-EXEMPLO CORRETO (uma pergunta por mensagem):
-- Utilizador: "Preciso de orÃ§amento para uma caixa aberta"
-- Tu: "O veÃ­culo Ã© novo ou usado?"
-- Utilizador: "Novo"
-- Tu: "Qual a marca e modelo?"
-- Utilizador: "Mercedes Sprinter"
-- Tu: "Qual o PBT?"
-- (continua assim, UMA pergunta de cada vez)
-
-DADOS ATUAIS DAS OBRAS:
-${JSON.stringify(obras, null, 2)}
-
-TIMER ATIVO:
-${timer ? JSON.stringify(timer, null, 2) : "Nenhum timer ativo"}
-
-ANÃLISE DE IMAGENS:
-Quando recebes imagens, analisa-as com atenÃ§Ã£o. Extrai toda a informaÃ§Ã£o visÃ­vel: matrÃ­cula, VIN, marca, modelo, tipo de carroÃ§aria actual, dados de documentos fotografados (DUA, FAM, certificados). Nunca digas que nÃ£o consegues ler â€” tenta sempre. Se a imagem estiver desfocada, diz exactamente que parte nÃ£o consegues ler e pede nova foto sÃ³ dessa parte. Se vires um veÃ­culo, descreve-o e pergunta se o colaborador quer registar como lead ou associar a uma obra.
-
-Usa as tools disponÃ­veis para consultar dados atualizados e executar aÃ§Ãµes.`
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function POST(req: NextRequest) {
   try {
-    const { colaborador_id, message, history, images } = await req.json()
+    const body = await req.json()
+    const {
+      obra_id,
+      tipo_carrocaria,
+      marca, modelo, matricula, vin, cod_homologacao,
+      comprimento, largura, altura,
+      dist_eixo_frente, dist_eixo_retaguarda,
+      peso_bruto, tara_total, tara_frontal, tara_traseira,
+    } = body
 
-    if (!colaborador_id || !message) {
-      return NextResponse.json({ error: "Faltam campos" }, { status: 400 })
-    }
+    const pdfDoc = await PDFDocument.create()
 
-    const supabase = getServiceSupabase()
+    // A4 portrait: 595 x 842 pt
+    const page = pdfDoc.addPage([595, 842])
+    const { width, height } = page.getSize()
 
-    // 1. Buscar dados do colaborador
-    const { data: colab } = await supabase
-      .from("colaboradores")
-      .select("*")
-      .eq("id", colaborador_id)
-      .single()
+    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
+    const fontReg  = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
-    if (!colab) {
-      return NextResponse.json({ error: "Colaborador nÃ£o encontrado" }, { status: 404 })
-    }
+    const BLACK = rgb(0, 0, 0)
+    const GRAY  = rgb(0.4, 0.4, 0.4)
 
-    // 2. Buscar obras em produÃ§Ã£o
-    const { data: obras } = await supabase
-      .from("obras")
-      .select("*, fases_obra(*)")
-      .in("estado", ["producao", "espera"])
+    const L = 56   // left margin
+    const R = width - 56  // right margin
+    const W = R - L       // content width
 
-    // 3. Buscar timer ativo
-    const { data: timer } = await supabase
-      .from("timetracking")
-      .select("*, fases_obra(nome, obra_id)")
-      .eq("colaborador_id", colaborador_id)
-      .is("fim", null)
-      .maybeSingle()
-
-    // 4. Montar system prompt
-    const systemPrompt = buildSystemPrompt(colab, obras || [], timer)
-
-    // 5. Montar mensagens
-    // Build user content: if images are attached, create multi-block content
-    type ImageAttachment = { data: string; media_type: string }
-    const hasImages = images && Array.isArray(images) && images.length > 0
-    if (hasImages) {
-      console.log(`[chat] Received ${images.length} image(s) from ${colab.nome}, sizes: ${(images as ImageAttachment[]).map(i => `${(i.data.length / 1024).toFixed(0)}KB`).join(", ")}`)
-    }
-    let userContent: Anthropic.ContentBlockParam[] | string = message
-    if (hasImages) {
-      const blocks: Anthropic.ContentBlockParam[] = []
-      for (const img of images as ImageAttachment[]) {
-        blocks.push({
-          type: "image",
-          source: {
-            type: "base64",
-            media_type: img.media_type as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
-            data: img.data,
-          },
+    // ── LOGO ──────────────────────────────────────────────
+    // Tenta carregar o logo do disco (Next.js server)
+    try {
+      const logoPath = path.join(process.cwd(), "public", "logo-horizontal.png")
+      if (fs.existsSync(logoPath)) {
+        const logoBytes = fs.readFileSync(logoPath)
+        const logoImg = await pdfDoc.embedPng(logoBytes)
+        const logoDims = logoImg.scale(0.18)
+        page.drawImage(logoImg, {
+          x: width / 2 - logoDims.width / 2,
+          y: height - 90,
+          width: logoDims.width,
+          height: logoDims.height,
         })
       }
-      blocks.push({ type: "text", text: message })
-      userContent = blocks
+    } catch {
+      // Se logo não disponível, desenha placeholder texto
+      page.drawText("CSN", {
+        x: width / 2 - 20, y: height - 70,
+        size: 28, font: fontBold, color: BLACK,
+      })
+      page.drawText("TRANSFORMACAO DE VEICULOS", {
+        x: width / 2 - 80, y: height - 86,
+        size: 8, font: fontBold, color: BLACK,
+      })
     }
 
-    const messages: Anthropic.MessageParam[] = [
-      ...(history || []).slice(-20).map((m: { role: string; content: string }) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      })),
-      { role: "user" as const, content: userContent },
+    let y = height - 110
+
+    // ── LINHA SEPARADORA ──────────────────────────────────
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
+    y -= 22
+
+    // ── TÍTULO ────────────────────────────────────────────
+    const title = "TERMO DE RESPONSABILIDADE"
+    const titleW = fontBold.widthOfTextAtSize(title, 14)
+    page.drawText(title, {
+      x: width / 2 - titleW / 2, y,
+      size: 14, font: fontBold, color: BLACK,
+    })
+    y -= 6
+    page.drawLine({ start: { x: L, y }, end: { x: R, y }, thickness: 0.5, color: BLACK })
+    y -= 20
+
+    // ── TEXTO JURÍDICO ────────────────────────────────────
+    const tipoCarrocaria = (tipo_carrocaria || "").toUpperCase()
+
+    const textoIntro = [
+      "Eu, abaixo assinado com poderes para o efeito, na qualidade de gerente da empresa Carlos dos Santos",
+      "Nascimento, Lda, com o n.\u00BA de contribuinte 500 861790 e sede em Rua da Industria n.\u00BA 8, Casal do",
+      "Rodo, 2640-216 Encarnacao, declara que a carrocaria produzida e do Tipo:",
     ]
 
-    // 6. Chamar Claude API (more tokens when processing images)
-    let response = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: hasImages ? 4096 : 2048,
-      system: systemPrompt,
-      tools: CLAUDE_TOOLS,
-      messages,
+    for (const linha of textoIntro) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      y -= 13
+    }
+    y -= 4
+
+    // Tipo de carroçaria em bold centrado
+    const tipoW = fontBold.widthOfTextAtSize(tipoCarrocaria, 11)
+    page.drawText(tipoCarrocaria, {
+      x: width / 2 - tipoW / 2, y,
+      size: 11, font: fontBold, color: BLACK,
+    })
+    y -= 16
+
+    const textoConf = [
+      "esta em conformidade com as disposicoes legais aplicaveis, cumpre com as caracteristicas definidas na",
+      "folha de aprovacao de modelo e obedece as caracteristicas estabelecidas na Norma Portuguesa em",
+      "vigor.",
+    ]
+
+    for (const linha of textoConf) {
+      page.drawText(linha, { x: L, y, size: 9, font: fontReg, color: BLACK })
+      y -= 13
+    }
+    y -= 16
+
+    // ── TABELA VEÍCULO ────────────────────────────────────
+    const tableTop = y
+    const rowH = 18
+    const col1W = 120
+    const tableW = W
+
+    // Header "Veículo:"
+    page.drawRectangle({ x: L, y: tableTop - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    page.drawText("Veiculo:", { x: L + 4, y: tableTop - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y = tableTop - rowH
+
+    // Linhas da tabela veículo
+    const veiculoRows = [
+      ["Marca:", marca || "-"],
+      ["Modelo:", modelo || "-"],
+      ["Matricula:", matricula || "-"],
+      ["VIN:", vin || "-"],
+      ["Cod. Homologacao", cod_homologacao || "-"],
+    ]
+
+    for (const [label, value] of veiculoRows) {
+      page.drawRectangle({ x: L, y: y - rowH, width: tableW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      page.drawText(label, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      page.drawText(value, { x: L + col1W, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+      y -= rowH
+    }
+
+    y -= 16
+
+    // ── TABELA DIMENSÕES / PESOS (lado a lado) ───────────
+    const halfW = W / 2
+    const col2Start = L + halfW
+
+    // Header linha 1: "Carroçaria" e "Conjunto"
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr1W = fontBold.widthOfTextAtSize("Carrocaria", 9)
+    page.drawText("Carrocaria", { x: L + halfW / 2 - hdr1W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr2W = fontBold.widthOfTextAtSize("Conjunto", 9)
+    page.drawText("Conjunto", { x: col2Start + halfW / 2 - hdr2W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    // Header linha 2: "Dimensões exteriores (mm)" e "Pesos (Kg)"
+    page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr3W = fontBold.widthOfTextAtSize("Dimensoes exteriores (mm)", 9)
+    page.drawText("Dimensoes exteriores (mm)", { x: L + halfW / 2 - hdr3W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+
+    page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+    const hdr4W = fontBold.widthOfTextAtSize("Pesos (Kg)", 9)
+    page.drawText("Pesos (Kg)", { x: col2Start + halfW / 2 - hdr4W / 2, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+    y -= rowH
+
+    // Linhas dimensões + pesos lado a lado
+    const dimCol = 100  // largura coluna label esquerda
+    const pesoCol = 110 // largura coluna label direita
+
+    const dimRows = [
+      ["Comprimento", comprimento ? String(comprimento) : "-"],
+      ["Largura", largura ? String(largura) : "-"],
+      ["Altura", altura ? String(altura) : "-"],
+      ["Dist. eixo ret. a frente", dist_eixo_frente ? String(dist_eixo_frente) : "-"],
+      ["Dist. eixo ret. a retaguarda", dist_eixo_retaguarda ? String(dist_eixo_retaguarda) : "-"],
+    ]
+
+    const pesoRows = [
+      ["Peso bruto:", peso_bruto ? String(peso_bruto) : "-"],
+      ["Peso tara total:", tara_total ? String(tara_total) : "-"],
+      ["Peso tara frontal:", tara_frontal ? String(tara_frontal) : "-"],
+      ["Peso tara traseira:", tara_traseira ? String(tara_traseira) : "-"],
+      ["", ""],
+    ]
+
+    const maxRows = Math.max(dimRows.length, pesoRows.length)
+    for (let i = 0; i < maxRows; i++) {
+      const [dLabel, dVal] = dimRows[i] || ["", ""]
+      const [pLabel, pVal] = pesoRows[i] || ["", ""]
+
+      // Lado esquerdo — dimensões
+      page.drawRectangle({ x: L, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (dLabel) page.drawText(dLabel, { x: L + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (dVal) page.drawText(dVal, { x: L + dimCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      // Lado direito — pesos
+      page.drawRectangle({ x: col2Start, y: y - rowH, width: halfW, height: rowH, borderColor: BLACK, borderWidth: 0.5 })
+      if (pLabel) page.drawText(pLabel, { x: col2Start + 4, y: y - rowH + 5, size: 9, font: fontBold, color: BLACK })
+      if (pVal) page.drawText(pVal, { x: col2Start + pesoCol, y: y - rowH + 5, size: 9, font: fontReg, color: BLACK })
+
+      y -= rowH
+    }
+
+    y -= 30
+
+    // ── LOCAL E DATA ──────────────────────────────────────
+    const dataGeracao = new Date()
+    const meses = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    const dataStr = `Encarnacao, ${String(dataGeracao.getDate()).padStart(2,"0")} de ${meses[dataGeracao.getMonth()]} de ${dataGeracao.getFullYear()}`
+    page.drawText(dataStr, { x: L, y, size: 9, font: fontReg, color: BLACK })
+
+    y -= 60
+
+    // ── ASSINATURA ────────────────────────────────────────
+    const sigW = 200
+    const sigX = width / 2 - sigW / 2
+    page.drawLine({ start: { x: sigX, y: y + 10 }, end: { x: sigX + sigW, y: y + 10 }, thickness: 0.5, color: BLACK })
+
+    const nome = "Duarte da Cunha Martins Bustorff-Silva"
+    const nomeW = fontBold.widthOfTextAtSize(nome, 10)
+    page.drawText(nome, {
+      x: width / 2 - nomeW / 2, y,
+      size: 10, font: fontBold, color: BLACK,
+    })
+    y -= 14
+
+    const certidao = "Certidao Permanente Codigo de acesso: 3172-1374-8252"
+    const certW = fontReg.widthOfTextAtSize(certidao, 8)
+    page.drawText(certidao, {
+      x: width / 2 - certW / 2, y,
+      size: 8, font: fontReg, color: GRAY,
     })
 
-    // 7. Processar tool calls (loop para permitir mÃºltiplas tool calls)
-    let iterations = 0
-    while (response.stop_reason === "tool_use" && iterations < 5) {
-      iterations++
-      const toolUseBlocks = response.content.filter(
-        (block): block is Anthropic.ToolUseBlock => block.type === "tool_use"
-      )
+    // ── GUARDAR NO SUPABASE ───────────────────────────────
+    const pdfBytes = await pdfDoc.save()
+    const dataStr2 = new Date().toISOString().slice(0, 10).replace(/-/g, "")
+    const fileName = `TERM_${obra_id}_${dataStr2}.pdf`
+    const storagePath = `termos/${fileName}`
 
-      const toolResults: Anthropic.ToolResultBlockParam[] = []
-      for (const toolUse of toolUseBlocks) {
-        const result = await executeTool(
-          toolUse.name,
-          toolUse.input as Record<string, unknown>,
-          colaborador_id
-        )
-        toolResults.push({
-          type: "tool_result",
-          tool_use_id: toolUse.id,
-          content: result,
-        })
-      }
+    const { error: uploadError } = await supabase.storage
+      .from("documentos")
+      .upload(storagePath, pdfBytes, { contentType: "application/pdf", upsert: true })
 
-      // Continuar conversa com resultados
-      messages.push({ role: "assistant", content: response.content })
-      messages.push({ role: "user", content: toolResults })
-
-      response = await anthropic.messages.create({
-        model: "claude-sonnet-4-6",
-        max_tokens: 2048,
-        system: systemPrompt,
-        tools: CLAUDE_TOOLS,
-        messages,
-      })
+    if (uploadError) {
+      console.error("Erro upload:", uploadError)
+      return NextResponse.json({ error: "Erro ao guardar PDF" }, { status: 500 })
     }
 
-    // 8. Extrair texto da resposta
-    const responseText = response.content
-      .filter((block): block is Anthropic.TextBlock => block.type === "text")
-      .map((block) => block.text)
-      .join("\n")
+    const { data: signedUrl } = await supabase.storage
+      .from("documentos")
+      .createSignedUrl(storagePath, 60 * 60 * 24 * 7)
 
-    // 9. Guardar mensagens na DB
-    const { data: msgs } = await supabase.from("mensagens").insert([
-      { colaborador_id, role: "user", content: message },
-      {
-        colaborador_id,
-        role: "assistant",
-        content: responseText,
-        metadata: { tool_calls: iterations > 0 },
-      },
-    ]).select("id")
+    return NextResponse.json({
+      sucesso: true,
+      storage_path: storagePath,
+      download_url: signedUrl?.signedUrl ?? null,
+      file_name: fileName,
+    })
 
-    // 10. Audit
-    if (msgs && msgs.length > 0) {
-      await audit({
-        entidade_tipo: "mensagem",
-        entidade_id: String(msgs[0].id),
-        acao: "criar",
-        utilizador_id: colaborador_id,
-        utilizador_nome: colab.nome,
-        metadata: { tool_calls: iterations > 0 },
-      })
-    }
-
-    return NextResponse.json({ response: responseText })
-  } catch (error) {
-    console.error("Chat API error:", error)
-    return NextResponse.json(
-      { error: "Erro ao processar mensagem" },
-      { status: 500 }
-    )
+  } catch (err) {
+    console.error("Erro gerar-termo:", err)
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 })
   }
 }
-
