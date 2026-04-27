@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Arquitectura S56</title>
+<style>
+:root{
+  --bg:#fafaf7;--ink:#1a1a1a;--muted:#6b6858;--line:#e5e1d5;
+  --accent:#c9a961;--good:#2d7a4e;--warn:#c77b2a;--bad:#a33b3b;--soft:#faf7ed;
+  --l4:#5a4a8a;--l3:#3a6a8a;--l2:#2a6a5a;--l1:#6a5a2a;--l0:#6a3a2a;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:13px;max-width:1200px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+.level{margin:20px 0;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.level-header{padding:10px 16px;font-weight:600;font-size:13px;letter-spacing:.03em;color:white}
+.lh-l4{background:var(--l4)}
+.lh-l3{background:var(--l3)}
+.lh-l2{background:var(--l2)}
+.lh-l1{background:var(--l1)}
+.lh-l0{background:var(--l0)}
+.level-body{padding:12px 16px;background:#fff}
+.modules{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.module{border-radius:6px;padding:10px 14px;min-width:160px;flex:1}
+.mod-l4{background:#eae6f3;border:1px solid #c5bde8}
+.mod-l3{background:#e0edf3;border:1px solid #b5d0e0}
+.mod-l2{background:#e0f0ec;border:1px solid #b5d8d0}
+.mod-l0{background:#f3ede0;border:1px solid #d8c8a0}
+.mod-title{font-weight:600;font-size:12px;margin-bottom:4px}
+.mod-items{font-size:11px;color:var(--muted);line-height:1.6}
+.pill{display:inline-block;padding:1px 7px;font-size:10px;border-radius:8px;font-weight:600}
+.pill.ok{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.new{background:#e0edf3;color:var(--l3)}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:10px;background:var(--soft)}
+.bar{height:7px;background:var(--line);border-radius:3px;overflow:hidden;margin:3px 0}
+.bar>div{height:100%;border-radius:3px}
+.bg{background:var(--good)}
+.bw{background:var(--warn)}
+.bb{background:var(--bad)}
+h3{font-size:13px;font-weight:600;margin:14px 0 6px 0;color:var(--ink)}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center}
+.success{background:#e8f3ec;border-left:3px solid var(--good);padding:8px 12px;font-size:12px;color:#1a4a2e;border-radius:0 4px 4px 0;margin:12px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — Arquitectura do Sistema (S56)</h1>
+  <div class="sub">Sessão S56 · 2026-04-26 · ISA-95/IEC 62264 · csn-producao.vercel.app · HEAD <preencher></div>
+</header>
+
+<div class="success">
+  S56: FUSO catalog fechado (83 variantes na BD). Fernando cria leads sem bloquear por email. Deploy Vercel actualizado.
+</div>
+
+<!-- L4 -->
+<div class="level">
+  <div class="level-header lh-l4">L4 — Business Planning Level (BPL) · ISA-95 Part 4 · ISO 31000 · ISO 14001</div>
+  <div class="level-body">
+    <div class="modules">
+      <div class="module mod-l4">
+        <div class="mod-title">FIN — Financeiro</div>
+        <div class="mod-items">e-Fatura 4409 registos<br>InvoiceXpress AT cert 192<br>IES 2024 processada<br>Custos fixos €112.6k/ano</div>
+      </div>
+      <div class="module mod-l4">
+        <div class="mod-title">COM — Comercial</div>
+        <div class="mod-items">CRM pipeline (tickets→leads→obras)<br>Marta (persona C2, face pública)<br>CSN Connect B2B (planeado)<br>415+ concessionários mapeados<br>Side biz tribasculantes <span class="pill new">S56</span></div>
+      </div>
+      <div class="module mod-l4">
+        <div class="mod-title">ENG — Engenharia</div>
+        <div class="mod-items">Inventor + iLogic (2 rules)<br>Convenção CSN finalizada<br>CSN NestHub arquitectura<br>Almacam Tube (Q4 2026)<br>variaveis_ilogic 80+ params<br>RAG: 41.681 chunks ✓ <span class="pill ok">S56</span><br>knowledge_inventor 7.419 ✓<br>Endpoint unificado ⚠️ deploy</div>
+      </div>
+      <div class="module mod-l4">
+        <div class="mod-title">QMS-L4 · CST · RSH</div>
+        <div class="mod-items">Prontidão auditoria ISO 9001 60%<br>EN 1090 40% · Marcação CE 45%<br>Leonor (aftersales)<br>R_AGENT research (12 skills)</div>
+      </div>
+    </div>
+    <h3>Catálogo de Chassis — estado S56</h3>
+    <table>
+      <tr><th>Marca</th><th>Variantes</th><th>Na BD</th><th>Completude</th><th>Estado</th></tr>
+      <tr><td>Renault Master XDD</td><td>20</td><td>20</td><td><div class="bar"><div class="bg" style="width:100%"></div></div></td><td><span class="pill ok">S46</span></td></tr>
+      <tr><td>FUSO Canter diesel LHD</td><td>60</td><td>60</td><td><div class="bar"><div class="bg" style="width:100%"></div></div></td><td><span class="pill ok">✓ S56</span></td></tr>
+      <tr><td>FUSO eCanter LHD</td><td>23</td><td>23</td><td><div class="bar"><div class="bw" style="width:87%"></div></div></td><td><span class="pill warn">Audit 10 S52</span></td></tr>
+      <tr><td>Mercedes / Iveco / Outros</td><td>0</td><td>0</td><td><div class="bar"><div class="bb" style="width:0%"></div></div></td><td>—</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- L3 -->
+<div class="level">
+  <div class="level-header lh-l3">L3 — Manufacturing Operations Management (MOM) · MESA-11 · ISO 22400 · ISO 45001</div>
+  <div class="level-body">
+    <div class="modules">
+      <div class="module mod-l3">
+        <div class="mod-title">PRD — Produção</div>
+        <div class="mod-items">Fernando (persona C2)<br>chat/route.ts — fix email <span class="pill ok">S56</span><br>criar_lead tool operacional<br>Timer / ponto / obras</div>
+      </div>
+      <div class="module mod-l3">
+        <div class="mod-title">DOC — Documental</div>
+        <div class="mod-items">Agente Documental (16 cat.)<br>Apps Script v8 email→Router<br>Router v9 identificar_remetente<br>skill analise-ficha-fuso</div>
+      </div>
+      <div class="module mod-l3">
+        <div class="mod-title">QMS — Qualidade</div>
+        <div class="mod-items">registar-nc (EN 9606/5817)<br>nao_conformidades tabela<br>ITP templates<br>EN ISO 17637 (visual)</div>
+      </div>
+      <div class="module mod-l3">
+        <div class="mod-title">MNT · PER · INV</div>
+        <div class="mod-items">Manutenção equipamentos<br>Carolina (persona RH)<br>45 recibos Jan25-Mar26<br>Stocks + fornecedores</div>
+      </div>
+      <div class="module mod-l3">
+        <div class="mod-title">NestHub <span class="pill new">S54</span></div>
+        <div class="mod-items">Arquitectura 4 etapas definida<br>nesting_queue (criar S56)<br>Agregação dominical (cron)<br>Rastreabilidade peça→obra</div>
+      </div>
+    </div>
+    <h3>Worker Portal — colaboradores</h3>
+    <table>
+      <tr><th>Colaborador</th><th>PIN</th><th>Função</th><th>Estado</th></tr>
+      <tr><td>Bohdan</td><td>1001</td><td>Produção</td><td><span class="pill ok">Activo</span></td></tr>
+      <tr><td>José Júlio</td><td>1002</td><td>Produção</td><td><span class="pill ok">Activo</span></td></tr>
+      <tr><td>João António</td><td>1003</td><td>Produção</td><td><span class="pill warn">A verificar registo Nissan</span></td></tr>
+      <tr><td>Duarte</td><td>1234</td><td>Admin</td><td><span class="pill ok">Activo</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- L2 -->
+<div class="level">
+  <div class="level-header lh-l2">L2 — Supervisory Control · IEC 62443 · ISO 50001</div>
+  <div class="level-body">
+    <div class="modules">
+      <div class="module mod-l2">
+        <div class="mod-title">Router v9</div>
+        <div class="mod-items">identificar_remetente() 4 níveis<br>18.169 emails arquivados<br>Tickets ISA-95<br>SAPO 10.992 emails</div>
+      </div>
+      <div class="module mod-l2">
+        <div class="mod-title">Brain — Skills Engine</div>
+        <div class="mod-items">239 skills (127 community + 112 custom)<br>16 secções ISA-95<br>Voyage AI 2927 embeddings<br>pgvector Supabase</div>
+      </div>
+      <div class="module mod-l2">
+        <div class="mod-title">Bodor A3T6</div>
+        <div class="mod-items">6kW fibra híbrida<br>3000×1500mm chapa<br>Corte tubular incluído<br>Controlador Weihong</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- L1/L0 -->
+<div class="level">
+  <div class="level-header lh-l0">L0/L1 — Physical / Sensing · EN 1090 · EN ISO 3834 · EN 12642</div>
+  <div class="level-body">
+    <div class="modules">
+      <div class="module mod-l0">
+        <div class="mod-title">Carroçarias produzidas</div>
+        <div class="mod-items">Basculantes, caixas abertas<br>Estrados, furgões<br>3.5T–8.5T<br>PT / FR / DE / ES</div>
+      </div>
+      <div class="module mod-l0">
+        <div class="mod-title">Chassis suportados</div>
+        <div class="mod-items">Renault Master XDD ✓<br>FUSO Canter LHD ✓ (S56)<br>Mercedes (S56+)<br>Iveco (S56+)</div>
+      </div>
+      <div class="module mod-l0">
+        <div class="mod-title">Normas produto</div>
+        <div class="mod-items">Reg. 2018/858 (homologação)<br>Reg. 2019/2144 (GSR)<br>EN 12642 L/XL<br>UNECE R48/R73/R58</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Prontidão Auditoria — NUNCA REMOVER -->
+<div class="level">
+  <div class="level-header" style="background:var(--accent);color:white">Prontidão para Auditoria — Certificações CSN</div>
+  <div class="level-body">
+    <table>
+      <tr><th>Certificação</th><th>Progresso</th><th>Coberto</th><th>Falta</th><th>Fora SAAS</th></tr>
+      <tr>
+        <td><strong>ISO 9001</strong></td>
+        <td><div class="bar"><div class="bw" style="width:60%"></div></div>60%</td>
+        <td>Processos, objectivos, NC, controlo docs</td>
+        <td>WPS/WPQR, auditoria interna formal, revisão gestão</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>Marcação CE (Reg. 2018/858)</strong></td>
+        <td><div class="bar"><div class="bw" style="width:45%"></div></div>45%</td>
+        <td>COC multi-etapa, fluxo documental</td>
+        <td>COC electrónico (deadline jul/2026), DoP por obra</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>EN 1090</strong></td>
+        <td><div class="bar"><div class="bw" style="width:40%"></div></div>40%</td>
+        <td>EXC2 definida, ITP tipo criado</td>
+        <td>WPS qualificados, WPQR lab, coordenador soldadura, FPC manual</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>ISO 14001</strong></td>
+        <td><div class="bar"><div class="bb" style="width:25%"></div></div>25%</td>
+        <td>Aspectos ambientais mapeados</td>
+        <td>Monitorização consumos, resíduos, auditoria</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>ISO 45001</strong></td>
+        <td><div class="bar"><div class="bb" style="width:20%"></div></div>20%</td>
+        <td>Matriz riscos SST inicial</td>
+        <td>EPI registos, formações, investigação acidentes</td>
+        <td>—</td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px;font-style:italic">
+      Valores herdados de S52. Esta secção NUNCA deve ser removida de nenhuma versão da arquitectura. Extensível com novas normas (EN 12642, EN ISO 3834, VDI 2700).
+    </p>
+  </div>
+</div>
+
+<footer>
+  CSN Opus · csn-architecture-OPUS-S56.html · 2026-04-26 · ISA-95/IEC 62264 · NIF 500 861 790 · Não sobrescrever versões anteriores
+</footer>
+</body>
+</html>

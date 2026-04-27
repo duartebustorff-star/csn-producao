@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Skills &amp; Tools Registry S56</title>
+<style>
+:root{
+  --bg:#fafaf7;--ink:#1a1a1a;--muted:#6b6858;--line:#e5e1d5;
+  --accent:#c9a961;--good:#2d7a4e;--warn:#c77b2a;--bad:#a33b3b;--soft:#faf7ed;
+  --custom:#5a4a8a;--hub:#3a6a8a;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;border-left:3px solid var(--accent);padding-left:8px}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;background:var(--soft)}
+td.n{text-align:right}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.pill.new{background:#faf7ed;color:var(--accent);border:1px solid var(--accent)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.delta{font-size:11px;color:var(--muted);margin-left:6px}
+.delta.up{color:var(--good)}
+code{background:var(--soft);padding:1px 4px;border-radius:3px;font-size:12px;font-family:monospace}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — Skills &amp; Tools Registry (S56)</h1>
+  <div class="sub">Sessão S56 · 2026-04-26 · 239 skills totais · 112 custom (IP CSN) · RAG Inventor 41.681 chunks ✓</div>
+</header>
+
+<section>
+  <h2>Snapshot — agregados</h2>
+  <div class="grid-4">
+    <div class="card"><div class="l">Skills totais</div><div class="n">239</div><div class="l">= (sem alteração S56)</div></div>
+    <div class="card"><div class="l">Community skills</div><div class="n">127</div><div class="l">base alirezarezvani</div></div>
+    <div class="card"><div class="l">Custom CSN (IP)</div><div class="n">112</div><div class="l">=</div></div>
+    <div class="card"><div class="l">Secções ISA-95 cobertas</div><div class="n">16</div><div class="l">=</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Novidades S56 — Tools &amp; Integrações</h2>
+  <table>
+    <tr><th>Item</th><th>Alteração</th><th>Estado</th></tr>
+    <tr>
+      <td><code>src/app/api/chat/route.ts</code></td>
+      <td>System prompt Fernando: email opcional, lead criada com nome+telefone+veículo</td>
+      <td><span class="pill good">✓ Deployed a13015e</span></td>
+    </tr>
+    <tr>
+      <td><code>tsconfig.json</code></td>
+      <td>scripts/ excluído do build Next.js (import_fuso_xlsx.ts usava xlsx/dotenv)</td>
+      <td><span class="pill good">✓ Deployed 121d08c</span></td>
+    </tr>
+    <tr>
+      <td><code>fichas_tecnicas_fuso</code></td>
+      <td>+24 colunas (alternator_a/v, brake_auxiliary, capacity_cc, etc.) + 2 constraints corrigidas</td>
+      <td><span class="pill good">✓ Supabase</span></td>
+    </tr>
+    <tr>
+      <td><code>v_catalogo_fuso</code></td>
+      <td>83 rows (60 diesel + 23 eCanter) — catálogo FUSO fechado</td>
+      <td><span class="pill good">✓ Operacional</span></td>
+    </tr>
+    <tr>
+      <td><code>research_findings</code></td>
+      <td>Side business tribasculantes registado (tipo: mercado, relevância 9/10)</td>
+      <td><span class="pill good">✓ Registado</span></td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h2>Distribuição por secção ISA-95 (custom CSN, sem alteração S56)</h2>
+  <table>
+    <tr><th>Camada</th><th>Secção</th><th>Skills custom</th><th>Delta S56</th><th>Notas</th></tr>
+    <tr><td>L4-BPL</td><td>FIN</td><td class="n">11</td><td>=</td><td>faturação, IES, custo/hora</td></tr>
+    <tr><td>L4-BPL</td><td>COM</td><td class="n">14</td><td>=</td><td>CSN Connect, Marta, CRM</td></tr>
+    <tr><td>L4-BPL</td><td>ENG</td><td class="n">18</td><td>=</td><td>export-nesting-inventor, modelacao-parametrica-longarina</td></tr>
+    <tr><td>L4-BPL</td><td>QMS-L4</td><td class="n">6</td><td>=</td><td>auditoria, normas, compliance</td></tr>
+    <tr><td>L4-BPL</td><td>CST</td><td class="n">5</td><td>=</td><td>aftersales, Leonor</td></tr>
+    <tr><td>L4-BPL</td><td>RSH</td><td class="n">12</td><td>=</td><td>research, scraping, R_AGENT</td></tr>
+    <tr><td>L3-MOM</td><td>PRD</td><td class="n">9</td><td>=</td><td>produção, obras</td></tr>
+    <tr><td>L3-MOM</td><td>QMS</td><td class="n">8</td><td>=</td><td>registar-nc, EN 1090, EN ISO 5817</td></tr>
+    <tr><td>L3-MOM</td><td>MNT</td><td class="n">3</td><td>=</td><td>manutenção</td></tr>
+    <tr><td>L3-MOM</td><td>PER</td><td class="n">5</td><td>=</td><td>HR, Carolina</td></tr>
+    <tr><td>L3-MOM</td><td>DOC</td><td class="n">10</td><td>=</td><td>Agente Documental, analise-ficha-fuso</td></tr>
+    <tr><td>L3-MOM</td><td>INV</td><td class="n">7</td><td>=</td><td>fornecedores, Chagas, Pecol, FUSO</td></tr>
+    <tr><td>L2/L1/L0</td><td>—</td><td class="n">4</td><td>=</td><td>skills instrumentais</td></tr>
+    <tr style="background:var(--soft);font-weight:600">
+      <td colspan="2">TOTAL custom CSN</td><td class="n">112</td><td>=</td><td>IP — base de CSN Brain como produto futuro</td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h2>Tools &amp; Integrações — estado S56</h2>
+  <table>
+    <tr><th>Integração</th><th>Âmbito</th><th>Estado</th></tr>
+    <tr><td>Supabase (<code>oysfxhlzilazeznpaafc</code>)</td><td>~90 tabelas</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Claude API</td><td>Haiku (routing), Sonnet 4.6 (worker portal)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Vercel</td><td><code>csn-producao.vercel.app</code></td><td><span class="pill good">Operacional — 1 deploy S56</span></td></tr>
+    <tr><td>GitHub</td><td><code>duartebustorff-star/csn-producao</code></td><td><span class="pill good">HEAD a13015e</span></td></tr>
+    <tr><td>Google Apps Script v8</td><td>Email → Storage → Router → Ag. Documental</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>Voyage AI voyage-3</td><td>Embeddings pgvector (2927)</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>InvoiceXpress</td><td>Faturação AT cert 192</td><td><span class="pill good">Operacional</span></td></tr>
+    <tr><td>v_catalogo_fuso</td><td>83 variantes FUSO (60 diesel + 23 eCanter)</td><td><span class="pill good">✓ Fechado S56</span></td></tr>
+    <tr><td>Autodesk Inventor + iLogic</td><td>2 rules + convenção CSN</td><td><span class="pill good">Produção ready</span></td></tr>
+    <tr><td>Bodor A3T6</td><td>6kW fibra híbrida 3000×1500mm Weihong</td><td><span class="pill good">Em produção</span></td></tr>
+    <tr><td>R_AGENT</td><td>Satélite web search</td><td><span class="pill warn">Ligação Router pendente</span></td></tr>
+    <tr><td>Almacam Tube</td><td>Nesting 3D tubo</td><td><span class="pill warn">Investimento Q4 2026</span></td></tr>
+    <tr><td>WhatsApp Business API</td><td>Via BSP</td><td><span class="pill bad">Não configurado</span></td></tr>
+  </table>
+</section>
+
+<footer>
+  CSN Opus · csn-skills-tools-registry-S56.html · 2026-04-26 · Não sobrescrever versões anteriores
+</footer>
+</body>
+</html>

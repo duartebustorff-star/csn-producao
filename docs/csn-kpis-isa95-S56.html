@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — KPIs ISA-95 S56</title>
+<style>
+:root{
+  --bg:#fafaf7; --ink:#1a1a1a; --muted:#6b6858; --line:#e5e1d5;
+  --accent:#c9a961; --good:#2d7a4e; --warn:#c77b2a; --bad:#a33b3b; --soft:#faf7ed;
+  --hub:#3a6a8a;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);
+  color:var(--ink);margin:0;padding:32px;line-height:1.55;font-size:14px;max-width:1120px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+header h1{font-size:22px;margin:0 0 4px 0;font-weight:600}
+header .sub{font-size:12px;color:var(--muted)}
+section{margin:24px 0;padding:16px;background:#fff;border:1px solid var(--line);border-radius:6px}
+section.new{border-left:4px solid var(--hub)}
+h2{font-size:16px;margin:0 0 12px 0;color:var(--ink);font-weight:600;border-left:3px solid var(--accent);padding-left:8px}
+h3{font-size:13px;margin:14px 0 6px 0;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.3px;background:var(--soft)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 8px;font-size:11px;border-radius:10px;font-weight:600}
+.pill.good{background:#e8f3ec;color:var(--good)}
+.pill.warn{background:#fbefdf;color:var(--warn)}
+.pill.bad{background:#f3e4e4;color:var(--bad)}
+.pill.new{background:#e0edf3;color:var(--hub)}
+.delta{font-size:11px;color:var(--muted);margin-left:6px}
+.delta.up{color:var(--good)}
+.delta.down{color:var(--bad)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0}
+.bar>div{height:100%;background:var(--accent)}
+.bar.good>div{background:var(--good)}
+.bar.warn>div{background:var(--warn)}
+.bar.bad>div{background:var(--bad)}
+.footnote{font-size:11px;color:var(--muted);margin-top:8px;font-style:italic}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:10px}
+.card .n{font-size:20px;font-weight:700}
+.card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.disclaimer{background:#fbefdf;border-left:3px solid var(--warn);padding:10px 14px;
+  font-size:12px;color:#6a4a1e;margin:16px 0;border-radius:0 4px 4px 0}
+.success-banner{background:#e8f3ec;border-left:3px solid var(--good);padding:10px 14px;
+  font-size:12px;color:#1a4a2e;margin:16px 0;border-radius:0 4px 4px 0}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>CSN Opus — KPIs ISA-95 (S56)</h1>
+  <div class="sub">Sessão S56 · 2026-04-26 · ISO 22400 alinhados onde aplicável · Deltas vs S54</div>
+</header>
+
+<div class="success-banner">
+  S56 fecha o catálogo FUSO: 83 variantes importadas (60 diesel + 23 eCanter). v_catalogo_fuso operacional.
+  Fix worker portal: Fernando cria leads sem bloquear por email. Deploy Vercel actualizado.
+</div>
+
+<section>
+  <h2>Snapshot — indicadores principais</h2>
+  <div class="grid-4">
+    <div class="card"><div class="l">Tabelas Supabase</div><div class="n">~90</div><div class="l">+3 FUSO S56</div></div>
+    <div class="card"><div class="l">Variantes catalogadas</div><div class="n">103</div><div class="l">= (83 na BD agora)</div></div>
+    <div class="card"><div class="l">Skills</div><div class="n">239</div><div class="l">=</div></div>
+    <div class="card"><div class="l">FUSO importado</div><div class="n">83</div><div class="l">✓ Fechado S56</div></div>
+    <div class="card"><div class="l">Ag. Documental categ.</div><div class="n">16</div><div class="l">=</div></div>
+    <div class="card"><div class="l">Embeddings CSN</div><div class="n">2927</div><div class="l">=</div></div>
+    <div class="card"><div class="l">inventor_rag</div><div class="n">41.681</div><div class="l">✓ voyage-3 S56</div></div>
+    <div class="card"><div class="l">knowledge_inv.</div><div class="n">7.419</div><div class="l">✓ operacional</div></div>
+    <div class="card"><div class="l">Git HEAD</div><div class="n" style="font-size:13px">a13015e</div><div class="l">+3 commits S56</div></div>
+    <div class="card"><div class="l">Vercel deploys S56</div><div class="n">1</div><div class="l">route.ts + tsconfig</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>L3-ENG — Catálogo de chassis (actualizado S56)</h2>
+  <table>
+    <tr><th>Marca</th><th>Variantes</th><th>Na BD</th><th>Completude BBG</th><th>Estado</th></tr>
+    <tr>
+      <td>Renault (Master XDD)</td><td class="n">20</td><td class="n">20</td>
+      <td><div class="bar good"><div style="width:100%"></div></div>100%</td>
+      <td><span class="pill good">Completo S46</span></td>
+    </tr>
+    <tr>
+      <td>FUSO Canter diesel LHD</td><td class="n">60</td><td class="n">60</td>
+      <td><div class="bar good"><div style="width:100%"></div></div>100%</td>
+      <td><span class="pill good">✓ Importado S56</span></td>
+    </tr>
+    <tr>
+      <td>FUSO eCanter LHD</td><td class="n">23</td><td class="n">23</td>
+      <td><div class="bar good"><div style="width:87%"></div></div>87%</td>
+      <td><span class="pill warn">Audit 10 linhas S52 (PDFs EN em falta)</span></td>
+    </tr>
+    <tr>
+      <td>Mercedes Sprinter / Atego</td><td class="n">0</td><td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr>
+      <td>Iveco Daily / Eurocargo</td><td class="n">0</td><td class="n">0</td>
+      <td><div class="bar bad"><div style="width:0%"></div></div>0%</td>
+      <td><span class="pill bad">Não iniciado</span></td>
+    </tr>
+    <tr style="background:var(--soft);font-weight:600">
+      <td>TOTAL</td><td class="n">103</td><td class="n">103</td><td>—</td><td>—</td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h2>L3-MOM — Worker Portal (actualizado S56)</h2>
+  <table>
+    <tr><th>Indicador</th><th>Valor</th><th>Estado</th></tr>
+    <tr><td>Fernando cria lead sem email</td><td>Corrigido</td><td><span class="pill good">✓ Deploy S56</span></td></tr>
+    <tr><td>Email perguntado após lead criada</td><td>Sim</td><td><span class="pill good">Fluxo correcto</span></td></tr>
+    <tr><td>João regista Nissan Cabstar 76-38-71B</td><td>—</td><td><span class="pill warn">A verificar</span></td></tr>
+    <tr><td>Worker portal navegação rebuild</td><td>—</td><td><span class="pill bad">Pendente S56</span></td></tr>
+  </table>
+</section>
+
+<section class="new">
+  <h2>L3-MOM — CSN NestHub (KPIs fundadores, herdado S54)</h2>
+  <div class="grid-5">
+    <div class="card"><div class="l">NEST-1</div><div class="n">—</div><div class="l">% sucata por corte</div></div>
+    <div class="card"><div class="l">NEST-2</div><div class="n">—</div><div class="l">Tempo prog. (min)</div></div>
+    <div class="card"><div class="l">NEST-3</div><div class="n">—</div><div class="l">Piercings/programa</div></div>
+    <div class="card"><div class="l">NEST-4</div><div class="n">—</div><div class="l">Obras/sessão corte</div></div>
+    <div class="card"><div class="l">NEST-5</div><div class="n">—</div><div class="l">% offcuts usados</div></div>
+  </div>
+  <p class="footnote">Baseline a capturar em S56 após criação da tabela nesting_queue.</p>
+</section>
+
+<section>
+  <h2>L4-ENG — Modelação Inventor (herdado S54)</h2>
+  <table>
+    <tr><th>Indicador</th><th>Valor</th><th>Estado</th></tr>
+    <tr><td>Rules iLogic produção-ready</td><td class="n">2</td><td><span class="pill good">CSN_Inventario_Recursivo + CSN_Export_Nesting_v2</span></td></tr>
+    <tr><td>d49 → C_Centro_Long_Ypos</td><td>Instrução enviada</td><td><span class="pill warn">Murtaza a implementar</span></td></tr>
+    <tr><td>RAG inventor_rag</td><td>41.681 embeddings</td><td><span class="pill good">✓ voyage-3 S56</span></td></tr>
+    <tr><td>Endpoint /api/rag/inventor/search</td><td>unified (2 tabelas)</td><td><span class="pill warn">Deploy em curso S56</span></td></tr>
+    <tr><td>Briefing Murtaza DOCX</td><td>gerado S56</td><td><span class="pill good">✓ S56</span></td></tr>
+    <tr><td>Peças paramétricas CSN_PAR_*</td><td class="n">0/4</td><td><span class="pill warn">Backlog Murtaza</span></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>L4-FIN — Financeiro (herdado)</h2>
+  <table>
+    <tr><th>KPI</th><th>Valor</th><th>Fonte</th></tr>
+    <tr><td>Vendas IES 2024</td><td class="n">€435.000</td><td>IES 2024 S47</td></tr>
+    <tr><td>Resultado líquido 2024</td><td class="n">€59.000</td><td>IES 2024</td></tr>
+    <tr><td>Side business tribasculantes (estimativa)</td><td class="n">€90.000/ano</td><td>research_findings S56</td></tr>
+    <tr><td>Custos fixos anuais</td><td class="n">€112.631</td><td>S47</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Prontidão para Auditoria — KPI agregado</h2>
+  <table>
+    <tr><th>Certificação</th><th>Progresso</th><th>Delta S56</th></tr>
+    <tr><td>ISO 9001</td><td><div class="bar good"><div style="width:60%"></div></div>60%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>ISO 14001</td><td><div class="bar warn"><div style="width:25%"></div></div>25%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>ISO 45001</td><td><div class="bar warn"><div style="width:20%"></div></div>20%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>Marcação CE</td><td><div class="bar warn"><div style="width:45%"></div></div>45%</td><td><span class="delta">=</span></td></tr>
+    <tr><td>EN 1090</td><td><div class="bar warn"><div style="width:40%"></div></div>40%</td><td><span class="delta">=</span></td></tr>
+  </table>
+  <p class="footnote">Valores herdados de S52. Reconciliação quando houver progresso real.</p>
+</section>
+
+<footer>
+  CSN Opus · csn-kpis-isa95-S56.html · 2026-04-26 · Não sobrescrever versões anteriores
+</footer>
+</body>
+</html>
