@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     // Buscar lead
     const { data: lead } = await supabase
       .from("leads")
-      .select("tipo_carrocaria, comprimento_ext, largura_ext, altura_ext, pbt, tara")
+      .select("tipo_carrocaria, comprimento_ext, largura_ext, altura_ext, pbt, tara, dist_eixo_frontal_frente, dist_eixo_traseiro_retaguarda")
       .eq("id", obra.lead_id)
       .maybeSingle()
 
@@ -51,7 +51,17 @@ export async function POST(req: NextRequest) {
     const modelo = dav?.modelo || "-"
     const cod_homologacao = dav?.cod_homologacao || "-"
     const peso_bruto = dav?.peso_bruto ? String(dav.peso_bruto) : "-"
-    const tara_total = dav?.tara ? String(dav.tara) : "-"
+    const tara_total = body.tara_total != null
+      ? String(body.tara_total)
+      : (dav?.tara ? String(dav.tara) : "-")
+    const tara_frontal = body.tara_frontal != null ? String(body.tara_frontal) : "-"
+    const tara_traseira = body.tara_traseira != null ? String(body.tara_traseira) : "-"
+    const dist_eixo_ret_frente = body.dist_eixo_ret_frente != null
+      ? String(body.dist_eixo_ret_frente)
+      : (lead?.dist_eixo_frontal_frente != null ? String(lead.dist_eixo_frontal_frente) : "-")
+    const dist_eixo_ret_traseira = body.dist_eixo_ret_traseira != null
+      ? String(body.dist_eixo_ret_traseira)
+      : (lead?.dist_eixo_traseiro_retaguarda != null ? String(lead.dist_eixo_traseiro_retaguarda) : "-")
     const tipo_carrocaria = lead?.tipo_carrocaria || "-"
     const comprimento = lead?.comprimento_ext ? String(lead.comprimento_ext) : "-"
     const largura = lead?.largura_ext ? String(lead.largura_ext) : "-"
@@ -189,15 +199,15 @@ export async function POST(req: NextRequest) {
       ["Comprimento", comprimento],
       ["Largura", largura],
       ["Altura", altura],
-      ["Dist. eixo ret. a frente", "-"],
-      ["Dist. eixo ret. a retaguarda", "-"],
+      ["Dist. eixo ret. a frente", dist_eixo_ret_frente],
+      ["Dist. eixo ret. a retaguarda", dist_eixo_ret_traseira],
     ]
 
     const pesoRows = [
       ["Peso bruto:", peso_bruto],
       ["Peso tara total:", tara_total],
-      ["Peso tara frontal:", "-"],
-      ["Peso tara traseira:", "-"],
+      ["Peso tara frontal:", tara_frontal],
+      ["Peso tara traseira:", tara_traseira],
       ["", ""],
     ]
 
