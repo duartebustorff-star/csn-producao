@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Skills & Tools Registry — S57</title>
+<style>
+  :root { --preto:#0A0A0A; --branco:#FFFFFF; --verde:#34C759; --cinza:#888; --bg:#1A1A1A; --alerta:#FF3B30; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,"Helvetica Neue",Arial,sans-serif; background:var(--preto); color:var(--branco); padding:40px 20px; line-height:1.5; }
+  .wrap { max-width:1400px; margin:0 auto; }
+  header { border-bottom:2px solid var(--verde); padding-bottom:20px; margin-bottom:30px; }
+  h1 { font-size:30px; }
+  h1 .acc { color:var(--verde); }
+  .meta { color:var(--cinza); font-size:14px; margin-top:8px; }
+  h2 { font-size:20px; margin:35px 0 12px; padding-bottom:6px; border-bottom:1px solid #333; }
+  h3 { font-size:15px; margin:18px 0 10px; color:var(--verde); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; margin:14px 0; }
+  .stat-card { background:var(--bg); border:1px solid #333; border-radius:8px; padding:14px; }
+  .stat-card h4 { color:var(--verde); font-size:12px; }
+  .stat-value { font-size:32px; font-weight:700; }
+  .stat-source { font-size:11px; color:var(--cinza); margin-top:4px; }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:12.5px; }
+  th, td { padding:7px 9px; text-align:left; border-bottom:1px solid #333; vertical-align:top; }
+  th { color:var(--verde); font-size:11.5px; background:var(--bg); }
+  td.code { font-family:monospace; color:var(--verde); font-size:11.5px; }
+  .badge { padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; display:inline-block; }
+  .badge.activo { background:var(--verde); color:var(--preto); }
+  .badge.draft { background:#FF9500; color:var(--preto); }
+  .badge.deprecated { background:#666; color:var(--branco); }
+  .badge.novo { background:#1B4D8C; color:var(--branco); }
+  .badge.alerta { background:var(--alerta); color:var(--branco); }
+  .filter-bar { background:var(--bg); padding:10px 14px; border-radius:6px; margin:10px 0; font-size:12px; color:var(--cinza); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>CSN <span class="acc">Skills & Tools</span> Registry — S57</h1>
+  <div class="meta">5 de Maio 2026 · Snapshot da tabela <code style="color:var(--verde)">skills_csn</code> (SSoT) · Migration 054 não aplicada</div>
+</header>
+
+<h2>Resumo</h2>
+<div class="stats">
+  <div class="stat-card">
+    <h4>Total skills sistema</h4>
+    <div class="stat-value">236</div>
+    <div class="stat-source">127 comunidade + 109 custom</div>
+  </div>
+  <div class="stat-card">
+    <h4>Custom CSN</h4>
+    <div class="stat-value">109</div>
+    <div class="stat-source">IP CSN, em skills/csn/</div>
+  </div>
+  <div class="stat-card">
+    <h4>Em skills_csn (seed)</h4>
+    <div class="stat-value">5</div>
+    <div class="stat-source">Aguarda migration 054</div>
+  </div>
+  <div class="stat-card">
+    <h4>Secções ISA-95 cobertas</h4>
+    <div class="stat-value">17</div>
+    <div class="stat-source">+ RES (S57)</div>
+  </div>
+  <div class="stat-card">
+    <h4>Codificação</h4>
+    <div class="stat-value">SKL</div>
+    <div class="stat-source">CSN-LX-XXX-SKL-NNN-AAAA</div>
+  </div>
+</div>
+
+<h2>Skills Custom CSN — Registo Formal (snapshot v_skills_registry)</h2>
+
+<div class="filter-bar">
+  Estes são os skills com entrada na tabela <code>skills_csn</code> (após aplicação da migration 054). 
+  Skills que ainda não foram registados ficam como ficheiros em <code>skills/csn/</code> mas sem entrada SSoT.
+</div>
+
+<table>
+<tr>
+  <th>Código</th>
+  <th>Nome</th>
+  <th>Título</th>
+  <th>ISA-95</th>
+  <th>Agente Dono</th>
+  <th>Versão</th>
+  <th>Status</th>
+  <th>Sessão</th>
+</tr>
+<tr>
+  <td class="code">CSN-L4-DOC-SKL-001-2026</td>
+  <td>criar-skill-csn</td>
+  <td>Criar Skill CSN (meta-skill)</td>
+  <td>L4-DOC</td>
+  <td>Agente Documental</td>
+  <td>v1.0</td>
+  <td><span class="badge activo">Activo</span></td>
+  <td>S57 <span class="badge novo">Novo</span></td>
+</tr>
+<tr>
+  <td class="code">CSN-L4-ENG-SKL-001-2026</td>
+  <td>analise-fabricante</td>
+  <td>Análise Documentos Fabricantes BBG</td>
+  <td>L4-ENG</td>
+  <td>Agente Engenharia</td>
+  <td>v4.0</td>
+  <td><span class="badge activo">Activo</span></td>
+  <td>S40</td>
+</tr>
+<tr>
+  <td class="code">CSN-L4-ENG-SKL-002-2026</td>
+  <td>analise-ficha-fuso</td>
+  <td>Análise Ficha Técnica FUSO Canter LHD</td>
+  <td>L4-ENG</td>
+  <td>Agente Engenharia</td>
+  <td>v1.0</td>
+  <td><span class="badge activo">Activo</span></td>
+  <td>S48</td>
+</tr>
+<tr>
+  <td class="code">CSN-L3-QMS-SKL-001-2026</td>
+  <td>registar-nc</td>
+  <td>Registar Não-Conformidade</td>
+  <td>L3-QMS</td>
+  <td>Agente Qualidade</td>
+  <td>v1.0</td>
+  <td><span class="badge activo">Activo</span></td>
+  <td>S44</td>
+</tr>
+<tr>
+  <td class="code">CSN-L4-RES-SKL-001-2026</td>
+  <td>research-index</td>
+  <td>Índice 12 Skills Research</td>
+  <td>L4-RES</td>
+  <td>Agente Research</td>
+  <td>v1.0</td>
+  <td><span class="badge activo">Activo</span></td>
+  <td>S54 <span class="badge novo">Secção RES nova</span></td>
+</tr>
+</table>
+
+<h2>Skills Backlog — A Registar em S58+</h2>
+<p style="color:var(--cinza);font-size:13px;">
+Skills custom CSN que existem como ficheiros mas ainda sem registo formal em <code>skills_csn</code>. 
+Precisam de migração progressiva para SSoT.
+</p>
+
+<h3>L4-COM (12 skills) · Vendas e marketing</h3>
+<p style="font-size:12.5px;color:var(--cinza)">cold-outreach, qualificacao-leads, follow-up-deals, proposta-comercial, demo-csn-connect, ...</p>
+
+<h3>L4-FIN (9 skills) · Financeiro</h3>
+<p style="font-size:12.5px;color:var(--cinza)">conciliacao-bancaria, ies-anual, custos-obra, mapa-fluxos-caixa, ...</p>
+
+<h3>L4-ENG (8 skills, 2 já registados)</h3>
+<p style="font-size:12.5px;color:var(--cinza)">homologacao-coc, calculos-pesos-distribuicao, fea-cargas, body-builder-cumprimento, ...</p>
+
+<h3>L4-CST (5 skills) · Custos / risco</h3>
+<p style="font-size:12.5px;color:var(--cinza)">analise-margem, riscos-iso31000, oportunidades-prr, candidatura-incentivos, ...</p>
+
+<h3>L3-QMS (22 skills, 1 já registado)</h3>
+<p style="font-size:12.5px;color:var(--cinza)">registar-nc ✓ + gerar-itp, gerar-fpc, gerar-dop, etiqueta-ce, fea-report, cert-12642, manual-sgq, revisao-gestao, auditoria-interna, etiqueta-lxl, ...</p>
+
+<h3>L3-PRD (10 skills)</h3>
+<p style="font-size:12.5px;color:var(--cinza)">plano-producao, checklist-fase, rastrear-material, rastrear-soldadura, ordem-fabrico, ...</p>
+
+<h3>L3-RH (13 skills)</h3>
+<p style="font-size:12.5px;color:var(--cinza)">processar-recibo, declaracao-anual, plano-formacoes, registo-epis, matriz-riscos-sst, registo-acidentes, cert-soldadores, ...</p>
+
+<h3>L3-MNT (3 skills) · L3-PER (3 skills) · L3-DOC (3 skills) · L3-INV (4 skills)</h3>
+
+<h3>JUR (7 skills) · AMB (5 skills ISO 14001) · EST (5 skills estratégia)</h3>
+
+<h2>Tools / Integrações Activas</h2>
+<table>
+<tr>
+  <th>Tool</th>
+  <th>Função</th>
+  <th>ISA-95</th>
+  <th>Status</th>
+</tr>
+<tr>
+  <td>Supabase MCP</td>
+  <td>Acesso à BD oysfxhlzilazeznpaafc</td>
+  <td>Transversal</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>InvoiceXpress API</td>
+  <td>Faturação cert AT 192</td>
+  <td>L4-FIN</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>matricula.co.pt</td>
+  <td>Matrícula → ID básico</td>
+  <td>L4-ENG</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>Vincario API</td>
+  <td>VIN → specs completas</td>
+  <td>L4-ENG</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>Apps Script v8</td>
+  <td>Pipeline emails Gmail</td>
+  <td>L3-DOC</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>Claude API (Haiku)</td>
+  <td>Router classificação rápida</td>
+  <td>L3-MOM</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>Claude API (Sonnet)</td>
+  <td>Conversação e geração</td>
+  <td>Transversal</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>Voyage AI voyage-3</td>
+  <td>Embeddings 1024 dim</td>
+  <td>L4-ENG</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+<tr>
+  <td>Vercel auto-deploy</td>
+  <td>Push main → produção</td>
+  <td>Transversal</td>
+  <td><span class="badge alerta">Webhook PARTIDO</span></td>
+</tr>
+<tr>
+  <td>Google Calendar</td>
+  <td>9 calendários ISA-95</td>
+  <td>Transversal</td>
+  <td><span class="badge activo">Activo</span></td>
+</tr>
+</table>
+
+<h2>Endpoints Aplicação</h2>
+<table>
+<tr><th>Rota</th><th>Função</th><th>Status</th></tr>
+<tr><td class="code">/api/documentos/gerar-termo</td><td>Gera termo responsabilidade PDF</td><td><span class="badge alerta">Patch c5f8c80 não em produção</span></td></tr>
+<tr><td class="code">/api/router/classificar</td><td>Router v9/v10 classifica entrada</td><td><span class="badge activo">Activo</span></td></tr>
+<tr><td class="code">/api/rh/recibo</td><td>Geração recibos vencimento</td><td><span class="badge activo">Activo</span></td></tr>
+<tr><td class="code">/api/rh/conta-corrente</td><td>Conta-corrente colaborador</td><td><span class="badge activo">Activo</span></td></tr>
+<tr><td class="code">/api/rh/resumo-anual</td><td>Resumo anual rendimentos</td><td><span class="badge activo">Activo</span></td></tr>
+<tr><td class="code">/api/faturacao/emitir</td><td>Emitir factura via InvoiceXpress</td><td><span class="badge activo">Activo</span></td></tr>
+<tr><td class="code">/api/faturacao/listar</td><td>Listar facturas emitidas</td><td><span class="badge activo">Activo</span></td></tr>
+<tr><td class="code">/api/rag/inventor/search</td><td>RAG search Inventor (unified)</td><td><span class="badge activo">Activo</span></td></tr>
+<tr><td class="code">/portal</td><td>Portal workers (PIN-only)</td><td><span class="badge activo">Activo</span></td></tr>
+</table>
+
+<h2>Skills Engine — Roadmap S58</h2>
+<table>
+<tr><th>#</th><th>Skill</th><th>Código previsto</th><th>Trigger</th></tr>
+<tr><td>1</td><td>vin-decoder-csn</td><td>CSN-L4-ENG-SKL-003-2026</td><td>Input VIN → Marca + Modelo Comercial + Modelo Código + Ano</td></tr>
+<tr><td>2</td><td>distancia-eixo-carrocaria</td><td>CSN-L4-ENG-SKL-004-2026</td><td>Calcula 2 distâncias do termo a partir de entre_eixos + ADAP01 + comprimento + folga + tipo cabine</td></tr>
+<tr><td>3</td><td>buscar-empresa-dados</td><td>CSN-L4-DOC-SKL-002-2026</td><td>Lê empresa_dados como SSoT para preencher cabeçalhos termos/facturas</td></tr>
+<tr><td>4</td><td>processar-recibos-mensal</td><td>CSN-L3-RH-SKL-002-2026</td><td>Cron mensal — gera recibos para todos colaboradores activos no dia 1</td></tr>
+</table>
+
+<h2>Avisos S57</h2>
+<div style="background:var(--bg); border-left:3px solid var(--alerta); padding:14px 18px; border-radius:4px;">
+  <strong style="color:var(--alerta)">Migration 054 não aplicada em produção</strong><br/>
+  <span style="font-size:13px;color:var(--cinza)">
+  Os 5 skills listados nesta página são <em>seed</em> da migration. 
+  Até a migration ser aplicada (S58), o registry HTML é a representação intencional, 
+  não estado real da BD. Aplicar via Supabase SQL Editor após reconectar webhook Vercel.
+  </span>
+</div>
+
+</div>
+</body>
+</html>

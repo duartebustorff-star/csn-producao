@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN KPIs ISA-95 — S57</title>
+<style>
+  :root { --preto:#0A0A0A; --branco:#FFFFFF; --verde:#34C759; --cinza:#888; --bg:#1A1A1A; --alerta:#FF3B30; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,"Helvetica Neue",Arial,sans-serif; background:var(--preto); color:var(--branco); padding:40px 20px; line-height:1.5; }
+  .wrap { max-width:1200px; margin:0 auto; }
+  header { border-bottom:2px solid var(--verde); padding-bottom:20px; margin-bottom:30px; }
+  h1 { font-size:30px; }
+  h1 .acc { color:var(--verde); }
+  .meta { color:var(--cinza); font-size:14px; margin-top:8px; }
+  h2 { font-size:20px; margin:35px 0 12px; padding-bottom:6px; border-bottom:1px solid #333; }
+  h3 { font-size:15px; margin:18px 0 10px; color:var(--verde); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin:14px 0; }
+  .kpi-card { background:var(--bg); border:1px solid #333; border-radius:8px; padding:14px; }
+  .kpi-card h4 { color:var(--verde); font-size:13px; margin-bottom:6px; }
+  .kpi-value { font-size:28px; font-weight:700; }
+  .kpi-unit { font-size:14px; color:var(--cinza); margin-left:4px; }
+  .kpi-source { font-size:11px; color:var(--cinza); margin-top:6px; }
+  .badge { padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; }
+  .badge.ok { background:var(--verde); color:var(--preto); }
+  .badge.wait { background:#FF9500; color:var(--preto); }
+  .badge.alerta { background:var(--alerta); color:var(--branco); }
+  .badge.calc { background:#1B4D8C; color:var(--branco); }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13px; }
+  th, td { padding:8px 10px; text-align:left; border-bottom:1px solid #333; }
+  th { color:var(--verde); font-size:12px; }
+  .progress-bar { background:#333; border-radius:4px; height:10px; margin:4px 0; overflow:hidden; }
+  .progress-fill { background:var(--verde); height:100%; }
+  .progress-fill.alerta { background:var(--alerta); }
+  .progress-fill.wait { background:#FF9500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>CSN <span class="acc">KPIs</span> ISA-95 — S57</h1>
+  <div class="meta">5 de Maio 2026 · 97 KPIs mapeados em 12 secções · 14 normas de referência</div>
+</header>
+
+<h2>Resumo Executivo</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>KPIs mapeados</h4>
+    <div class="kpi-value">97</div>
+    <div class="kpi-source">12 secções ISA-95</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Calculáveis hoje</h4>
+    <div class="kpi-value">12 <span class="kpi-unit">/ 97</span></div>
+    <div class="kpi-source">via kpi_dashboard()</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Normas referência</h4>
+    <div class="kpi-value">14</div>
+    <div class="kpi-source">ISO 22400, EN 15341, ISO 30414...</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Pendentes hardware</h4>
+    <div class="kpi-value">4</div>
+    <div class="kpi-source">Smart meter Bodor (energia)</div>
+  </div>
+</div>
+
+<h2>KPIs Calculáveis — Operacional</h2>
+
+<div class="grid">
+  <div class="kpi-card">
+    <h4>OEE (Overall Equipment Effectiveness)</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400-2 · <span class="badge calc">Calculável</span></div>
+    <div style="font-size:11px;margin-top:6px;color:var(--cinza)">Aguarda dados Bodor smart meter</div>
+  </div>
+  <div class="kpi-card">
+    <h4>First Pass Yield (FPY)</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400-2 · <span class="badge calc">Calculável</span></div>
+    <div style="font-size:11px;margin-top:6px;color:var(--cinza)">Depende registar-nc com volume suficiente</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Quality Ratio</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400 · <span class="badge calc">Calculável</span></div>
+  </div>
+  <div class="kpi-card">
+    <h4>Scrap Ratio</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Rework Ratio</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Termos pendentes</h4>
+    <div class="kpi-value">1 <span class="kpi-unit">obra</span></div>
+    <div class="kpi-source">BZ-93-LE — pronto para envio <span class="badge ok">Resolvido S57</span></div>
+  </div>
+</div>
+
+<h2>KPIs RH (ISO 30414)</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Recibos processados (acumulado)</h4>
+    <div class="kpi-value">45</div>
+    <div class="kpi-source">Jan 2025 - Mar 2026 · 3 colaboradores</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Colaboradores activos</h4>
+    <div class="kpi-value">3</div>
+    <div class="kpi-source">Bohdan, José Júlio, João António</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Recibos Abril 2026</h4>
+    <div class="kpi-value">0 <span class="kpi-unit">/ 3</span></div>
+    <div class="kpi-source"><span class="badge alerta">Pendente</span> Não há job mensal automático</div>
+  </div>
+</div>
+
+<h2>KPIs Financeiros (SNC/IAS)</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Movimentos BPI</h4>
+    <div class="kpi-value">2.153</div>
+    <div class="kpi-source">Importados em movimentos_bancarios</div>
+  </div>
+  <div class="kpi-card">
+    <h4>e-Fatura registos</h4>
+    <div class="kpi-value">4.409</div>
+    <div class="kpi-source">50 meses cobertos</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Faturas emitidas</h4>
+    <div class="kpi-value">— </div>
+    <div class="kpi-source">InvoiceXpress cert AT 192</div>
+  </div>
+</div>
+
+<h2>KPIs Conformidade Normas</h2>
+<table>
+<tr><th>Norma</th><th>Cobertura</th><th>Estado</th></tr>
+<tr><td>ISO 9001:2015</td><td><div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>62%</td><td><span class="badge wait">Em curso</span></td></tr>
+<tr><td>Reg. (UE) 2018/858</td><td><div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>70%</td><td><span class="badge wait">Em curso</span></td></tr>
+<tr><td>EN 1090</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:25%"></div></div>25%</td><td><span class="badge alerta">Crítico</span></td></tr>
+<tr><td>EN ISO 3834</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>EN 12642 L/XL</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>ISO 14001 (Trio PRR)</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>ISO 45001 (Trio PRR)</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>ISO 22400</td><td><div class="progress-bar"><div class="progress-fill wait" style="width:35%"></div></div>35%</td><td><span class="badge wait">12/97 KPIs</span></td></tr>
+</table>
+
+<h2>KPIs Skills Engine</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Total skills</h4>
+    <div class="kpi-value">236</div>
+    <div class="kpi-source">127 comunidade + 109 custom CSN</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Registados em skills_csn</h4>
+    <div class="kpi-value">5</div>
+    <div class="kpi-source"><span class="badge wait">Migration não aplicada</span></div>
+  </div>
+  <div class="kpi-card">
+    <h4>Secções ISA-95 cobertas</h4>
+    <div class="kpi-value">17</div>
+    <div class="kpi-source">RES adicionada em S57</div>
+  </div>
+</div>
+
+<h2>KPIs RAG / IA</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Embeddings totais</h4>
+    <div class="kpi-value">49.100</div>
+    <div class="kpi-source">inventor_rag + knowledge_inventor</div>
+  </div>
+  <div class="kpi-card">
+    <h4>inventor_rag</h4>
+    <div class="kpi-value">41.681</div>
+    <div class="kpi-source">voyage-3 1024 dim, HNSW</div>
+  </div>
+  <div class="kpi-card">
+    <h4>knowledge_inventor</h4>
+    <div class="kpi-value">7.419</div>
+    <div class="kpi-source">Conhecimento engenharia</div>
+  </div>
+</div>
+
+<h2>KPIs Sessão S57</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>REGRA BANDEIRA quebrada</h4>
+    <div class="kpi-value" style="color:var(--alerta)">4 <span class="kpi-unit">vezes</span></div>
+    <div class="kpi-source">Modelo, morada, tipo, texto declarativo</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Decisões tomadas</h4>
+    <div class="kpi-value">9</div>
+    <div class="kpi-source">Ver ESTADO.OPUS.S57.md</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Migrations geradas</h4>
+    <div class="kpi-value">1</div>
+    <div class="kpi-source">054_skills_csn (não aplicada)</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Tempo desbloqueio termo</h4>
+    <div class="kpi-value" style="color:var(--alerta)">25 <span class="kpi-unit">dias</span></div>
+    <div class="kpi-source">Pedido inicial 9 Abril</div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
