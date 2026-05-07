@@ -90,10 +90,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Bug E: tara real vem da inspecao Controlauto, nao da tara chassis do DAV
+    // Bug H: ignorar registos com peso_estatico_total=NULL (stubs criados por
+    // duplicate ingestion ou typos de data) — caso contrario apanha o "mais
+    // recente" mas vazio, e cai no fallback dav.tara errado.
     const { data: insp } = await supabase
       .from("inspecoes")
       .select("peso_estatico_total, peso_estatico_eixo1_total, peso_estatico_eixo2_total")
       .eq("matricula", obra.matricula)
+      .not("peso_estatico_total", "is", null)
       .order("data_inspecao", { ascending: false })
       .limit(1)
       .maybeSingle()
