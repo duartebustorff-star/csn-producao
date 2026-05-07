@@ -885,13 +885,17 @@ async function gerarTermoResponsabilidade(obraId: string): Promise<string> {
 
   const result = await resp.json()
 
-  // 5. Guardar referência no dossie_obra
-  await supabase.from("dossie_obra").upsert({
-    obra_id: obraId,
-    tipo_documento: "TERM",
-    storage_path: result.storage_path,
-    gerado_em: new Date().toISOString(),
-  })
+  // 5. Atualizar dossie_obra (linha já existe pré-populada — UPDATE não UPSERT)
+  await supabase
+    .from("dossie_obra")
+    .update({
+      estado: "ok",
+      ficheiro_url: result.download_url,
+      concluido_em: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("obra_id", obraId)
+    .eq("tipo", "termo_responsabilidade")
 
   await audit({
     entidade_tipo: "obra", entidade_id: obraId,

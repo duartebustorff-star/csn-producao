@@ -9,13 +9,42 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+// Bug D: mapa slug/forma curta -> nome legal de homologacao.
+// Fonte de verdade ate existir tabela tipos_carrocaria (planeada S59).
+const TIPO_CARROCARIA_LEGAL: Record<string, string> = {
+  "CAIXA_ABERTA_MADEIRA": "CAIXA ABERTA COM OU SEM COBERTURA",
+  "CAIXA_ABERTA": "CAIXA ABERTA COM OU SEM COBERTURA",
+  "CAIXA ABERTA": "CAIXA ABERTA COM OU SEM COBERTURA",
+  "CAIXA ABERTA MADEIRA": "CAIXA ABERTA COM OU SEM COBERTURA",
+  "BASCULANTE": "CAIXA BASCULANTE",
+  "CAIXA_BASCULANTE": "CAIXA BASCULANTE",
+  "CAIXA BASCULANTE": "CAIXA BASCULANTE",
+  "PLATAFORMA": "PLATAFORMA",
+  "TAIPAIS": "CAIXA ABERTA COM OU SEM COBERTURA",
+}
+
+function tipoCarrocariaLegal(raw: string | null | undefined): string {
+  if (!raw) return "-"
+  const upper = raw.trim().toUpperCase()
+  return TIPO_CARROCARIA_LEGAL[upper] || upper
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { obra_id } = body
 
-    if (!obra_id) {
-      return NextResponse.json({ error: "obra_id obrigatorio" }, { status: 400 })
+    if (
+      !obra_id ||
+      typeof obra_id !== "string" ||
+      obra_id.trim() === "" ||
+      obra_id === "undefined" ||
+      obra_id === "null"
+    ) {
+      return NextResponse.json(
+        { error: "obra_id obrigatorio", recebido: obra_id ?? null },
+        { status: 400 }
+      )
     }
 
     // Buscar obra
@@ -36,33 +65,67 @@ export async function POST(req: NextRequest) {
       .eq("id", obra.lead_id)
       .maybeSingle()
 
-    // Buscar DAV pela matricula
-    const { data: dav } = await supabase
-      .from("davs")
-      .select("marca, modelo, cod_homologacao, peso_bruto, tara")
+    // Bug G: lookup DAV por VIN primeiro (DAV pode ter matricula=NULL na BD,
+    // pois e gerado antes da matricula final). Fallback para matricula.
+    let dav: { marca?: string; modelo?: string; cod_homologacao?: string; peso_bruto?: number; tara?: number } | null = null
+    if (obra.vin) {
+      const { data } = await supabase
+        .from("davs")
+        .select("marca, modelo, cod_homologacao, peso_bruto, tara")
+        .eq("vin", obra.vin)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      dav = data
+    }
+    if (!dav && obra.matricula) {
+      const { data } = await supabase
+        .from("davs")
+        .select("marca, modelo, cod_homologacao, peso_bruto, tara")
+        .eq("matricula", obra.matricula)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      dav = data
+    }
+
+    // Bug E: tara real vem da inspecao Controlauto, nao da tara chassis do DAV
+    const { data: insp } = await supabase
+      .from("inspecoes")
+      .select("peso_estatico_total, peso_estatico_eixo1_total, peso_estatico_eixo2_total")
       .eq("matricula", obra.matricula)
-      .order("created_at", { ascending: false })
+      .order("data_inspecao", { ascending: false })
       .limit(1)
       .maybeSingle()
 
     const matricula = obra.matricula || "-"
-    const vin = obra.vin || "-"
+    const vinRaw = obra.vin || ""
+    const vin = vinRaw || "-"
     const marca = dav?.marca || "-"
-    const modelo = dav?.modelo || "-"
+    // Bug C: modelo legal e VIN posicoes 4-6 (model code de homologacao), nao o nome comercial do DAV
+    const modeloFromVin = vinRaw.length >= 6 ? vinRaw.slice(3, 6).toUpperCase() : ""
+    const modelo = modeloFromVin || dav?.modelo || "-"
     const cod_homologacao = dav?.cod_homologacao || "-"
     const peso_bruto = dav?.peso_bruto ? String(dav.peso_bruto) : "-"
+    // Bug E: prioridade body > inspecao.peso_estatico_* > dav.tara (chassis, ultimo recurso)
     const tara_total = body.tara_total != null
       ? String(body.tara_total)
-      : (dav?.tara ? String(dav.tara) : "-")
-    const tara_frontal = body.tara_frontal != null ? String(body.tara_frontal) : "-"
-    const tara_traseira = body.tara_traseira != null ? String(body.tara_traseira) : "-"
+      : (insp?.peso_estatico_total != null ? String(insp.peso_estatico_total) : (dav?.tara ? String(dav.tara) : "-"))
+    const tara_frontal = body.tara_frontal != null
+      ? String(body.tara_frontal)
+      : (insp?.peso_estatico_eixo1_total != null ? String(insp.peso_estatico_eixo1_total) : "-")
+    const tara_traseira = body.tara_traseira != null
+      ? String(body.tara_traseira)
+      : (insp?.peso_estatico_eixo2_total != null ? String(insp.peso_estatico_eixo2_total) : "-")
     const dist_eixo_ret_frente = body.dist_eixo_ret_frente != null
       ? String(body.dist_eixo_ret_frente)
       : (lead?.dist_eixo_frontal_frente != null ? String(lead.dist_eixo_frontal_frente) : "-")
     const dist_eixo_ret_traseira = body.dist_eixo_ret_traseira != null
       ? String(body.dist_eixo_ret_traseira)
       : (lead?.dist_eixo_traseiro_retaguarda != null ? String(lead.dist_eixo_traseiro_retaguarda) : "-")
-    const tipo_carrocaria = lead?.tipo_carrocaria || "-"
+    // Bug D: slug -> nome legal homologacao. Fonte de verdade hard-coded; tabela tipos_carrocaria fica para S59.
+    const tipoRaw = body.tipo_carrocaria || lead?.tipo_carrocaria || ""
+    const tipo_carrocaria = tipoCarrocariaLegal(tipoRaw)
     const comprimento = lead?.comprimento_ext ? String(lead.comprimento_ext) : "-"
     const largura = lead?.largura_ext ? String(lead.largura_ext) : "-"
     const altura = lead?.altura_ext ? String(lead.altura_ext) : "-"
@@ -250,6 +313,38 @@ export async function POST(req: NextRequest) {
     const certidao = "Certidao Permanente Codigo de acesso: 3172-1374-8252"
     const certW = fontReg.widthOfTextAtSize(certidao, 8)
     page.drawText(certidao, { x: width / 2 - certW / 2, y, size: 8, font: fontReg, color: GRAY })
+
+    // CARIMBO INSTITUCIONAL — fonte canonica: public/assets/carimbo_csn.svg (S58)
+    y -= 38
+    const cW = 280
+    const cH = 110
+    const cX = width / 2 - cW / 2
+    const cY = y - cH
+    const cCenterX = cX + cW / 2
+
+    page.drawRectangle({ x: cX, y: cY, width: cW, height: cH, borderColor: BLACK, borderWidth: 2 })
+
+    const fontSerif = await pdfDoc.embedFont(StandardFonts.TimesRoman)
+    const fontSerifBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold)
+    const fontSerifItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic)
+
+    let cy = cY + cH - 16
+    const drawCentered = (txt: string, font: typeof fontSerif, size: number) => {
+      const w = font.widthOfTextAtSize(txt, size)
+      page.drawText(txt, { x: cCenterX - w / 2, y: cy, size, font, color: BLACK })
+    }
+
+    drawCentered("A Gerencia", fontSerifItalic, 9)
+    cy -= 18
+    drawCentered("CARLOS DOS SANTOS NASCIMENTO, LDA.", fontSerifBold, 11)
+    cy -= 6
+    page.drawLine({ start: { x: cX + 24, y: cy }, end: { x: cX + cW - 24, y: cy }, thickness: 0.5, color: BLACK })
+    cy -= 14
+    drawCentered("NIF 500 861 790", fontSerif, 10)
+    cy -= 14
+    drawCentered("Rua da Industria, Casal do Rodo, 8 - 2640-216 Encarnacao, Mafra", fontSerif, 7.5)
+    cy -= 12
+    drawCentered("geral@carrocariascsn.pt | www.carrocariascsn.pt", fontSerif, 8)
 
     // GUARDAR NO SUPABASE
     const pdfBytes = await pdfDoc.save()
