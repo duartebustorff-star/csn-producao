@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN KPIs ISA-95 — S58</title>
+<style>
+  :root { --preto:#0A0A0A; --branco:#FFFFFF; --verde:#34C759; --cinza:#888; --bg:#1A1A1A; --alerta:#FF3B30; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,"Helvetica Neue",Arial,sans-serif; background:var(--preto); color:var(--branco); padding:40px 20px; line-height:1.5; }
+  .wrap { max-width:1200px; margin:0 auto; }
+  header { border-bottom:2px solid var(--verde); padding-bottom:20px; margin-bottom:30px; }
+  h1 { font-size:30px; }
+  h1 .acc { color:var(--verde); }
+  .meta { color:var(--cinza); font-size:14px; margin-top:8px; }
+  h2 { font-size:20px; margin:35px 0 12px; padding-bottom:6px; border-bottom:1px solid #333; }
+  h3 { font-size:15px; margin:18px 0 10px; color:var(--verde); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin:14px 0; }
+  .kpi-card { background:var(--bg); border:1px solid #333; border-radius:8px; padding:14px; }
+  .kpi-card h4 { color:var(--verde); font-size:13px; margin-bottom:6px; }
+  .kpi-value { font-size:28px; font-weight:700; }
+  .kpi-unit { font-size:14px; color:var(--cinza); margin-left:4px; }
+  .kpi-source { font-size:11px; color:var(--cinza); margin-top:6px; }
+  .badge { padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; }
+  .badge.ok { background:var(--verde); color:var(--preto); }
+  .badge.wait { background:#FF9500; color:var(--preto); }
+  .badge.alerta { background:var(--alerta); color:var(--branco); }
+  .badge.calc { background:#1B4D8C; color:var(--branco); }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13px; }
+  th, td { padding:8px 10px; text-align:left; border-bottom:1px solid #333; }
+  th { color:var(--verde); font-size:12px; }
+  .progress-bar { background:#333; border-radius:4px; height:10px; margin:4px 0; overflow:hidden; }
+  .progress-fill { background:var(--verde); height:100%; }
+  .progress-fill.alerta { background:var(--alerta); }
+  .progress-fill.wait { background:#FF9500; }
+  footer.docs-footer {
+    margin-top:50px; padding-top:18px; border-top:1px solid #333;
+    font-size:11px; color:var(--cinza);
+  }
+  footer.docs-footer code { background:#2A2A2A; padding:1px 5px; border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>CSN <span class="acc">KPIs</span> ISA-95 — S58</h1>
+  <div class="meta">11 de Maio 2026 · 97 KPIs mapeados em 12 secções · 34 definidos ISO 22400-2 · 12 activos hoje · consistente com <code>CSN-CERT-ROADMAP-S58</code> rev.2</div>
+</header>
+
+<h2>Resumo Executivo</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>KPIs mapeados</h4>
+    <div class="kpi-value">97</div>
+    <div class="kpi-source">12 secções ISA-95 (sem alteração S58)</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Definidos em norma</h4>
+    <div class="kpi-value">34</div>
+    <div class="kpi-source">ISO 22400-2</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Activos hoje</h4>
+    <div class="kpi-value">12 <span class="kpi-unit">/ 97</span></div>
+    <div class="kpi-source">via <code>kpi_dashboard()</code> · <span class="badge wait">+0 S58</span></div>
+  </div>
+  <div class="kpi-card">
+    <h4>Pendentes hardware</h4>
+    <div class="kpi-value">4</div>
+    <div class="kpi-source">Smart meter Bodor (energia)</div>
+  </div>
+</div>
+
+<p style="margin-top:8px;font-size:13px;color:var(--cinza);">
+S58 foi sessão de estrutura: <strong>+0 KPIs activos</strong>. Foco em fechar a dívida do gerador de termos (8 bugs A–H), reconciliar 6 termos L2026-001, formalizar agente CSN-L4-CST (Certificações) e criar o 7º documento canónico CERT-ROADMAP. Migration <code>kpis_csn</code> (056) fica para S59+ depois da bloqueante facturação 2025.
+</p>
+
+<h2>KPIs Calculáveis — Operacional</h2>
+
+<div class="grid">
+  <div class="kpi-card">
+    <h4>OEE (Overall Equipment Effectiveness)</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400-2 · <span class="badge calc">Calculável</span></div>
+    <div style="font-size:11px;margin-top:6px;color:var(--cinza)">Aguarda dados Bodor smart meter</div>
+  </div>
+  <div class="kpi-card">
+    <h4>First Pass Yield (FPY)</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400-2 · <span class="badge calc">Calculável</span></div>
+    <div style="font-size:11px;margin-top:6px;color:var(--cinza)">Depende registar-nc com volume suficiente</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Quality Ratio</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400 · <span class="badge calc">Calculável</span></div>
+  </div>
+  <div class="kpi-card">
+    <h4>Scrap Ratio</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Rework Ratio</h4>
+    <div class="kpi-value">— <span class="kpi-unit">%</span></div>
+    <div class="kpi-source">ISO 22400</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Termos L2026-001 reconciliados</h4>
+    <div class="kpi-value">6 <span class="kpi-unit">/ 6</span></div>
+    <div class="kpi-source">JAP Mouriz · 4 OK + 2 issue regulamentar refletores <span class="badge ok">S58</span></div>
+  </div>
+  <div class="kpi-card">
+    <h4>Bugs gerador termos fechados</h4>
+    <div class="kpi-value">8 <span class="kpi-unit">/ 8</span></div>
+    <div class="kpi-source">A–H em 2 PRs (#1 + #2) merged + deployed</div>
+  </div>
+</div>
+
+<h2>KPIs L3-DOC — Termos e Documentos (NOVO S58)</h2>
+<p style="font-size:13px;color:var(--cinza);margin-bottom:8px;">
+Adicionados como pendentes em S58, a registar formalmente em <code>kpis_csn</code> em S59+. Cobrem a maturidade do pipeline documental crítico para marcação CE e ISO 9001 §7.5.
+</p>
+<table>
+<tr><th>Código</th><th>KPI</th><th>Fórmula</th><th>Fonte</th><th>Estado</th></tr>
+<tr><td>CSN-L3-DOC-KPI-001-2026</td><td>% termos gerados sem bug</td><td>(termos OK na 1.ª geração / total termos) × 100</td><td><code>audit_log</code> + <code>dossie_obra</code></td><td><span class="badge wait">Pendente S59</span></td></tr>
+<tr><td>CSN-L3-DOC-KPI-002-2026</td><td>Cobertura inspecções pré-entrega</td><td>(obras com inspecção válida antes do termo / total obras entregues) × 100</td><td><code>inspecoes</code> + <code>obras</code></td><td><span class="badge wait">Pendente S59</span></td></tr>
+</table>
+
+<h2>KPIs RH (ISO 30414)</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Recibos processados (acumulado)</h4>
+    <div class="kpi-value">45</div>
+    <div class="kpi-source">Jan 2025 - Mar 2026 · 3 colaboradores</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Colaboradores activos</h4>
+    <div class="kpi-value">3</div>
+    <div class="kpi-source">Bohdan, José Júlio, João António</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Recibos Abril 2026</h4>
+    <div class="kpi-value">0 <span class="kpi-unit">/ 3</span></div>
+    <div class="kpi-source"><span class="badge alerta">Pendente</span> Não há job mensal automático</div>
+  </div>
+</div>
+
+<h2>KPIs Financeiros (SNC/IAS)</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Movimentos BPI</h4>
+    <div class="kpi-value">2.153</div>
+    <div class="kpi-source">Importados em <code>movimentos_bancarios</code></div>
+  </div>
+  <div class="kpi-card">
+    <h4>e-Fatura registos</h4>
+    <div class="kpi-value">4.409</div>
+    <div class="kpi-source">50 meses cobertos · <span class="badge wait">conciliação S59</span></div>
+  </div>
+  <div class="kpi-card">
+    <h4>Faturas emitidas</h4>
+    <div class="kpi-value">— </div>
+    <div class="kpi-source">InvoiceXpress cert AT 192</div>
+  </div>
+  <div class="kpi-card">
+    <h4>DSO / DPO / churn fornecedores</h4>
+    <div class="kpi-value">— </div>
+    <div class="kpi-source">Pendente S61 após núcleos fornecedor</div>
+  </div>
+</div>
+
+<h2>KPIs Conformidade Normas</h2>
+<table>
+<tr><th>Norma</th><th>Cobertura</th><th>Estado</th></tr>
+<tr><td>ISO 9001:2015</td><td><div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>62%</td><td><span class="badge wait">Em curso</span></td></tr>
+<tr><td>Reg. (UE) 2018/858</td><td><div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>70%</td><td><span class="badge wait">Em curso</span></td></tr>
+<tr><td>EN 1090</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:25%"></div></div>25%</td><td><span class="badge alerta">Crítico</span></td></tr>
+<tr><td>EN ISO 3834</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>EN 12642 L/XL</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>ISO 14001 (Trio PRR)</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>ISO 45001 (Trio PRR)</td><td><div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>0%</td><td><span class="badge alerta">Não iniciada</span></td></tr>
+<tr><td>ISO 22400</td><td><div class="progress-bar"><div class="progress-fill wait" style="width:35%"></div></div>35%</td><td><span class="badge wait">12 activos / 34 norma / 97 mapeados</span></td></tr>
+</table>
+
+<h2>KPIs Skills Engine</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Total skills</h4>
+    <div class="kpi-value">236</div>
+    <div class="kpi-source">127 comunidade + 109 custom CSN</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Registados em skills_csn</h4>
+    <div class="kpi-value">5 <span class="kpi-unit">/ 109</span></div>
+    <div class="kpi-source"><span class="badge wait">Migration 054 não aplicada</span></div>
+  </div>
+  <div class="kpi-card">
+    <h4>Secções ISA-95 cobertas</h4>
+    <div class="kpi-value">17</div>
+    <div class="kpi-source">+CST formalizada em S58</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Skills planeadas S59</h4>
+    <div class="kpi-value">2</div>
+    <div class="kpi-source"><code>distancia-eixo-carrocaria</code> (ENM) + <code>gerar-wps</code> (WLD)</div>
+  </div>
+</div>
+
+<h2>KPIs RAG / IA</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Embeddings totais</h4>
+    <div class="kpi-value">49.100</div>
+    <div class="kpi-source">inventor_rag + knowledge_inventor</div>
+  </div>
+  <div class="kpi-card">
+    <h4>inventor_rag</h4>
+    <div class="kpi-value">41.681</div>
+    <div class="kpi-source">voyage-3 1024 dim, HNSW</div>
+  </div>
+  <div class="kpi-card">
+    <h4>knowledge_inventor</h4>
+    <div class="kpi-value">7.419</div>
+    <div class="kpi-source">Conhecimento engenharia</div>
+  </div>
+</div>
+
+<h2>KPIs Sessão S58</h2>
+<div class="grid">
+  <div class="kpi-card">
+    <h4>Bugs gerador termos fechados</h4>
+    <div class="kpi-value" style="color:var(--verde)">8 <span class="kpi-unit">/ 8</span></div>
+    <div class="kpi-source">A–H em 2 PRs merged + deployed</div>
+  </div>
+  <div class="kpi-card">
+    <h4>PRs entregues</h4>
+    <div class="kpi-value">2</div>
+    <div class="kpi-source">#1 (A–G) + #2 (H)</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Termos L2026-001 conformes</h4>
+    <div class="kpi-value">4 <span class="kpi-unit">/ 6</span></div>
+    <div class="kpi-source">2 com issue regulamentar refletores</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Inspecções importadas</h4>
+    <div class="kpi-value">2</div>
+    <div class="kpi-source">CB-78-LB (id=42), CB-34-LG (id=41)</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Limpeza BD/Storage</h4>
+    <div class="kpi-value">11</div>
+    <div class="kpi-source">4 registos NULL/dup + 7 PDFs lixo</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Endpoints órfãos removidos</h4>
+    <div class="kpi-value">1</div>
+    <div class="kpi-source">twilio (clone S39, fonte dos 5 PDFs lixo)</div>
+  </div>
+  <div class="kpi-card">
+    <h4>Decisões estratégicas</h4>
+    <div class="kpi-value">3</div>
+    <div class="kpi-source">L3-MOM split, formação Duarte, 7º doc canónico</div>
+  </div>
+  <div class="kpi-card">
+    <h4>+0 KPIs activos S58</h4>
+    <div class="kpi-value" style="color:var(--cinza)">+0</div>
+    <div class="kpi-source">Sessão de estrutura. Migration 056 <code>kpis_csn</code> em S59+</div>
+  </div>
+</div>
+
+<footer class="docs-footer">
+  <strong>7 documentos canónicos S58:</strong>
+  <code>ESTADO.OPUS.S58.md</code> ·
+  <code>CSN-Controlo-OPUS-S58.pdf</code> ·
+  <code>csn-architecture-OPUS-S58.html</code> ·
+  <code>csn-kpis-isa95-S58.html</code> (este) ·
+  <code>csn-skills-tools-registry-S58.html</code> ·
+  <code>CSN-CERT-ROADMAP-S58.html</code> ·
+  <code>CSN-PRODUCAO-BRIEFING.md</code>
+</footer>
+
+</div>
+</body>
+</html>
