@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<title>CSN Opus — Arquitectura S58</title>
+<style>
+  :root {
+    --preto: #0A0A0A;
+    --branco: #FFFFFF;
+    --verde: #34C759;
+    --cinza: #888888;
+    --cinza-claro: #E5E5E5;
+    --cinza-bg: #1A1A1A;
+    --alerta: #FF3B30;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: var(--preto);
+    color: var(--branco);
+    line-height: 1.5;
+    padding: 40px 20px;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  header {
+    border-bottom: 2px solid var(--verde);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; }
+  h1 .acc { color: var(--verde); }
+  .meta { color: var(--cinza); font-size: 14px; margin-top: 8px; }
+  h2 {
+    font-size: 22px;
+    margin: 50px 0 15px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--cinza-claro);
+  }
+  h3 { font-size: 16px; margin: 20px 0 10px; color: var(--verde); }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+  }
+  .tab {
+    padding: 10px 16px;
+    background: var(--cinza-bg);
+    border: none;
+    color: var(--branco);
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 6px 6px 0 0;
+    font-family: inherit;
+  }
+  .tab.active { background: var(--verde); color: var(--preto); font-weight: 600; }
+  .panel { display: none; padding: 20px 0; }
+  .panel.active { display: block; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .card {
+    background: var(--cinza-bg);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .card h4 { color: var(--verde); margin-bottom: 8px; font-size: 14px; }
+  .card .label { color: var(--cinza); font-size: 12px; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .badge.ok { background: var(--verde); color: var(--preto); }
+  .badge.wait { background: #FF9500; color: var(--preto); }
+  .badge.alerta { background: var(--alerta); color: var(--branco); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+  }
+  th { color: var(--verde); font-weight: 600; font-size: 12px; }
+  .progress-bar {
+    background: #333;
+    border-radius: 4px;
+    height: 14px;
+    overflow: hidden;
+    margin: 4px 0;
+  }
+  .progress-fill {
+    background: var(--verde);
+    height: 100%;
+    transition: width 0.3s;
+  }
+  .progress-fill.alerta { background: var(--alerta); }
+  .progress-fill.wait { background: #FF9500; }
+  .pct { font-size: 12px; color: var(--cinza); margin-left: 8px; }
+  .audit-section {
+    background: var(--cinza-bg);
+    border-left: 3px solid var(--verde);
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 12px 0;
+  }
+  .audit-section.alert { border-left-color: var(--alerta); }
+  .layer-box {
+    background: var(--cinza-bg);
+    border: 1px solid #333;
+    padding: 14px 18px;
+    margin: 8px 0;
+    border-radius: 6px;
+  }
+  .layer-name { color: var(--verde); font-weight: 700; font-size: 14px; }
+  .layer-desc { color: var(--cinza); font-size: 12px; margin: 4px 0 8px; }
+  .agents { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .agent-pill {
+    padding: 3px 10px;
+    background: #2A2A2A;
+    border-radius: 12px;
+    font-size: 11px;
+    color: var(--branco);
+  }
+  .agent-pill.c2 { background: #1B4D8C; }
+  .agent-pill.c3 { background: #1F6F2B; }
+  .agent-pill.novo { background: #FF9500; color: var(--preto); }
+  footer.docs-footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+    font-size: 12px;
+    color: var(--cinza);
+  }
+  footer.docs-footer ol { margin-left: 20px; line-height: 1.8; }
+  footer.docs-footer code { background: #2A2A2A; padding: 1px 6px; border-radius: 3px; font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>CSN <span class="acc">Opus</span> — Arquitectura S58</h1>
+  <div class="meta">
+    Sessão S58 · 11 de Maio de 2026 · Repo: duartebustorff-star/csn-producao · main após PRs #1 + #2
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab(event, 'visao')">Visão Geral</button>
+  <button class="tab" onclick="showTab(event, 'isa95')">Camadas ISA-95</button>
+  <button class="tab" onclick="showTab(event, 'agentes')">Agentes</button>
+  <button class="tab" onclick="showTab(event, 'skills')">Skills</button>
+  <button class="tab" onclick="showTab(event, 'tabelas')">Tabelas Supabase</button>
+  <button class="tab" onclick="showTab(event, 'integracoes')">Integrações</button>
+  <button class="tab" onclick="showTab(event, 'auditoria')">Prontidão para Auditoria</button>
+  <button class="tab" onclick="showTab(event, 'mudancas')">Mudanças S58</button>
+  <button class="tab" onclick="showTab(event, 'pendentes')">Pendentes S59</button>
+  <button class="tab" onclick="showTab(event, 'roadmap')">Roadmap</button>
+</div>
+
+<!-- VISÃO -->
+<div id="visao" class="panel active">
+<h2>Visão Geral</h2>
+<p>O CSN Opus é um sistema integrado de gestão industrial baseado em ISA-95 / IEC 62264. Não é ERP — é organização operacional total da CSN segundo níveis L0 a L4. S58 fecha a dívida técnica do gerador de termos (8 bugs A–H em 2 PRs) e formaliza o eixo de certificações como 7º documento canónico de fecho de sessão.</p>
+
+<div class="grid">
+  <div class="card">
+    <h4>Stack</h4>
+    <div>Next.js 16 + TypeScript 5</div>
+    <div>Supabase (Postgres 17 + pgvector)</div>
+    <div>Vercel auto-deploy <span class="badge ok">ON</span></div>
+    <div>Claude API (Haiku/Sonnet 4.5)</div>
+    <div>Voyage AI voyage-3 (1024 dim)</div>
+  </div>
+  <div class="card">
+    <h4>Estatísticas</h4>
+    <div>Tabelas: ~90+</div>
+    <div>Embeddings RAG: 49.100</div>
+    <div>Skills: 236 (109 custom CSN)</div>
+    <div>Recibos processados: 45 (Jan25-Mar26)</div>
+    <div>Agentes activos: 4 nucleares C3 (+2 ENM/WLD planeados)</div>
+  </div>
+  <div class="card">
+    <h4>Personas C2 (Comunicação)</h4>
+    <div>Marta — COM/CSN Connect</div>
+    <div>Fernando — Produção</div>
+    <div>Carolina — RH</div>
+    <div>Luísa — CEO assistente</div>
+    <div>Leonor — Aftersales</div>
+  </div>
+  <div class="card">
+    <h4>Agentes C3 (Núcleo)</h4>
+    <div>Agente Documental — L3-DOC</div>
+    <div>Agente Router — L3-MOM</div>
+    <div>Agente Qualidade — L3-QMS</div>
+    <div>Agente Research — L4-RES</div>
+    <div class="label" style="margin-top:6px;">+2 planeados S59: ENM + WLD</div>
+  </div>
+</div>
+</div>
+
+<!-- ISA-95 -->
+<div id="isa95" class="panel">
+<h2>Camadas ISA-95</h2>
+
+<div class="layer-box">
+  <div class="layer-name">L4-BPL — Business Planning & Logistics</div>
+  <div class="layer-desc">Planeamento estratégico, finanças, comercial, engenharia de produto, certificações.</div>
+  <div class="agents">
+    <span class="agent-pill">FIN</span>
+    <span class="agent-pill">COM</span>
+    <span class="agent-pill">ENG</span>
+    <span class="agent-pill">QMS-L4</span>
+    <span class="agent-pill">CST <span style="color:#34C759">CERT-ROADMAP S58</span></span>
+    <span class="agent-pill">RES</span>
+  </div>
+</div>
+
+<div class="layer-box">
+  <div class="layer-name">L3-MOM — Manufacturing Operations Management</div>
+  <div class="layer-desc">Execução de produção, qualidade, manutenção, pessoal, documentação. <strong>S59 separa em ENM (Eng. Mecânica) + WLD (Soldadura).</strong></div>
+  <div class="agents">
+    <span class="agent-pill">PRD</span>
+    <span class="agent-pill novo">ENM (S59)</span>
+    <span class="agent-pill novo">WLD (S59)</span>
+    <span class="agent-pill">QMS</span>
+    <span class="agent-pill">MNT</span>
+    <span class="agent-pill">PER</span>
+    <span class="agent-pill">DOC</span>
+    <span class="agent-pill">INV</span>
+    <span class="agent-pill">NestHub</span>
+  </div>
+</div>
+
+<div class="layer-box">
+  <div class="layer-name">L2-SUP — Supervisory Control</div>
+  <div class="layer-desc">SCADA, supervisão de equipamentos individuais.</div>
+</div>
+
+<div class="layer-box">
+  <div class="layer-name">L1-SEN — Sensing & Manipulating</div>
+  <div class="layer-desc">Sensores, actuadores, PLCs.</div>
+</div>
+
+<div class="layer-box">
+  <div class="layer-name">L0-PHY — Physical Process</div>
+  <div class="layer-desc">Processo físico de carroçaria. Bodor A3T6, KUKA, Weinig.</div>
+</div>
+</div>
+
+<!-- AGENTES -->
+<div id="agentes" class="panel">
+<h2>Agentes do Sistema</h2>
+
+<h3>Camada 2 — Personas (5)</h3>
+<table>
+<tr><th>Persona</th><th>ISA-95</th><th>Função</th><th>Status</th></tr>
+<tr><td>Marta</td><td>L4-COM</td><td>Comunicação clientes + CSN Connect</td><td>Activa</td></tr>
+<tr><td>Fernando</td><td>L3-PRD</td><td>Chefe workers (substituiu Sr. Manuel)</td><td>Activa</td></tr>
+<tr><td>Carolina</td><td>L3-RH</td><td>RH conversação</td><td>Activa</td></tr>
+<tr><td>Luísa</td><td>L4-BPL</td><td>CEO assistente Duarte</td><td>Activa</td></tr>
+<tr><td>Leonor</td><td>L4-COM</td><td>Aftersales / garantias</td><td>Activa</td></tr>
+</table>
+<p style="margin-top:8px;color:var(--cinza);font-size:12px;">Personas só comunicam — não produzem dados nem decidem.</p>
+
+<h3>Camada 3 — Agentes Nucleares (produção de dados)</h3>
+<table>
+<tr><th>Agente</th><th>Código</th><th>ISA-95</th><th>Função</th><th>Status</th></tr>
+<tr><td>Agente Documental</td><td>CSN-L3-DOC</td><td>L3-DOC</td><td>Classifica emails, gera termos, organiza dossier</td><td>Activo</td></tr>
+<tr><td>Agente Router</td><td>CSN-L3-MOM</td><td>L3-MOM</td><td>Classifica tickets entrada → secção ISA-95</td><td>Activo (a separar em S59)</td></tr>
+<tr><td>Agente Engenharia Mecânica <span class="badge wait">S59</span></td><td>CSN-L3-MOM-ENM</td><td>L3-MOM</td><td>Cálculos dimensionais, distâncias eixo, momentos, FEA</td><td>Planeado</td></tr>
+<tr><td>Agente Soldadura <span class="badge wait">S59</span></td><td>CSN-L3-MOM-WLD</td><td>L3-MOM</td><td>WPS, WPQR, certificação soldadores EN 9606, FPC</td><td>Planeado</td></tr>
+<tr><td>Agente Qualidade</td><td>CSN-L3-QMS</td><td>L3-QMS</td><td>NCs, auditoria, KPIs ISO 22400</td><td>Activo</td></tr>
+<tr><td>Agente RH</td><td>CSN-L3-RH</td><td>L3-RH</td><td>Recibos, declarações, contratos</td><td>Activo</td></tr>
+<tr><td>Agente Engenharia</td><td>CSN-L4-ENG</td><td>L4-ENG</td><td>Análise BBG, decoder VIN, cálculos normativos</td><td>Activo</td></tr>
+<tr><td>Agente Research</td><td>CSN-L4-RES</td><td>L4-RES</td><td>Research, scraping, intelligence</td><td>Activo</td></tr>
+<tr><td>Agente Certificações <span class="badge ok">S58</span></td><td>CSN-L4-CST</td><td>L4-BPL/CST</td><td>Roadmap certificações, KPIs ISO 22400, gap analysis</td><td>Formalizado em S58</td></tr>
+</table>
+
+<h3>Decisão S58 — Separar L3-MOM em ENM + WLD</h3>
+<p style="margin-top:8px;font-size:13px;">
+A função L3-MOM cobre simultaneamente engenharia mecânica e soldadura — competências distintas com normas distintas (ISO 1090 / EN 9606 / ISO 3834). Separar em dois agentes especialistas em S59 com skills próprias:
+</p>
+<ul style="margin-left:24px;margin-top:8px;line-height:1.8;font-size:13px;">
+  <li><code>CSN-L3-MOM-ENM</code>: skill <code>distancia-eixo-carrocaria</code>, cálculo de momentos, validações dimensionais</li>
+  <li><code>CSN-L3-MOM-WLD</code>: skill <code>gerar-wps</code>, gestão WPQR, certificações soldadores</li>
+</ul>
+<p style="margin-top:8px;font-size:13px;color:var(--cinza);">
+Apoio humano S58: Duarte tira <strong>IWS</strong> (International Welding Specialist) + contrata consultor mentor de soldadura + Eng. Validador Mecânico part-time.
+</p>
+</div>
+
+<!-- SKILLS -->
+<div id="skills" class="panel">
+<h2>Skills Engine</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Total</h4>
+    <div style="font-size:32px;font-weight:700;color:var(--verde)">236</div>
+    <div class="label">127 comunidade + 109 custom CSN</div>
+  </div>
+  <div class="card">
+    <h4>SSoT — skills_csn</h4>
+    <div>Migration 054 gerada (S57)</div>
+    <div>Conforme ISO 9001 §7.5</div>
+    <div>Tabelas: skills_csn + skills_csn_historico</div>
+    <div><span class="badge wait">Não aplicada</span></div>
+  </div>
+  <div class="card">
+    <h4>Codificação</h4>
+    <div style="font-family:monospace;color:var(--verde)">CSN-LX-XXX-SKL-NNN-AAAA</div>
+    <div class="label">ex: CSN-L4-DOC-SKL-001-2026</div>
+    <div class="label">Função: proximo_codigo_skill()</div>
+  </div>
+  <div class="card">
+    <h4>Meta-skill</h4>
+    <div>criar-skill-csn (L4-DOC)</div>
+    <div class="label">Workflow 8 passos</div>
+    <div class="label">REGRA BANDEIRA obrigatória</div>
+  </div>
+</div>
+
+<h3>Skills custom registados (5 retroactivos)</h3>
+<table>
+<tr><th>Código</th><th>Nome</th><th>ISA-95</th><th>Versão</th></tr>
+<tr><td>CSN-L4-DOC-SKL-001-2026</td><td>criar-skill-csn</td><td>L4-DOC</td><td>v1.0</td></tr>
+<tr><td>CSN-L4-ENG-SKL-001-2026</td><td>analise-fabricante</td><td>L4-ENG</td><td>v4.0</td></tr>
+<tr><td>CSN-L4-ENG-SKL-002-2026</td><td>analise-ficha-fuso</td><td>L4-ENG</td><td>v1.0</td></tr>
+<tr><td>CSN-L3-QMS-SKL-001-2026</td><td>registar-nc</td><td>L3-QMS</td><td>v1.0</td></tr>
+<tr><td>CSN-L4-RES-SKL-001-2026</td><td>research-index</td><td>L4-RES</td><td>v1.0</td></tr>
+</table>
+
+<h3>Skills planeadas S59 (2)</h3>
+<table>
+<tr><th>Código</th><th>Nome</th><th>ISA-95</th><th>Agente</th></tr>
+<tr><td>CSN-L3-MOM-SKL-001-2026 <span class="badge wait">S59</span></td><td>distancia-eixo-carrocaria</td><td>L3-MOM</td><td>ENM</td></tr>
+<tr><td>CSN-L3-MOM-SKL-002-2026 <span class="badge wait">S59</span></td><td>gerar-wps</td><td>L3-MOM</td><td>WLD</td></tr>
+</table>
+</div>
+
+<!-- TABELAS -->
+<div id="tabelas" class="panel">
+<h2>Tabelas Supabase Críticas</h2>
+<table>
+<tr><th>Tabela</th><th>Função</th><th>Volume</th><th>Camada</th></tr>
+<tr><td>leads</td><td>Pedidos comerciais (sales orders)</td><td>~50</td><td>L4-COM</td></tr>
+<tr><td>obras</td><td>Work Orders (WO-AAAA-NNNN)</td><td>~30</td><td>L3-MOM</td></tr>
+<tr><td>davs</td><td>Documentos Aprovação Veículo</td><td>~40</td><td>L3-DOC</td></tr>
+<tr><td>inspecoes</td><td>Resultados inspecções facultativas (+2 importadas S58)</td><td>~22</td><td>L3-QMS</td></tr>
+<tr><td>dossie_obra</td><td>Dossier digital por obra</td><td>~30</td><td>L3-DOC</td></tr>
+<tr><td>tickets</td><td>Router L3-MOM tickets ISA-95</td><td>milhares</td><td>L3-MOM</td></tr>
+<tr><td>recibos_vencimento</td><td>Recibos colaboradores</td><td>45</td><td>L3-RH</td></tr>
+<tr><td>movimentos_bancarios</td><td>BPI extratos</td><td>2.153</td><td>L4-FIN</td></tr>
+<tr><td>e_fatura</td><td>e-Fatura AT (foco S59)</td><td>4.409</td><td>L4-FIN</td></tr>
+<tr><td>emails_indice</td><td>Emails históricos arquivados</td><td>18.169</td><td>L3-DOC</td></tr>
+<tr><td>inventor_rag</td><td>Embeddings Inventor</td><td>41.681</td><td>L4-ENG</td></tr>
+<tr><td>knowledge_inventor</td><td>Conhecimento engenharia</td><td>7.419</td><td>L4-ENG</td></tr>
+<tr><td>skills_csn <span class="badge wait">migration 054 pendente</span></td><td>Registo skills SSoT</td><td>5 (seed)</td><td>L4-DOC</td></tr>
+<tr><td>agentes_perfil <span class="badge wait">migration 055 S59</span></td><td>Regras operacionais JSONB (princípios Boris)</td><td>—</td><td>L4-DOC</td></tr>
+<tr><td>kpis_csn <span class="badge wait">migration 056 S59</span></td><td>97 KPIs com fórmula + fonte + status</td><td>—</td><td>L3-QMS / L4-CST</td></tr>
+<tr><td>fichas_tecnicas_fuso</td><td>FUSO Canter LHD diesel</td><td>83</td><td>L4-ENG</td></tr>
+<tr><td>fichas_tecnicas_fuso_ecanter</td><td>FUSO eCanter</td><td>23</td><td>L4-ENG</td></tr>
+</table>
+</div>
+
+<!-- INTEGRAÇÕES -->
+<div id="integracoes" class="panel">
+<h2>Integrações Externas</h2>
+<table>
+<tr><th>Integração</th><th>Função</th><th>Status</th></tr>
+<tr><td>InvoiceXpress (cert AT 192)</td><td>Facturação</td><td>Activa</td></tr>
+<tr><td>matricula.co.pt</td><td>Matrícula → ID básico (€0.20)</td><td>Activa</td></tr>
+<tr><td>Vincario API</td><td>VIN → specs completas</td><td>Activa</td></tr>
+<tr><td>Apps Script v8 → Router v9/v10</td><td>Pipeline emails Gmail</td><td>Activa</td></tr>
+<tr><td>Vercel auto-deploy</td><td>Push main → produção</td><td><span class="badge ok">ON</span></td></tr>
+<tr><td>Voyage AI voyage-3</td><td>Embeddings 1024-dim</td><td>Activa</td></tr>
+<tr><td>Anthropic Claude API</td><td>Haiku (Router) + Sonnet 4.5 (chat + termos)</td><td>Activa</td></tr>
+<tr><td>Google Calendar carrocariascsn@gmail.com</td><td>9 calendários ISA-95</td><td>Activa</td></tr>
+<tr><td>WhatsApp/Twilio</td><td>—</td><td><span class="badge alerta">REMOVIDO S58 (clone órfão)</span></td></tr>
+</table>
+</div>
+
+<!-- PRONTIDÃO PARA AUDITORIA - INVIOLÁVEL -->
+<div id="auditoria" class="panel">
+<h2>Prontidão para Auditoria</h2>
+<p style="color:var(--cinza);font-size:13px;margin-bottom:20px;">
+Esta secção é OBRIGATÓRIA em todas as versões. Não pode ser removida. Mostra o estado real de cobertura por norma. Extensível: novas normas adicionadas como blocos próprios.
+</p>
+
+<div class="audit-section">
+  <h3>ISO 9001:2015 — Sistema de Gestão da Qualidade</h3>
+  <div>Cobertura: 62%</div>
+  <div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>
+  <div style="margin-top:10px;font-size:13px;">
+    <div><strong>Coberto:</strong> §7.5 Informação documentada (skills_csn S57 + CERT-ROADMAP S58), §10 Melhoria (registar-nc), §7.1 Recursos (parcial), §8 Operacional (parcial)</div>
+    <div><strong>Falta:</strong> Política qualidade formal, objectivos mensuráveis completos, auditorias internas, revisão pela gestão</div>
+    <div><strong>Fora SAAS:</strong> Cultura organizacional</div>
+  </div>
+</div>
+
+<div class="audit-section">
+  <h3>Marcação CE — Reg. (UE) 2018/858</h3>
+  <div>Cobertura: 70%</div>
+  <div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div>
+  <div style="margin-top:10px;font-size:13px;">
+    <div><strong>Coberto:</strong> Termos de responsabilidade (gerador V2 corrigido em S58), dossie_obra, DAVs, inspecoes, COC multi-etapa em papel</div>
+    <div><strong>Falta:</strong> COC eletrónico (deadline Jul 2026)</div>
+    <div><strong>Fora SAAS:</strong> Homologação física no IMT (CAA Solution)</div>
+  </div>
+</div>
+
+<div class="audit-section alert">
+  <h3>EN 1090 — Execução de Estruturas em Aço</h3>
+  <div>Cobertura: 25%</div>
+  <div class="progress-bar"><div class="progress-fill alerta" style="width:25%"></div></div>
+  <div style="margin-top:10px;font-size:13px;">
+    <div><strong>Coberto:</strong> Inventário materiais (parcial), rastreabilidade lotes (em curso)</div>
+    <div><strong>Falta:</strong> WPS, WPQR, FPC, ITP, certificação soldadores EN 9606, IWS coordenador</div>
+    <div><strong>Fora SAAS:</strong> Auditoria por organismo notificado</div>
+    <div><strong>Roadmap S58:</strong> Duarte tira IWS + agente CSN-L3-MOM-WLD com skill <code>gerar-wps</code> em S59. Candidatura PRR/P2030 fases 1-3.</div>
+  </div>
+</div>
+
+<div class="audit-section alert">
+  <h3>EN ISO 3834 — Qualidade de Soldadura</h3>
+  <div>Cobertura: 0%</div>
+  <div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>
+  <div style="margin-top:10px;font-size:13px;">
+    <div><strong>Estado:</strong> Não iniciada. Implementar em paralelo com EN 1090 via agente WLD (S59+).</div>
+  </div>
+</div>
+
+<div class="audit-section alert">
+  <h3>EN 12642 L/XL — Resistência Estrutural Carroçarias</h3>
+  <div>Cobertura: 0%</div>
+  <div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>
+  <div style="margin-top:10px;font-size:13px;">
+    <div><strong>Crítica para:</strong> Mercado DE (VDI 2700 + §22 StVO + §412 HGB)</div>
+    <div><strong>Falta:</strong> Cálculo FEA + ensaio em laboratório (TÜV/DEKRA). Skill ENM em S59 prepara terreno.</div>
+  </div>
+</div>
+
+<div class="audit-section alert">
+  <h3>ISO 14001 — Gestão Ambiental (Trio PRR)</h3>
+  <div>Cobertura: 0%</div>
+  <div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>
+</div>
+
+<div class="audit-section alert">
+  <h3>ISO 45001 — Saúde e Segurança Ocupacional (Trio PRR)</h3>
+  <div>Cobertura: 0%</div>
+  <div class="progress-bar"><div class="progress-fill alerta" style="width:0%"></div></div>
+</div>
+
+<div class="audit-section">
+  <h3>ISO 22400 — KPIs Manufacturing</h3>
+  <div>Cobertura: 35%</div>
+  <div class="progress-bar"><div class="progress-fill wait" style="width:35%"></div></div>
+  <div style="margin-top:10px;font-size:13px;">
+    <div><strong>Coberto:</strong> 12 KPIs activos via <code>kpi_dashboard()</code></div>
+    <div><strong>Mapeados (em CERT-ROADMAP):</strong> 97 KPIs · <strong>Definidos em norma:</strong> 34 ISO 22400-2</div>
+    <div><strong>Falta:</strong> 4 KPIs energia (smart meter Bodor pendente) + migration 056 <code>kpis_csn</code> (S59)</div>
+  </div>
+</div>
+</div>
+
+<!-- MUDANÇAS -->
+<div id="mudancas" class="panel">
+<h2>Mudanças desta Sessão (S58)</h2>
+<table>
+<tr><th>Componente</th><th>Mudança</th><th>Estado</th></tr>
+<tr><td>/api/documentos/gerar-termo</td><td>8 bugs A–H corrigidos em 2 PRs (#1 + #2)</td><td><span class="badge ok">Merged + deployed</span></td></tr>
+<tr><td>Endpoint twilio (clone órfão S39)</td><td>Removido — root cause undefined em obra_id</td><td><span class="badge ok">Removido</span></td></tr>
+<tr><td>public/assets/carimbo_csn.svg</td><td>Carimbo institucional CSN criado (commit 0cb1d1a)</td><td><span class="badge ok">Aplicado</span></td></tr>
+<tr><td>inspecoes</td><td>+2 importadas (CB-78-LB id=42, CB-34-LG id=41) + 4 NULL/duplicados removidos</td><td><span class="badge ok">Aplicado</span></td></tr>
+<tr><td>Storage/documentos/termos/</td><td>7 PDFs lixo apagados (resíduos clone twilio)</td><td><span class="badge ok">Limpo</span></td></tr>
+<tr><td>6 termos L2026-001 (JAP Mouriz)</td><td>Reconciliados: 4 conformes regenerados + 2 issue regulamentar (refletores)</td><td>4 OK / 2 pendente regulamentar</td></tr>
+<tr><td>CSN-CERT-ROADMAP-S58.html</td><td>7º doc canónico criado: 97 KPIs / 34 ISO 22400-2 / 12 activos</td><td><span class="badge ok">Aplicado</span></td></tr>
+<tr><td>Decisão L3-MOM</td><td>Separar em ENM (mecânica) + WLD (soldadura)</td><td>Desenho S59</td></tr>
+<tr><td>Decisão formação</td><td>Duarte tira IWS + consultor mentor + Eng. Validador Mecânico</td><td>A iniciar</td></tr>
+<tr><td>Layout BZ-93-LE em route.ts</td><td>Fix cosmético (cinza headers, carimbo PNG via SVG)</td><td><span class="badge wait">Diferido (branch archive/termo-layout-bz93le-canonico)</span></td></tr>
+</table>
+</div>
+
+<!-- PENDENTES -->
+<div id="pendentes" class="panel">
+<h2>Pendentes S59</h2>
+
+<h3>Bloqueante S59 — Gestão Documental Facturação 2025</h3>
+<p style="margin-top:6px;font-size:13px;color:var(--cinza);">
+Contabilidade precisa de conciliar facturas 2025 com e-Fatura URGENTEMENTE. 4.409 registos e-Fatura já importados; faltam ligações às facturas físicas e estrutura de fornecedores como entidades autónomas.
+</p>
+<table>
+<tr><th>#</th><th>Pendência</th><th>Esforço</th></tr>
+<tr><td>1</td><td>Conciliar 4.409 registos e-Fatura ↔ facturas em sistema</td><td>S59 inteira</td></tr>
+<tr><td>2</td><td>Abrir tabela <code>fornecedores</code> SSoT (núcleo de fornecedor por entidade)</td><td>2 sessões</td></tr>
+<tr><td>3</td><td>Entregável: facturas conciliadas para contabilidade</td><td>S59 fim</td></tr>
+</table>
+
+<h3>Migrations e BD</h3>
+<table>
+<tr><th>#</th><th>Pendência</th><th>Esforço</th></tr>
+<tr><td>4</td><td>Aplicar migration 054 <code>skills_csn</code> em produção</td><td>5 min</td></tr>
+<tr><td>5</td><td>Migration 055 — <code>agentes_perfil</code> (regras Boris JSONB)</td><td>1 sessão</td></tr>
+<tr><td>6</td><td>Migration 056 — <code>kpis_csn</code> (97 KPIs registados)</td><td>1 sessão</td></tr>
+<tr><td>7</td><td>Tabela <code>empresa_dados</code> (morada/NIF/certidão SSoT)</td><td>30 min</td></tr>
+</table>
+
+<h3>Agentes e skills</h3>
+<table>
+<tr><th>#</th><th>Pendência</th><th>Esforço</th></tr>
+<tr><td>8</td><td>Desenhar <code>CSN-L3-MOM-ENM</code> + skill <code>distancia-eixo-carrocaria</code></td><td>1 sessão</td></tr>
+<tr><td>9</td><td>Desenhar <code>CSN-L3-MOM-WLD</code> + skill <code>gerar-wps</code></td><td>1 sessão</td></tr>
+<tr><td>10</td><td>Skill <code>vin-decoder-csn</code> (VIN → marca + modelo_comercial + modelo_codigo + ano)</td><td>1 sessão</td></tr>
+<tr><td>11</td><td>Separar <code>davs.modelo</code> em <code>modelo_comercial</code> + <code>modelo_codigo</code></td><td>30 min + skill</td></tr>
+</table>
+
+<h3>Dívida técnica diferida</h3>
+<table>
+<tr><th>#</th><th>Pendência</th><th>Esforço</th></tr>
+<tr><td>12</td><td>Layout BZ-93-LE <code>route.ts</code> — branch local <code>archive/termo-layout-bz93le-canonico</code> (cinza headers + carimbo PNG via SVG)</td><td>1 sessão</td></tr>
+<tr><td>13</td><td>Resolver issue refletores 4.8.2.10 — L2026-001-03 (CB-78-LB) e L2026-001-04 (CB-34-LG)</td><td>Regulamentar</td></tr>
+<tr><td>14</td><td>2 KPIs L3-DOC pendentes: "% termos gerados sem bug" + "Cobertura inspecoes pré-entrega"</td><td>30 min</td></tr>
+<tr><td>15</td><td>COC eletrónico (deadline Jul 2026)</td><td>1 sessão</td></tr>
+</table>
+</div>
+
+<!-- ROADMAP -->
+<div id="roadmap" class="panel">
+<h2>Roadmap Próximas Sessões</h2>
+<div class="grid">
+  <div class="card">
+    <h4>S59 — Facturação 2025 (urgente)</h4>
+    <div>Conciliar 4.409 e-Fatura ↔ facturas</div>
+    <div>Abrir tabela fornecedores (núcleos SSoT)</div>
+    <div>Migrations 054 + 055 + 056</div>
+    <div>Entregar à contabilidade</div>
+  </div>
+  <div class="card">
+    <h4>S60 — Núcleos de fornecedor</h4>
+    <div>Subgrafo BD por fornecedor</div>
+    <div>Contratos, encomendas, recibos</div>
+    <div>Qualidade, prazos, contencioso</div>
+    <div>KPIs DSO / DPO</div>
+  </div>
+  <div class="card">
+    <h4>S61 — KPIs L4-FIN</h4>
+    <div>Registar formalmente em kpis_csn</div>
+    <div>DSO, DPO, prazo médio pagamento</div>
+    <div>Churn fornecedores</div>
+    <div>Top-N concentração</div>
+  </div>
+  <div class="card">
+    <h4>S62+ — Agentes ENM + WLD</h4>
+    <div>Desenho CSN-L3-MOM-ENM</div>
+    <div>Desenho CSN-L3-MOM-WLD</div>
+    <div>Skills distancia-eixo + gerar-wps</div>
+    <div>Acompanhamento IWS Duarte</div>
+  </div>
+  <div class="card">
+    <h4>Médio prazo</h4>
+    <div>EN 1090 + EN 3834 — fase 1</div>
+    <div>NestHub L3 (Q3-Q4 2026)</div>
+    <div>COC eletrónico (deadline Jul 2026)</div>
+    <div>LFAM prova de conceito (2027)</div>
+  </div>
+</div>
+</div>
+
+<footer class="docs-footer">
+  <strong>7 documentos canónicos de fecho de sessão S58:</strong>
+  <ol>
+    <li><code>ESTADO.OPUS.S58.md</code> — estado da sessão (raiz + docs/)</li>
+    <li><code>CSN-Controlo-OPUS-S58.pdf</code> — controlo executivo</li>
+    <li><code>csn-architecture-OPUS-S58.html</code> — arquitectura ISA-95 (este documento)</li>
+    <li><code>csn-kpis-isa95-S58.html</code> — KPIs ISO 22400 / ISA-95</li>
+    <li><code>csn-skills-tools-registry-S58.html</code> — registo skills + tools</li>
+    <li><code>CSN-CERT-ROADMAP-S58.html</code> — roadmap de certificações (NOVO S58, <code>CSN-L4-CST-CERT-001-2026</code>)</li>
+    <li><code>CSN-PRODUCAO-BRIEFING.md</code> — briefing técnico permanente</li>
+  </ol>
+</footer>
+
+</div>
+
+<script>
+function showTab(ev, id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  ev.currentTarget.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
