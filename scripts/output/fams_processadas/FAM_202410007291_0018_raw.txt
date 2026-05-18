@@ -1,0 +1,105 @@
+=== HEADER ===
+FOLHA DE APROVAÇÃO DE MODELO
+N.º DE HOMOLOGAÇÃO NACIONAL 202410007291 extensão0018 SITUAÇÃO: REGULAR
+e2*2018/858*00075*00
+N.º DE HOMOLOGAÇÃO CE DESPACHO EM:2024-09-20
+
+=== LEFT ===
+CARACTERÍSTICAS GERAIS
+0.1 MARCA RENAULT 681
+0.2 MODELO RDB 12068
+VARIANTE UDNT
+VERSÃO B304000A300
+0.2.1 DESIGN. COMERCIAL MASTER 13
+0.4 CATEGORIA LIGEIRO 1
+TIPO MERCADORIAS 3
+CÓDIGO CE N1
+0.5 FABRICANTE RENAULT S.A.S. 919
+0.6 CLASSE
+0.7 TIPO DE MÁQUINA
+CONSTITUIÇÃO GERAL DO VEÍCULO
+1 N.º de Eixos F 1 R 1 T 2
+N.º de Rodas F 2 R 2 T 4
+2 N.º de Eixos Motores F 1 R
+3 Distância entre Eixos 3585
+5 Largura de Via 1ÚNICA1770 2ÚNICA1730 3 4
+Mínima
+Máxima
+6.1 Comprimento 5730
+7.1 Largura 2080
+8 Altura 2257
+9.1 Dist. Eixo-Apoio
+9.2 Dist. Eixo-Frente/Frente
+11 Eixo Ret. à Retaguarda
+11.1 Dist. Eixos Consecutivos 1-23585 2-3 3-4
+11.2 Avanço do Prato Máx. Min.
+PESOS
+12.1 Tara F R T 2055
+14.1 Peso Bruto (TOTAL) 3500
+14.2 Distribuição do PB Frente Retaguarda
+14.3 Máximo Admissível 1F01950 2R02100 3 4
+14.4 Peso Máx. Disp. Engate
+17 Peso Bruto Rebocável com Travão 2500 sem Travão 750
+18 Peso Bruto Conjunto 6000
+MOTOR
+Homologação 202410007291 Extensão 0018
+20 Marca RENAULT 681
+21 Modelo M9R H6
+23 N.º de Cilindros 4
+24 Cilindrada 1997
+25 Combustível / Energia GASOLEO 2
+26 Potência Máxima 110 Kw a 3500 rpm
+27 %Máx. Biocombustível 10
+
+=== RIGHT ===
+TRANSMISSÃO - SUSPENSÃO - TRAVÕES
+28 Caixa de Velocidades MANUAL 1
+32 Pneumáticos Frente 205/75R16C
+32.1 Retaguarda 205/75R16C
+33 Suspensão Frente MECANICA 3
+33.1 Retaguarda MECANICA 3
+35 Travões Serviço HIDRAULICO 2
+36 Estacionamento MECÂNICO 3
+CAIXA
+37 Tipo QUADRO 16
+37.1 Categoria Europeia BX
+37.2 Comprimento Exterior Máx. 3803 Min. 3188
+37.3 Comprimento Interior Máx. Min.
+37.4 Total
+37.5 Altura Interior Máx. Min.
+37.6 Largura Exterior Máx. 2350
+37.7 Avanço Centro GravidadeMáx. Min.
+37.8 Avanço cg/calculo Máx. Min.
+41 N.º de Portas 2
+42.1 Lotação Total 3
+42.2 Sentada F 3 M R
+42.3 Em Pé
+EMISSÕES POLUENTES E CONSUMO
+45 Nível Sonoro Estacionário 80 dB (A) a 2625 rpm
+45.1 Nível Sonoro em Movim. 69 dB (A)
+46.1 Emissões CO (Tipo I) .001g / Km
+CO (Tipo II) %
+HC .006g / Km
+NOx .048g / Km
+HC+NOx g / Km
+Partículas .0006g / Km
+46.2 CO2 Combustível I Combustível II
+GASOLEO
+Urbano 336g / Km g / Km
+Extra Urbano g / Km g / Km
+Combinado g / Km g / Km
+46.3 Cons. Combustível Urb. 12.8l / 100 Km
+Extra Urbano l / 100 Km
+Combinado l / 100 Km
+46.4 Redução Emissão CO 2 g / Km
+46.5 Tecnologia Inovativa
+46.6 Autonomia baterias Valor Km
+46.7 Fonte
+
+=== FOOTER ===
+50 - Anotações
+PN:215/75R16C
+HN-WLTP ; 46.1 ENSAIO WHSC (g/kWh) ; APOS CARROCAMENTO: 6.1 - COMPRIMENTO MAX.:6348 mm ; 37.6 - LARGURA EXTERIOR DA CAIXA PERMITIDA:
+2080 A 2350 mm ; EM CASO DE TRANSFORMACAO: 12.1 - TARA MINIMA PERMITIDA SUPERIOR A 2355 kg ; ; COM UMA LARGURA DE CAIXA > 2170 mm
+OBRIGATORIO MONTAR ESPELHO RETROVISOR DE GRANDE BRACO
+UNIDADES - Pesos: Kg; Dimensões: mm; Cilindrada: cm 3 O Presidente

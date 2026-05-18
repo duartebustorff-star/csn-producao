@@ -1,0 +1,26 @@
+
+=== DRY-RUN  (19 FAMs) ===
+
+   19  201010003291/4135  RENAULT         campos= 80  novos=56  alterados= 2  dry_run
+   18  201010003292/1066  RENAULT         campos=  0  novos= 0  alterados= 0  scanned
+   12  201010003297/4141  RENAULT         campos=  0  novos= 0  alterados= 0  scanned
+   20  201010003298/4112  RENAULT         campos= 81  novos=57  alterados= 3  dry_run
+   21  201010003299/4103  RENAULT         campos= 81  novos=58  alterados= 3  dry_run
+   23  201110003900/0705  MERCEDES-BENZ   campos=  0  novos= 0  alterados= 0  scanned
+    5  201519004470/0007  MITSUBISHI      campos=  0  novos= 0  alterados= 0  scanned
+    8  201710004353/8573  FORD            campos= 76  novos=54  alterados= 1  dry_run
+    6  201810001901/2289  VOLKSWAGEN      campos= 78  novos=57  alterados= 2  dry_run
+    9  202010003210/0041  ISUZU           campos=  0  novos= 0  alterados= 0  scanned
+    4  202010003211/0062  ISUZU           campos=  0  novos= 0  alterados= 0  scanned
+    3  202110005856/3410  CITROEN         campos= 77  novos=56  alterados= 1  dry_run
+   17  202110006563/2800  PEUGEOT         campos= 77  novos=56  alterados= 3  dry_run
+   22  202110006569/3166  PEUGEOT         campos=  0  novos= 0  alterados= 0  scanned
+    1  202410007291/0108  RENAULT         campos= 81  novos=57  alterados= 1  dry_run
+   14  202410007291/0018  RENAULT         campos= 81  novos=57  alterados= 0  dry_run
+   15  202410007293/0110  RENAULT         campos= 81  novos=57  alterados= 0  dry_run
+   16  202410007297/1024  RENAULT         campos= 82  novos=58  alterados= 1  dry_run
+    2  202410007299/0016  RENAULT         campos= 81  novos=57  alterados= 0  dry_run
+
+Relatório: C:\Users\Utilizador\Projectos-AI\csn-producao\.claude\worktrees\condescending-chatterjee-115599\scripts\output\fam_extraction_report_20260518_141951.json
+
+Para aplicar UPDATEs, re-corre com --commit
